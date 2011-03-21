@@ -179,7 +179,7 @@
 			$this->fixFilters(&$filters, array(
 				'date'		=> "DATE_FORMAT(`l`.`date`, '%d/%m/%Y')",
 			));
-			$sql = "SELECT	`l`.*,
+			return "SELECT	`l`.*,
 							DATE_FORMAT(`l`.`date`, '%d/%m/%Y') AS 'date',
 							`c`.`customer`,
 							CONCAT(
@@ -192,7 +192,6 @@
 					WHERE {$this->array2filter($filters)}
 					AND `type` = '{$this->modifier}'
 					ORDER BY `l`.`date`, CONVERT(`l`.`invoice`, UNSIGNED INTEGER)";
-			return $this->asList($sql, 'id_sale');
 		}/**/
 		
 		/**
@@ -216,7 +215,9 @@
 		 *              26 => 'Some Guy (address: homeless)')
 		 * @default: if commented out, comboList data will be taken by calling
 		 *           #getCommonListData() or #getSimpleListData() instead (first
-		 *           of them that's enabled).
+		 *           of them that is not commented out). If one of those was
+		 *           called before (and this one's commented out), it'll take
+		 *           the data from cache.
 		 */
 /*		public function getComboListData( $filters=array() ){
 		}/**/

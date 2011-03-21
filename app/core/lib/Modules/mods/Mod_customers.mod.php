@@ -19,14 +19,15 @@
  */
 
 	
-	class Mod_{code here} extends ModulesDefaults{
+	class Mod_customers extends ModulesDefaults{
 		
 		/**
 		 * @overview: The name that will be shown to users for this object
 		 * @returns: string
 		 * @default: defaults to '' if commented out
 		 */
-/*		public function getName(){
+		public function getName(){
+			return 'Cliente';
 		}/**/
 		
 		/**
@@ -35,7 +36,8 @@
 		 * @returns: string
 		 * @default: defaults to '' if commented out
 		 */
-/*		public function getPlural(){
+		public function getPlural(){
+			return 'Clientes';
 		}/**/
 		
 		
@@ -58,7 +60,21 @@
 		 * to override this behaviour, use getCreateFields or getEditFields (infoPage cannot override it)
 		 * if one of these is created and the other one isn't, both will point to the one that is defined
 		 */
-/*		public function getFields(){
+		public function getFields(){
+			return array(
+				'id_customer'	=> 'ID interno',
+				'number'		=> 'Nº',
+				'customer'		=> 'Empresa',
+				'legal_name'	=> 'Razón Social',
+				'rut'			=> 'RUT',
+				'address'		=> 'Dirección',
+				'id_location'	=> 'ID Ciudad',
+				'location'		=> 'Ciudad',
+				'phone'			=> 'Teléfono',
+				'email'			=> 'Email',
+				'sellerName'	=> 'Vendedor',
+				'since'			=> 'Fecha Ingreso',
+			);
 		}/**/
 		
 		/**
@@ -87,7 +103,10 @@
 		 * @returns: a numeric array with field codes
 		 * @default: if commented out, no page will be available
 		 */
-/*		public function getCommonListFields(){
+		public function getCommonListFields(){
+		
+			return array('number', 'customer', 'legal_name', 'address', 'phone', 'sellerName');
+			
 		}/**/
 		
 		/**
@@ -131,7 +150,13 @@
 /*		public function getEditFields(){
 		}/**/
 		
-		
+		private function getFilterFromModifier(){
+			switch( $this->modifier ){
+				case 'customers': return 'NOT ISNULL(`since`)';
+				case 'potential': return 'ISNULL(`since`)';
+			}
+			return '1';		# No filter for status (show all customers)
+		}
 		
 		/**
 		 * @overview: get data for a commonList
@@ -143,7 +168,18 @@
 		 * )
 		 * @default: if commented out, commonList won't be available
 		 */
-/*		public function getCommonListData( $filters=array() ){
+		public function getCommonListData( $filters=array() ){
+			return "SELECT	`c`.*,
+							`u`.`name`		AS 'seller_name',
+							`u`.`lastName`	AS 'seller_lastName',
+							CONCAT(`u`.`name`,' ',`u`.`lastName`) AS 'sellerName',
+							`lc`.*
+					FROM `customers` `c`
+					LEFT JOIN `_users` `u` ON (`u`.`user` = `c`.`seller`)
+					LEFT JOIN `_locations` `lc` USING (`id_location`)
+					WHERE {$this->array2filter($filters)}
+					AND {$this->getFilterFromModifier()}
+					ORDER BY `c`.`customer`";
 		}/**/
 		
 		/**
@@ -169,10 +205,17 @@
 		 *		26 => 'Some Guy (address: homeless)',
 		 * )
 		 * @default: if commented out, comboList data will be taken by calling
-		 * #getCommonListData() or #getSimpleListData() instead (first of them that
-		 * is not commented out), if comboList
+		 *           #getCommonListData() or #getSimpleListData() instead (first
+		 *           of them that is not commented out). If one of those was
+		 *           called before (and this one's commented out), it'll take
+		 *           the data from cache.
 		 */
-/*		public function getComboListData( $filters=array() ){
+		public function getComboListData( $filters=array() ){
+			return "SELECT	`id_customer`,
+							`customer`
+					FROM `customers`
+					WHERE {$this->getFilterFromModifier()}
+					ORDER BY `customer`";
 		}/**/
 		
 		

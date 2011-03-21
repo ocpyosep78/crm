@@ -1,7 +1,4 @@
 <?php
-	
-	require_once( CLASSES_PATH.'/Modules/Modules.class.php' );
-	
 
 	class PageChecker{
 	

@@ -181,6 +181,8 @@
 				case 'fPDF':
 					return CLASSES_PATH.'fPDF/ExtendedFPDF.class.php';
 				break;
+				case 'Modules':
+					return CORE_PATH.'lib/Modules/Modules.class.php';
 				case 'XajaxResp':
 					return CLASSES_PATH.'Xajax/xajaxResponse.inc.php';
 				break;

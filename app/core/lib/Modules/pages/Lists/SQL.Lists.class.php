@@ -1,54 +1,6 @@
 <?php
 
-/**
- * CRMTemplate - PHP Framework for building CRM-like applications
- * GitHub https://github.com/dbarreiro/crm_template/
- * Copyright (C) 2011 Diego Barreiro <diego.bindart@gmail.com>
- * Licence: GNU GENERAL PUBLIC LICENSE <http://www.gnu.org/licenses/gpl.txt>
- */
-
-
-
-/**
- * This SQL class specializes in object lists. I.e. products, users, customers...
- * It is an SQL Connection tool for class Lists (which extends this one).
- * 
- * To present a list of items of a particular object, there's always 2 queries
- * required ($obj stands for that object's code):
- *	~ Lists: {$obj}List([array $filters])
- *		Returns a named array with all rows needed for a list (key for each row
- *		is the item's id). This is used for the item's tabular list.
- *	~ Hashes: {$obj}()
- *		Returns a 1-dimensional array, $id => $value, where $id is the item's
- *		id and $value. This one's used for combos to jump fast to a certain item,
- *		so $value should be descriptive (could be several fields concatenated).
- *		Note: Hashes are used in other pages, like {$obj}Info, edit{$obj}, etc.
- * It is the programmer's task to create these two queries and return meaningfull
- * results. Creating them right should be enough for this class' duties.
- * 
- * See List class for additional info to get a list running.
- */
-	
-	require_once( CLASSES_PATH.'/Modules/ModulesBase.class.php' );
-
-
-	class SQL_Lists extends ModulesBase{
-		
-/***************
-** H A S H E S
-***************/
-	
-		public function customers( $show='all' ){
-			if( $show == 'customers' ) $statusFilter = 'NOT ISNULL(`since`)';
-			elseif( $show == 'potential' ) $statusFilter = 'ISNULL(`since`)';
-			else $statusFilter = '1';
-			$sql = "SELECT	`id_customer`,
-							`customer`
-					FROM `customers`
-					WHERE {$statusFilter}
-					ORDER BY `customer`";
-			return $this->asHash( $sql );
-		}
+/* TEMPORARY FILE TO DUMP ITS METHODS ORDERLY WITHIN MODULES CLASSES */
 		
 		public function departments(){
 			$sql = "SELECT	`id_department`,
@@ -183,29 +135,6 @@
 ***************/
 		
 		public function customersList($filters=array(), $show='all'){
-		
-			# Modifier specifics ($show)
-			if( $show == 'customers' ) $statusFilter = 'AND NOT ISNULL(`since`)';
-			elseif( $show == 'potential' ) $statusFilter = 'AND ISNULL(`since`)';
-			else $statusFilter = '';
-			# Handle possible name conflicts and composed fields
-			$this->fixFilters(&$filters, array(
-				'address' => '`c`.`address`',
-				'phone' => '`c`.`phone`',
-				'sellerName' => "CONCAT(`u`.`name`,' ',`u`.`lastName`)"
-			));
-			$sql = "SELECT	`c`.*,
-							`u`.`name`		AS 'seller_name',
-							`u`.`lastName`	AS 'seller_lastName',
-							CONCAT(`u`.`name`,' ',`u`.`lastName`) AS 'sellerName',
-							`lc`.*
-					FROM `customers` `c`
-					LEFT JOIN `_users` `u` ON (`u`.`user` = `c`.`seller`)
-					LEFT JOIN `_locations` `lc` USING (`id_location`)
-					WHERE {$this->array2filter($filters)}
-					{$statusFilter}
-					ORDER BY `c`.`customer`";
-			return $this->asList($sql, 'id_customer');
 		}
 		
 		public function estimatesList($filters=array(), $modifier='all', $compare='LIKE'){

@@ -9,21 +9,42 @@
 	
 	
 	/**
-	 * A module represents a kind of object that's itself a list of objects. To avoid
-	 * missunderstandings, here we'll refer to the objects represented by this class as
-	 * modules, and items its individual objects. As an example, module Users represents
-	 * all the users of the application, and each user is an item of that module.
+	 * A module represents a kind of object that's itself a list of objects. To
+	 * avoid missunderstandings, here we'll refer to the objects represented by
+	 * this class as modules, and as items its individual objects. As an example,
+	 * module Users represents all the users of the application, and each user is
+	 * an item of that module.
 	 * 
-	 * Most modules share methods like 'list your items' or 'add an item', while their
-	 * items often have methods 'create', 'view', 'edit', 'block', 'delete'. The goal of
-	 * this class (and its children) is to grab what's common to all (or most) of the
-	 * modules, ask external files about what's special or particular in a given Module,
-	 * using a concise and compact protocol, and put it all together to answer for the
-	 * abstract Module when the application requests something from it.
+	 * Most modules share methods like 'list your items' or 'add an item', while
+	 * their items often have methods 'create', 'view', 'edit', 'block', 'delete'.
+	 * 
+	 * The goal of this class (and its children) is to grab what's common to all
+	 * (or most) of the modules, ask external files about what's special or
+	 * particular in a given Module, using a concise and compact protocol, and put
+	 * it all together to answer for the abstract Module when the application
+	 * requests something from it.
+	 * 
+	 * There is a limited specialization of classes, where Module_Lists handles
+	 * mostly lists, Module_Info handles info page, and Module_Edit handles both
+	 * create and edit pages. However, to avoid duplicating code, considering lists
+	 * might be partially included in info pages (in particular comboList is most
+	 * likely to be included in all info, edit and create pages), and info might be
+	 * included in lists (when hovering an item, for example), most common methods
+	 * are in this class instead.
+	 * 
+	 * There is a very important reason though, to organize it all this way. Having
+	 * different classes that descend from this one, the same methods can be reused,
+	 * which is specially important for the main methods (only ones seen from the
+	 * outside): #getPage and #doTasks().
 	 */
 
 
 	abstract class ModulesBase extends Connection{
+		
+
+##################################
+########### PROPERTIES ###########
+##################################
 	
 		protected $type;			/* Type of page, for page-handlers with multiple types (i.e. Module_Lists) */
 		protected $code;			/* Unique identifier for this module */
@@ -33,9 +54,9 @@
 		protected $fields;			/* List of fields for current page */
 		protected $keys;			/* Key fields for current module */
 		
-		protected $listData;		/* Cached list data in case we need to reuse it */
+		protected $dataCache;		/* Cached lists data in case we need to reuse it */
 		
-		private $DP;				/* Data Provider for this module */
+		private $DP;				/* Data Provider for this module (user-configured) */
 		
 		private $TemplateEngine;
 		private $vars;				/* Registers vars to be used in the templates */
@@ -163,12 +184,12 @@
 			
 			# Attempt to get data from its own function, or fall back to
 			# cached listData, or fall back to common, then simpleList
-			$data = $this->DP->getComboListData();
-			if( is_null($data) ){
-				if( is_null($extData=$this->listData) ){
-					$extData = ($aux=$this->DP->getCommonListData())
+			$data = $this->getListData('combo');
+			if( $data === NULL ){	# getComboListData was not set
+				if( is_null($extData=$this->getDataCache('common')) ){
+					$extData = ($aux=$this->getListData('common'))
 						? $aux
-						: $this->DP->getSimpleListData();
+						: $this->getListData('simple');
 				}
 			}
 			
@@ -176,6 +197,7 @@
 			if( empty($data) && empty($extData) ) return $this->ignoreComboList();
 			
 			# If we have external data, we have to translate it into comboList data
+			# (while lists are multidimensional, a combo is just a dictionary)
 			if( isset($extData) ){
 				$data = array();
 				$keys = $this->keys;
@@ -316,6 +338,68 @@
 			}
 		
 		}
+		
+		/**
+		 * Retrieving data (usually from the database) can be time- and
+		 * CPU-consuming, so we attempt to cache retrieved data that can
+		 * be reused if filters and modifier are still the same as stored.
+		 */
+		private function setDataCache($code, $data, $filters=array()){
+			
+			$this->dataCache[$code] = array(
+				'modifier'	=> $this->modifier,
+				'filters'	=> $filters,
+				'data'		=> $data,
+			);
+			
+			return $data;
+			
+		}
+		
+		/**
+		 * Retrieving cached data, within one script run (not in session)
+		 * (see setDataCache's comment for more info)
+		 */
+		private function getDataCache($code, $filters=array()){
+		
+			return (isset($this->dataCache[$code])
+					&& $this->dataCache[$code]['modifier'] === $this->modifier
+					&& $this->dataCache[$code]['filters'] === $filters)
+						? $this->dataCache[$code]['data']
+						: NULL;
+						
+		}
+		
+		/**
+		 * @overview: Gets a data array from user-configured sql query
+		 * @returns: - on success, an array
+		 *           - on error, false
+		 *           - if missing, NULL
+		 */
+		private function getListData($code, $filters=array()){
+			
+			# See if we've got it stored already
+			$cachedData = $this->getDataCache($code, $filters);
+			if( !is_null($cachedData) ) return $cachedData;
+		
+			$method = 'get'.ucfirst($code).'ListData';
+			$formatAs = $code == 'combo' ? 'asHash' : 'asList';
+			
+			$sql = $this->DP->$method( $filters );
+if( !is_string($sql) && !is_null($sql) ) test( $method );
+			$data = $sql ? $this->$formatAs($sql, $this->keys) : NULL;
+			
+			return $this->setDataCache($code, $data, $filters);
+			
+		}
+		
+		private function getKeysString(){
+			
+			return join('__|__', $this->keys);
+			
+		}
+		
+		
 	
 	
 	}

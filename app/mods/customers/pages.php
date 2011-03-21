@@ -11,7 +11,7 @@
 	
 	function page_customers( $modifier='customers' ){	/* Status: 'customers', 'potential', 'all' */
 	
-		return oLists()->printList('customers', $modifier);
+		return oModules()->printPage('customersCommonList', $modifier);
 		
 	}
 	
@@ -146,8 +146,6 @@
 	function page_sales(){
 	
 		return oModules()->printPage('salesCommonList', 'sale');
-	
-#		return oLists()->printList('sales', 'sale');
 		
 	}
 	
