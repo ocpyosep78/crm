@@ -331,17 +331,11 @@
 		}
 		
 		protected function array2filter($arr, $joint='AND', $compare='LIKE'){
-			# Build template string for different possible operators
-			$cmpStr['LIKE'] = "%s LIKE '%%%s%%'";
-			$operators = array('=', '<>', '>', '<');
-			foreach( $operators as $operator ) $cmpStr[$operator] = "%s {$operator} '%s'";
-			# See if current $compare type is expected, or set equals (=) as default
+			$cmpStr = array('LIKE' => "%s LIKE '%%%s%%'", '=' => "%s = '%s'");
 			$compareTpl = isset($cmpStr[$compare]) ? $cmpStr[$compare] : $cmpStr['='];
-			# Process filters to build the SQL filter string, and return it
 			foreach( $arr as $k => $v ){
 				if( $k[0] == '*' ) $cond[] = $v;
 				elseif( is_array($v) ){
-					# Accept different comparisson config for individual elements
 					$cmp = isset($v[1])
 						? (isset($cmpStr[$v[1]]) ? $cmpStr[$v[1]] : $cmpStr['='])
 						: $compareTpl;

@@ -29,7 +29,7 @@
  * See List class for additional info to get a list running.
  */
 	
-	require_once( CLASSES_PATH.'/Modules/Modules.class.php' );
+	require_once( CLASSES_PATH.'/Modules/ModulesBase.class.php' );
 
 
 	class SQL_Lists extends ModulesBase{
@@ -127,19 +127,6 @@
 							`profile`
 					FROM `_profiles`
 					WHERE `id_profile` >= '{$minProfile}'";
-			return $this->asHash( $sql );
-		}
-		
-		public function sales(){
-			$sql = "SELECT	`l`.`id_sale`,
-							CONCAT(
-								'(', DATE_FORMAT(`l`.`date`, '%d/%m/%Y'), ') ',
-								'Fact. ', `l`.`invoice`, ' - ',
-								`c`.`customer`
-							) AS 'info'
-					FROM `sales` `l`
-					LEFT JOIN `customers` `c` USING (`id_customer`)
-					ORDER BY `l`.`date`, CONVERT(`l`.`invoice`, UNSIGNED INTEGER)";
 			return $this->asHash( $sql );
 		}
 		
@@ -283,23 +270,6 @@
 					ORDER BY `pc`.`category`, `pe`.`code`, `p`.`name`";
 			return $this->asList($sql, 'id');
 		}
-		
-		public function salesList($filters=array(), $modifier=NULL){
-			$cond = isset($modifier) ? "`type` = '{$modifier}'" : '1';
-			# Handle possible name conflicts and composed fields
-			$this->fixFilters(&$filters, array(
-				'date'		=> "DATE_FORMAT(`l`.`date`, '%d/%m/%Y')",
-			));
-			$sql = "SELECT	`l`.*,
-							DATE_FORMAT(`l`.`date`, '%d/%m/%Y') AS 'date',
-							`c`.`customer`
-					FROM `sales` `l`
-					LEFT JOIN `customers` `c` USING (`id_customer`)
-					WHERE {$this->array2filter($filters)}
-					AND `type` = '{$modifier}'
-					ORDER BY `l`.`date`, CONVERT(`l`.`invoice`, UNSIGNED INTEGER)";
-			return $this->asList($sql, 'id_sale');
-		}
 
 		public function techVisitsList( $filters=array() ){
 			# Handle possible name conflicts and composed fields
@@ -365,15 +335,12 @@
 		}
 		
 		public function notesSL( $filters=array() ){
-			$sql = "SELECT	`n`.`id_note`,
-							`n`.`note`,
-							`n`.`user`,
-							`n`.`by`,
-							DATE_FORMAT(`n`.`date`, '%d/%m/%Y') AS 'date',
-							`c`.`id_customer`,
-							`c`.`customer`
-					FROM `_notes` `n`
-					LEFT JOIN `customers` `c` USING (`id_customer`)
+			$sql = "SELECT	`id_note`,
+							`note`,
+							`user`,
+							`by`,
+							DATE_FORMAT(`date`, '%d/%m/%Y') AS 'date'
+					FROM `_notes`
 					WHERE {$this->array2filter($filters)}";
 			return $this->asList($sql, 'id_note');
 		}
@@ -396,16 +363,6 @@
 		
 		public function notesByUserSL($filters, $id){
 			return $this->notesSL($filters + array('user' => array($id, '=')));
-		}
-		
-		public function notesByCustomerSL($filters, $ids){
-			# $ids is a concatenation of customer ID and user ID (latter is optional)
-			$idsArr = explode('__|__', $ids, 2);
-			$idsFilter['id_customer'] = array($idsArr[0], '=');
-			if( isset($idsArr[1]) ){
-				$idsFilter['*literal'] = "(`user` = '{$idsArr[1]}' OR ISNULL(`user`))";
-			}
-			return $this->notesSL($filters + $idsFilter);
 		}
 		
 		public function salesByCustomerList($filters, $id){

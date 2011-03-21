@@ -106,7 +106,7 @@
 					$InfoPage = new InfoPage( $code );
 				break;
 				case 'Lists':
-					$Lists = new Lists( $code );
+					$Lists = new Lists(NULL, $code, NULL);	/* TEMP */
 				break;
 				case 'Modules':
 					$Modules = new Modules( $code );

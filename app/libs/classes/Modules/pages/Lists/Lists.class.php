@@ -91,8 +91,6 @@
 		private $src=NULL;				# Alternative source
 		
 		private $combo=true;			# Whether to include comboList in tabular lists
-		
-		private $comboOptions=array();	# Lists of options for simpleLists (create/edit)
 	
 	
 		
@@ -118,16 +116,6 @@
 				'technical'	=> 'Visitas técnicas',
 			);
 		
-		}
-		
-		public function salesTypes(){
-		
-			return array(
-				'install'	=> 'Instalación',
-				'sale'		=> 'Venta',
-				'service'	=> 'Visita Técnica',
-			);
-			
 		}
 		
 		public function warranties(){	/* In months */
@@ -295,8 +283,6 @@
 			oSmarty()->assign('data', isset($data) ? $data : array());
 			oSmarty()->assign('canCreate', oPermits()->can('create'.ucfirst($this->code)) );
 			
-			oSmarty()->assign('comboOptions', $this->comboOptions);
-			
 			# Fetch the template and return it
 			return $this->template('simpleList');
 		
@@ -370,15 +356,15 @@
 				'plural'	=> ''
 			);
 			
-			$axns = array();
+			$axns = $noInputList = array();
 			# Fix/Complete Tools
 			foreach( array_reverse($tools) as $axn ) $axns[$axn] = $axn.ucfirst($code);
 			# Fix/Complete Fields
 			foreach( $fields as $k => $field ){
 				if( is_null($field) ) unset( $fields[$k] );
-				if( !isset($noInput[$k]) ) $noInput[$k] = NULL;
-				if( is_array($field) && !isset($noInput[$field[1]]) ) $noInput[$field[1]] = NULL;
+				$noInputList[$k] = in_array($k, $noInput);
 			}
+			
 			
 			# Return a hash with all relevant static data for current list
 			return $key
@@ -387,7 +373,7 @@
 					'id'			=> $id,
 					'params'		=> $params,
 					'fields'		=> $fields,
-					'noInput'		=> $noInput,
+					'noInput'		=> $noInputList,
 					'tools'			=> isset($axns) ? $axns : array(),
 					'actions'		=> $actions,
 					'preProcess'	=> $preProcess,
@@ -420,12 +406,6 @@
 		
 			$this->src = $src;
 			
-		}
-		
-		public function addComboOptions($name, $options=array()){
-		
-			$this->comboOptions[$name] = $options;
-		
 		}
 		
 	}

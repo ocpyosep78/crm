@@ -137,24 +137,28 @@
 		
 	}
 	
+	
+	
+	
+	
+	
+	/* TEMP */
 	function page_sales(){
 	
-		return oLists()->printList('sales', 'sale');
+		return oModules()->printPage('salesCommonList', 'sale');
+	
+#		return oLists()->printList('sales', 'sale');
 		
 	}
 	
+	/* TEMP */
 	function page_salesInfo(){
 	
-		return oNav()->updateContent(oModules()->getPage('salesInfo'), true);
+		return oModules()->printPage('salesInfo', 'sale');
 	
-		return oLists()->printList('sales', 'sale');
+#		return oLists()->printList('sales', 'sale');
 		
 	}
-	
-	
-	
-	
-	
 	
 	/* TEMP */
 	function page_registerSales(){

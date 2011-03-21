@@ -5,7 +5,7 @@
 	$cnt = array(
 		'notes'			=> oStats()->count('_notes', array('user' => $id)),
 		'agendaBy'		=> oStats()->countAgendaEvents( array('creator' => $id) ),
-		'agendaFor'		=> oStats()->countAgendaEvents( array('target' => $id, 'creator' => array($id, '<>')) ),
+		'agendaFor'		=> oStats()->countAgendaEvents( array('target' => $id) ),
 		'customers'		=> oStats()->count('customers', array('seller' => $id)),
 	);
 	

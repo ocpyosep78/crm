@@ -7,8 +7,7 @@
 	
 		private function supportedTypes(){
 		
-			return array(	'commonList', 'simpleList', 'comboList',
-							'create', 'edit', 'info');
+			return array('commonList', 'simpleList', 'create', 'edit', 'info');
 		
 		}
 		
@@ -20,9 +19,13 @@
 			# See if the page can be created
 			$str = join('|', $types);
 			preg_match("/^(.+)({$str})$/", $page, $parts);
+			
+			# Uncapitalize first letter of the code, if we got one
+			if( isset($parts[2]) ) $parts[2][0] = strtolower( $parts[2][0] );
+			
 			return array(
 				'code'	=> empty($parts) ? NULL : $parts[1],
-				'type'	=> empty($parts) ? NULL : strtolower($parts[2]),
+				'type'	=> empty($parts) ? NULL : $parts[2],
 			);
 			
 		}
@@ -44,7 +47,7 @@
 		public function canBuildPageFor($code, $type){
 			
 			return in_array($type, $this->supportedTypes())
-				&& is_file(MODULES_PATH."{$code}.class.php");
+				&& is_file(MODULES_PATH."Mod_{$code}.mod.php");
 		
 		}
 

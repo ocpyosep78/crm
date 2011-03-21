@@ -12,8 +12,10 @@
 		}
 		
 		private function infoPage(){
-		
-			$this->assign('comboList', oLists()->comboListHTML($this->code, $this->modifier));
+			
+			# Combo list
+			$this->insertComboList();
+			
 			$this->assign('data', array('Nombre' => 'yo', 'Edad' => '32'));
 			
 			return $this->fetch( 'info' );

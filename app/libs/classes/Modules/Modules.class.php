@@ -10,21 +10,30 @@
 
 	define('MODULES_PATH', dirname(__FILE__).'/mods/');
 	
+
+	require_once( CONNECTION_PATH );
 	
-	require_once( dirname(__FILE__).'/PageChecker.class.php' );
-	require_once( dirname(__FILE__).'/PageCreator.class.php' );
-	require_once( dirname(__FILE__).'/ModulesBase.class.php' );
+	require_once( dirname(__FILE__).'/engines/ajax.engine.php' );
+	require_once( dirname(__FILE__).'/engines/template.engine.php' );
+	
+	require_once( dirname(__FILE__).'/lib/ModulesBase.class.php' );
+	require_once( dirname(__FILE__).'/lib/ModulesDefaults.class.php' );
+	
+	require_once( dirname(__FILE__).'/lib/PageChecker.class.php' );
+	require_once( dirname(__FILE__).'/lib/PageCreator.class.php' );
 	
 
 	class Modules{
 	
 		private $PageChecker;
 		private $PageCreator;
+		private $AjaxEngine;
 		
 		public function __construct( $code=NULL ){
 		
 			$this->PageChecker = new PageChecker;
 			$this->PageCreator = new PageCreator;
+			$this->AjaxEngine = new Modules_ajaxEngine;
 		
 		}
 	
@@ -45,8 +54,20 @@
 			# #getPage is done AFTER checking: either input is valid or something's wrong.
 			$page = $this->PageChecker->parsePageName( $name );
 			
-			return $this->PageCreator->getPage($page['code'], $page['type'], $modifier);
+			return $this->PageCreator->getPage($page['type'], $page['code'], $modifier);
 			
+		}
+		
+		public function printPage($name, $modifier=NULL){
+		
+			$HTML = $this->getPage($name, $modifier);
+			
+			$this->AjaxEngine->write(PAGE_CONTENT_BOX, $HTML);
+			
+			$this->PageCreator->doTasks();
+			
+			return $this->AjaxEngine;
+		
 		}
 	
 	}
