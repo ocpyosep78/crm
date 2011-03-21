@@ -1,0 +1,21 @@
+/**
+ * registerSales
+ */
+
+#registerSaleTitle{
+	width:400px;
+	margin-bottom:30px;
+	text-align:center;
+}
+#tblNewSales TH{
+	padding:5px;
+	text-align:right;
+}
+#btn_Submit{
+	margin-top:20px;
+}
+#saleTypeOptions{
+	float:left;
+	padding:3px;
+	border:solid 1px #600000;
+}

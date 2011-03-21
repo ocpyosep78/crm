@@ -1,0 +1,16 @@
+FIELDSET{
+	background:#ffffff;
+}
+.productInfoPreview{
+	float:right;
+	margin-bottom:-40px;
+	right:50px;
+}
+.productInfoPreview IMG{
+	float:right;
+	height:180px;
+}
+.productDescription{
+	width:320px;
+	white-space:normal;
+}

@@ -1,0 +1,125 @@
+/**
+ * PROFILE specifics
+ */
+
+#listToConfig, #permitsInfo{
+	float:left;
+	margin:12px 30px 12px 0px;
+}
+.listRow{
+	clear:both;
+	padding:1px 2px 6px 2px;
+	height:16px;
+	cursor:pointer;
+}
+.listRow:hover{
+	background:#606090;
+}
+.listRow A{
+	display:block;
+	float:left;
+	width:140px;
+	padding:2px 5px;
+	color:#000000;
+	font-family:Verdana, Arial, Helvetica, sans-serif;
+	font-size:12px;
+	text-decoration:none;
+}
+.listRow.selectedItem A, .listRow:hover A{
+	color:#ffffff;
+	font-weight:bold;
+}
+.listRow.selectedItem, .listRow.selectedItem:hover{
+	background:#003000;
+}
+.listRow IMG{
+	float:right;
+	padding:1px 3px;
+}
+#newProfile{
+	margin:20px 5px 5px 5px;
+	width:97%;
+}
+#btn_newProfile{
+	float:right;
+}
+
+/**
+ * GLOBAL (config module)
+ */
+ 
+#permitsInfo{
+	width:650px;
+}
+#permitsInfo H3{
+	font-weight:normal;
+	text-align:right;
+}
+#insertNameHere{
+	color:#990000;
+	text-transform:lowercase;
+	font-variant:small-caps;
+	font-weight:bold;
+	font-size:18px;
+}
+#permitsYes, #permitsNo{
+	width:48%;
+	padding-top:3px;
+}
+#permitsYes{
+	float:left;
+}
+#permitsNo{
+	float:right;
+}
+#permitsInfo H5{
+	float:right;
+	margin:-1px 3px;
+	text-align:right;
+	font-size:10px;
+	color:#c0ffe0;
+}
+#permitsInfo H5.pendingPermit{
+	color:#ffc0c0;
+}
+.permitsFilter{
+	height:12px;
+	margin-bottom:5px;
+	padding:5px 0px;
+	font-size:10px;
+	background:#003000;
+	border-top:solid #c0c0c0 1px;
+	border-bottom:solid #c0c0c0 1px;
+}
+.permitsFilter SPAN{
+	padding:0px 3px;
+	border:solid 1px #ffffff;
+	background:#006000;
+	color:#d0d0d0;
+	cursor:pointer;
+}
+.permitsFilter SPAN:hover{
+	background:#00b000;
+	color:#505050;
+}
+.permitsFilter SPAN.selectedPermitsFilter{
+	background:#00b000;
+	color:#ffffff;
+	cursor:default;
+}
+.permitsList{
+	height:350px;
+	overflow:auto;
+}
+
+.permitRow{
+	font-size:11px;
+	border-bottom:solid 1px #c0c0ff;
+	cursor:pointer;
+}
+.permitName{
+	clear:both;
+	float:left;
+	width:85%;
+	color:#000000;
+}

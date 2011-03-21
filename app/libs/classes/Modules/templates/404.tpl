@@ -1,0 +1,1 @@
+<div class='noResMsg'>Error 404: Page not found</div>

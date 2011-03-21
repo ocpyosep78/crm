@@ -1,0 +1,300 @@
+SELECT.systemProductsSelect{
+	display:none;
+}
+
+
+/* estimateInfo */
+#estimateInfoTbl{
+	padding:5px;
+	background:#ffffff;
+	text-align:left;
+	border:solid 2px #036;
+	border-radius:6px;
+	-moz-border-radius:6px;
+	-webkit-border-radius:6px;
+}
+#estimateInfoTbl A{
+	text-decoration:none;
+}
+#estimateInfoTbl TH{
+	padding-right:30px;
+}
+.systemPreview{
+	float:left;
+}
+#systemPreview{
+	height:105px;
+	margin-right:10px;
+}
+
+
+/* quotes (first define styles for printable popup, then for main page) */
+.quoteBasicLine{
+	display:none;
+}
+.quotesTable{
+	padding:5px;
+	background:#ffffff;
+	border-collapse:collapse;
+	border:1px solid #505050;
+	background:#ffffff;
+}
+.quotesTable TH{
+	padding:4px;
+}
+.quotesTable TD, .quotesTable TH{
+	border:solid 1px #505050;
+}
+.hiddenAmount, .hiddenPrice{
+	display:block;
+}
+.quoteInput{
+	display:none;
+}
+.productName{
+	display:none;
+}
+#quotesTableWrapper{
+	margin-top:20px;
+}
+#quotesTableWrapper .hiddenAmount, #quotesTableWrapper .hiddenPrice{
+	display:none;
+}
+#quotesTableWrapper .quoteInput{
+	display:block;
+}
+#quotesTableWrapper .productName{
+	display:block;
+}
+#quotesTableWrapper .quotesTable{
+	border:2px solid #000030;
+}
+#quotesTableWrapper .quotesTable TH{
+	border:2px solid #000030;
+	border-collapse:collapse;
+	border-left:none;
+}
+.quotesTable THEAD, .quotesTable TFOOT{
+	height:30px;
+}
+.quotesTable TD INPUT{
+	height:18px;
+	padding:3px 1px 0px 1px;
+	margin:0px;
+	color:#000000;
+	border:1px solid #ffffff;
+}
+#quotesTableWrapper, INPUT{
+	color:#000000 !important;
+}
+.rowSelected, .rowSelected INPUT{
+	color:#000060 !important;
+}
+.autoCell{
+	padding:2px;
+	text-align:right;
+}
+.estimateInfoName{
+	padding:2px;
+	width:460px;
+}
+.suggestDIV{
+	white-space:nowrap;
+}
+.suggestBox, .suggestBox INPUT.productName{
+	position:relative;
+	width:460px;
+	margin:0px;
+	padding:0px;
+	background:#ffffff;
+	font-size:11px;
+	font-weight:normal;
+	font-family:Verdana, Geneva, sans-serif;
+	color:#808080;
+}
+.suggestBox DIV{
+	position:absolute;
+	top:5px;
+	right:2px;
+}
+.match{
+	color:#606060;
+	font-weight:bold;
+}
+.formattedResult{
+	color:#002066;
+	font-weight:bold;
+	white-space:nowrap;
+	margin-top:-17px;
+	overflow:hidden;
+}
+#quotesTableWrapper .formattedResult{
+	margin-top:-5px;
+}
+#quotesTableWrapper .formattedResult SPAN{
+	color:#606090;
+	font-weight:normal;
+}
+.suggestBox INPUT.productName{
+	height:20px;
+	width:458px;
+	padding-top:4px;
+	background-color:transparent;
+	color:#000000;
+}
+#listBox{
+	display:none;
+	position:relative;
+	float:right;
+	z-index:500;
+}
+#estimateListWrapper{
+	position:absolute;
+	top:-160px;
+	left:-310px;
+	height:300px;
+	width:282px;
+	overflow:auto;
+	text-align:right;
+}
+#suggestList{
+	width:260px;
+	padding:0px;
+	border:solid 2px #003333;
+	border-bottom:none;
+	background:#669999;
+	color:#000000;
+	text-align:left;
+}
+#suggestList A{
+	display:block;
+	padding:1px 3px;
+	color:#004060;
+	text-decoration:none;
+	white-space:nowrap;
+	overflow:hidden;
+	cursor:pointer;
+}
+#suggestList A DIV{
+	width:272px;
+	overflow:hidden;
+}
+#suggestList A:hover{
+	background:#66bbff;
+	color:#900000;
+}
+#suggestList A.selected{
+	background:#3399FF;
+	color:#300000;
+}
+#quotesButtons{
+	margin-top:20px;
+}
+
+#saveEstimateWrapper{
+	display:none;
+	position:absolute;
+	height:170px;
+	width:200px;
+	margin-top:-100px;
+	margin-left:-85px;
+	overflow:visible;
+}
+#saveEstimate{
+	padding:10px 20px;
+	border:solid 2px #003300;
+	background:#f0f0f2;
+}
+#saveEstimate INPUT, #saveEstimate SELECT{
+	margin-bottom:5px;
+}
+#saveEstimate INPUT{
+	width:153px;
+}
+#saveEstimate SELECT{
+	width:156px;
+}
+.saveEstimateLine{
+	text-align:center;
+	margin:10px 0px;
+	padding:5px;
+}
+.saveEstimateLine INPUT{
+	width:70px !important;
+}
+#saveEstimateTitle{
+	height:15px;
+	padding:5px 0px 0px 10px;
+	background:#003300;
+	color:#ffffff;
+}
+#estimateInfoTbl TD{
+	border-spacing:0px !important;
+}
+#estimateInfoTbl TH{
+	line-height:1.6em;
+}
+#estimateInfoTbl INPUT[type=text]{
+	margin:0px;
+	padding:0px;
+}
+
+
+
+#quotesTableWrapper .waiting::after{
+	position:absolute;
+	right:0px;
+	text-align:right;
+	content:'buscando...';
+}
+
+/**
+ * INSTALL PLAN
+ */
+ 
+.installPlanRow{
+	float:left;
+}
+#installPlan, #frm_plan{
+	margin-top:30px;
+}
+#installPlan TH{
+	width:50px;
+	padding:2px 10px;
+	border-top:solid 1px #000000;
+	border-bottom:solid 1px #000000;
+	white-space:nowrap;
+}
+#installPlan IMG{
+	height:14px;
+	width:14px;
+	cursor:pointer;
+}
+.planAmount{
+	width:50px;
+}
+.planName{
+	width:250px;
+}
+.planPosition{
+	width:500px;
+	white-space:normal !important;
+}
+
+#printEstimatePDF{
+	display:none;
+}
+.estimatePDFbutton{
+	float:left;
+	margin:0px 5px 10px 0px;
+}
+#estimatePDF{
+	float:left;
+	clear:both;
+	height:500px;
+	width:800px;
+}
+
+#estimatePDF_print{
+	visibility:hidden;
+}
