@@ -347,6 +347,7 @@
 				'times'			=> 'Tiempo de instalación',
 				'cctvInclude'	=> 'Incluye:',
 				'changesNote'	=> 'IMPORTANTE',
+				'server'		=> 'Servidor con tecnología Intel',
 				'screen'		=> 'Monitor ViewSonic 19"',
 				'company'		=> 'Nuestra empresa',
 				'quality'		=> 'Calidad, Seriedad y Confianza',
