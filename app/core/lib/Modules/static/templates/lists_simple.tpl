@@ -13,7 +13,6 @@
 	
 *}
 
-{literal}
 <!-- IE wont' understand conditional comment without some commented output before...
 	even if it's '&nbsp;' (amazing crap, isn't it?!) -->
 <!--[if IE]>&nbsp;
@@ -21,7 +20,6 @@
 		.simpleList{ width:auto !important; }
 	</style>
 <![endif]-->
-{/literal}
 
 
 <table {if $simpleListID}id='{$simpleListID}' {/if}class='data simpleList'>
@@ -47,7 +45,7 @@
 	</tr>
   {foreachelse}																			{* LIST IS EMPTY *}
 	<tr>
-	  <td colspan='{math equation="x + y" x=$fields|@count y=1}' class='noResMsg'>
+	  <td colspan='{$fields|@count + 1}' class='noResMsg'>
 		Esta lista aun no contiene elementos{if $canCreate} (utilice la línea debajo para crear nuevos elementos){/if}
 	  </td>
 	</tr>

@@ -190,6 +190,12 @@
 			
 		}
 		
+		public function getInfoPageData( $filters=array() ){
+		
+			return NULL;
+		
+		}
+		
 		
 		
 		/**

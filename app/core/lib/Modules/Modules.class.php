@@ -9,6 +9,7 @@
 
 
 	define('MODULES_PATH', dirname(__FILE__).'/mods/');
+	define('MODULES_TEMPLATES_PATH', dirname(__FILE__).'/static/templates/');
 	
 
 	require_once( CONNECTION_PATH );
@@ -47,26 +48,33 @@
 			
 		}
 		
-		public function getPage($name, $modifier=NULL){
+		public function getPage($name, $modifier=NULL, $filters=array()){
 			
 			# Not checking $page is on purpose, so it raises a warning in developer mode
 			# if that page cannot be created by PageCreator. We assume that calling
 			# #getPage is done AFTER checking: either input is valid or something's wrong.
 			$page = $this->PageChecker->parsePageName( $name );
 			
-			return $this->PageCreator->getPage($page['type'], $page['code'], $modifier);
+			return $this->PageCreator->getPage($page['type'], $page['code'], $modifier, $filters);
 			
 		}
 		
-		public function printPage($name, $modifier=NULL){
+		public function doTasks( $filters=array() ){
+			
+			$this->PageCreator->doTasks( $filters );
+			
+			return $this->AjaxEngine->AjaxResponse;
+			
+		}
 		
-			$HTML = $this->getPage($name, $modifier);
+		public function printPage($name, $modifier=NULL, $filters=array()){
+		
+			$HTML = $this->getPage($name, $modifier, $filters);
+			if( !$HTML ) return NULL;
 			
 			$this->AjaxEngine->write(PAGE_CONTENT_BOX, $HTML);
 			
-			$this->PageCreator->doTasks();
-			
-			return $this->AjaxEngine;
+			return $this->doTasks( $filters );
 		
 		}
 	

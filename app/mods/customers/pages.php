@@ -22,39 +22,11 @@
 	}
 	
 	function page_customersInfo( $id ){
-		
-		$cust = oSQL()->getCustomer( $id );
-		if( empty($cust) ) return oNav()->getPage('customers', array(), 'Cliente no encontrado.');
-		
-		# Build seller's full name
-		$cust['seller'] = "{$cust['seller_name']} {$cust['seller_lastName']}";
-		
-		# Block Datos Básicos
-		oFormTable()->clear();
-		oFormTable()->emptyTxt = "(no ingresado)";
-		oFormTable()->addRow('Nº Cliente', $cust['number']);
-		oFormTable()->addRow('Nombre Comercial', $cust['customer']);
-		oFormTable()->addRow('Razón Social', $cust['legal_name']);
-		oFormTable()->addRow('R.U.T.', $cust['rut']);
-		oFormTable()->addRow('Ingresado', $cust['since']);
-		$blocks[] = oFormTable()->getTemplate();
-		
-		# Block Datos Básicos
-		oFormTable()->clear();
-		oFormTable()->emptyTxt = "(no ingresado)";
-		oFormTable()->addRow('Teléfono', $cust['phone']);
-		oFormTable()->addRow('Email', $cust['email']);
-		oFormTable()->addRow('Dirección', $cust['address']);
-		oFormTable()->addRow('Ciudad', $cust['location']);
-		oFormTable()->addRow('Vendedor', $cust['seller']);
-		$blocks[] = oFormTable()->getTemplate();
-		
-		oSmarty()->assign('custID', $id);
-		oSmarty()->assign('blocks', $blocks);
-		
-		oLists()->includeComboList('customers', $cust['since'] ? 'customers' : 'potential', $id);
 	
-		return oTabs()->start();
+		$HTML = oModules()->getPage('customersInfo', 'customers', $id);
+		if( !$HTML ) return oNav()->getPage('customers', array(), 'Cliente no encontrado.');
+	
+		return oTabs()->start( $HTML );
 		
 	}
 
@@ -150,9 +122,9 @@
 	}
 	
 	/* TEMP */
-	function page_salesInfo(){
+	function page_salesInfo( $id ){
 	
-		return oModules()->printPage('salesInfo', 'sale');
+		return oModules()->printPage('salesInfo', 'sale', $id);
 	
 #		return oLists()->printList('sales', 'sale');
 		

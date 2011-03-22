@@ -56,7 +56,11 @@
 		
 		protected $dataCache;		/* Cached lists data in case we need to reuse it */
 		
-		private $DP;				/* Data Provider for this module (user-configured) */
+		protected $Creator;			/* Object of class PageCreator that built this object's child */
+		protected $DP;				/* Data Provider for this module (user-configured) */
+		
+		protected $dataProvider;	/* Whether the data provider could be found (boolean) */
+		protected $configIntegrity;	/* The result of reading config (boolean) */
 		
 		private $TemplateEngine;
 		private $vars;				/* Registers vars to be used in the templates */
@@ -66,9 +70,11 @@
 ########## CONSTRUCTOR ###########
 ##################################
 
-		public function __construct($type, $code, $modifier){
+		public function __construct($type, $code, $modifier, $Creator){
 		
 			parent::__construct();
+			
+			$this->Creator = $Creator;
 		
 			# Main parameters for this module
 			$this->type = $type;
@@ -79,13 +85,29 @@
 			$this->fieldsCfg = array();
 			$this->fields = array();
 			$this->keys = array();
-			$this->DP = NULL;
 			$this->listData = NULL;
 			
 			# Template engine
 			$this->TemplateEngine = new Modules_templateEngine;
 			$this->vars = array();
+			
+			# Store and pass to template engine main vars and objects
+			$this->dataProvider = $this->setDataProvider();
+			$this->configIntegrity = $this->dataProvider === true
+				? $this->readConfig()
+				: false;
 		
+		}
+		
+		protected function foundError(){
+			
+			# Make sure the type of page is valid
+			if( !method_exists($this, $this->type) ) return $this->displayError('ModulesBase: wrong type.');
+			if( $this->dataProvider !== true ) return $this->displayError( $this->dataProvider );
+			if( $this->configIntegrity !== true ) return $this->displayError( $this->configIntegrity );
+			
+			return false;
+			
 		}
 
 ##################################
@@ -97,29 +119,124 @@
 		 */
 		public function getPage(){ return ''; }
 		public function doTasks(){}
+		
+		public function getComboList( $selected=NULL ){
+		
+			return method_exists($this, 'comboList')
+				? $this->comboList( $selected )
+				: $this->Creator->getPage('comboList', $this->code, $this->modifier, $selected);
+			
+		}
 
 ##################################
 ########### PROTECTED ############
 ##################################
 		
 		/**
+		 * Takes a row or col of data, and builds a unique ID for that
+		 * item based on that item's values for defined key fields
+		 */
+		protected function keysArray2String( $item ){
+		
+			if( !is_array($item) ){
+				if( count($this->keys) != 1 ) return NULL;
+				$item = array($this->keys[0] => $item);
+			}
+		
+			foreach( $this->keys as $key ){
+				if(isset($item[$key]) ) $keysArr[] = $item[$key];
+				else return NULL;
+			}
+			
+			return isset($keysArr) ? join('__|__', $keysArr) : '';
+			
+		}
+		
+		protected function getInfoPageData( $keys ){
+		
+			$filters = $this->sanitizeInfoKeys( $keys );
+			
+			# Get the right SQL, falling back to lists data if needed
+			$sql = $this->DP->getInfoPageData( $filters );
+			if( !$sql ) $altSQL = $sql = $this->DP->getCommonListData();
+			if( !$sql ) $altSQL = $sql = $this->DP->getSimpleListData();
+			if( !$sql ) return NULL;
+			
+			# Clear ORDER BY, GROUP BY and LIMIT clauses, and strip linefeeds
+			# This is necessary only if we got the query from another page's
+			if( !empty($altSQL) ){
+				$sql = preg_replace('/\s/', ' ', $sql);
+				$sql = preg_replace('/(GROUP BY|ORDER BY|LIMIT).+$/', '', $sql);
+				$sql .= ( !strstr(strtoupper($sql), 'WHERE ') ? 'WHERE ' : 'AND ' ).
+					" {$this->array2filter($filters)} LIMIT 1";
+			}
+			
+			return $this->query($sql, 'row');
+			
+		}
+		
+		/**
+		 * Returns an HTML string from a template, after assigning all vars
+		 * passed as $data.
+		 */
+		protected function fetch($name, $data=array()){
+		
+			$name = preg_replace('/\.tpl$/', '', $name);
+		
+			foreach( $data + $this->vars as $k => $v ) $this->TemplateEngine->assign($k, $v);
+			
+			if( !is_file(MODULES_TEMPLATES_PATH."{$name}.tpl") ) $name = '404';
+		
+			return $this->TemplateEngine->fetch( "{$name}.tpl" );
+		
+		}
+		
+		protected function assign($var, $val=NULL){
+			
+			$this->vars[$var] = $val;
+			
+		}
+		
+		protected function clearVar( $var=NULL ){
+		
+			if( is_null($var) ) $this->vars = array();
+			else unset( $this->vars[$var] );
+			
+		}
+		
+		/**
+		 * Shortcut to return a generic error page
+		 */
+		protected function displayError( $msg=NULL ){
+		
+			return $this->fetch('404', array('msg' => $msg));
+			
+		}
+		
+
+##################################
+############ PRIVATE #############
+##################################
+
+############# CONFIG #############
+		
+		/**
 		 * Validate and store data provider class for this module.
 		 * Returns the data provider on success, false otherwise.
 		 */
-		protected function setDataProvider(){
+		private function setDataProvider(){
 			
 			$class = "Mod_{$this->code}";
 			$path = MODULES_PATH."{$class}.mod.php";
 			
-			if( !is_file($path) ) return false;
+			if( !is_file($path) ) return 'ModulesBase error: data provider not found';
 			
 			require_once( $path );
 			$this->DP = new $class($this->type, $this->code, $this->modifier);
 			
-			return $this->DP;
+			return true;
 			
 		}
-		
 		
 		/**
 		 * Common elements to be registered in the template engine or stored.
@@ -162,126 +279,15 @@
 			if( is_null($fields) ){
 				return 'ModulesBase error: requested page does not exist';
 			}
+			if( !is_array($fields) ) $fields = array( $fields );
 			$this->sanitizeAndStoreFields( &$fields );
 			$this->assign('fields', $fields);
 			
 			return true;
 			
 		}
-		
-		
-		/**
-		 * Check that combo field is valid and keys are set
-		 * If so, fetch its HTML and register it for the template engine.
-		 */
-		protected function insertComboList( $selected=NULL ){
-		
-			# We need key(s) to present comboList
-			if( empty($this->keys) ) return $this->ignoreComboList();
-		
-			# Get configured field code
-			$field = $this->DP->getComboListField();
-			
-			# Attempt to get data from its own function, or fall back to
-			# cached listData, or fall back to common, then simpleList
-			$data = $this->getListData('combo');
-			if( $data === NULL ){	# getComboListData was not set
-				if( is_null($extData=$this->getDataCache('common')) ){
-					$extData = ($aux=$this->getListData('common'))
-						? $aux
-						: $this->getListData('simple');
-				}
-			}
-			
-			# If we still have no data, then we cannot present comboList
-			if( empty($data) && empty($extData) ) return $this->ignoreComboList();
-			
-			# If we have external data, we have to translate it into comboList data
-			# (while lists are multidimensional, a combo is just a dictionary)
-			if( isset($extData) ){
-				$data = array();
-				$keys = $this->keys;
-				$sampleRow = array_shift($aux=$extData);
-				# If we're lacking keys, there's no way to do it
-				foreach( $keys as $k => $v ){
-					if( !isset($sampleRow[$v]) ) return $this->ignoreComboList();
-				}
-				# If our field does not exist in data, there's nothing to do either
-				if( !isset($sampleRow[$field]) ) return $this->ignoreComboList();
-				# Now do translate the array
-				foreach( $extData as $item ){
-					# Support for multiple keys
-					$keysArr = array();
-					foreach( $keys as $key ) $keysArr[] = $item[$key];
-					$data[join('__|__', $keysArr)] = $item[$field];
-				}
-			}
-			
-			if( empty($data) ) return $this->ignoreComboList();
-			
-			$this->assign('combo', array(
-				'code'		=> $this->code,
-				'params'	=> array('name' => $this->DP->getName()),
-				'list'		=> $data,
-				'selected'	=> $selected,
-			));
-			$comboHTML = $this->fetch( 'lists_combo' );
-			$this->assign('comboList', $comboHTML);
-			
-			$this->clearVar( 'combo' );
-			
-		}
-		
-		protected function ignoreComboList(){
-		
-			$this->assign('comboList', '');
-			
-		}
-		
-		/**
-		 * Returns an HTML string from a template, after assigning all vars
-		 * passed as $data.
-		 */
-		protected function fetch($name, $data=array()){
-		
-			$name = preg_replace('/\.tpl$/', '', $name);
-		
-			foreach( $data + $this->vars as $k => $v ) $this->TemplateEngine->assign($k, $v);
-			
-			$dir = dirname(__FILE__).'/../templates';
-			if( !is_file("{$dir}/{$name}.tpl") ) $name = '404';
-		
-			return $this->TemplateEngine->fetch( "{$dir}/{$name}.tpl" );
-		
-		}
-		
-		protected function assign($var, $val=NULL){
-			
-			$this->vars[$var] = $val;
-			
-		}
-		
-		protected function clearVar( $var=NULL ){
-		
-			if( is_null($var) ) $this->vars = array();
-			else unset( $this->vars[$var] );
-			
-		}
-		
-		
-		
-		/**
-		 * Shortcut to return a generic error page
-		 */
-		protected function displayError( $msg=NULL ){
-		
-			return $this->fetch('404', array('msg' => $msg));
-			
-		}
 
-##################################
-############ PRIVATE #############
-##################################
+############# FIX VARS #############
 		
 		/**
 		 * We can accept strings instead of an array of key fields, but then
@@ -327,17 +333,38 @@
 			
 		}
 		
-		
 		/**
 		 * Force fields that do not have screen names to be hidden.
 		 */
 		private function sanitizeAndStoreFields( $fields ){
 		
 			foreach( $fields as &$field ){
-				if( $this->fieldsCfg[$field]['name'] === '' ) $this->fieldsCfg[$field]['hidden'] = true;
+				if( isset($this->fieldsCfg[$field]['name']) && $this->fieldsCfg[$field]['name'] === '' ){
+					$this->fieldsCfg[$field]['hidden'] = true;
+				}
 			}
+			
+			$this->fields = $fields;
 		
 		}
+		
+		private function sanitizeInfoKeys( $keys ){
+			
+			# Build and apply ID filter (check integrity first)
+			if( !is_array($keys) ){
+				# Only one key and one ID
+				if( count($this->keys) != 1 ) return false;
+				else return array($this->keys[0] => $keys);
+			}
+			else{
+				foreach( $this->keys as $key ) if( empty($keys[$key]) ) return false;
+				foreach( array_keys($keys) as $key ) if( !in_array($key, $this->keys) )return false;
+				return $keys;
+			}
+			
+		}
+
+############# CACHE #############
 		
 		/**
 		 * Retrieving data (usually from the database) can be time- and
@@ -376,7 +403,7 @@
 		 *           - on error, false
 		 *           - if missing, NULL
 		 */
-		private function getListData($code, $filters=array()){
+		protected function getListData($code, $filters=array()){
 			
 			# See if we've got it stored already
 			$cachedData = $this->getDataCache($code, $filters);
@@ -386,21 +413,19 @@
 			$formatAs = $code == 'combo' ? 'asHash' : 'asList';
 			
 			$sql = $this->DP->$method( $filters );
-if( !is_string($sql) && !is_null($sql) ) test( $method );
 			$data = $sql ? $this->$formatAs($sql, $this->keys) : NULL;
 			
 			return $this->setDataCache($code, $data, $filters);
 			
 		}
+
+############# DEBUGGING #############
 		
-		private function getKeysString(){
-			
-			return join('__|__', $this->keys);
-			
+		protected function seeVars(){
+		
+			return var_export($this->vars, true);
+		
 		}
-		
-		
-	
 	
 	}
 

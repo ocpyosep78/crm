@@ -478,36 +478,6 @@ function validEmail( email ){
    return !!/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$/.test(email);
 };
 
-/* Fix Table Titles */
-function fixTableHeader( oTitlesBox, oTable, cached ){
-	if( !arguments.length && typeof(arguments.callee.sets) == 'object' ){
-		for( var i=0, set ; set=arguments.callee.sets[i] ; i++ ){
-			fixTableHeader(set['titles'], set['table'], true);
-		};
-		return;
-	};
-	if( !arguments.callee.sets ) arguments.callee.sets = [];
-	if( !oTitlesBox || !oTitlesBox.style || !oTable || !oTable.rows || !oTable.rows[0] ){
-		if( oTitlesBox && oTitlesBox.style ) oTitlesBox.style.display = 'none';
-		return;
-	};
-	if( oTitlesBox && oTitlesBox.style ) oTitlesBox.style.display = 'block';
-	if( !cached ) arguments.callee.sets.push( {titles:oTitlesBox, table:oTable} );
-	var nlCells = oTable.rows[0].cells;
-	var nlTitles = oTitlesBox.getElementsByTagName('DIV');
-	var isIE = !!(/*@cc_on!@*/false);
-	var totalWidth = 10;
-	for( var i=0, len=nlTitles.length, oCell, iWidth, title ; oCell=nlCells[i], oTitle=nlTitles[i] ; i++ ){
-		iWidth = oCell.offsetWidth - 10;
-		if( nlTitles[i+1] ) oTitle.style.width = iWidth + 'px';
-		else oTitle.style.width = 'auto';
-		totalWidth += iWidth;
-		oTitle.style.display = 'block';
-	};
-	// Hide titles that do not match any column in the results table
-	for( var j=i, oTitle ; oTitle=nlTitles[j] ; j++ ) oTitle.style.display = 'none';
-};
-
 function showAlerts(){
 	alert('En construcción');
 };
@@ -821,6 +791,36 @@ var TableSearch = {
 		$('listWrapper').innerHTML = this.cacheBox.innerHTML;
 		this.cacheBox.innerHTML = '';
 	}
+};
+
+/* Fix Table Titles */
+function fixTableHeader( oTitlesBox, oTable, cached ){
+	if( !arguments.length && typeof(arguments.callee.sets) == 'object' ){
+		for( var i=0, set ; set=arguments.callee.sets[i] ; i++ ){
+			fixTableHeader(set['titles'], set['table'], true);
+		};
+		return;
+	};
+	if( !arguments.callee.sets ) arguments.callee.sets = [];
+	if( !oTitlesBox || !oTitlesBox.style || !oTable || !oTable.rows || !oTable.rows[0] ){
+		if( oTitlesBox && oTitlesBox.style ) oTitlesBox.style.display = 'none';
+		return;
+	};
+	if( oTitlesBox && oTitlesBox.style ) oTitlesBox.style.display = 'block';
+	if( !cached ) arguments.callee.sets.push( {titles:oTitlesBox, table:oTable} );
+	var nlCells = oTable.rows[0].cells;
+	var nlTitles = oTitlesBox.getElementsByTagName('DIV');
+	var isIE = !!(/*@cc_on!@*/false);
+	var totalWidth = 10;
+	for( var i=0, len=nlTitles.length, oCell, iWidth, title ; oCell=nlCells[i], oTitle=nlTitles[i] ; i++ ){
+		iWidth = oCell.offsetWidth - 10;
+		if( nlTitles[i+1] ) oTitle.style.width = iWidth + 'px';
+		else oTitle.style.width = 'auto';
+		totalWidth += iWidth;
+		oTitle.style.display = 'block';
+	};
+	// Hide titles that do not match any column in the results table
+	for( var j=i, oTitle ; oTitle=nlTitles[j] ; j++ ) oTitle.style.display = 'none';
 };
 
 

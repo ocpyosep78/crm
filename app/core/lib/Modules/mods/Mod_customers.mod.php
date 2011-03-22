@@ -27,7 +27,9 @@
 		 * @default: defaults to '' if commented out
 		 */
 		public function getName(){
-			return 'Cliente';
+		
+			return gettext('Cliente');
+			
 		}/**/
 		
 		/**
@@ -37,7 +39,9 @@
 		 * @default: defaults to '' if commented out
 		 */
 		public function getPlural(){
-			return 'Clientes';
+	
+			return gettext('Clientes');
+			
 		}/**/
 		
 		
@@ -61,9 +65,10 @@
 		 * if one of these is created and the other one isn't, both will point to the one that is defined
 		 */
 		public function getFields(){
+		
 			return array(
 				'id_customer'	=> 'ID interno',
-				'number'		=> 'Nº',
+				'number'		=> 'Nº Cliente',
 				'customer'		=> 'Empresa',
 				'legal_name'	=> 'Razón Social',
 				'rut'			=> 'RUT',
@@ -75,6 +80,7 @@
 				'sellerName'	=> 'Vendedor',
 				'since'			=> 'Fecha Ingreso',
 			);
+			
 		}/**/
 		
 		/**
@@ -84,7 +90,10 @@
 		 * @default: if commented out or empty, the following pages will be
 		 *           unavailable: infoPage, editPage
 		 */
-/*		public function getKeys(){
+		public function getKeys(){
+		
+			return 'id_customer';
+			
 		}/**/
 		
 		/**
@@ -122,16 +131,22 @@
 		 * @returns: string
 		 * @default: if commented out, comboList won't be available
 		 */
-/*		public function getComboListFields(){
+		public function getComboListFields(){
+			return 'customer';
 		}/**/
 		
 		/**
 		 * @overview: list of fields to be shown in infoPage
 		 * @returns: a numeric array with field codes
 		 * @default: if commented out, all defined (and not hidden) fields
-		 * will be used
+		 *           will be used
+		 * @tip: use '>' as field code to part information in blocks
 		 */
-/*		public function getInfoFields(){
+		public function getInfoFields(){
+		
+			return array('number', 'customer', 'legal_name', 'rut', 'since', '>',
+				'phone', 'email', 'address', 'location', 'sellerName');
+			
 		}/**/
 		
 		/**

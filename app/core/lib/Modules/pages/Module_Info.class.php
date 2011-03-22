@@ -2,30 +2,36 @@
 
 	class Module_Info extends ModulesBase{
 	
-		public function getPage(){
-			
-			# Make sure the type of page is valid
-			if( !method_exists($this, $this->type) ) return $this->displayError('Module_Info: wrong type.');
-			
-			if( !$this->setDataProvider() ) return $this->displayError('Module_Info: DP not found.');
-			
-			# Get static data and register it for the template engine to access it.
-			$cfgIntegrity = $this->readConfig();
-			if( $cfgIntegrity !== true ) return $this->displayError( $cfgIntegrity );
-			
-			# Combo list
-			$this->insertComboList();
+		public function getPage( $filters=array() ){
+		
+			if( $this->foundError() ) return $this->foundError();
 			
 			# Let the right method handle the rest, depending the list type
-			return $this->{$this->type}();
+			return $this->{$this->type}( $filters );
 			
 		}
 		
-		private function info(){
+		private function info( $filters=array() ){
 			
-			$this->assign('data', array('Nombre' => 'yo', 'Edad' => '32'));
+			# Retrieve item's data
+			$data = $this->getInfoPageData( $filters );
+			if( empty($data) ) return $this->displayError('Module_Info error: No data found for this item');
 			
-			return $this->fetch( 'info' );
+			# Form data blocks (for presentational purposes)
+			$block = 0;
+			$blocks = array();
+			foreach( $this->fields as $field ){
+				if( $field == '>' ) $block++;
+				else $blocks[$block][] = $field;
+			}
+			
+			$this->assign('data', $data);
+			$this->assign('blocks', $blocks);
+			
+			# Combo list
+			$combo = $this->getComboList( $this->keysArray2String($filters) );
+			
+			return $combo.$this->fetch( 'info' );
 			
 		}
 	

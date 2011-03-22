@@ -115,7 +115,7 @@
 		 */
 		public function getCommonListFields(){
 		
-			return array('type', 'date', 'invoice', 'customer', 'notes');
+			return array('date', 'invoice', 'customer', 'notes');
 			
 		}/**/
 		
@@ -136,7 +136,7 @@
 		 *           includes 'comboField') will make comboList useless
 		 *           and therefore it won't be shown.
 		 */
-/*		public function getComboListField(){
+/*		public function getComboListFields(){
 		}/**/
 		
 		/**
@@ -145,7 +145,10 @@
 		 * @default: if commented out, all defined fields will be used,
 		 * except keys and hidden fields.
 		 */
-/*		public function getInfoFields(){
+		public function getInfoFields(){
+		
+			return array('date', 'invoice', 'customer', 'notes');
+			
 		}/**/
 		
 		/**
@@ -220,6 +223,18 @@
 		 *           the data from cache.
 		 */
 /*		public function getComboListData( $filters=array() ){
+		}/**/
+		
+		/**
+		 * @overview: get data for infoPage
+		 * @returns: a uni-dimensional associative array of pairs 'field => value'
+		 * i.e.: Array( 'name' => 'None',
+		                'address' => '53rd 1020' )
+		 * @default: if commented out, infoPage data will be taken by calling
+		 *           #getCommonListData() or #getSimpleListData() instead (first
+		 *           of them that is not commented out) with the id as filter.
+		 */
+/*		public function getInfoPageData( $filters=array() ){
 		}/**/
 		
 		

@@ -5,19 +5,16 @@
 	<input type='text' size='30' id='TableSearchInput' />
 </div>
 
-
-{$comboList}
-
-
 <div class='tableOutterWrapper'>
 
   <div class='tableTitles' id='tableTitles'>
-	{foreach from=$fields key=key item=field}
-	  {if $key && $key != 'id_estimate'}
+	{foreach from=$fields item=field}
+	  {if $field && $fieldsCfg.$field.name && not $fieldsCfg.$field.hidden}
+		{assign var=fieldName value=$fieldsCfg.$field.name}
 		<div>
-		  {$field}
-		  <img class='tableColumnSearch' src='app/images/buttons/search.gif'
-			title='filtrar por campo {$field|lower}' for='{$key}' alt='{$field|lower}' />
+		  {$fieldName}
+		  <img class='tableColumnSearch' src='app/images/buttons/search.gif' for='{$field}'
+			title='filtrar por campo {$fieldName|lower}' alt='{$fieldName|lower}' />
 		</div>
 	  {/if}
 	{/foreach}
