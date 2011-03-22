@@ -1,17 +1,34 @@
 var Modules = {
-	initializeList: function (code, modifier, src){
-		// Make sure the list exists (listFrame, named {code}List)
-		var $list = $('listWrapper'), $titles = $('tableTitles');
-		if( !$list || !$titles ) return raise('missing required elements');
-		if( !$list.update ) $list.update = function(){
-			fixTableHeader($titles, $$('.listTable')[0]);
-			$$('.listRows').forEach(function(row){
+	code: null,
+	modifier: null,
+	src: null,
+	initialize: function(type, code, modifier, src){
+		var handler = Modules['ini'+type.capitalize()];
+		if( !handler ) return !!alert('Modules.js error: wrong type');
+		this.code = code;
+		this.modifier = modifier||'';
+		this.src = src||'';
+		handler();
+	},
+	iniComboList: function(){
+		$$('.comboList').forEach(function(cl){
+			cl.addEvent('change', function(e){
+				getPage(e, this.getAttribute('FOR') + 'Info', [this.value]);
+			});
+		});
+	},
+	iniCommonList: function (){
+		Modules.columnSearch.enable();				/* Prepare search tools */
+		if( $('listWrapper').update ) return;
+		Modules.columnSearch.process( true );		/* Do first search (unfiltered) */
+		$('listWrapper').update = function(){
+			Modules.fixTableHeader( this );
+			$list.getElements('.listRows').forEach(function(row){
 				row.addEvent('mouseover', function(){ highLight(this); });
-				if( row.getAttribute('FOR') ){
-					row.addEvent('click', function(e){
-						getPage(e, code + 'Info', [row.getAttribute('FOR')]);
-					});
-				};
+				var id = row.getAttribute('FOR');
+				if( id ) row.addEvent('click', function(e){
+					getPage(e, this.code + 'Info', [id]);
+				});
 			});
 			$$('.tblTools').forEach(function(tool){
 				var axn = tool.getAttribute('AXN');
@@ -21,23 +38,139 @@ var Modules = {
 					switch( axn ){
 						case 'delete':
 							if( confirm('¿Realmente desea eliminar este elemento?') ){
-								window['xajax_delete' + code.capitalize()](id, modifier);
+								var handler = window['xajax_delete' + this.code.capitalize()];
+								if( handler ) handler(id, this.modifier);
 							};
 							break;
 						case 'block':
 							if( confirm('¿Realmente desea bloquear este elemento?') ){
-								window['xajax_block' + code.capitalize()](id, modifier);
+								var handler = window['xajax_block' + this.code.capitalize()];
+								if( handler ) handler(id, this.modifier);
 							};
 							break;
 						default: 
-							getPage(e, axn + code.capitalize(), [id, modifier]);
+							getPage(e, axn + this.code.capitalize(), [id, this.modifier]);
 							break;
 					};
 				});
 			});
 		};
-		TableSearch.enableSearch(code, modifier, src||'');		/* Prepare search tools */
 	},
+	fixTableHeader: function(){
+		var oTitlesBox = $list.getElement('#tableTitles');
+		var oTable = $list.getElement('.listTable');
+		if( !oTitlesBox || !oTitlesBox.style || !oTable || !oTable.rows || !oTable.rows[0] ){
+			if( oTitlesBox && oTitlesBox.style ) oTitlesBox.style.display = 'none';
+			return;
+		};
+		if( oTitlesBox && oTitlesBox.style ) oTitlesBox.style.display = 'block';
+		if( !cached ) arguments.callee.sets.push( {titles:oTitlesBox, table:oTable} );
+		var nlCells = oTable.rows[0].cells;
+		var nlTitles = oTitlesBox.getElementsByTagName('DIV');
+		var isIE = !!(/*@cc_on!@*/false);
+		var totalWidth = 10;
+		for( var i=0, len=nlTitles.length, oCell, iWidth, title ; oCell=nlCells[i], oTitle=nlTitles[i] ; i++ ){
+			iWidth = oCell.offsetWidth - 10;
+			if( nlTitles[i+1] ) oTitle.style.width = iWidth + 'px';
+			else oTitle.style.width = 'auto';
+			totalWidth += iWidth;
+			oTitle.style.display = 'block';
+		};
+		// Hide titles that do not match any column in the results table
+		for( var j=i, oTitle ; oTitle=nlTitles[j] ; j++ ) oTitle.style.display = 'none';
+	},
+	columnSearch: {
+		/* Properties */
+		Box: null,					/* Search box */
+		Input: null,				/* Input field */
+		CloseButton: null,			/* Button to close search tools */
+		Buttons: [],				/* Collection of search buttons in the page */
+		funcAtts: [],				/* Attributes to pass on through Xajax */
+		showing: null,				/* Currently shown search box */
+		searchID: null,				/* Unique ID for each search request */
+		cacheBox: null,				/* DOM box to contain returned results */
+		lastSearch: null,			/* Last searched term */
+		/* Methods */
+		enable: function(){
+			if( !this.ini() ) throw('missing TableSearch parameters');
+			this.Buttons = $$('.tableColumnSearch');
+			this.funcAtts = [Modules.code, Modules.modifier, Modules.src];
+			for( var i=0, att, btn ; btn=this.Buttons[i] ; i++ ){
+				att = btn.getAttribute('FOR');
+				btn.setAttribute('TableSearchCol', i);
+				btn.addEvent('click', function(e){ TableSearch.present(e, this, att); } );
+			};
+		},
+		ini: function(){
+			var that = this;
+			var boxes = $$('.TableSearchBoxes')||[];
+			if( boxes.length > 1 ) document.body.removeChild(boxes[1]);
+			this.Box = $('TableSearchBox');
+			this.Input = $('TableSearchInput');
+			this.CloseButton = $('TableSearchCloseButton');
+			this.Input.addEvent('keyup', function(e){ that.process(e); });
+			this.CloseButton.addEvent('click', function(){ that.hideBox.apply(that); });
+			this.createCacheBox();
+			this.showing = -1;
+			return this.Box && this.Input && BODY.appendChild( this.Box );
+		},
+		createCacheBox: function(){
+			if( $('TableSearchCache') ) return;
+			var tmp = this.cacheBox = $(document.createElement('DIV')).setStyle('display', 'none');
+			tmp.id = 'TableSearchCache';
+			BODY.appendChild( tmp );
+		},
+		present: function(e, obj, att){
+			if( this.showing == obj.getAttribute('TableSearchCol') ) return this.hideBox();
+			this.hideBox();
+			this.showBox(e, obj);
+		},
+		hideBox: function(){
+			this.Box.style.display = 'none';
+			this.Input.value = '';
+			if( this.showing >= 0 ) this.process( true );
+			this.showing = -1;
+		},
+		showBox: function(e, tgt){
+			this.Box.setStyle('left', e.page.x - 100);
+			this.Box.setStyle('top', e.page.y + 48);
+			this.Box.setStyle('display', 'block');
+			this.showing = tgt.getAttribute('TableSearchCol');
+			this.Box.getElement('SPAN').innerHTML = this.Buttons[this.showing].alt;
+			$('TableSearchInput').focus();
+		},
+		process: function( clear ){
+			/* Don't repeat search when keyup provoked no changes */
+			var searchString = this.Input.value.replace('*', '%');
+			if( this.lastSearch == searchString ) return;
+			/* Build filter */
+			var filter = {};
+			if( clear !== true ){
+				var col = this.Buttons[this.showing].getAttribute('FOR');
+				filter[col] = this.lastSearch = searchString;
+			};
+			/* Pass the input and aditional info to registered xajax function */
+			var params = ['commonList', this.searchID=newSID().toString()];
+			xajax_ModulesAjaxCall.apply(window, params.concat(filter, this.funcAtts));
+		},
+		showResults: function( uID ){
+			test( uID );
+			/* Make sure we're receiving the most recent request */
+			if( !$('listWrapper') || uID != this.searchID ) return;
+			$('listWrapper').innerHTML = this.cacheBox.innerHTML;
+			this.cacheBox.innerHTML = '';
+		}
+	},
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	initializeSimpleList: function(code, modifier){
 		var SimpleList = function( $list ){			// Simple List
 			var that = this;
@@ -110,127 +243,5 @@ var Modules = {
 				});
 			});
 		});
-	},
-	enableComboList: function(){
-		$$('.comboList').forEach(function(cl){
-			cl.addEvent('change', function(e){
-				getPage(e, this.getAttribute('FOR') + 'Info', [this.value]);
-			});
-		});
-	},
-	TableSearch: {
-		/* Properties */
-		Box: null,					/* Search box */
-		Input: null,				/* Input field */
-		CloseButton: null,			/* Button to close search tools */
-		Buttons: [],				/* Collection of search buttons in the page */
-		funcAtts: [],				/* Attributes to pass on through Xajax */
-		showing: null,				/* Currently shown search box */
-		searchID: null,				/* Unique ID for each search request */
-		cacheBox: null,				/* DOM box to contain returned results */
-		lastSearch: null,			/* Last searched term */
-		/* Methods */
-		enableSearch: function(){
-			if( !this.ini() ) throw('missing TableSearch parameters');
-			this.Buttons = $$('.tableColumnSearch');
-			this.populateList( arguments );
-			for( var i=0, att, btn ; btn=this.Buttons[i] ; i++ ){
-				att = btn.getAttribute('FOR');
-				btn.setAttribute('TableSearchCol', i);
-				btn.addEvent('click', function(e){ TableSearch.present(e, this, att); } );
-			};
-			/* Do first search (unfiltered) */
-			this.process( true );
-		},
-		ini: function(){
-			var that = this;
-			var boxes = $$('.TableSearchBoxes')||[];
-			if( boxes.length > 1 ) document.body.removeChild(boxes[1]);
-			this.Box = $('TableSearchBox');
-			this.Input = $('TableSearchInput');
-			this.CloseButton = $('TableSearchCloseButton');
-			this.Input.addEvent('keyup', function(e){ that.process(e); });
-			this.CloseButton.addEvent('click', function(){ that.hideBox.apply(that); });
-			this.createCacheBox();
-			this.showing = -1;
-			return this.Box && this.Input && BODY.appendChild( this.Box );
-		},
-		createCacheBox: function(){
-			if( $('TableSearchCache') ) return;
-			var tmp = this.cacheBox = $(document.createElement('DIV')).setStyle('display', 'none');
-			tmp.id = 'TableSearchCache';
-			BODY.appendChild( tmp );
-		},
-		populateList: function( args ){
-			this.funcAtts = [];
-			for( var i=0, arg ; arg=args[i] ; i++ ) this.funcAtts.push( arg );
-		},
-		present: function(e, obj, att){
-			if( this.showing == obj.getAttribute('TableSearchCol') ) return this.hideBox();
-			this.hideBox();
-			this.showBox(e, obj);
-		},
-		hideBox: function(){
-			this.Box.style.display = 'none';
-			this.Input.value = '';
-			if( this.showing >= 0 ) this.process( true );
-			this.showing = -1;
-		},
-		showBox: function(e, tgt){
-			this.Box.setStyle('left', e.page.x - 100);
-			this.Box.setStyle('top', e.page.y + 48);
-			this.Box.setStyle('display', 'block');
-			this.showing = tgt.getAttribute('TableSearchCol');
-			this.Box.getElement('SPAN').innerHTML = this.Buttons[this.showing].alt;
-			$('TableSearchInput').focus();
-		},
-		process: function( clear ){
-			/* Don't repeat search when keyup provoked no changes */
-			var searchString = this.Input.value.replace('*', '%');
-			if( this.lastSearch == searchString ) return;
-			/* Build filter */
-			var filter = {};
-			if( clear !== true ){
-				var col = this.Buttons[this.showing].getAttribute('FOR');
-				filter[col] = this.lastSearch = searchString;
-			};
-			/* Pass the input and aditional info to registered xajax function */
-			var params = [this.searchID=newSID().toString()].concat(filter, this.funcAtts);
-			xajax_updateList.apply(window, params);
-		},
-		showResults: function( uID ){
-			/* Make sure we're receiving the most recent request */
-			if( !$('listWrapper') || uID != this.searchID ) return;
-			$('listWrapper').innerHTML = this.cacheBox.innerHTML;
-			this.cacheBox.innerHTML = '';
-		}
-	},
-	fixTableHeader: function( oTitlesBox, oTable, cached ){
-		if( !arguments.length && typeof(arguments.callee.sets) == 'object' ){
-			for( var i=0, set ; set=arguments.callee.sets[i] ; i++ ){
-				fixTableHeader(set['titles'], set['table'], true);
-			};
-			return;
-		};
-		if( !arguments.callee.sets ) arguments.callee.sets = [];
-		if( !oTitlesBox || !oTitlesBox.style || !oTable || !oTable.rows || !oTable.rows[0] ){
-			if( oTitlesBox && oTitlesBox.style ) oTitlesBox.style.display = 'none';
-			return;
-		};
-		if( oTitlesBox && oTitlesBox.style ) oTitlesBox.style.display = 'block';
-		if( !cached ) arguments.callee.sets.push( {titles:oTitlesBox, table:oTable} );
-		var nlCells = oTable.rows[0].cells;
-		var nlTitles = oTitlesBox.getElementsByTagName('DIV');
-		var isIE = !!(/*@cc_on!@*/false);
-		var totalWidth = 10;
-		for( var i=0, len=nlTitles.length, oCell, iWidth, title ; oCell=nlCells[i], oTitle=nlTitles[i] ; i++ ){
-			iWidth = oCell.offsetWidth - 10;
-			if( nlTitles[i+1] ) oTitle.style.width = iWidth + 'px';
-			else oTitle.style.width = 'auto';
-			totalWidth += iWidth;
-			oTitle.style.display = 'block';
-		};
-		// Hide titles that do not match any column in the results table
-		for( var j=i, oTitle ; oTitle=nlTitles[j] ; j++ ) oTitle.style.display = 'none';
 	}
 };

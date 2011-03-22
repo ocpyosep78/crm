@@ -37,6 +37,33 @@
 			$this->AjaxEngine = new Modules_ajaxEngine;
 		
 		}
+		
+		/**
+		 * Handles all Ajax calls to Modules. First parameter is always the type
+		 * of request. All other arguments depend of the type of request (both in
+		 * number as in order).
+		 */
+		public function ModulesAjaxCall(){
+		
+			# Get arguments
+			$args = func_get_args();
+			
+			# Shift off type
+			switch( array_shift($args) ){
+				case 'commonList':
+					# commonList updates include uID, filters, code, modifier and src as params
+					list($uID, $filters, $code, $modifier, $src) = $args;
+					# We reuse the common way to request pages' HTML, so we need less params
+					$params = array('uID' => $uID, 'filters' => $filters, 'src' => $src);
+					# Module_Lists#commonList knows what it means when last param has those keys
+					$HTML = $this->PageCreator->getPage('commonList', $code, $modifier, $params);
+					# Print the HTML, doTasks() and return the Ajax Response object
+					$this->AjaxEngine->write('listWrapper', $HTML);
+					$this->PageCreator->doTasks( $filters );
+					return oXajaxResp();
+			}
+			
+		}
 	
 		/**
 		 * Whether a page can be built. Takes a single argument that's assumed
@@ -59,14 +86,6 @@
 			
 		}
 		
-		public function doTasks( $filters=array() ){
-			
-			$this->PageCreator->doTasks( $filters );
-			
-			return $this->AjaxEngine->AjaxResponse;
-			
-		}
-		
 		public function printPage($name, $modifier=NULL, $filters=array()){
 		
 			$HTML = $this->getPage($name, $modifier, $filters);
@@ -76,6 +95,14 @@
 			
 			return $this->doTasks( $filters );
 		
+		}
+		
+		public function doTasks( $filters=array() ){
+			
+			$this->PageCreator->doTasks( $filters );
+			
+			return $this->AjaxEngine->AjaxResponse;
+			
 		}
 	
 	}

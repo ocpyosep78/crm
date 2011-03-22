@@ -15,6 +15,7 @@
 			
 			switch( $type ){
 				case 'commonList':
+				case 'commonListUpdate':
 				case 'simpleList':
 				case 'comboList':
 					require_once( dirname(__FILE__).'/../pages/Module_Lists.class.php' );

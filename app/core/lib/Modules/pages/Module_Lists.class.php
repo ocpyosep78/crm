@@ -4,6 +4,8 @@
 	
 		public function getPage( $filters=array() ){
 		
+			# commonListUpdate retrieves fields and other data as 'commonList',
+			# but it needs to call its own handler #commonListUpdate
 			if( $this->foundError() ) return $this->foundError();
 			
 			# Let the right method handle the rest, depending the list type
@@ -11,9 +13,36 @@
 			
 		}
 		
-		protected function commonList(){
+		protected function commonList( $params=array() ){
+		
+			# $filters holds uID, src and filters for updating commonList, but it's empty
+			# for the first call (when it only wants to draw the list frame).
+			if( empty($params['uID']) ) return $this->getComboList().$this->fetch( 'lists_frame' );
 			
-			return $this->getComboList().$this->fetch( 'lists_frame' );
+			# If we're still on the run, then we're expected to update the list
+			
+			# Move input to more comfortable vars
+			$uID = $params['uID'];
+			$filters = $params['filters'];
+			$src = $params['src'];
+			
+			# Get Data
+			$data = $this->getListData($src ? $src : 'common', $filters);
+			$this->TemplateEngine->assign('data', $data);
+			
+/*			oSmarty()->assign('params', $static['params']);
+			oSmarty()->assign('fields', $static['fields']);
+			oSmarty()->assign('data', isset($data) ? $data : array());
+			oSmarty()->assign('axns', $static['actions']);
+			oSmarty()->assign('tools', $static['tools']);
+			oSmarty()->assign('infoPage', "{$this->code}Info");
+			
+			addAssign('TableSearchCache', 'innerHTML', $this->template('list'));
+			addScript("TableSearch.showResults('{$uID}');");
+			
+			return addScript("\$('listWrapper').update();"); */
+			
+			return $this->fetch( 'lists_common' );
 		
 		}
 		
@@ -81,9 +110,19 @@
 			
 		}
 		
-		public function doTasks(){
+		public function doTasks( $filters=array() ){
 		
-			addScript( "initializeList('{$this->code}', '{$this->modifier}');" );
+			$cmd = "Modules.initialize('{$this->type}', '{$this->code}', '{$this->modifier}');";
+			
+			if( isset($filters['uID']) ){
+				$cmd .= "Modules.columnSearch.showResults('{$filters['uID']}');";
+				$cmd .= "\$('listWrapper').update();";
+			}
+			elseif( $this->type !== 'comboList' ){
+				$cmd .= "Modules.initialize('comboList', '{$this->code}', '{$this->modifier}');";
+			}
+			
+			return $this->AjaxEngine->addScript( $cmd );
 			
 		}
 	

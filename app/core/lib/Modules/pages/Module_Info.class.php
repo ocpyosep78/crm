@@ -34,6 +34,15 @@
 			return $combo.$this->fetch( 'info' );
 			
 		}
+		
+		public function doTasks(){
+		
+			$cmd = "Modules.initialize('{$this->type}', '{$this->code}', '{$this->modifier}');";
+			$cmd .= "Modules.initialize('comboList', '{$this->code}', '{$this->modifier}');";
+			
+			return $this->AjaxEngine->addScript( $cmd );
+		
+		}
 	
 	}
 

@@ -62,7 +62,8 @@
 		protected $dataProvider;	/* Whether the data provider could be found (boolean) */
 		protected $configIntegrity;	/* The result of reading config (boolean) */
 		
-		private $TemplateEngine;
+		protected $AjaxEngine;
+		protected $TemplateEngine;
 		private $vars;				/* Registers vars to be used in the templates */
 		
 
@@ -88,6 +89,7 @@
 			$this->listData = NULL;
 			
 			# Template engine
+			$this->AjaxEngine = new Modules_ajaxEngine;
 			$this->TemplateEngine = new Modules_templateEngine;
 			$this->vars = array();
 			
@@ -403,19 +405,19 @@
 		 *           - on error, false
 		 *           - if missing, NULL
 		 */
-		protected function getListData($code, $filters=array()){
+		protected function getListData($listCode, $filters=array()){
 			
 			# See if we've got it stored already
-			$cachedData = $this->getDataCache($code, $filters);
+			$cachedData = $this->getDataCache($listCode, $filters);
 			if( !is_null($cachedData) ) return $cachedData;
 		
-			$method = 'get'.ucfirst($code).'ListData';
-			$formatAs = $code == 'combo' ? 'asHash' : 'asList';
+			$method = 'get'.ucfirst($listCode).'ListData';
+			$formatAs = ($listCode == 'combo') ? 'asHash' : 'asList';
 			
 			$sql = $this->DP->$method( $filters );
 			$data = $sql ? $this->$formatAs($sql, $this->keys) : NULL;
 			
-			return $this->setDataCache($code, $data, $filters);
+			return $this->setDataCache($listCode, $data, $filters);
 			
 		}
 
