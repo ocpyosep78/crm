@@ -202,13 +202,36 @@
 		}
 	
 		public function drawServer(){
+			
+			$pgph = $this->DP->getParagraphs('server');
 		
 			# Add page with header and footer
 			$this->SetHeaderTitle( 'Servidor' );
 			$this->AddPage();
 			$this->SetFont('Arial');
 			
+			# Monitor name
+			$this->SetY(50);
+			$this->SetFont('Arial', 'B', 18);
+			$this->SetTextColor(150, 0, 0);
+			$this->Cell(NULL, NULL, array_shift(array_keys($pgph)), NULL, 1);
+			$this->Ln(5);
 			
+			# Monitor description
+			$this->SetTextColor(0);
+			$this->SetFont('Helvetica', '', 12);
+			$this->MultiCell(110, 7, array_shift($pgph));
+			
+			# Images
+			$this->Image('app/images/export/server_1.gif', $this->w - 125, 70, 125);
+			$this->Image('app/images/export/server_2.gif', 10, 140, NULL, 130);
+			
+			# Disclaimer
+			$this->SetXY(10, 252);
+			$this->setTextColor( 90 );
+			$this->SetFont('Arial', 'IB', 10);
+			$this->Cell(0, 8, 'Nota: Las imágenes son de referencia y pueden no coincidir con el'.
+				' modelo incluído en esta cotización', NULL, 1, 'R');
 		
 		}
 	
