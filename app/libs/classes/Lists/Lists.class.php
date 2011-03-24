@@ -120,6 +120,16 @@
 		
 		}
 		
+		public function salesTypes(){
+		
+			return array(
+				'install'	=> 'Instalación',
+				'sale'		=> 'Venta',
+				'service'	=> 'Visita Técnica',
+			);
+			
+		}
+		
 		public function warranties(){	/* In months */
 			return array(
 				12	=> '1 año',

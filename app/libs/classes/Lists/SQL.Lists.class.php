@@ -29,7 +29,7 @@
  * See List class for additional info to get a list running.
  */
 	
-	require_once( CLASSES_PATH.'/Modules/ModulesBase.class.php' );
+	require_once( CORE_PATH.'lib/Modules/Modules.class.php' );
 
 
 	class SQL_Lists extends ModulesBase{

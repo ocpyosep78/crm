@@ -423,7 +423,7 @@ TABLE.data TD DIV{
 .tableOverflowWrapper{
 	overflow:auto;
 	width:auto;
-	height:410px;
+	max-height:410px;
 	padding:2px;
 	margin:0px;
 	border:solid 1px #503030;
@@ -584,7 +584,6 @@ TABLE.simpleList .simpleListCreate{ white-space:nowrap; }
 .infoBlocks TD{ text-indent:0px !important; color:#000060 !important; }
 .FormTableBox{ float:left; border:solid 1px #202020; text-align:left; padding:10px; margin-bottom:10px; margin-right:10px; box-shadow:#808080 3px 3px 5px; -moz-box-shadow:#808080 3px 3px 5px; -webkit-box-shadow:#808080 3px 3px 5px; }
 .infoBlocks .FormTableBox{ float:none; margin:0px 15px; border:solid 1px #e0e0f0; }
-.FormTableBox{ float:left; border:solid 1px #202020; text-align:left; padding:10px; margin-bottom:10px; margin-right:10px; box-shadow:#808080 3px 3px 5px; -moz-box-shadow:#808080 3px 3px 5px; -webkit-box-shadow:#808080 3px 3px 5px; }
 .FormTable{margin:0px 20px;border-collapse:collapse;font-size:12px;}
 .FormTablePreText{float:right; margin-right:10px; text-align:right;}
 .FormTable TR{white-space:nowrap;}

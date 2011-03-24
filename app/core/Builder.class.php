@@ -106,7 +106,7 @@
 					$InfoPage = new InfoPage( $code );
 				break;
 				case 'Lists':
-					$Lists = new Lists( $code );
+					$Lists = new Lists(NULL, $code, NULL, NULL);	/* TEMP */
 				break;
 				case 'Modules':
 					$Modules = new Modules( $code );
@@ -129,10 +129,10 @@
 				break;
 				case 'Smarty':
 					$Smarty = new Smarty;
-					$Smarty->template_dir = TEMPLATES_PATH;
-					$Smarty->compile_dir  = 'temp';
-					$Smarty->cache_dir    = SMARTY_DIR.'cache';
-					$Smarty->config_dir   = SMARTY_DIR.'configs';
+					$Smarty->setTemplateDir(TEMPLATES_PATH);
+					$Smarty->setCompileDir('temp');
+					$Smarty->setCacheDir(SMARTY_DIR.'cache');
+					$Smarty->setConfigDir(SMARTY_DIR.'configs');
 				break;
 				case 'SQL':
 					$SQL = new SQL();
@@ -181,6 +181,10 @@
 				case 'fPDF':
 					return CLASSES_PATH.'fPDF/ExtendedFPDF.class.php';
 				break;
+				case 'Modules':
+					return CORE_PATH.'lib/Modules/Modules.class.php';
+				case 'Smarty':
+					return CORE_PATH.'third-party/Smarty-3.0.7/Smarty.class.php';
 				case 'XajaxResp':
 					return CLASSES_PATH.'Xajax/xajaxResponse.inc.php';
 				break;

@@ -336,7 +336,7 @@
 		
 		public function getUserEvents($id, $type=NULL){
 			$conds = array(	'by'	=> "`e`.`creator` = '{$id}'",
-							'for'	=> "`e`.`target` = '{$id}' AND `e`.`creator` <> '{$id}'");
+							'for'	=> "`e`.`target` = '{$id}'");
 			$cond = isset($conds[$type]) ? $conds[$type] : join(' OR ', $conds);
 			$sql = "SELECT	`e`.*,
 							'' AS `customer`,		/* for event.tpl widget */

@@ -80,17 +80,17 @@
 			
 		}
 		
-		public function start(){
+		public function start( $HTML=NULL ){
 		
-			$args = func_get_args();
-			return call_user_func_array(array($this, 'getHTML'), $args);
+			return $this->getHTML(NULL, $HTML);
 			
 		}
 		
-		public function getHTML( $tab=NULL ){
+		public function getHTML($tab=NULL, $baseHTML=NULL){
 		
 			if( is_null($tab) ) $tab = array_shift(array_keys($this->getTabs()));
 			
+			oSmarty()->assign('baseHTML', $baseHTML);
 			# Locate the template for the fixed part of the page (off-tabs)...
 			$baseTpl = realpath(TEMPLATES_PATH."{$this->module}/{$this->page}.tpl");
 			# ...tell Smarty about it...

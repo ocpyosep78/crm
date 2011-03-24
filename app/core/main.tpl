@@ -129,7 +129,7 @@
 	{* Widgets *}
 	{if $USER && $Permits->can('agenda')}{include file='widgets/eventInfo.tpl'}{/if}
 	{if $USER && $Permits->can('chatActivity')}{include file='widgets/chat.tpl'}{/if}
-	{if $USER }{include file='widgets/alerts.tpl'}{/if}
+	{if $USER}{include file='widgets/alerts.tpl'}{/if}
 	{include file='widgets/statusMsgs.tpl'}
 	{include file='widgets/loadingMsg.tpl'}
 	{if $Page->debugger}{include file='widgets/debugger.tpl'}{/if}

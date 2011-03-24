@@ -226,11 +226,23 @@
 			}
 		}
 		
-		private function res2named($res, $idCol){
+		private function res2named($res, $keys=array()){
 			$this->formattedRes = array();
+			# Make sure keys are given as array, or fix it to be
+			if( !is_array($keys) ) $keys = array($keys);
+			$cntKeys = count($keys);	# Amount of keys
+			# Browse all rows and fix each index with key fields
 			while( $data=mysql_fetch_assoc($res) ){
-				if( !isset($data[$idCol]) ) $this->formattedRes[] = $data;
-				else $this->formattedRes[$data[$idCol]] = $data;
+				$arrIDs = array();
+				foreach( $keys as $key ) if( isset($data[$key]) ) $arrIDs[] = $data[$key];
+				# Don't use key fields as index if a key field is missing in data
+				if( !$cntKeys || empty($arrIDs) || count($arrIDs) != $cntKeys ){
+					$this->formattedRes[] = $data;
+				}
+				else{
+					$idRow = join('__|__', $arrIDs);
+					$this->formattedRes[$idRow] = $data;
+				}
 			}
 		}
 		
@@ -331,17 +343,11 @@
 		}
 		
 		protected function array2filter($arr, $joint='AND', $compare='LIKE'){
-			# Build template string for different possible operators
-			$cmpStr['LIKE'] = "%s LIKE '%%%s%%'";
-			$operators = array('=', '<>', '>', '<');
-			foreach( $operators as $operator ) $cmpStr[$operator] = "%s {$operator} '%s'";
-			# See if current $compare type is expected, or set equals (=) as default
+			$cmpStr = array('LIKE' => "%s LIKE '%%%s%%'", '=' => "%s = '%s'");
 			$compareTpl = isset($cmpStr[$compare]) ? $cmpStr[$compare] : $cmpStr['='];
-			# Process filters to build the SQL filter string, and return it
 			foreach( $arr as $k => $v ){
 				if( $k[0] == '*' ) $cond[] = $v;
 				elseif( is_array($v) ){
-					# Accept different comparisson config for individual elements
 					$cmp = isset($v[1])
 						? (isset($cmpStr[$v[1]]) ? $cmpStr[$v[1]] : $cmpStr['='])
 						: $compareTpl;

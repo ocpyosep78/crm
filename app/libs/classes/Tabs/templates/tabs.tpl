@@ -77,6 +77,8 @@
 
 
 
+{if $baseHTML}{$baseHTML}{/if}
+
 {if $baseTpl}{include file=$baseTpl}{/if}
 
 <div id='tabsBox'>

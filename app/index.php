@@ -139,6 +139,7 @@
 		oXajax()->registerFunction('takeCall');
 		oXajax()->registerFunction(array('updateList', oLists(), 'updateList'));
 		oXajax()->registerFunction(array('switchTab', oTabs(), 'switchTab'));
+		oXajax()->registerFunction(array('ModulesAjaxCall', oModules(), 'ModulesAjaxCall'));
 	}
 
 
@@ -153,6 +154,15 @@
 	oPageCfg()->add_jsCode("window.loggedIn = '".loggedIn()."'");
 	
 	if( oNav()->inFrame ) oPageCfg()->add_styleSheets( FRAME_CSS_PATH );
+	
+
+
+/***************
+** M O D U L E S
+***************/
+
+	oPageCfg()->add_jScripts(CORE_PATH.'lib/Modules/static/scripts/Modules.js');
+	oPageCfg()->add_styleSheets(CORE_PATH.'lib/Modules/static/styles/Modules.css');
 
 
 
