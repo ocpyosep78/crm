@@ -22,3 +22,24 @@
 .infoData TD{ text-indent:0px !important; color:#000060 !important; }
 .infoData .Tip{color:#800000 !important;font-size:11px;}
 .infoData .Tip DIV{padding:2px;}
+
+
+/**
+ * COMMON LIST
+ */
+.commonListWrapper{ padding:5px; margin:0px 5px 15px 5px; }
+.commonListInnerWrapper{ overflow:auto; width:auto; min-height:100px; max-height:410px; padding:2px; margin:0px; border:solid 1px #503030; background:#eaeaf5; border-radius:8px; -moz-border-radius:8px; -webkit-border-radius:8px; box-shadow:#000000 2px 2px 5px; -moz-box-shadow:#000000 2px 2px 5px; -webkit-box-shadow:#000000 2px 2px 5px; }
+.listWrapper{ height:auto; width:auto; overflow:hidden; }
+
+
+/**
+ * LIST SEARCH AND TITLES
+ */
+.listSearch{ position:absolute; height:50px; width:203px; margin-top:-90px; padding:5px 10px; background:#003060; border:ridge 2px #003000; display:none; z-index:200; border-radius:6px; -moz-border-radius:6px; -webkit-border-radius:6px; box-shadow:#a0a0a0 3px 3px 4px; -moz-box-shadow:#a0a0a0 3px 3px 4px; -webkit-box-shadow:#a0a0a0 3px 3px 4px; }
+.listSearch > DIV{ font-family:Arial, Helvetica, sans-serif; font-size:11px; font-weight:bold; color:#c0c0c0; }
+.listSearch > DIV > SPAN{ position:relative; left:3px; font-size:13px; color:#ccddaa; text-shadow:none; filter:shadow(color=#ffa0a0, direction=120, strength=0); }
+.listSearch > INPUT{ height:1.5em; width:200px; margin:5px 0px; background:#ccddaa; border:2px solid #000000; }
+.listSearchBtn{ position:relative; top:2px; left:2px; height:16px; width:16px; cursor:pointer; }
+
+.listTitles{ height:18px; position:relative; width:auto; margin:0px -3px 5px -3px;padding:7px 0px 9px 0px;text-align:left;font-size:14px;color:#303000; font-weight:bold;font-family:"Times New Roman", Times, serif;white-space:nowrap;overflow:hidden;z-index:50; border:solid 1px #503030; border-radius:12px; -moz-border-radius:12px; -webkit-border-radius:12px; box-shadow:#000000 2px 1px 5px; -moz-box-shadow:#000000 2px 1px 5px; -webkit-box-shadow:#000000 2px 1px 5px; }
+.listTitles > DIV{ display:none; float:left; position:relative; margin:0px 5px; padding:0px; border:none; text-indent:1px; overflow:hidden; }

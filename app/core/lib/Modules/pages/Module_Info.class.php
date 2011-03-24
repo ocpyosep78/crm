@@ -2,10 +2,10 @@
 
 	class Module_Handler_Info extends ModulesBase{
 		
-		protected function info( $filters=array() ){
+		protected function info(){
 		
 			# Retrieve item's data
-			$data = $this->getInfoPageData( $filters );
+			$data = $this->getInfoPageData( $this->params );
 			if( empty($data) ){
 				return $this->displayError('Module_Info error: No data found for this item');
 			}
@@ -21,7 +21,7 @@
 			$this->assign('data', $data);
 			$this->assign('blocks', $blocks);
 			
-			return $this->fetch( 'info' );
+			return $this->fetch( 'pages/info' );
 			
 		}
 		

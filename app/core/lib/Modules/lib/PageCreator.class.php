@@ -5,6 +5,7 @@
 		private $type;
 		private $code;
 		private $modifier;
+		private $params;
 	
 		private $Handlers=array();	/* Handlers involved in fetching this page */
 		
@@ -33,14 +34,14 @@
 		public function getElement($type, $code, $modifier=NULL, $params=NULL){
 			
 			# Store main parameters in case we need them later
-			$this->storeMainParams($type, $code, $modifier);
+			$this->storeProperties($type, $code, $modifier, $params);
 		
 			# See if we have a handler (and a code given, as it's required)
 			$this->Handlers[] = $this->getHandler();
 			if(!$code || !$this->getCurrentHandler()) return NULL;
 			
 			# Get the actual HTML
-			return $this->getCurrentHandler()->getElement( $params );
+			return $this->getCurrentHandler()->getElement();
 		
 		}
 		
@@ -54,14 +55,14 @@
 		public function runAjaxCall($type, $code, $modifier=NULL, $params=NULL){
 		
 			# Store main parameters in case we need them later
-			$this->storeMainParams($type, $code, $modifier);
+			$this->storeProperties($type, $code, $modifier, $params);
 		
 			# See if we have a handler (and a code given, as it's required)
 			$this->Handlers[] = $this->getHandler();
 			
 			# Pass params to the handler, and it's not our problem anymore
 			if( $code && $this->getCurrentHandler() ){
-				$this->getCurrentHandler()->runAjaxCall( $params );
+				$this->getCurrentHandler()->runAjaxCall();
 			}
 		
 		}
@@ -69,13 +70,12 @@
 		/**
 		 * @overview: Most pages will need to get a javascript run after they're
 		 *            done modifying their HTML. This and other actions should be
-		 *            included in a method (of the handler) called doTasks. It'll
-		 *            be sent the $params var (which is a wildcard param).
+		 *            included in a method (of the handler) called doTasks.
 		 * @returns: NULL
 		 */
-		public function doTasks( $params=NULL ){
+		public function doTasks(){
 		
-			foreach( $this->Handlers as $Handler ) $Handler->doTasks( $params );
+			foreach( $this->Handlers as $Handler ) $Handler->doTasks();
 			
 		}
 		
@@ -113,7 +113,7 @@
 			
 			return is_null($handler)
 				? NULL
-				: new $handler($type, $this->code, $this->modifier, $this);
+				: new $handler($type, $this->code, $this->modifier, $this->params, $this);
 			
 		}
 		
@@ -129,11 +129,12 @@
 		 * @overview: Store main parameters for future reference
 		 * @returns: NULL
 		 */
-		private function storeMainParams($type, $code, $modifier){
+		private function storeProperties($type, $code, $modifier, $params){
 			
 			$this->type = $type;
 			$this->code = $code;
 			$this->modifier = $modifier;
+			$this->params = $params;
 			
 		}
 	

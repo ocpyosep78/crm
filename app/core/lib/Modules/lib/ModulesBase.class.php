@@ -49,6 +49,7 @@
 		protected $type;			/* Type of page, for page-handlers with multiple types (i.e. Module_Lists) */
 		protected $code;			/* Unique identifier for this module */
 		protected $modifier;		/* Some modules might have different behaviours depending on a parameter */
+		protected $params;			/* Wildcard var to pass extra parameters (each Handler knows its own) */
 		
 		protected $fieldsCfg;		/* List of fields for this module, with their attributes */
 		protected $fields;			/* List of fields for current page */
@@ -70,7 +71,7 @@
 ########## CONSTRUCTOR ###########
 ##################################
 
-		public function __construct($type, $code, $modifier, $Creator){
+		public function __construct($type, $code, $modifier, $params, $Creator){
 		
 			parent::__construct();
 			
@@ -80,6 +81,7 @@
 			$this->type = $type;
 			$this->code = $code;
 			$this->modifier = $modifier;
+			$this->params = $params;
 			
 			# Initialize only
 			$this->fieldsCfg = array();
@@ -110,13 +112,13 @@
 		 *            class) might combine or not, in order to make pages.
 		 * @returns: an HTML string
 		 */
-		public function getElement( $params=NULL ){
+		public function getElement(){
 		
 			$integrityCheckResult = $this->initialize();
 			
 			# Let the right method handle the rest, depending on $this->type
 			return ($integrityCheckResult === true)
-				? $this->{$this->type}( $params )
+				? $this->{$this->type}()
 				: $integrityCheckResult;
 			
 		}
@@ -125,27 +127,29 @@
 		 * 
 		 */
 		public function runAjaxCall(){
-		
-			$args = func_get_args();
 			
 			$integrityCheckResult = $this->initialize();
 			
 			# Let the right method handle the rest, depending on $this->type
-			if($integrityCheckResult === true){
-				$res = call_user_func_array(array($this, $this->type), $args);
-				if( is_null($res) ) return $this->doTasks();
+			if( $integrityCheckResult !== true){
+				$this->AjaxEngine->displayError( $integrityCheckResult );
 			}
-			else $this->AjaxEngine->displayError( $integrityCheckResult );
+			
+			# Call the function corresponding to given type
+			$res = $this->{$this->type}();
+			
+			# If no result is returned (or NULL), then run #doTasks
+			if( is_null($res) ) return $this->doTasks();
 			
 		}
 		
 		/**
 		 * 
 		 */
-		public function doTasks( $params=NULL ){
+		public function doTasks(){
 		
 			$fixedParams = "'{$this->type}', '{$this->code}', '{$this->modifier}'";
-			$extraParams = $this->toJson($params);
+			$extraParams = $this->toJson($this->params);
 		
 			$cmd = "Modules.initialize({$fixedParams}, {$extraParams});";
 			
@@ -216,6 +220,7 @@
 			$this->assign('type', $this->type);
 			$this->assign('code', $this->code);
 			$this->assign('modifier', $this->modifier);
+			$this->assign('params', toJson($this->params));
 			
 			# Common attributes
 			$this->assign('name', $this->DP->getName());
@@ -262,13 +267,15 @@
 		 */
 		protected function fetch($name, $data=array()){
 		
-			$name = preg_replace('/\.tpl$/', '', $name);
-		
+			# Register all stored vars in the Template Engine
 			foreach( $data + $this->vars as $k => $v ) $this->TemplateEngine->assign($k, $v);
 			
-			if( !is_file(MODULES_TEMPLATES_PATH."{$name}.tpl") ) $name = '404';
-		
-			return $this->TemplateEngine->fetch( "{$name}.tpl" );
+			$path = MODULES_TEMPLATES_PATH;
+			$name = preg_replace('/\.tpl$/', '', $name);
+			if( !is_file("{$path}{$name}.tpl") ) $name = '404';
+			$this->TemplateEngine->assign('pathToTemplate', "{$path}{$name}.tpl");
+			
+			return $this->TemplateEngine->fetch( 'global.tpl' );
 		
 		}
 		

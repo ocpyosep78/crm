@@ -8,28 +8,28 @@
 
 	class Module_Handler_Lists extends ModulesBase{
 		
-		protected function commonList( $params=array() ){
+		protected function commonList(){
 		
-			return $this->fetch( 'lists_frame' );
+			return $this->fetch( 'lists/commonList' );
 			
 		}
 	
-		protected function updateCommonList( $params=array() ){
+		protected function updateCommonList(){
 			
 			# If we're still on the run, then we're expected to update the list
 			
 			# Move input to more comfortable vars
-			$uID = $params['uID'];
-			$filters = $params['filters'];
-			$src = $params['src'];
+			$uID = $this->params['uID'];
+			$filters = $this->params['filters'];
+			$src = $this->params['src'];
 			
 			# Get Data
 			$data = $this->getListData($src ? $src : 'common', $filters);
 			$this->TemplateEngine->assign('data', $data);
 			
-			$HTML = $this->fetch( 'lists_common' );
+			$HTML = $this->fetch( 'lists/updateCommonList' );
 			
-			$this->AjaxEngine->write('TableSearchCache', $HTML);
+			$this->AjaxEngine->write("listWrapper_{$uID}", $HTML);
 			
 /*			oSmarty()->assign('params', $static['params']);
 			oSmarty()->assign('fields', $static['fields']);
@@ -47,7 +47,7 @@
 		
 		protected function simpleList(){
 		
-			return $this->fetch( 'lists_simple' );
+			return $this->fetch( 'lists/simpleList' );
 			
 		}
 		
@@ -55,7 +55,7 @@
 		 * Check that combo field is valid and keys are set
 		 * If so, fetch its HTML and return it
 		 */
-		protected function comboList( $selected=NULL ){
+		protected function comboList(){
 		
 			# We need key(s) to present comboList
 			if( empty($this->keys) ) return '';
@@ -99,13 +99,11 @@
 			if( empty($data) ) return '';
 			
 			$this->assign('combo', array(
-				'code'		=> $this->code,
-				'params'	=> array('name' => $this->DP->getName()),
 				'list'		=> $data,
-				'selected'	=> $selected,
+				'selected'	=> $this->params,
 			));
 			
-			return $this->fetch( 'lists_combo' );
+			return $this->fetch( 'lists/comboList' );
 			
 		}
 		

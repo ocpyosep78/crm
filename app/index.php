@@ -161,7 +161,7 @@
 ** M O D U L E S
 ***************/
 
-	oPageCfg()->add_jScripts(CORE_PATH.'lib/Modules/static/scripts/Modules.js');
+	oPageCfg()->add_jScripts(CORE_PATH.'lib/Modules/scripts/Modules.js');
 	oPageCfg()->add_styleSheets(CORE_PATH.'lib/Modules/static/styles/Modules.css');
 
 

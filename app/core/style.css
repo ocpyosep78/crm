@@ -500,10 +500,11 @@ TABLE.simpleList .addItemToSimpleList IMG:hover{ top:-2px; height:28px; width:28
 TABLE.simpleList .addItemToSimpleList SPAN{ float:right; padding:4px 12px; color:#036; text-shadow:#ffffff 1px 1px 3px; filter:shadow(color=#ffffff, direction=120, strength=1); font-weight:bold; font-size:14px; cursor:pointer; }
 TABLE.simpleList .addItemToSimpleList:hover SPAN{ color:#ffffff; text-shadow:#000000 1px 1px 1px; filter:shadow(color=#000000, direction=120, strength=3); }
 #infoSummary > DIV{ padding:10px 20px; }
-.tableTitles{ background:url(../images/titlesBg.gif) repeat-x #ffffff;height:18px;position:relative;width:auto; margin:0px -3px 5px -3px;padding:7px 0px 9px 0px;text-align:left;font-size:14px;color:#303000; font-weight:bold;font-family:"Times New Roman", Times, serif;white-space:nowrap;overflow:hidden;z-index:50; border:solid 1px #503030; border-radius:12px; -moz-border-radius:12px; -webkit-border-radius:12px; box-shadow:#000000 2px 1px 5px; -moz-box-shadow:#000000 2px 1px 5px; -webkit-box-shadow:#000000 2px 1px 5px; }
-.tableTitles div{ display:none;float:left;position:relative;margin:0px 5px;padding:0px;border:none;text-indent:1px;overflow:hidden; }
 TABLE.simpleList TD:first-child{ white-space:normal; width:100%; }
 TABLE.simpleList .simpleListCreate{ white-space:nowrap; }
+
+.tableTitles{ background:url(../images/titlesBg.gif) repeat-x #ffffff;height:18px;position:relative;width:auto; margin:0px -3px 5px -3px;padding:7px 0px 9px 0px;text-align:left;font-size:14px;color:#303000; font-weight:bold;font-family:"Times New Roman", Times, serif;white-space:nowrap;overflow:hidden;z-index:50; border:solid 1px #503030; border-radius:12px; -moz-border-radius:12px; -webkit-border-radius:12px; box-shadow:#000000 2px 1px 5px; -moz-box-shadow:#000000 2px 1px 5px; -webkit-box-shadow:#000000 2px 1px 5px; }
+.tableTitles div{ display:none;float:left;position:relative;margin:0px 5px;padding:0px;border:none;text-indent:1px;overflow:hidden; }
 
 /**
  * TABLE SEARCH
@@ -512,7 +513,6 @@ TABLE.simpleList .simpleListCreate{ white-space:nowrap; }
 #TableSearchBox > DIV{ font-family:Arial, Helvetica, sans-serif; font-size:11px; font-weight:bold; color:#c0c0c0; }
 #TableSearchBox > DIV > SPAN{ position:relative; left:3px; font-size:13px; color:#ccddaa; text-shadow:none; filter:shadow(color=#ffa0a0, direction=120, strength=0); }
 #TableSearchInput{ height:1.5em; width:200px; margin:5px 0px; background:#ccddaa; border:2px solid #000000; }
-#TableSearchSubmit{ margin:0px; }
 .tblTools{ float:right; width:20px !important; }
 .listRows, .tblTools IMG{ cursor:pointer; }
 
