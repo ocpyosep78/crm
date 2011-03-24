@@ -179,7 +179,7 @@
 			}
 			
 			# Store and pass to template engine main vars and objects
-			$configIntegrity = $this->readConfig();
+			$configIntegrity = $this->config();
 			if( $configIntegrity !== true ){
 				return $this->displayError( $configIntegrity );
 			}
@@ -214,13 +214,16 @@
 		 * @returns: returns true if everything's in place, or an error string
 		 *           if a required element is missing or corrupted
 		 */
-		private function readConfig(){
+		private function config(){
+		
+			# General and presentational
+			$this->assign('cycleValues', '#eaeaf5,#e0e0e3,#e5e6eb');
 			
 			# Internal attributes
 			$this->assign('type', $this->type);
 			$this->assign('code', $this->code);
 			$this->assign('modifier', $this->modifier);
-			$this->assign('params', toJson($this->params));
+			$this->assign('params', $this->toJson($this->params));
 			
 			# Common attributes
 			$this->assign('name', $this->DP->getName());
@@ -267,13 +270,15 @@
 		 */
 		protected function fetch($name, $data=array()){
 		
+			$BASE_PATH = MODULES_TEMPLATES_PATH;
+		
 			# Register all stored vars in the Template Engine
 			foreach( $data + $this->vars as $k => $v ) $this->TemplateEngine->assign($k, $v);
+			$this->TemplateEngine->assign('BASE_PATH', $BASE_PATH);
 			
-			$path = MODULES_TEMPLATES_PATH;
 			$name = preg_replace('/\.tpl$/', '', $name);
-			if( !is_file("{$path}{$name}.tpl") ) $name = '404';
-			$this->TemplateEngine->assign('pathToTemplate', "{$path}{$name}.tpl");
+			if( !is_file("{$BASE_PATH}{$name}.tpl") ) $name = '404';
+			$this->TemplateEngine->assign('pathToTemplate', "{$BASE_PATH}{$name}.tpl");
 			
 			return $this->TemplateEngine->fetch( 'global.tpl' );
 		
@@ -396,7 +401,10 @@
 			
 			if( !is_array($arr) || !count($arr) ) return '{}';
 			foreach( $arr as $k => $v ){
-				$json[] = "'{$k}':".(is_array($v) ? toJson($v) : (is_numeric($v) ? $v : "'".addslashes($v)."'"));
+				$json[] = '"'.$k.'":'.(is_array($v)
+					? $this->toJson($v)
+					: (is_numeric($v) ? $v : '"'.addslashes($v).'"')
+				);
 			}
 			
 			return '{'.join(",", $json).'}';

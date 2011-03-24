@@ -1,5 +1,32 @@
 /* Pending: #comboList should rely only on Modules (currently it calls getPage) */
 
+
+function SyncTitles(el, atts){
+	var that = this;
+	var oBox = el.getElement('.listTitles');
+	var oTitles = oBox.getElements('DIV')||[];
+	// No need to attempt to sync titles each time if there's no titles
+	this.sync = !oTitles.length ? function(){} : function(){
+		var oRow = el.getElement('.listWrapper').getElement('TR')||{};
+		// Store horizontal position and width of each cell...
+		var posX = [];
+		Array.from(oRow.cells||[]).forEach(function(cell){
+			posX.push( cell.getPosition().x );
+		});
+		// ...and apply that info to titles
+		var startX = posX.length ? posX[0] - 5 : null;
+		var availWidth = parseInt(oBox.getStyle('width'));
+		var defWidth = availWidth / (oTitles.length||1) - 10;
+		oTitles.forEach(function(oTtl, i){
+			oTtl.setStyles({
+				left: (posX[i] || (startX + availWidth)) - startX,
+				width: oRow ? (posX[i+1] ? posX[i+1]-posX[i] : 0) : defWidth
+			});
+		});
+		return that;
+	};
+};
+
 var Modules = {
 	/**************************************************************************/
 	/********************************* TOOLS **********************************/
@@ -19,7 +46,7 @@ var Modules = {
 				dom.Atts[inp.name] = inp.value;
 			});
 			// Remember params came as a JSON string
-			eval('dom.Atts.params = ' + dom.Atts.params);
+			dom.Atts.params = eval('('+dom.Atts.params+')');
 			Elements.push( {dom:dom, atts:dom.Atts} );
 		});
 		// We call the handler method on each element
@@ -41,16 +68,20 @@ var Modules = {
 	},
 	commonList: function (el, atts){					   /*** COMMON LIST ***/
 		// Enable column search and do a first search (without filters)
-try{
-		el.ListSearch = new ListSearch(el, atts);
-		el.ListSearch.updateList();
-}catch(e){ test(e); };
+		new ListSearch(el, atts).updateList();
+		// SyncTitles applies to commonList, but is called by updateCommonList,
+		// so it needs to be made available to updateCommonList on list update
+		el.getElement('.listWrapper').ST = new SyncTitles(el, atts).sync();
 	},
-	updateCommonList: function( atts ){
-		return test( atts );
+	updateCommonList: function(el, atts){
 try{
+		// updateCommonList is usually loaded within a commonList, so it might
+		// need to sync titles width with it (among other stuff)
+		var oWrapper = el, ST = null;
+		while( !ST && (oWrapper=oWrapper.parentNode) ) ST = oWrapper.ST;
+		if( ST ) ST.sync();
+		return;
 		Modules.fixTableHeader( $('listWrapper') );
-		Modules.columnSearch.showResults( atts.uID );
 		$('listWrapper').getElements('.listRows').forEach(function(row){
 			row.addEvent('mouseover', function(){ highLight(this); });
 			var id = row.getAttribute('FOR');
@@ -82,35 +113,9 @@ try{
 				};
 			});
 		});
-}catch(e){ alert(e); };
+}catch(e){ test(e); };
 	},
-	/**************************************************************************/
-	/***************************** AUXILIARY TOOLS ****************************/
-	/**************************************************************************/
-	fixTableHeader: function( $list ){
-		var oTitlesBox = $list.getElementById('tableTitles');
-		var oTable = $list.getElement('.listTable');
-		if( !oTitlesBox || !oTitlesBox.style || !oTable || !oTable.rows || !oTable.rows[0] ){
-			if( oTitlesBox && oTitlesBox.style ) oTitlesBox.style.display = 'none';
-			return;
-		};
-		if( oTitlesBox && oTitlesBox.style ) oTitlesBox.style.display = 'block';
-		if( !cached ) arguments.callee.sets.push( {titles:oTitlesBox, table:oTable} );
-		var nlCells = oTable.rows[0].cells;
-		var nlTitles = oTitlesBox.getElementsByTagName('DIV');
-		var isIE = !!(/*@cc_on!@*/false);
-		var totalWidth = 10;
-		for( var i=0, len=nlTitles.length, oCell, iWidth, title ; oCell=nlCells[i], oTitle=nlTitles[i] ; i++ ){
-			iWidth = oCell.offsetWidth - 10;
-			if( nlTitles[i+1] ) oTitle.style.width = iWidth + 'px';
-			else oTitle.style.width = 'auto';
-			totalWidth += iWidth;
-			oTitle.style.display = 'block';
-		};
-		// Hide titles that do not match any column in the results table
-		for( var j=i, oTitle ; oTitle=nlTitles[j] ; j++ ) oTitle.style.display = 'none';
-	},
-	simpleList: function(code, modifier){
+	simpleList: function(el, atts){
 		var SimpleList = function( $list ){			// Simple List
 			var that = this;
 			var row4edit = $list.getElement('.addItemToSimpleList');
@@ -186,38 +191,14 @@ try{
 };
 
 function ListSearch(el, atts){
-	// Save reference to this object as closure and within main dom element
-	var that = this;
+	var that = el.ListSearch = this;
 	// Define most used elements as private properties
 	var oBox = el.getElement('.listSearch');
 	var oBoxLbl = oBox.getElement('SPAN');
 	var oInput = oBox.getElement('INPUT');
 	var oList = el.getElement('.listWrapper');
-	// Add search buttons to each title field
-	el.getElement('.listTitles').getElements('DIV').forEach(function(field){
-		var code = field.getAttribute('FOR');
-		new Element('IMG', {
-			'code': code,
-			'class': 'listSearchBtn',
-			'src': 'app/images/buttons/search.gif',
-			'alt': field.innerHTML.toLowerCase(),
-			'title': 'filtrar por campo ' + field.innerHTML.toLowerCase()
-		}).inject( field ).addEvent('click', function(){
-			that[(oBox.code == code) ? 'hide' : 'show']( this );
-		}).parentNode.setStyle('display', 'block');
-	});
 	// Create cache box
 	var oCache = new Element('DIV', {style:'display:none'}).inject(document.body);
-	// Private methods
-	function process(){
-		var newSrch = oInput.value.replace('*', '%');
-		if( newSrch != process.lastSrch ){
-			var aux = {};
-			aux[oBox.code] = lastSrch = newSrch;
-			that.updateList( aux );
-		};
-		process.lastSrch = newSrch;
-	};
 	// Public methods
 	this.show = function( btn ){
 		oInput.value = '';
@@ -230,6 +211,7 @@ function ListSearch(el, atts){
 	};
 	this.hide = function(){
 		oBox.setStyle('display', 'none').code = null;
+		that.updateList();	// Clear filters upon closing
 	};
 	this.updateList = function( filters ){
 		var type = 'update' + atts.type.capitalize();
@@ -238,8 +220,29 @@ function ListSearch(el, atts){
 		var params = {uID:uID, filters:filters||[], src:atts.params.src||''};
 		xajax_ModulesAjaxCall(type, atts.code, atts.modifier, params);
 	};
+	// Add search buttons to each title field and set them up
+	el.getElement('.listTitles').getElements('DIV').forEach(function(field){
+		if( !field.innerHTML ) return;	// Only for used title fields
+		var code = field.getAttribute('FOR');
+		new Element('IMG', {
+			'code': code,
+			'class': 'listSearchBtn',
+			'src': 'app/images/buttons/search.gif',
+			'alt': field.innerHTML.toLowerCase(),
+			'title': 'filtrar por campo ' + field.innerHTML.toLowerCase()
+		}).inject( field ).addEvent('click', function(){
+			that[(oBox.code == code) ? 'hide' : 'show']( this );
+		}).parentNode.setStyle('display', 'block');
+	});
 	// Attach event handlers
 	oInput.addEvent('escape', this.hide);
-	oInput.addEvent('keyup', process);
 	oBox.getElement('.CloseButton').addEvent('click', this.hide);
+	oInput.addEvent('keyup', function(){
+		var newSrch = oInput.value.replace('*', '%');
+		if( newSrch != oBox.lastSrch ){
+			var aux = {};
+			aux[oBox.code] = oBox.lastSrch = newSrch;
+			that.updateList( aux );
+		};
+	});
 };

@@ -68,7 +68,7 @@
 		
 			return array(
 				'id_customer'	=> 'ID interno',
-				'number'		=> 'Nº Cliente',
+				'number'		=> 'Número',
 				'customer'		=> 'Empresa',
 				'legal_name'	=> 'Razón Social',
 				'rut'			=> 'RUT',
@@ -184,9 +184,12 @@
 		 * @default: if commented out, commonList won't be available
 		 */
 		public function getCommonListData( $filters=array() ){
+			$this->fixFilters(&$filters, array(
+				'phone'			=> '`c`.`phone`',
+				'address'		=> '`c`.`address`',
+				'sellerName'	=> "CONCAT(`u`.`name`,' ',`u`.`lastName`)",
+			));
 			return "SELECT	`c`.*,
-							`u`.`name`		AS 'seller_name',
-							`u`.`lastName`	AS 'seller_lastName',
 							CONCAT(`u`.`name`,' ',`u`.`lastName`) AS 'sellerName',
 							`lc`.*
 					FROM `customers` `c`

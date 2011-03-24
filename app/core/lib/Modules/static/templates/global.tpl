@@ -4,7 +4,7 @@
    	<input type='hidden' name='modifier' value='{$modifier}' />
    	<input type='hidden' name='params' value='{$params}' />
   </form>
-
+  
   {include file=$pathToTemplate}
 	
 </div>

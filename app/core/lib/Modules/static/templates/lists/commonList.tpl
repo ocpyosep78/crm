@@ -1,25 +1,18 @@
-<div class='listSearch'>
-	<img class='CloseButtonHover' src="app/images/buttons/closeHover.png" alt='cerrar' title='cerrar ventana' />
-	<img class='CloseButton' src="app/images/buttons/close.png" alt='cerrar ventana' />
-	<div>Filtrar por <span></span></div>
-	<input type='text' size='30' value='' />
-</div>
+{include file="{$BASE_PATH}lists/_ListSearch.tpl"}
 
 <div class='commonListWrapper'>
 
-  <div class='listTitles'>
-	{foreach from=$fields item=field}
-	  {if $field && $fieldsCfg.$field.name && not $fieldsCfg.$field.hidden}
-		{assign var=fieldName value=$fieldsCfg.$field.name}
-		<div for='{$field}'>{$fieldName}</div>
-	  {/if}
-	{/foreach}
-  </div>
+  {include file="{$BASE_PATH}lists/_ListTitles.tpl"}
   
   <div style='clear:both;'></div>
   
   <div class='commonListInnerWrapper'>
-	<div class='listWrapper'></div>
+	<div class='listWrapper'>
+		<div class='commonListPreLoad'>
+			cargando la lista, espere por favor...
+			<img class='listPreLoad' src='app/images/temp/timer.gif' style=''>
+		</div>
+	</div>
   </div>
   
 </div>

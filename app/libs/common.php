@@ -59,7 +59,7 @@
 		oSmarty()->assign('VERSION', VERSION);
 		oSmarty()->assign('VERSION_STATUS', VERSION_STATUS);
 		
-		oSmarty()->assign('cycleValues', '#eaeaf5,#e5e5e5,#e5e5e5');
+		oSmarty()->assign('cycleValues', '#eaeaf5,#e5e5e5,#e5e5e5');		/* TEMP till Modules is ready */
 	
 		oSmarty()->assign('DATES', array(
 			'today'		=> date('Y-m-d h:i:s'),
@@ -110,18 +110,22 @@
 	}
 	
 	function toJson( $arr=array() ){
-		
+			
 		if( !is_array($arr) || !count($arr) ) return '{}';
 		foreach( $arr as $k => $v ){
-			$json[] = "'{$k}':".(is_array($v) ? toJson($v) : (is_numeric($v) ? $v : "'".addslashes($v)."'"));
+			$json[] = '"'.$k.'":'.(is_array($v)
+				? toJson($v)
+				: (is_numeric($v) ? $v : '"'.addslashes($v).'"')
+			);
 		}
 		
 		return '{'.join(",", $json).'}';
-	
 	}
 	
 	function getSkinName(){
+	
 		return isset($_GET['skin']) ? $_GET['skin'] : (defined('SKIN') && SKIN ? SKIN : NULL);
+		
 	}
 	
 	function getSkinTpl(){
