@@ -7,9 +7,6 @@
  * Licence: GNU GENERAL PUBLIC LICENSE <http://www.gnu.org/licenses/gpl.txt>
  */
 
-
-
-
 	
 	return ($Builder = new Builder());
 	
@@ -22,27 +19,25 @@
 		
 	}
 	
-	function oModules( $code=NULL )	{	return getBuilderObject('Modules', $code);		}
-	function oLists( $code=NULL )	{	return getBuilderObject('Lists', $code);		}
-	function oInfoPage( $code )		{	return getBuilderObject('InfoPage', $code);		}
+	function oModules( $code=NULL )		{	return getBuilderObject('Modules', $code);		}
+	function oLists( $code=NULL )		{	return getBuilderObject('Lists', $code);		}		/* TEMP untill Modules is ready */
+	function oStats( $code=NULL )		{	return getBuilderObject('Stats', $code);		}		/* TEMP untill Modules is ready */
+	function oFormTable( $code=NULL )	{	return getBuilderObject('FormTable', $code);	}		/* TEMP untill Modules is ready */
 	
+	function oXajax()					{	return getBuilderObject( 'Xajax' );				}
+	function oXajaxResp()				{	return getBuilderObject( 'XajaxResp' );			}
+	function oSmarty()					{	return getBuilderObject( 'Smarty' );			}
 	
-	function oSQL()					{	return getBuilderObject( 'SQL' );				}
-	function oStats()				{	return getBuilderObject( 'Stats' );				}
-	function oXajax()				{	return getBuilderObject( 'Xajax' );				}
-	function oXajaxResp()			{	return getBuilderObject( 'XajaxResp' );			}
-	function oSmarty()				{	return getBuilderObject( 'Smarty' );			}
+	function oSQL()						{	return getBuilderObject( 'SQL' );				}
+	function oNav()						{	return getBuilderObject( 'Nav' );				}
+	function oPageCfg()					{	return getBuilderObject( 'PageCfg' );			}
+	function oPermits()					{	return getBuilderObject( 'Permits' );			}
 	
-	function oNav()					{	return getBuilderObject( 'Nav' );				}
-	function oPageCfg()				{	return getBuilderObject( 'PageCfg' );			}
-	function oPermits()				{	return getBuilderObject( 'Permits' );			}
+	function oTabs()					{	return getBuilderObject( 'Tabs' );				}
 	
-	function oTabs()				{	return getBuilderObject( 'Tabs' );				}
-	
-	function oAlerts()				{	return getBuilderObject( 'Alerts' );			}
-	function oValidate()			{	return getBuilderObject( 'Validate' );			}
-	function oFormTable()			{	return getBuilderObject( 'FormTable' );			}
-	function oPajax()				{	return getBuilderObject( 'Pajax' );				}
+	function oAlerts()					{	return getBuilderObject( 'Alerts' );			}
+	function oValidate()				{	return getBuilderObject( 'Validate' );			}
+	function oPajax()					{	return getBuilderObject( 'Pajax' );				}
 	
 	
 	
@@ -101,9 +96,6 @@
 				break;
 				case 'FormTable':
 					$FormTable = new FormTable;
-				break;
-				case 'InfoPage':
-					$InfoPage = new InfoPage( $code );
 				break;
 				case 'Lists':
 					$Lists = new Lists(NULL, $code, NULL, NULL, NULL);	/* TEMP */

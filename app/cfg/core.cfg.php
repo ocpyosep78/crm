@@ -7,6 +7,10 @@
  * Licence: GNU GENERAL PUBLIC LICENSE <http://www.gnu.org/licenses/gpl.txt>
  */
 
+	# Core paths
+	define('CORE_ROOT', dirname(__FILE__).'/');
+	define('CORE_LIB', CORE_ROOT.'lib');
+
 
 	/**
 	 * BASE_PATH constant is defined before loading this script, and points
@@ -41,7 +45,6 @@
 	define('DEFAULT_PAGE', 'home');
 	define('DEFAULT_PAGE_ATTS', serialize(array()));
 	define('PERMITS_CACHE_TIMEOUT', 1800, true);		/* Time to cache Permissions and structure */
-	define('PAGE_CONTENT_BOX', 'main_box');
 //	define('SKIN', 'new', true);
 	
 	# Agenda
