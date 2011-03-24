@@ -7,6 +7,10 @@
  * Licence: GNU GENERAL PUBLIC LICENSE <http://www.gnu.org/licenses/gpl.txt>
  */
 
+	# Core paths
+	define('CORE_ROOT', dirname(__FILE__).'/');
+	define('CORE_LIB', CORE_ROOT.'lib');
+
 
 	/**
 	 * BASE_PATH constant is defined before loading this script, and points
