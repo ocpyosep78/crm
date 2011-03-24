@@ -52,7 +52,7 @@
 		oSmarty()->assign('IN_FRAME', oNav()->inFrame ? 1 : 0);
 		oSmarty()->assign('LAST_UPDATE', strtotime(LAST_UPDATE));
 		oSmarty()->assign('PROFILE', getSes('profile'));
-		oSmarty()->assign('TODAY', date('Y-m-d') );
+		oSmarty()->assign('NOW', date('Y-m-d H:i:s'));
 		oSmarty()->assign('URL', "http://{$_SERVER['HTTP_HOST']}{$_SERVER['PHP_SELF']}");
 		oSmarty()->assign('USER', getSes('user'));
 		oSmarty()->assign('USER_NAME', getSes('name').' '.getSes('lastName'));

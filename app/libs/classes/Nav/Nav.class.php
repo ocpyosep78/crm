@@ -147,7 +147,9 @@
 					: showStatus('La página que intenta cargar no está disponible.');
 			}
 			
-			return addAssign('main_box', 'innerHTML', $parsed ? $page : oSmarty()->fetch($page));
+			$HTML = $parsed ? $page : oSmarty()->fetch($page);
+			
+			return addAssign(PAGE_CONTENT_BOX, 'innerHTML', $HTML);
 			
 		}
 		

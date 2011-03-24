@@ -115,6 +115,10 @@
 				: NULL;
 					
 		}
+		/* alias to getCommonListFields, needed when updating list */
+		public function getUpdateCommonListFields(){
+			return $this->getCommonListFields();
+		}
 		
 		/**
 		 * @overview: list of fields to be shown in simpleList

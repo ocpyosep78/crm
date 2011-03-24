@@ -125,6 +125,7 @@
 	
 	<div id='curtain'></div>		{* modal windows, refer to JS:Modal object *}
 	
+	<div id='xajax_addElement'></div>
 	
 	{* Widgets *}
 	{if $USER && $Permits->can('agenda')}{include file='widgets/eventInfo.tpl'}{/if}

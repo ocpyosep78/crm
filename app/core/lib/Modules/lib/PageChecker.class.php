@@ -11,7 +11,7 @@
 		public function parsePageName( $page ){
 		
 			foreach( $this->supportedTypes() as $type ) $types[] = ucfirst($type);
-			if( empty($types) ) return array('code' => NULL, 'type' => NULL);
+			if( empty($types) ) return array(NULL, NULL);
 			
 			# See if the page can be created
 			$str = join('|', $types);
@@ -21,8 +21,8 @@
 			if( isset($parts[2]) ) $parts[2][0] = strtolower( $parts[2][0] );
 			
 			return array(
-				'code'	=> empty($parts) ? NULL : $parts[1],
-				'type'	=> empty($parts) ? NULL : $parts[2],
+				empty($parts) ? NULL : $parts[2],	# type
+				empty($parts) ? NULL : $parts[1],	# code
 			);
 			
 		}
@@ -33,15 +33,15 @@
 			
 		}
 	
-		public function canBuildPage( $page ){
-			
-			$parts = $this->parsePageName( $page );
+		public function canBuildPage( $name ){
 		
-			return $this->canBuildPageFor($parts['code'], $parts['type']);
+			list($type, $code) = $this->parsePageName( $name );
+		
+			return $this->canBuildPageFor($type, $code);
 		
 		}
 		
-		public function canBuildPageFor($code, $type){
+		public function canBuildPageFor($type, $code){
 			
 			return in_array($type, $this->supportedTypes())
 				&& is_file(MODULES_PATH."Mod_{$code}.mod.php");

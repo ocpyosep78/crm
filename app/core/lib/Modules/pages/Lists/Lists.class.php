@@ -109,6 +109,7 @@
 				'install'	=> 'Instalaciones',
 				'calls'		=> 'Llamadas',
 				'estimate'	=> 'Presupuestos',
+				'laststeps'	=> 'Puesta a punto y curso',
 				'meetings'	=> 'Reuniones',
 				'remote'	=> 'Servicios remotos',
 				'service'	=> 'Servicios técnicos',

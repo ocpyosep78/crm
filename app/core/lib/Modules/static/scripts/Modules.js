@@ -1,62 +1,89 @@
+/**
+ * Pending:
+ *		- #comboList should rely only on Modules (currently it calls getPage)
+ *		- 
+ */
+
+
 var Modules = {
-	code: null,
-	modifier: null,
-	src: null,
-	initialize: function(type, code, modifier, src){
-		var handler = Modules['ini'+type.capitalize()];
-		if( !handler ) return !!alert('Modules.js error: wrong type');
-		this.code = code;
-		this.modifier = modifier||'';
-		this.src = src||'';
-		handler();
+	showError: function( msg ){
+		return showStatus( msg );
 	},
-	iniComboList: function(){
+	atts: function(type, code, modifier, extra){
+		this.type = type;
+		this.code = code;
+		this.modifier = modifier||null;
+		this.extra = extra||null;
+	},
+	/**************************************************************************/
+	/********************************* COMMON *********************************/
+	/**************************************************************************/
+	initialize: function(type, code, modifier, extra){
+this.code = code;
+this.modifier = modifier;
+this.src = '';
+		return Modules[type]
+			? Modules[type].call(this, new this.atts(type, code, modifier, extra))
+			: this.showError('Modules.js error: wrong type');
+	},
+	/**************************************************************************/
+	/******************************** HANDLERS ********************************/
+	/**************************************************************************/
+	info: function( atts ){										  /*** INFO ***/
+	},
+	comboList: function( atts ){							/*** COMBO LIST ***/
 		$$('.comboList').forEach(function(cl){
-			cl.addEvent('change', function(e){
+			cl.onchange = function(e){
 				getPage(e, this.getAttribute('FOR') + 'Info', [this.value]);
-			});
+			};
 		});
 	},
-	iniCommonList: function (){
-		Modules.columnSearch.enable();				/* Prepare search tools */
-		if( $('listWrapper').update ) return;
-		Modules.columnSearch.process( true );		/* Do first search (unfiltered) */
-		$('listWrapper').update = function(){
-			Modules.fixTableHeader( this );
-			$list.getElements('.listRows').forEach(function(row){
-				row.addEvent('mouseover', function(){ highLight(this); });
-				var id = row.getAttribute('FOR');
-				if( id ) row.addEvent('click', function(e){
-					getPage(e, this.code + 'Info', [id]);
-				});
-			});
-			$$('.tblTools').forEach(function(tool){
-				var axn = tool.getAttribute('AXN');
-				var id = tool.getAttribute('FOR');
-				tool.addEvent('click', function(e){
-					e.stop();
-					switch( axn ){
-						case 'delete':
-							if( confirm('¿Realmente desea eliminar este elemento?') ){
-								var handler = window['xajax_delete' + this.code.capitalize()];
-								if( handler ) handler(id, this.modifier);
-							};
-							break;
-						case 'block':
-							if( confirm('¿Realmente desea bloquear este elemento?') ){
-								var handler = window['xajax_block' + this.code.capitalize()];
-								if( handler ) handler(id, this.modifier);
-							};
-							break;
-						default: 
-							getPage(e, axn + this.code.capitalize(), [id, this.modifier]);
-							break;
-					};
-				});
-			});
-		};
+	commonList: function ( atts ){							   /*** COMMON LIST ***/
+		// Enable column search and do a first search (without filters)
+		Modules.columnSearch.enable();
+		Modules.columnSearch.requestNewList( [] );
 	},
-	fixTableHeader: function(){
+	updateCommonList: function( atts ){
+try{
+		Modules.fixTableHeader( $('listWrapper') );
+		Modules.columnSearch.showResults( atts.uID );
+		$('listWrapper').getElements('.listRows').forEach(function(row){
+			row.addEvent('mouseover', function(){ highLight(this); });
+			var id = row.getAttribute('FOR');
+			if( id ) row.addEvent('click', function(e){
+				getPage(e, this.code + 'Info', [id]);
+			});
+		});
+		$$('.tblTools').forEach(function(tool){
+			var axn = tool.getAttribute('AXN');
+			var id = tool.getAttribute('FOR');
+			tool.addEvent('click', function(e){
+				e.stop();
+				switch( axn ){
+					case 'delete':
+						if( confirm('¿Realmente desea eliminar este elemento?') ){
+							var handler = window['xajax_delete' + this.code.capitalize()];
+							if( handler ) handler(id, this.modifier);
+						};
+						break;
+					case 'block':
+						if( confirm('¿Realmente desea bloquear este elemento?') ){
+							var handler = window['xajax_block' + this.code.capitalize()];
+							if( handler ) handler(id, this.modifier);
+						};
+						break;
+					default: 
+						getPage(e, axn + this.code.capitalize(), [id, this.modifier]);
+						break;
+				};
+			});
+		});
+}catch(e){ alert(e); };
+	},
+	/**************************************************************************/
+	/***************************** AUXILIARY TOOLS ****************************/
+	/**************************************************************************/
+	fixTableHeader: function( $list ){
 		var oTitlesBox = $list.getElement('#tableTitles');
 		var oTable = $list.getElement('.listTable');
 		if( !oTitlesBox || !oTitlesBox.style || !oTable || !oTable.rows || !oTable.rows[0] ){
@@ -85,7 +112,6 @@ var Modules = {
 		Input: null,				/* Input field */
 		CloseButton: null,			/* Button to close search tools */
 		Buttons: [],				/* Collection of search buttons in the page */
-		funcAtts: [],				/* Attributes to pass on through Xajax */
 		showing: null,				/* Currently shown search box */
 		searchID: null,				/* Unique ID for each search request */
 		cacheBox: null,				/* DOM box to contain returned results */
@@ -94,7 +120,6 @@ var Modules = {
 		enable: function(){
 			if( !this.ini() ) throw('missing TableSearch parameters');
 			this.Buttons = $$('.tableColumnSearch');
-			this.funcAtts = [Modules.code, Modules.modifier, Modules.src];
 			for( var i=0, att, btn ; btn=this.Buttons[i] ; i++ ){
 				att = btn.getAttribute('FOR');
 				btn.setAttribute('TableSearchCol', i);
@@ -139,24 +164,26 @@ var Modules = {
 			this.Box.getElement('SPAN').innerHTML = this.Buttons[this.showing].alt;
 			$('TableSearchInput').focus();
 		},
-		process: function( clear ){
+		process: function(){
 			/* Don't repeat search when keyup provoked no changes */
 			var searchString = this.Input.value.replace('*', '%');
 			if( this.lastSearch == searchString ) return;
 			/* Build filter */
 			var filter = {};
-			if( clear !== true ){
-				var col = this.Buttons[this.showing].getAttribute('FOR');
-				filter[col] = this.lastSearch = searchString;
-			};
+			var col = this.Buttons[this.showing].getAttribute('FOR');
+			filter[col] = this.lastSearch = searchString;
+			this.requestNewList( filter );
+		},
+		requestNewList: function( filter ){
 			/* Pass the input and aditional info to registered xajax function */
-			var params = ['commonList', this.searchID=newSID().toString()];
-			xajax_ModulesAjaxCall.apply(window, params.concat(filter, this.funcAtts));
+			this.searchID = newSID().toString();
+			var params = ['updateCommonList', Modules.code, Modules.modifier,
+						  {uID: this.searchID, filters: filter, src: Modules.src}];
+			xajax_ModulesAjaxCall.apply(window, params);
 		},
 		showResults: function( uID ){
-			test( uID );
 			/* Make sure we're receiving the most recent request */
-			if( !$('listWrapper') || uID != this.searchID ) return;
+//			if( !$('listWrapper') || uID != this.searchID ) return;
 			$('listWrapper').innerHTML = this.cacheBox.innerHTML;
 			this.cacheBox.innerHTML = '';
 		}
@@ -171,7 +198,7 @@ var Modules = {
 	
 	
 	
-	initializeSimpleList: function(code, modifier){
+	simpleList: function(code, modifier){
 		var SimpleList = function( $list ){			// Simple List
 			var that = this;
 			var row4edit = $list.getElement('.addItemToSimpleList');

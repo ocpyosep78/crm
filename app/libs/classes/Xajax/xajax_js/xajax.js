@@ -193,17 +193,6 @@ else if(cmd=="jc"){
 	for( var j=0, sFunc=oObj, path ; path=aPath[j] ; j++ ) if( !(sFunc=sFunc[path]) ) break;
 	if( sFunc ) sFunc.apply(aPath.length ? oObj : window, data);
 	else throw('Xajax addScriptCall error: function not found') ;
-/*
-	var scr = eval(id) + '(';
-	if( typeof(data) !== 'string' && data[0] != null ){
-		scr += 'data[0]';
-		for( var l=1 ; l<data.length ; l++ ){
-			scr += ',data[' + l + ']';
-		}
-	}
-	scr += ');';
-	eval( scr );
-*/
 }
 else if(cmd=="in"){cmdFullname="addIncludeScript";this.include(data);}
 else if(cmd=="as"){cmdFullname="addAssign/addClear";if(this.willChange(id,property,data)){eval("objElement."+property+"=data;");}

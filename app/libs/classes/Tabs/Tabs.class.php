@@ -80,23 +80,37 @@
 			
 		}
 		
+		/**
+		 * @overview: Initializes a page with Tabs in it. Basically, it prints
+		 *            a fixed part of the page, and adds below the tabs, fully
+		 *            functional.
+		 * @returns: XajaxResp object
+		 * @notes: the only parameter, $HTML has 3 possible states, each defining
+		 *         a different behaviour
+		 *         		- $HTML == NULL means the page will be automatically found
+		 *                and fetched (needed data comes from oNav).
+		 *         		- $HTML == false means the page should not be overwritten.
+		 *                Tabs are appended below.
+		 *         		- $HTML is a string, then it's used as HTML for the fixed
+		 *                part of the page.
+		 *         In practice, anything that's not NULL and not a string will act
+		 *         as boolean false.
+		 */
 		public function start( $HTML=NULL ){
 		
-			return $this->getHTML(NULL, $HTML);
+			$tab = array_shift(array_keys($this->getTabs()));
+			$box = PAGE_CONTENT_BOX;
 			
-		}
-		
-		public function getHTML($tab=NULL, $baseHTML=NULL){
-		
-			if( is_null($tab) ) $tab = array_shift(array_keys($this->getTabs()));
+			# If $HTML parameter is NULL, we automatically add the fixed page...
+			if( is_null($HTML) ){
+				$path = realpath(TEMPLATES_PATH."{$this->module}/{$this->page}.tpl");
+				if( $path ) addAssign($box, 'innerHTML', oSmarty()->fetch($path));
+			}
+			# ...else if it's a string we use it as page content
+			elseif( is_string($HTML) ) addAssign($box, 'innerHTML', $HTML);
 			
-			oSmarty()->assign('baseHTML', $baseHTML);
-			# Locate the template for the fixed part of the page (off-tabs)...
-			$baseTpl = realpath(TEMPLATES_PATH."{$this->module}/{$this->page}.tpl");
-			# ...tell Smarty about it...
-			oSmarty()->assign('baseTpl', $baseTpl);
-			# ...and display the tabs skeleton below it
-			oNav()->updateContent( dirname(__FILE__).'/templates/tabs.tpl' );
+			# Display the tabs skeleton below fixed content
+			addElement($box, oSmarty()->fetch(dirname(__FILE__).'/templates/tabs.tpl'));
 			
 			# Now we're ready to load the first tab through regular method switchTab
 			return $this->switchTab( $tab );

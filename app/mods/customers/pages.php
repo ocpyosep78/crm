@@ -11,22 +11,15 @@
 	
 	function page_customers( $modifier='customers' ){	/* Status: 'customers', 'potential', 'all' */
 	
-		return oModules()->printPage('customersCommonList', $modifier);
+		oModules()->printPage('customersCommonList', $modifier);
+		
+		return oXajaxResp();
 		
 	}
 	
 	function page_potentialCustomers(){	/* Status: 'customers', 'potential', 'all' */
 		
 		return page_customers( 'potential' );
-		
-	}
-	
-	function page_customersInfo( $id ){
-	
-		$HTML = oModules()->getPage('customersInfo', 'customers', $id);
-		if( !$HTML ) return oNav()->getPage('customers', array(), 'Cliente no encontrado.');
-	
-		return oTabs()->start( $HTML );
 		
 	}
 
@@ -115,18 +108,31 @@
 	
 	
 	/* TEMP */
+	
+	function page_customersInfo( $id ){
+	
+		$HTML = oModules()->printPage('customersInfo', 'customers', $id);
+		if( !$HTML ) return oNav()->getPage('customers', array(), 'Cliente no encontrado.');
+	
+		return oTabs()->start( false );
+		
+	}
+	
+	/* TEMP */
 	function page_sales(){
 	
-		return oModules()->printPage('salesCommonList', 'sale');
+		oModules()->printPage('salesCommonList', 'sale');
+		
+		return oXajaxResp();
 		
 	}
 	
 	/* TEMP */
 	function page_salesInfo( $id ){
 	
-		return oModules()->printPage('salesInfo', 'sale', $id);
-	
-#		return oLists()->printList('sales', 'sale');
+		oModules()->printPage('salesInfo', 'sale', $id);
+		
+		return oXajaxResp();
 		
 	}
 	

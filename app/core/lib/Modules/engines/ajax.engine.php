@@ -22,6 +22,12 @@
 		
 		}
 		
+		public function displayError( $msg ){
+			
+			return showStatus( $msg );
+			
+		}
+		
 	}
 
 ?>

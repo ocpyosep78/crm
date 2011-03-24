@@ -35,7 +35,7 @@
 	 * There is a very important reason though, to organize it all this way. Having
 	 * different classes that descend from this one, the same methods can be reused,
 	 * which is specially important for the main methods (only ones seen from the
-	 * outside): #getPage and #doTasks().
+	 * outside): #getPage and #doTasks.
 	 */
 
 
@@ -60,7 +60,6 @@
 		protected $DP;				/* Data Provider for this module (user-configured) */
 		
 		protected $dataProvider;	/* Whether the data provider could be found (boolean) */
-		protected $configIntegrity;	/* The result of reading config (boolean) */
 		
 		protected $AjaxEngine;
 		protected $TemplateEngine;
@@ -92,135 +91,98 @@
 			$this->AjaxEngine = new Modules_ajaxEngine;
 			$this->TemplateEngine = new Modules_templateEngine;
 			$this->vars = array();
-			
-			# Store and pass to template engine main vars and objects
-			$this->dataProvider = $this->setDataProvider();
-			$this->configIntegrity = $this->dataProvider === true
-				? $this->readConfig()
-				: false;
 		
 		}
-		
-		protected function foundError(){
-			
-			# Make sure the type of page is valid
-			if( !method_exists($this, $this->type) ) return $this->displayError('ModulesBase: wrong type.');
-			if( $this->dataProvider !== true ) return $this->displayError( $this->dataProvider );
-			if( $this->configIntegrity !== true ) return $this->displayError( $this->configIntegrity );
-			
-			return false;
-			
-		}
+
 
 ##################################
 ############# PUBLIC #############
 ##################################
 		
 		/**
-		 * Method supposed to be overriden by this class' children.
+		 * @overview: This is the class' main method by far. Module Handlers (descended
+		 *            from this one) have here their initialization and validation of
+		 *            input. It is ModulesBase, through its few public methods, that
+		 *            calls methods in Handlers (they're all protected or private).
+		 *            It is important to notice that Handlers have no knowledge of pages
+		 *            or how the returned HTML string is going to be presented. Handlers
+		 *            only know about atomic elements, that PageCreator (or another
+		 *            class) might combine or not, in order to make pages.
+		 * @returns: an HTML string
 		 */
-		public function getPage(){ return ''; }
-		public function doTasks(){}
+		public function getElement( $params=NULL ){
 		
-		public function getComboList( $selected=NULL ){
-		
-			return method_exists($this, 'comboList')
-				? $this->comboList( $selected )
-				: $this->Creator->getPage('comboList', $this->code, $this->modifier, $selected);
+			$integrityCheckResult = $this->initialize();
 			
-		}
-
-##################################
-########### PROTECTED ############
-##################################
-		
-		/**
-		 * Takes a row or col of data, and builds a unique ID for that
-		 * item based on that item's values for defined key fields
-		 */
-		protected function keysArray2String( $item ){
-		
-			if( !is_array($item) ){
-				if( count($this->keys) != 1 ) return NULL;
-				$item = array($this->keys[0] => $item);
-			}
-		
-			foreach( $this->keys as $key ){
-				if(isset($item[$key]) ) $keysArr[] = $item[$key];
-				else return NULL;
-			}
-			
-			return isset($keysArr) ? join('__|__', $keysArr) : '';
-			
-		}
-		
-		protected function getInfoPageData( $keys ){
-		
-			$filters = $this->sanitizeInfoKeys( $keys );
-			
-			# Get the right SQL, falling back to lists data if needed
-			$sql = $this->DP->getInfoPageData( $filters );
-			if( !$sql ) $altSQL = $sql = $this->DP->getCommonListData();
-			if( !$sql ) $altSQL = $sql = $this->DP->getSimpleListData();
-			if( !$sql ) return NULL;
-			
-			# Clear ORDER BY, GROUP BY and LIMIT clauses, and strip linefeeds
-			# This is necessary only if we got the query from another page's
-			if( !empty($altSQL) ){
-				$sql = preg_replace('/\s/', ' ', $sql);
-				$sql = preg_replace('/(GROUP BY|ORDER BY|LIMIT).+$/', '', $sql);
-				$sql .= ( !strstr(strtoupper($sql), 'WHERE ') ? 'WHERE ' : 'AND ' ).
-					" {$this->array2filter($filters)} LIMIT 1";
-			}
-			
-			return $this->query($sql, 'row');
+			# Let the right method handle the rest, depending on $this->type
+			return ($integrityCheckResult === true)
+				? $this->{$this->type}( $params )
+				: $integrityCheckResult;
 			
 		}
 		
 		/**
-		 * Returns an HTML string from a template, after assigning all vars
-		 * passed as $data.
+		 * 
 		 */
-		protected function fetch($name, $data=array()){
+		public function runAjaxCall(){
 		
-			$name = preg_replace('/\.tpl$/', '', $name);
-		
-			foreach( $data + $this->vars as $k => $v ) $this->TemplateEngine->assign($k, $v);
+			$args = func_get_args();
 			
-			if( !is_file(MODULES_TEMPLATES_PATH."{$name}.tpl") ) $name = '404';
-		
-			return $this->TemplateEngine->fetch( "{$name}.tpl" );
-		
-		}
-		
-		protected function assign($var, $val=NULL){
+			$integrityCheckResult = $this->initialize();
 			
-			$this->vars[$var] = $val;
-			
-		}
-		
-		protected function clearVar( $var=NULL ){
-		
-			if( is_null($var) ) $this->vars = array();
-			else unset( $this->vars[$var] );
+			# Let the right method handle the rest, depending on $this->type
+			if($integrityCheckResult === true){
+				$res = call_user_func_array(array($this, $this->type), $args);
+				if( is_null($res) ) return $this->doTasks();
+			}
+			else $this->AjaxEngine->displayError( $integrityCheckResult );
 			
 		}
 		
 		/**
-		 * Shortcut to return a generic error page
+		 * 
 		 */
-		protected function displayError( $msg=NULL ){
+		public function doTasks( $params=NULL ){
 		
-			return $this->fetch('404', array('msg' => $msg));
+			$fixedParams = "'{$this->type}', '{$this->code}', '{$this->modifier}'";
+			$extraParams = $this->toJson($params);
+		
+			$cmd = "Modules.initialize({$fixedParams}, {$extraParams});";
+			
+			$this->AjaxEngine->addScript( $cmd );
 			
 		}
 		
 
 ##################################
-############ PRIVATE #############
-##################################
-
 ############# CONFIG #############
+##################################
+
+		/**
+		 * Initialize and validate vars and config
+		 */
+		public function initialize(){
+		
+			# Make sure the type of page is valid
+			if( !is_callable(array($this, $this->type)) ){
+				return $this->displayError('ModulesBase: wrong type.');
+			}
+			
+			# Attempt to load data provider
+			$this->dataProvider = $this->setDataProvider();
+			if( $this->dataProvider !== true ){
+				return $this->displayError( $this->dataProvider );
+			}
+			
+			# Store and pass to template engine main vars and objects
+			$configIntegrity = $this->readConfig();
+			if( $configIntegrity !== true ){
+				return $this->displayError( $configIntegrity );
+			}
+			
+			return true;
+			
+		}
 		
 		/**
 		 * Validate and store data provider class for this module.
@@ -248,7 +210,7 @@
 		 * @returns: returns true if everything's in place, or an error string
 		 *           if a required element is missing or corrupted
 		 */
-		protected function readConfig(){
+		private function readConfig(){
 			
 			# Internal attributes
 			$this->assign('type', $this->type);
@@ -289,13 +251,70 @@
 			
 		}
 
-############# FIX VARS #############
+
+##################################
+############ TEMPLATE ############
+##################################
+		
+		/**
+		 * Returns an HTML string from a template, after assigning all vars
+		 * passed as $data.
+		 */
+		protected function fetch($name, $data=array()){
+		
+			$name = preg_replace('/\.tpl$/', '', $name);
+		
+			foreach( $data + $this->vars as $k => $v ) $this->TemplateEngine->assign($k, $v);
+			
+			if( !is_file(MODULES_TEMPLATES_PATH."{$name}.tpl") ) $name = '404';
+		
+			return $this->TemplateEngine->fetch( "{$name}.tpl" );
+		
+		}
+		
+		protected function assign($var, $val=NULL){
+			
+			$this->vars[$var] = $val;
+			
+		}
+		
+		protected function clearVar( $var=NULL ){
+		
+			if( is_null($var) ) $this->vars = array();
+			else unset( $this->vars[$var] );
+			
+		}
+
+
+##################################
+############# TOOLS ##############
+##################################
+		
+		/**
+		 * Takes a row or col of data, and builds a unique ID for that
+		 * item based on that item's values for defined key fields
+		 */
+		protected function keysArray2String( $item ){
+		
+			if( !is_array($item) ){
+				if( count($this->keys) != 1 ) return NULL;
+				$item = array($this->keys[0] => $item);
+			}
+		
+			foreach( $this->keys as $key ){
+				if(isset($item[$key]) ) $keysArr[] = $item[$key];
+				else return NULL;
+			}
+			
+			return isset($keysArr) ? join('__|__', $keysArr) : '';
+			
+		}
 		
 		/**
 		 * We can accept strings instead of an array of key fields, but then
 		 * we need to make it an array (with one single element)
 		 */
-		private function sanitizeAndStoreKeys( $keys ){
+		protected function sanitizeAndStoreKeys( $keys ){
 		
 			if( !is_array($keys) ) $keys = array($keys);
 			
@@ -310,7 +329,7 @@
 		 * and most attributes are optional. Just make sure the configuration
 		 * is valid: well-formatted and with all fields set to avoid warnings.
 		 */
-		private function sanitizeAndStoreFieldsCfg( $fieldsCfg ){
+		protected function sanitizeAndStoreFieldsCfg( $fieldsCfg ){
 			
 			foreach( $fieldsCfg as $key => &$atts ){
 				# Accept strings as attributes, assuming it's the name alone
@@ -338,7 +357,7 @@
 		/**
 		 * Force fields that do not have screen names to be hidden.
 		 */
-		private function sanitizeAndStoreFields( $fields ){
+		protected function sanitizeAndStoreFields( $fields ){
 		
 			foreach( $fields as &$field ){
 				if( isset($this->fieldsCfg[$field]['name']) && $this->fieldsCfg[$field]['name'] === '' ){
@@ -350,7 +369,7 @@
 		
 		}
 		
-		private function sanitizeInfoKeys( $keys ){
+		protected function sanitizeInfoKeys( $keys ){
 			
 			# Build and apply ID filter (check integrity first)
 			if( !is_array($keys) ){
@@ -365,63 +384,36 @@
 			}
 			
 		}
+	
+		protected function toJson( $arr=array() ){
+			
+			if( !is_array($arr) || !count($arr) ) return '{}';
+			foreach( $arr as $k => $v ){
+				$json[] = "'{$k}':".(is_array($v) ? toJson($v) : (is_numeric($v) ? $v : "'".addslashes($v)."'"));
+			}
+			
+			return '{'.join(",", $json).'}';
+		
+		}
 
-############# CACHE #############
+
+##################################
+######### ERROR HANDLING #########
+##################################
 		
 		/**
-		 * Retrieving data (usually from the database) can be time- and
-		 * CPU-consuming, so we attempt to cache retrieved data that can
-		 * be reused if filters and modifier are still the same as stored.
+		 * Shortcut to return a generic error page
 		 */
-		private function setDataCache($code, $data, $filters=array()){
-			
-			$this->dataCache[$code] = array(
-				'modifier'	=> $this->modifier,
-				'filters'	=> $filters,
-				'data'		=> $data,
-			);
-			
-			return $data;
-			
-		}
+		protected function displayError( $msg=NULL ){
 		
-		/**
-		 * Retrieving cached data, within one script run (not in session)
-		 * (see setDataCache's comment for more info)
-		 */
-		private function getDataCache($code, $filters=array()){
-		
-			return (isset($this->dataCache[$code])
-					&& $this->dataCache[$code]['modifier'] === $this->modifier
-					&& $this->dataCache[$code]['filters'] === $filters)
-						? $this->dataCache[$code]['data']
-						: NULL;
-						
-		}
-		
-		/**
-		 * @overview: Gets a data array from user-configured sql query
-		 * @returns: - on success, an array
-		 *           - on error, false
-		 *           - if missing, NULL
-		 */
-		protected function getListData($listCode, $filters=array()){
-			
-			# See if we've got it stored already
-			$cachedData = $this->getDataCache($listCode, $filters);
-			if( !is_null($cachedData) ) return $cachedData;
-		
-			$method = 'get'.ucfirst($listCode).'ListData';
-			$formatAs = ($listCode == 'combo') ? 'asHash' : 'asList';
-			
-			$sql = $this->DP->$method( $filters );
-			$data = $sql ? $this->$formatAs($sql, $this->keys) : NULL;
-			
-			return $this->setDataCache($listCode, $data, $filters);
+			return $this->fetch('404', array('msg' => $msg));
 			
 		}
 
-############# DEBUGGING #############
+
+##################################
+########### DEBUGGING ############
+##################################
 		
 		protected function seeVars(){
 		
