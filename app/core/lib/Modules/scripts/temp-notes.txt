@@ -1,0 +1,99 @@
+Notes while working at home, forgot to push last changes so...
+
+Some considerations for JS Modules object:
+
+	- it needs to be able to record the state of more than one module element sharing the same namespace (meaning not in an iframe).
+		solutions (brainstorm, no smarty thoughts here):
+			1- make it a constructor instead of a single literal object
+			2- save state of each object in the DOM
+			3- use and abuse clossures and send atts around everywhere they need to go
+		all of them have pros and cons... let's see:
+			1- we'd still need to save the created object somehow, and tag it by a unique ID. This is not too different from tagging atts, except it duplicates things needlessly. However, it might be cleaner once the tagging is sorted, then every object will have its private state unchanged.
+			2- which elements need to run initialization more than once? commonLists for now, maybe simpleLists in the future (pagination, sorting)
+			   which elements would not see well to be initialized twice? in general, all if there's event handlers attached twice
+		
+		Let's then explore the following (yeah, I know last paragraph is mixed and left unfinished, so what).
+		
+		
+		1. PHP#ModulesBase calls automatically and dynamically JS's Modules#initialize(type, code, modifier, params)
+		2. JS:Modules#initialize creates var atts = {type:type, code:code, modifier:modifier||'', params:params||{}}
+		3. It checks that this[type] exists and is a function, calls it if it does or raises an error if it doesn't
+		   There's no point in storing attributes globally when they're not global (change for different elements)
+		4. Each element then has it's own function, that I'll call that element's Handler.
+		   Handlers do initialize not the element we want but any element of that kind (identified by className)
+		   For that reason, it's imperative to get rid of ids in their templates. Classes should be used instead.
+		   For example, if we attempt to initialize a commonList (its skeleton, the list frame), it'll go like:
+		   
+		   commonList: function( atts ){
+               $$('.tableOutterWrapper').forEach(function(ttl){
+			       if( ttl.initialized ) return;	// Don't initialize it twice, there's no need to
+			       *add event handlers to create button and other tools that might be added to commonLists*
+				   *add event handlers to search tools in particular (event if titles are hidden from the start)*
+				   ttl.initialized = true;			// This list won't be initialized again
+				   *request the first list to be loaded, without filters*
+			   });
+		   }
+		  
+STOP! so I changed my mind... if I send the params like this, how would I know which list they're for???
+
+So what if we store attributes (type, code, modifier, params) in the HTML of that element? All elements have HTML and all of them are built automatically. Meaning there's just so many templates, and -better yet- all are called by the same central method (ModulesBase#fetch). What if...
+
+
+		protected function fetch($name, $data=array()){
+		
+			$name = preg_replace('/\.tpl$/', '', $name);
+		
+			foreach( $data + $this->vars as $k => $v ) $this->TemplateEngine->assign($k, $v);
+			
+			if( !is_file(MODULES_TEMPLATES_PATH."{$name}.tpl") ) $name = '404';
+			
+			********** ADDED LINES ***********
+			$this->assign('name', $name);
+			return $this->TemplateEngine->fetch( 'global.tpl' );
+		
+			********** DISCARDED LINE ***********
+			return $this->TemplateEngine->fetch( "{$name}.tpl" );
+		
+		}
+
+For the global template see app/core/lib/Modules/static/templates/global.tpl
+$params is not registered in the template yet. It should be, as it's proven to be very helpfull. It shouldn't be treated different than code or type. Except, of course, that it should be serialized (toJson method).
+
+The most important change here is that all elements will be wrapped inside a div, with all of those wrappers sharing a class name. This is very practical when it comes to searching the DOM looking for a particular kind of element. I.e.:
+
+	$$('.Modules_Element.Wrapper_of_Type_'+type) would give us all elements of type 'type' (gotta test IE...).
+	
+Moreover, we can use this same DIV to store whether that element is initialized already (some elements like updateCommonList could ignore it, but that's irrelevant, it costs nothing to keep track automatically and it could prove usefull in the future). So what if... centralized method JS:Modules#initialize already handles all this?!! Let's see:
+
+	initialize: function( type ){
+		var Elements = [], that = this;
+		// Collect uninitialized elements of type 'type', ignore the rest
+		$$('.Modules_Element.Wrapper_of_Type_'+type).forEach(function(dom){
+			if( dom.initialized ) return;
+			dom.initialized = true;
+			dom.Atts = {type:type};
+			['code', 'modifier', 'params'].forEach(function(att){
+				var attDOM = dom.getElement('[@name='+att+']');
+				if( attDOM ) dom.Atts[att] = attDOM.value;
+				else return dom.Atts = null; /* Unexpected error, abort */
+			});
+			// Remember params came as a JSON string
+			dom.Atts.params = eval( dom.Atts.params );
+			Elements.push( {dom:dom, atts:dom.Atts} );
+		});
+		// We call the handler method on each element
+		Elements.forEach(function(el){
+			that[type].call(that, el.dom, el.atts);
+		});
+	},
+	someType(domEl, Atts){
+		/* Here, this points to Modules, el to the dom common wrapper */
+		/* atts is an object with properties type, code, modifier, params */
+		/* Attributes are stored also in the dom element (el.Atts) */
+	}
+
+I can't think of any scenario where Elements would find more than one item, and it would end up empty only if there was an unexpected error (that I can't think of either). But, if it does find none, nothing happens (Handler won't be even called), and if it finds more than one, let it be happy. There's no possible conflicts or namespace crashes here: the Handler needs to use domEl and Atts in closures, and external methods can always go back to the dom element for persistence or re-getting atts from it.
+	
+Side Note: This would represent a challenge for styling, because a div surrounding each element is different from what we have now. The rimbombant class given to it, 'Modules_Wrapper_of_Type_{$name}' can be used in special cases to add float or other effects to a particular kind of element (and maybe replace former wrappers, like in updateCommonList elements).
+
+Search tools for commonList could be a challenge, as they currently fall a long way off-limit of the element's area. A better solution would be maybe to make it appear flying in the middle, and keep the results when closed. Then adding a reset filters button would do the trick (it's about time I add a global search -by all columns at once-, while I'm on it...).
