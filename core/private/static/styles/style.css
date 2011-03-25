@@ -237,6 +237,12 @@ BODY{
 	background: -webkit-gradient(linear, left top, left bottom, from(#e0e0e0), to(#003366));
 	background: -moz-linear-gradient(top,  #e0e0e0,  #003366);
 	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#e0e0e0', endColorstr='#003366');
+	border-top-right-radius:20px;
+	border-bottom-right-radius:20px;
+	-moz-border-top-right-radius:20px;
+	-moz-border-bottom-right-radius:20px;
+	-webkit-border-top-right-radius:20px;
+	-webkit-border-bottom-right-radius:20px;
 }
 .menuItem.currentPage A{
 	background:none;
