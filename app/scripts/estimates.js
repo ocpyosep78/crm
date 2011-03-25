@@ -350,9 +350,9 @@ function ini_editEstimates(){
 
 function ini_estimatesInfo(){
 	var id = $('hdn_id_estimate').value;
-	($('btn_edit')||$E).onclick = function(e){ getPage(e, 'editEstimates', [id]); };
-	($('btn_print')||$E).onclick = function(){ xajax_printQuote( id ); };
-	($('btn_design')||$E).onclick = function(e){ getPage(e, 'installPlan', [id]); };
+	($('btn_edit')||$E).addEvent('click', function(e){ getPage(e, 'editEstimates', [id]); });
+	($('btn_print')||$E).addEvent('click', function(){ xajax_printQuote( id ); });
+	($('btn_design')||$E).addEvent('click', function(e){ getPage(e, 'installPlan', [id]); });
 	($('btn_exportPDF')||$E).addEvent('click', function(e){
 		return getPage(e, 'estimatePDF', [id]);
 		var height = (parseInt(screen.availHeight) * .90) + 'px';

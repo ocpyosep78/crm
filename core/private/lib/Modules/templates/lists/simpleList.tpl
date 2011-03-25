@@ -36,7 +36,7 @@
 		{foreach from=$item.tools key=axn item=permit}									{* TOOLS *}
 		  {if $Permits->can($permit)}
 			<div class='tblTools' for='{$id}' axn='{$axn}'>
-			  <img src='app/images/buttons/{$axn}.png' alt='{$axns[$axn]}'
+			  <img src='{$MODULES_IMAGES}buttons/{$axn}.png' alt='{$axns[$axn]}'
 				title='{$axns[$axn]} {$params.name|lower}' />
 			</div>
 		  {/if}
@@ -61,7 +61,7 @@
 	  {/foreach}
 	  <td class='simpleListCreate'>
 		<div class='tblTools' axn='create' id='SLcreateItem'>
-		  <img src='app/images/buttons/add.png' alt='agregar' title='agregar' />
+		  <img src='{$MODULES_IMAGES}buttons/add.png' alt='agregar' title='agregar' />
 		</div>
 		<span id='createItemText'>Agregar</span>
 	  </td>

@@ -1,8 +1,8 @@
-{include file="{$BASE_PATH}lists/_ListSearch.tpl"}
+{include file="{$MODULES_TEMPLATES}lists/_ListSearch.tpl"}
 
 <div class='commonListWrapper'>
 
-  {include file="{$BASE_PATH}lists/_ListTitles.tpl"}
+  {include file="{$MODULES_TEMPLATES}lists/_ListTitles.tpl"}
   
   <div style='clear:both;'></div>
   
@@ -10,7 +10,7 @@
 	<div class='listWrapper'>
 		<div class='commonListPreLoad'>
 			cargando la lista, espere por favor...
-			<img class='listPreLoad' src='app/images/timer.gif' style=''>
+			<img class='listPreLoad' src='{$MODULES_IMAGES}timer.gif' style=''>
 		</div>
 	</div>
   </div>

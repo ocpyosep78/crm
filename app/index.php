@@ -172,7 +172,7 @@
 
 
 /***************
-** M O D U L E S   /   S E C T I O N S
+** P A G E   M A N A G E R
 ***************/
 
 	# User regularly logged in

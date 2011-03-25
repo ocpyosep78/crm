@@ -27,7 +27,7 @@
 {*			{foreach from=$tools key=axn item=permit}
 			  {if $Permits->can($permit)}
 				<div class='tblTools' for='{$id}' axn='{$axn}'>
-				  <img src='app/images/buttons/{$axn}.png' alt='{$axns[$axn]}'
+				  <img src='{$MODULES_IMAGES}buttons/{$axn}.png' alt='{$axns[$axn]}'
 					title='{$axns[$axn]} {$params.name|lower}' />
 				</div>
 			  {/if}
