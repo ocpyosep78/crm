@@ -72,6 +72,7 @@ function iniPage( name ){
 	/* Call page's engine */
 	try{
 		if(window['ini_'+name]) window['ini_'+name].apply(window['ini_'+name], IniParams.get());
+		enableComboList();
 	}catch(e){
 		if( DEVELOPER_MODE ) test( e );
 		return false;
