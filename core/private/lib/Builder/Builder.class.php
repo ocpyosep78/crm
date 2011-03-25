@@ -174,14 +174,18 @@
 				case 'fPDF':
 					return THIRD_PARTY_PATH.'fPDF/ExtendedFPDF.class.php';
 				break;
-				case 'Smarty':
-					return CORE_THIRD_PARTY.'Smarty-3.0.7/Smarty.class.php';
+				case 'FormTable':
+				case 'Lists':
+				case 'PageCfg':
+				case 'Pajax':
 				case 'SQL':
-					return CLASSES_PATH.'SQL/SQL.class.php';
+				case 'Validate':
+					return CLASSES_PATH."{$obj}/{$obj}.class.php";
+				case 'Smarty':
 				case 'Xajax':
-					return CORE_THIRD_PARTY.'Xajax0.2.4/Xajax.class.php';
+					return CORE_THIRD_PARTY."{$obj}/{$obj}.class.php";
 				case 'XajaxResp':
-					return CORE_THIRD_PARTY.'Xajax0.2.4/xajaxResponse.inc.php';
+					return CORE_THIRD_PARTY.'Xajax/xajaxResponse.inc.php';
 				break;
 				default:
 					return CORE_LIB."{$obj}/{$obj}.class.php";

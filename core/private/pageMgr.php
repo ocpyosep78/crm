@@ -42,6 +42,7 @@
 		$mods = oPermits()->getModules();
 		$pags = oPermits()->getPagesFromModule( $cMod );	
 		# Register current coordinates info in PageCfg for template use
+		oPageCfg()->add_jsOnLoad("flagMenuItem('{$cPag}');");
 		oPageCfg()->add_develMsgs("Módulo: {$mods[$cMod]['name']} ({$cMod})");
 		oPageCfg()->add_develMsgs("Página: {$pags[$cPag]['name']} ({$cPag})");
 		oPageCfg()->add_modules( $mods );
@@ -60,17 +61,6 @@
 		if( is_file($modAjax=MODS_PATH."{$code}/ajax.php") && is_array($fList=require_once($modAjax)) ){
 			foreach( $fList as $f ) if( function_exists($f) ) oXajax()->registerFunction($f);
 		}
-/* This does not work because PHP would not return the REAL names of functions, but a lowercase version
-		# Include module's xajax script and register all found functions
-		if( is_file($modAjax=MODS_PATH."{$code}/ajax.php") ){
-			$fs = get_defined_functions();
-			$cnt = count($fs['user']);
-			require_once( $modAjax );
-			while( isset($fs['user'][$cnt]) ){
-				oXajax()->registerFunction( $fs['user'][$cnt++] );
-			}
-		}
-*/
 	}
 	
 	

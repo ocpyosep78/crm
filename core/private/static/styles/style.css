@@ -211,7 +211,7 @@ BODY{
 	font-size:13px;
 }
 
-.menuItem a, .disabledMenuItem a{
+.menuItem > A, .disabledMenuItem > A{
 	display:block;
 	width:100%;
 	padding:1px 0px;
@@ -220,17 +220,32 @@ BODY{
 	text-indent:20px;
 	font-size:12px;
 }
-.menuItem a{
+.menuItem > A{
 	color:#400000;
 }
-.disabledMenuItem a{
+.disabledMenuItem > A{
 	color:#909090;
 	cursor:default;
 }
 
-.menuItem a:hover{
+.menuItem > A:hover{
 	color:#106060;
 	background:#e0c090;
+}
+.menuItem.currentPage{
+	padding:3px 0px;
+	background: -webkit-gradient(linear, left top, left bottom, from(#e0e0e0), to(#003366));
+	background: -moz-linear-gradient(top,  #e0e0e0,  #003366);
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#e0e0e0', endColorstr='#003366');
+}
+.menuItem.currentPage A{
+	background:none;
+	color:#ffb850;
+	font-size:13px;
+	font-weight:bold;
+}
+.menuItem.currentPage > A:hover{
+	color:#cccccc;
 }
 
 #hideMenu, #showMenu{
@@ -489,8 +504,8 @@ TABLE.data TD DIV{
  */
 TABLE.simpleList{ border:solid 1px #000000; border-left:none; }
 TABLE.simpleList INPUT{ margin:0px; width:99%; }
-TABLE.simpleList TH{ padding:5px 5px; }
-TABLE.simpleList TH, TABLE.simpleList TD{ border-left:solid 1px #000000; border-bottom:solid 1px #000000; white-space:nowrap; }
+TABLE.simpleList TH{ padding:5px 5px; background: -webkit-gradient(linear, left top, left bottom, from(#336699), to(#e0e0e0)); background: -moz-linear-gradient(top,  #e0e0e0,  #003366); filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#e0e0e0', endColorstr='#003366'); }
+TABLE.simpleList TH, TABLE.simpleList TD{ border-left:solid 1px #909090; border-bottom:solid 1px #909090; white-space:nowrap; }
 TABLE.simpleList TR.addItemToSimpleList TD{ border-color:#036; }
 TABLE.simpleList .noResMsg{ background:#ffffff; padding:20px 0px 30px 0px; font-weight:bold; }
 TABLE.simpleList.data{ background:#036; }

@@ -25,6 +25,9 @@ function SyncTitles(el, atts){
 		});
 		return that;
 	};
+	// Re-sync if page is resized or menu is hidden
+	window.addEvent('resize', that.sync);
+	window.addEvent('menutoggled', that.sync);
 };
 
 var Modules = {

@@ -55,7 +55,7 @@ require_once(dirname(__FILE__)."/xajaxResponse.inc.php");
 
 if (!defined ('XAJAX_JS_DIR'))
 {
-	define ('XAJAX_JS_DIR', CORE_THIRD_PARTY.'Xajax0.2.4/xajax_js');
+	define ('XAJAX_JS_DIR', 'xajax_js');
 }
 
 if (!defined ('XAJAX_VERBOSE'))

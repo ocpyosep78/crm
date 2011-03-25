@@ -48,6 +48,7 @@
 	define('PERMITS_CACHE_TIMEOUT', 1800, true);		/* Time to cache Permissions and structure */
 	
 	# Xajax
+	define('XAJAX_JS_DIR', CORE_THIRD_PARTY.'Xajax/xajax_js');
 	define('XAJAX_VERBOSE', false, true);
 
 ?>

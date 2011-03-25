@@ -1,3 +1,27 @@
-update.bat
+# ignore wHole folder
+(docs)/
+app/images/temp/
+
+# ignore folder content
+/app/images/users/*
+/app/images/products/*
+/logs/*
+/sql/*
+/temp/*
+
+# ignore files globally
 Thumbs.db
-.svn/
+
+# ignore specific files
+/app/chat.php
+/app/cfg/local.cfg.php
+/update.bat
+
+# do not ignore these files
+/app/images/users/admin.png
+/app/images/users/master.png
+/app/images/users/operator.png
+/app/images/users/user.png
+!/sql/crm_minimal.sql.gz
+!.gitignore
+!README

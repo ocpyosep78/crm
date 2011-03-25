@@ -92,7 +92,7 @@
 				  {foreach from=$Page->menuItems key=key item=items}
 					<div class='menuGroup'>{$key}</div>
 					{foreach from=$items item=x}
-					  <div class='{if $x.action}menuItem{else}disabledMenuItem{/if}'>
+					  <div class='{if $x.action}menuItem{else}disabledMenuItem{/if}' for='{$x.code}'>
 						<a href='javascript:void(0);' {if $x.action}onclick='{$x.action};'{/if}>{$x.name}</a>
 					  </div>
 					{/foreach}

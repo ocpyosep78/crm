@@ -81,36 +81,51 @@ function iniPage( name ){
 	globalApplyCalendar();
 };
 
+function flagMenuItem( code ){
+	var newItem = $$('.menuItem').filter(function(mi){
+		return mi.getAttribute('FOR') == code;
+	});
+	if( newItem.length ){
+		$$('.menuItem.currentPage').removeClass('currentPage');
+		newItem.addClass('currentPage');
+	};
+};
+
 function hideMenu(){
+	window.fireEvent('menutoggled');
 	if( !$('showMenu') || !$('hideMenu') ) return;
 	(function(){
 		new Fx.Tween('menuDiv',
-			{property:'opacity', duration:400, fps:50, onStart:function(){
-				this.set(1);
-			}, onComplete:function(){
-				$('hideMenu').style.display = 'none';
-				this.set('display', 'none');
-				$('showMenu').style.display = 'inline';
-				$('main_menu').setStyle('width', 'auto');
-				fixTableHeader();
-			} }
-		).start(0.3);
+			{property:'opacity', duration:400, fps:50,
+				onStart:function(){
+					this.set(1);
+				}, onComplete:function(){
+					$('hideMenu').style.display = 'none';
+					this.set('display', 'none');
+					$('showMenu').style.display = 'inline';
+					$('main_menu').setStyle('width', 'auto');
+					window.fireEvent('menutoggled');
+					fixTableHeader();									/* TEMP (Modules) */
+				}
+			}).start(0.3);
 	}).apply( $('hideMenu') );
 };
 function showMenu(){
 	if( !$('showMenu') || !$('hideMenu') ) return;
 	(function(){
-		new Fx.Tween(
-			'menuDiv',
-			{property:'opacity', duration:400, fps:50, onStart:function(){
-				this.set(0.3);
-				$('showMenu').style.display = 'none';
-				this.set('display', 'block');
-				$('main_menu').setStyle('width', 1);
-				$('hideMenu').style.display = 'inline';
-				fixTableHeader();
-			} }
-		).start(1);
+		new Fx.Tween('menuDiv',
+			{property:'opacity', duration:400, fps:50,
+				onStart:function(){
+					this.set(0.3);
+					$('showMenu').style.display = 'none';
+					this.set('display', 'block');
+					$('main_menu').setStyle('width', 1);
+					$('hideMenu').style.display = 'inline';
+					fixTableHeader();									/* TEMP (Modules) */
+				}, onComplete: function(){
+					window.fireEvent('menutoggled');
+				}
+			}).start(1);
 	}).apply( $('showMenu') );
 };
 
@@ -837,7 +852,7 @@ if( !window.IN_FRAME ){
 	window.addEvent('domready', function(){			/* Main container's transition */
 		window.addEvent('resize', function(){
 			CONTENT.setStyle('height', $(BODY).getHeight() - 145 - (Browser.ie ? 10 : 0) + 'px');
-			fixTableHeader();
+			fixTableHeader();											/* TEMP (Modules) */
 		} );
 		new Fx.Tween(
 			'main_container',

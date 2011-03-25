@@ -85,7 +85,7 @@
 			}elseif($code || devMode()){
 				$menuItems = $this->get( 'menuItems' );
 				$action = $code ? ($isPage ? "getPage(event, \"{$code}\")" : "xajax_{$code}()") : '';
-				$menuItems[$area][] = array('name' => $item, 'action' => $action);
+				$menuItems[$area][] = array('code' => $code, 'name' => $item, 'action' => $action);
 				$this->set('menuItems', $menuItems);
 			}
 
