@@ -42,11 +42,14 @@
 		$mods = oPermits()->getModules();
 		$pags = oPermits()->getPagesFromModule( $cMod );	
 		# Register current coordinates info in PageCfg for template use
-		oPageCfg()->add_jsOnLoad("flagMenuItem('{$cPag}');");
 		oPageCfg()->add_develMsgs("Módulo: {$mods[$cMod]['name']} ({$cMod})");
 		oPageCfg()->add_develMsgs("Página: {$pags[$cPag]['name']} ({$cPag})");
 		oPageCfg()->add_modules( $mods );
 		oPageCfg()->set_module( $cMod );
+		# Highlight current menu item (and store it in case next page is not in menu)
+		$menuItem = $pags[$cPag]['id_area'] ? $cPag : getSes('menuItem');
+		oPageCfg()->add_jsOnLoad("flagMenuItem('{$menuItem}');");
+		regSes('menuItem', $menuItem);
 	}
 	
 /**
