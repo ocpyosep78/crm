@@ -854,13 +854,7 @@ if( !window.IN_FRAME ){
 			CONTENT.setStyle('height', $(BODY).getHeight() - 145 - (Browser.ie ? 10 : 0) + 'px');
 			fixTableHeader();											/* TEMP (Modules) */
 		} );
-		new Fx.Tween(
-			'main_container',
-			{property:'opacity', duration:200, fps:50, onStart: function(){
-				this.set(0.5);
-				window.fireEvent('resize');
-			} }
-		).start(0.5, 1);
+		window.fireEvent('resize');
 	});
 	
 	window.addEvent('domready', function(){			/* Menu */
