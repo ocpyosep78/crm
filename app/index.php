@@ -13,7 +13,7 @@
 ** 
 ** The app has only one entry point: this file. All calls, ajax or direct, start
 ** and end in this script. If a user is logged, module's engine handles the logic
-** related to pages and modules: CORE_PATH.'pageMgr.php'.
+** related to pages and modules: CORE_PRIVATE.'pageMgr.php'.
 ** 
 ** What follows is a short summary of what index.php does.
 ** 
@@ -47,11 +47,11 @@
 ** - The application is composed of atomic pages. In general, no page depends
 ** on other pages (though disencouraged, there might be a few exceptions). So,
 ** pages are also loaded in the most automatized way possible. See doc header in
-** CORE_PATH.'pageMgr.php' for more information on pages, modules and the way
+** CORE_PRIVATE.'pageMgr.php' for more information on pages, modules and the way
 ** they are handled.
 ** 
 ** - If conditions are met, debugging mode is turned on, adding a debug messages
-** box to the main template (CORE_PATH.'main.tpl') and setting error_reporting value
+** box to the main template (CORE_TEMPLATES.'main.tpl') and setting error_reporting value
 ** to E_ALL. A user-defined error-handling function prepares the output to be sent
 ** to this box for developpers to see.
 ** 
@@ -89,6 +89,7 @@
 	require_once( 'initialize.php' );
 
 
+
 /***************
 ** U R G E N T   X A J A X   F U N C T I O N S
 ***************/
@@ -103,6 +104,7 @@
 		oXajax()->registerFunction( $code );
 		if( isXajax($key) ) oXajax()->processRequests();
 	}
+	
 	
 
 /***************
@@ -125,7 +127,6 @@
 		require_once('debug/stats.php');
 	}
 	addScript( 'window.DEVELOPER_MODE = '.((int)DEVELOPER_MODE).';' );
-	
 	
 
 /***************
@@ -150,7 +151,11 @@
 
 	oPageCfg()->set_appTitle( loggedIn() );
 	oPageCfg()->add_styleSheets( getSkinCss() );
-	oPageCfg()->add_jScripts(array(CORE_PATH.'mootools 1.3.js', CORE_PATH.'libs.js', CORE_PATH.'common.js'));
+	oPageCfg()->add_jScripts(array(
+		CORE_SCRIPTS.'mootools 1.3.js',
+		CORE_SCRIPTS.'libs.js',
+		CORE_SCRIPTS.'common.js')
+	);
 	oPageCfg()->add_jsCode("window.loggedIn = '".loggedIn()."'");
 	
 	if( oNav()->inFrame ) oPageCfg()->add_styleSheets( FRAME_CSS_PATH );
@@ -158,11 +163,11 @@
 
 
 /***************
-** M O D U L E S
+** M O D U L E S			/* TEMP */ /*
 ***************/
 
-	oPageCfg()->add_jScripts(CORE_PATH.'lib/Modules/scripts/Modules.js');
-	oPageCfg()->add_styleSheets(CORE_PATH.'lib/Modules/static/styles/Modules.css');
+	oPageCfg()->add_jScripts(MODULES_PATH.'scripts/Modules.js');
+	oPageCfg()->add_styleSheets(MODULES_PATH.'static/styles/Modules.css');
 
 
 
@@ -171,11 +176,11 @@
 ***************/
 
 	# User regularly logged in
-	if( loggedIn() ) require_once(CORE_PATH.'pageMgr.php');
+	if( loggedIn() ) require_once(CORE_PRIVATE.'pageMgr.php');
 	# No user logged in
 	elseif( !isXajax() ){
 		oPageCfg()->set_appTitle('Iniciar sesion');
-		oPageCfg()->set_content('../core/login.tpl');
+		oPageCfg()->set_content(CORE_TEMPLATES.'login.tpl');
 		oNav()->processQueuedMsg();
 	}
 	

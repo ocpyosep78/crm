@@ -124,22 +124,22 @@
 	
 	function getSkinName(){
 	
-		return isset($_GET['skin']) ? $_GET['skin'] : (defined('SKIN') && SKIN ? SKIN : NULL);
+		return isset($_GET['skin']) ? $_GET['skin'] : (defined('SKIN') && SKIN ? SKIN : '');
 		
 	}
 	
 	function getSkinTpl(){
 	
-		$skinApplied = ($skin=getSkinName()) && is_file($tpl=SKINS_PATH."{$skin}.tpl");
+		$skin = realpath( CORE_SKINS.getSkinName().'.tpl' );
 		
-		return '../../'.($skinApplied ?  $tpl : CORE_PATH.'main.tpl');
+		return $skin ? $skin : MAIN_TPL_PATH;
 		
 	}
 	
 	function getSkinCss(){
 	
 		$skin = getSkinName();
-		return $skin && is_file($css=SKINS_PATH."{$skin}.css") ? $css : CORE_PATH.'style.css';
+		return $skin && is_file($css=CORE_SKINS."{$skin}.css") ? $css : CORE_STYLES.'style.css';
 		
 	}
 	

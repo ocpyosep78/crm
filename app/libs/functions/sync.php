@@ -16,7 +16,7 @@
 		
 		/* Check alerts */
 		seekAlerts( $params );
-	
+		
 		return oXajaxResp();
 	
 	}
