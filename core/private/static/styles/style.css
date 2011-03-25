@@ -142,8 +142,6 @@ BODY{
 	margin:0px;
 	width:100%;
 	text-align:center;
-	opacity:0.5;
-	filter:alpha(opacity=50);		/* startup, then does a transition */
 	white-space:normal;
 }
 
