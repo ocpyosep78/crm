@@ -218,6 +218,7 @@
 		
 			# General and presentational
 			$this->assign('cycleValues', '#eaeaf5,#e0e0e3,#e5e6eb');
+			$this->assign('MODULES_IMAGES', MODULES_IMAGES);
 			
 			# Internal attributes
 			$this->assign('type', $this->type);
@@ -270,15 +271,13 @@
 		 */
 		protected function fetch($name, $data=array()){
 		
-			$BASE_PATH = MODULES_TEMPLATES_PATH;
-		
 			# Register all stored vars in the Template Engine
 			foreach( $data + $this->vars as $k => $v ) $this->TemplateEngine->assign($k, $v);
-			$this->TemplateEngine->assign('BASE_PATH', $BASE_PATH);
+			$this->TemplateEngine->assign('MODULES_TEMPLATES', MODULES_TEMPLATES);
 			
 			$name = preg_replace('/\.tpl$/', '', $name);
-			if( !is_file("{$BASE_PATH}{$name}.tpl") ) $name = '404';
-			$this->TemplateEngine->assign('pathToTemplate', "{$BASE_PATH}{$name}.tpl");
+			if( !is_file(MODULES_TEMPLATES.$name.'.tpl') ) $name = '404';
+			$this->TemplateEngine->assign('pathToTemplate', MODULES_TEMPLATES.$name.'.tpl');
 			
 			return $this->TemplateEngine->fetch( 'global.tpl' );
 		

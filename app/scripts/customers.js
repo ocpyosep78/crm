@@ -2,15 +2,15 @@ function ini_customers( type ){};
 function ini_potentialCustomers(){};
 
 function ini_customersInfo(){
-	if( $('editCustomers') ) $('editCustomers').onclick = function(e){
+	($('editCustomers')||$E).addEvent('click', function(e){
 		getPage(e, 'editCustomers', [this.getAttribute('for')]);
-	};
+	});
 };
 
 function ini_createCustomers( isNotNew ){
-	($('potentialSubmit')||{}).onclick = function(){
+	($('potentialSubmit')||$E).addEvent('click', function(){
 		xajaxSubmit($('createCustomerForm'), isNotNew ? 'editCustomers' : 'createCustomers', true);
-	};
+	});
 };
 
 function ini_editCustomers(){

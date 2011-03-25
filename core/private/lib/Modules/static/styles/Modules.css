@@ -22,7 +22,7 @@
 /**
  * LISTS: TITLES
  */
-.listTitles{ height:18px; position:relative; width:auto; margin:0px -3px 5px -3px;padding:7px 0px 9px 0px;text-align:left;font-size:14px;color:#303000; font-weight:bold;font-family:"Times New Roman", Times, serif;white-space:nowrap;overflow:hidden;z-index:50; border:solid 1px #503030; border-radius:12px; -moz-border-radius:12px; -webkit-border-radius:12px; box-shadow:#000000 2px 1px 5px; -moz-box-shadow:#000000 2px 1px 5px; -webkit-box-shadow:#000000 2px 1px 5px; }
+.listTitles{ height:18px; position:relative; width:auto; margin:0px -3px 5px -3px; padding:7px 0px 9px 0px; background:#eaeaf5; text-align:left; font-size:14px; color:#303000; font-weight:bold; font-family:"Times New Roman", Times, serif; white-space:nowrap; overflow:hidden; z-index:50; border:solid 1px #503030; border-radius:12px; -moz-border-radius:12px; -webkit-border-radius:12px; box-shadow:#000000 2px 1px 5px; -moz-box-shadow:#000000 2px 1px 5px; -webkit-box-shadow:#000000 2px 1px 5px; }
 .listTitles > DIV{ position:absolute; margin:0px 5px; padding:0px; border:none; text-indent:1px; overflow:hidden; }
 
 /**

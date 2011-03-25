@@ -1,5 +1,10 @@
 $_ = {style:{}};
-$E = {addEvent: function(){}, setStyle: function(){}};
+$E = {
+	addEvent: function(){ return $E; },
+	setStyle: function(){ return $E; },
+	getElement: function(){ return null; },
+	getElements: function(){ return []; }
+};
 
 /* Just make sure these exist from the start (no need to throw errors if they don't) */
 var showLoading = function(){};

@@ -26,8 +26,8 @@
  * 
  * @in-depth: The availability of each element depends on the content of the
  *            corresponding definition class. See _template.mod.php in
- *            MODULES_TEMPLATES_PATH for more info on how to enable/disable
- *            each type of element.
+ *            MODULES_TEMPLATES for more info on how to enable/disable each
+ *            type of element.
  *            Strictly speaking, each element is not a page but a piece of
  *            HTML that might be combined with others to build a page. For
  *            example, infoPage, commonList and editPage might include a
@@ -82,7 +82,8 @@
  */
 
 
-	define('MODULES_TEMPLATES_PATH', dirname(__FILE__).'/static/templates/');
+	define('MODULES_TEMPLATES', 'core/private/lib/Modules/templates/');
+	define('MODULES_IMAGES', 'core/private/lib/Modules/static/images/');
 	
 
 	require_once( CONNECTION_PATH );

@@ -18,7 +18,7 @@
 		
 		public function fetch( $template ){
 		
-			$template = MODULES_TEMPLATES_PATH.$template;
+			$template = MODULES_TEMPLATES.$template;
 		
 			return $this->engine->fetch( $template );
 		

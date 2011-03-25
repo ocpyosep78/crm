@@ -16,20 +16,14 @@
 	
 		protected function updateCommonList(){
 			
-			# If we're still on the run, then we're expected to update the list
-			
-			# Move input to more comfortable vars
-			$uID = $this->params['uID'];
-			$filters = $this->params['filters'];
-			$src = $this->params['src'];
-			
 			# Get Data
-			$data = $this->getListData($src ? $src : 'common', $filters);
+			$src = $this->params['src'];
+			$data = $this->getListData($src ? $src : 'common', $this->params['filters']);
 			$this->TemplateEngine->assign('data', $data);
 			
 			$HTML = $this->fetch( 'lists/updateCommonList' );
 			
-			$this->AjaxEngine->write("listWrapper_{$uID}", $HTML);
+			$this->AjaxEngine->write($this->params['uID'], $HTML);
 			
 /*			oSmarty()->assign('params', $static['params']);
 			oSmarty()->assign('fields', $static['fields']);
