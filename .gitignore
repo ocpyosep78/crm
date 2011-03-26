@@ -22,6 +22,6 @@ Thumbs.db
 !/app/images/users/master.png
 !/app/images/users/operator.png
 !/app/images/users/user.png
-!/sql/crm_minimal.sql.gz
+!/sql/crm_minimal.sql
 !.gitignore
 !README
