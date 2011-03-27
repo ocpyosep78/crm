@@ -1,6 +1,6 @@
 <?php
 
-	class PageChecker{
+	class ModulesChecker{
 	
 		private function supportedTypes(){
 		

@@ -1,13 +1,13 @@
 <?php
 
-	class Module_Handler_Info extends ModulesBase{
+	class Mod_h_Info extends ModulesBase{
 		
 		protected function info(){
 		
 			# Retrieve item's data
 			$data = $this->getInfoPageData( $this->params );
 			if( empty($data) ){
-				return $this->displayError('Module_Info error: No data found for this item');
+				return $this->Error( 'Module_Info error: No data found for this item' );
 			}
 			
 			# Form data blocks (for presentational purposes)

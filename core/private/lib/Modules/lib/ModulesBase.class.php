@@ -57,7 +57,7 @@
 		
 		protected $dataCache;		/* Cached lists data in case we need to reuse it */
 		
-		protected $Creator;			/* Object of class PageCreator that built this object's child */
+		protected $Creator;			/* Object of class ModulesCreator that built this object's child */
 		protected $DP;				/* Data Provider for this module (user-configured) */
 		
 		protected $dataProvider;	/* Whether the data provider could be found (boolean) */
@@ -98,6 +98,23 @@
 
 
 ##################################
+############# ERRORS #############
+##################################
+		
+		
+		/**
+		 * Returns a formatted error (HTML string)
+		 */
+		protected function Error( $msg ){
+			
+			$Error = new ModulesError;
+			
+			return $Error->fetch( $msg );
+			
+		}
+
+
+##################################
 ############# PUBLIC #############
 ##################################
 		
@@ -108,7 +125,7 @@
 		 *            calls methods in Handlers (they're all protected or private).
 		 *            It is important to notice that Handlers have no knowledge of pages
 		 *            or how the returned HTML string is going to be presented. Handlers
-		 *            only know about atomic elements, that PageCreator (or another
+		 *            only know about atomic elements, that ModulesCreator (or another
 		 *            class) might combine or not, in order to make pages.
 		 * @returns: an HTML string
 		 */
@@ -145,23 +162,23 @@
 		/**
 		 * Initialize and validate vars and config
 		 */
-		public function initialize(){
+		private function initialize(){
 		
 			# Make sure the type of page is valid
 			if( !is_callable(array($this, $this->type)) ){
-				return $this->displayError('ModulesBase: wrong type.');
+				return $this->Error('ModulesBase: wrong type.');
 			}
 			
 			# Attempt to load data provider
 			$this->dataProvider = $this->setDataProvider();
 			if( $this->dataProvider !== true ){
-				return $this->displayError( $this->dataProvider );
+				return $this->Error($this->dataProvider);
 			}
 			
 			# Store and pass to template engine main vars and objects
 			$configIntegrity = $this->config();
 			if( $configIntegrity !== true ){
-				return $this->displayError( $configIntegrity );
+				return $this->Error($configIntegrity);
 			}
 			
 			return true;
@@ -177,7 +194,9 @@
 			$class = "Mod_{$this->code}";
 			$path = MOD_DEFINITIONS_PATH."{$class}.mod.php";
 			
-			if( !is_file($path) ) return 'ModulesBase error: data provider not found';
+			if( !is_file($path) ){
+				return $this->Error('ModulesBase error: data provider not found');
+			}
 			
 			require_once( $path );
 			$this->DP = new $class($this->type, $this->code, $this->modifier);
@@ -219,18 +238,18 @@
 			# Fields configuration
 			$fieldsCfg = $this->DP->getFields();
 			if( empty($fieldsCfg) || !is_array($fieldsCfg)){
-				return 'ModulesBase error: no fields defined';
+				return $this->Error('ModulesBase error: no fields defined');
 			}
 			$this->sanitizeAndStoreFieldsCfg( &$fieldsCfg );
 			$this->assign('fieldsCfg', $fieldsCfg);
 			
 			# Fields for current page
 			if( !method_exists($this->DP, $method='get'.ucfirst($this->type).'Fields') ){
-				return 'ModulesBase error: requested type does not exist';
+				return $this->Error('ModulesBase error: requested type does not exist');
 			}
 			$fields = $this->DP->{'get'.ucfirst($this->type).'Fields'}();
 			if( is_null($fields) ){
-				return 'ModulesBase error: requested page does not exist';
+				return $this->Error('ModulesBase error: requested page does not exist');
 			}
 			if( !is_array($fields) ) $fields = array( $fields );
 			$this->sanitizeAndStoreFields( &$fields );
@@ -256,7 +275,7 @@
 			$this->TemplateEngine->assign('MODULES_TEMPLATES', MODULES_TEMPLATES);
 			
 			$name = preg_replace('/\.tpl$/', '', $name);
-			if( !is_file(MODULES_TEMPLATES.$name.'.tpl') ) $name = '404';
+			if( !is_file(MODULES_TEMPLATES.$name.'.tpl') ) $name = 'error';
 			$this->TemplateEngine->assign('pathToTemplate', MODULES_TEMPLATES.$name.'.tpl');
 			
 			return $this->TemplateEngine->fetch( 'global.tpl' );
@@ -388,20 +407,6 @@
 			
 			return '{'.join(",", $json).'}';
 		
-		}
-
-
-##################################
-######### ERROR HANDLING #########
-##################################
-		
-		/**
-		 * Shortcut to return a generic error page
-		 */
-		protected function displayError( $msg=NULL ){
-		
-			return $this->fetch('404', array('msg' => $msg));
-			
 		}
 
 

@@ -6,7 +6,7 @@
 		 *            access to its properties $type, $code and $modifier)
 	 */
 
-	class Module_Handler_Lists extends ModulesBase{
+	class Mod_h_Lists extends ModulesBase{
 		
 		/**
 		 * @overview: commonList at first just prints the frame in which the

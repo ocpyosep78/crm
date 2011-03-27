@@ -1,6 +1,6 @@
 <?php
 
-	class PageCreator{
+	class ModulesCreator{
 	
 		private $type;
 		private $code;
@@ -8,6 +8,18 @@
 		private $params;
 	
 		private $Handlers=array();	/* Handlers involved in fetching this page */
+		
+		
+		/**
+		 * Returns a formatted error (HTML string)
+		 */
+		private function Error( $msg ){
+			
+			$Error = new ModulesError;
+			
+			return $Error->fetch( $msg );
+			
+		}
 		
 		/**
 		 * @overview: Validates requested page type, makes sure current code
@@ -42,7 +54,9 @@
 		
 			# See if we have a handler (and a code given, as it's required)
 			$this->Handlers[] = $this->getHandler();
-			if(!$code || !$this->getCurrentHandler()) return NULL;
+			if(!$code || !$this->getCurrentHandler()){
+				return $this->Error('ModulesCreator error: requested element is not defined');
+			}
 			
 			return $this->getCurrentHandler()->getElement();
 		
@@ -56,7 +70,9 @@
 		 */
 		public function doTasks(){
 		
-			foreach( $this->Handlers as $Handler ) $Handler->doTasks();
+			foreach( $this->Handlers as $Handler ){
+				if( $Handler ) $Handler->doTasks();
+			}
 			
 		}
 		
@@ -77,16 +93,16 @@
 				case 'simpleList':
 				case 'comboList':
 					require_once( dirname(__FILE__).'/../handlers/Mod_h_Lists.class.php' );
-					$handler = 'Module_Handler_Lists';
+					$handler = 'Mod_h_Lists';
 					break;
 				case 'create':
 				case 'edit':
 					require_once( dirname(__FILE__).'/../handlers/Mod_h_Edit.class.php' );
-					$handler = 'Module_Handler_Edit';
+					$handler = 'Mod_h_Edit';
 					break;
 				case 'info':
 					require_once( dirname(__FILE__).'/../handlers/Mod_h_Info.class.php' );
-					$handler = 'Module_Handler_Info';
+					$handler = 'Mod_h_Info';
 					break;
 				default:
 					$handler = NULL;

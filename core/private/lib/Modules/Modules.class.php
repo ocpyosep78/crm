@@ -36,11 +36,11 @@
  * 
  * @structure: - Modules: is the only class of the group that has an interface
  *             for the outside. All its methods are public.
- *             - PageChecker: validates a page type for a given module. It
+ *             - ModulesChecker: validates a page type for a given module. It
  *             can parse page names to get module's code and element's type
  *             (i.e. usersInfo to module:users, type:info) and check whether
  *             a given page is available for a particular module.
- *             - PageCreator: is called by Modules only, and it handles page
+ *             - ModulesCreator: is called by Modules only, and it handles page
  *             creation, based on the elements a page should include (i.e.
  *             commonList page should have a comboList first, then a
  *             commonList).
@@ -92,20 +92,23 @@
 	require_once( dirname(__FILE__).'/lib/ModulesBase.class.php' );
 	require_once( dirname(__FILE__).'/lib/ModulesDefaults.class.php' );
 	
-	require_once( dirname(__FILE__).'/lib/PageChecker.class.php' );
-	require_once( dirname(__FILE__).'/lib/PageCreator.class.php' );
+	require_once( dirname(__FILE__).'/lib/ModulesError.class.php' );
+	require_once( dirname(__FILE__).'/lib/ModulesChecker.class.php' );
+	require_once( dirname(__FILE__).'/lib/ModulesCreator.class.php' );
 	
 
 	class Modules{
 	
-		private $PageChecker;
-		private $PageCreator;
+		private $ModulesChecker;
+		private $ModulesCreator;
+		
 		private $AjaxEngine;
 		
 		public function __construct(){
-		
-			$this->PageChecker = new PageChecker;
-			$this->PageCreator = new PageCreator;
+			
+			$this->ModulesChecker = new ModulesChecker;
+			$this->ModulesCreator = new ModulesCreator;
+			
 			$this->AjaxEngine = new Modules_ajaxEngine;
 		
 		}
@@ -116,7 +119,7 @@
 		 */
 		public function canBuildPage( $page ){
 			
-			return $this->PageChecker->canBuildPage( $page );
+			return $this->ModulesChecker->canBuildPage( $page );
 			
 		}
 	
@@ -128,9 +131,9 @@
 		 */
 		public function getElement($name, $modifier=NULL, $params=NULL){
 		
-			list($code, $type) = $this->PageChecker->parsePageName( $name );
+			list($code, $type) = $this->ModulesChecker->parsePageName( $name );
 			
-			return $this->PageCreator->getElement($type, $code, $modifier, $params);
+			return $this->ModulesCreator->getElement($type, $code, $modifier, $params);
 			
 		}
 	
@@ -145,9 +148,9 @@
 			
 			list($code, $type) = is_array($name)
 				? $name
-				: $this->PageChecker->parsePageName( $name );
+				: $this->ModulesChecker->parsePageName( $name );
 			
-			return $this->PageCreator->getPage($type, $code, $modifier, $params);
+			return $this->ModulesCreator->getPage($type, $code, $modifier, $params);
 			
 		}
 	
@@ -164,7 +167,7 @@
 		/**
 		 * @overview: Gets a page's HTML and prints it through the Ajax Engine's write
 		 *            method (by default it maps to Xajax#assign). It then calls
-		 *            PageCreator#doTasks for further actions (adding scripts, running
+		 *            ModulesCreator#doTasks for further actions (adding scripts, running
 		 *            scripts, modifying other parts of the page, etc.).
 		 * @returns: an ajax response object
 		 */
@@ -174,8 +177,7 @@
 			$HTML = $this->getPage($name, $modifier, $params);
 			
 			$this->AjaxEngine->write($writeTo, $HTML);
-			
-			$this->PageCreator->doTasks();
+			$this->ModulesCreator->doTasks();
 			
 			return $this->AjaxEngine->getResponse();
 		
