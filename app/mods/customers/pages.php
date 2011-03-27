@@ -11,50 +11,15 @@
 	
 	function page_customers( $modifier='customers' ){	/* Status: 'customers', 'potential', 'all' */
 	
-		return oLists()->printList('customers', $modifier);
+		oModules()->printPage('customersCommonList', $modifier);
+		
+		return oXajaxResp();
 		
 	}
 	
 	function page_potentialCustomers(){	/* Status: 'customers', 'potential', 'all' */
 		
 		return page_customers( 'potential' );
-		
-	}
-	
-	function page_customersInfo( $id ){
-		
-		$cust = oSQL()->getCustomer( $id );
-		if( empty($cust) ) return oNav()->getPage('customers', array(), 'Cliente no encontrado.');
-		
-		# Build seller's full name
-		$cust['seller'] = "{$cust['seller_name']} {$cust['seller_lastName']}";
-		
-		# Block Datos Básicos
-		oFormTable()->clear();
-		oFormTable()->emptyTxt = "(no ingresado)";
-		oFormTable()->addRow('Nº Cliente', $cust['number']);
-		oFormTable()->addRow('Nombre Comercial', $cust['customer']);
-		oFormTable()->addRow('Razón Social', $cust['legal_name']);
-		oFormTable()->addRow('R.U.T.', $cust['rut']);
-		oFormTable()->addRow('Ingresado', $cust['since']);
-		$blocks[] = oFormTable()->getTemplate();
-		
-		# Block Datos Básicos
-		oFormTable()->clear();
-		oFormTable()->emptyTxt = "(no ingresado)";
-		oFormTable()->addRow('Teléfono', $cust['phone']);
-		oFormTable()->addRow('Email', $cust['email']);
-		oFormTable()->addRow('Dirección', $cust['address']);
-		oFormTable()->addRow('Ciudad', $cust['location']);
-		oFormTable()->addRow('Vendedor', $cust['seller']);
-		$blocks[] = oFormTable()->getTemplate();
-		
-		oSmarty()->assign('custID', $id);
-		oSmarty()->assign('blocks', $blocks);
-		
-		oLists()->includeComboList('customers', $cust['since'] ? 'customers' : 'potential', $id);
-	
-		return oTabs()->start();
 		
 	}
 
@@ -137,13 +102,39 @@
 		
 	}
 	
-	function page_sales(){
 	
-		return oLists()->printList('sales', 'sale');
+	
+	
+	
+	
+	/* TEMP */
+	
+	function page_customersInfo( $id ){
+	
+		$HTML = oModules()->printPage('customersInfo', 'customers', $id);
+		if( !$HTML ) return oNav()->getPage('customers', array(), 'Cliente no encontrado.');
+	
+		return oTabs()->start( false );
 		
 	}
 	
+	/* TEMP */
+	function page_sales(){
 	
+		oModules()->printPage('salesCommonList', 'sale');
+		
+		return oXajaxResp();
+		
+	}
+	
+	/* TEMP */
+	function page_salesInfo( $id ){
+	
+		oModules()->printPage('salesInfo', 'sale', $id);
+		
+		return oXajaxResp();
+		
+	}
 	
 	/* TEMP */
 	function page_registerSales(){
