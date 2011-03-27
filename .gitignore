@@ -1,22 +1,22 @@
 # ignore whole folder
 (docs)/
-app/images/temp/
-#
+/app/images/temp/
+
 # ignore folder content
 /app/images/users/*
 /app/images/products/*
 /logs/*
 /sql/*
 /temp/*
-#
+
 # ignore files globally
 Thumbs.db
-#
+
 # ignore specific files
 /app/chat.php
 /app/cfg/local.cfg.php
 /update.bat
-#
+
 # do not ignore these files
 !/app/images/users/admin.png
 !/app/images/users/master.png

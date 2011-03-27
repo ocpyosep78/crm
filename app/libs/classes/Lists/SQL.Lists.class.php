@@ -29,10 +29,10 @@
  * See List class for additional info to get a list running.
  */
 	
-	require_once( MODULES_PATH.'Modules.class.php' );
+	require_once( CONNECTION_PATH );
 
 
-	class SQL_Lists extends ModulesBase{
+	class SQL_Lists extends Connection{
 		
 /***************
 ** H A S H E S

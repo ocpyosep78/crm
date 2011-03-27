@@ -99,7 +99,7 @@
 					$FormTable = new FormTable;
 				break;
 				case 'Lists':
-					$Lists = new Lists(NULL, $code, NULL, NULL, NULL);	/* TEMP */
+					$Lists = new Lists;	/* TEMP */
 				break;
 				case 'Modules':
 					$Modules = new Modules( $code );
