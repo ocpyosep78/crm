@@ -126,26 +126,6 @@
 		/**
 		 * 
 		 */
-		public function runAjaxCall(){
-			
-			$integrityCheckResult = $this->initialize();
-			
-			# Let the right method handle the rest, depending on $this->type
-			if( $integrityCheckResult !== true){
-				$this->AjaxEngine->displayError( $integrityCheckResult );
-			}
-			
-			# Call the function corresponding to given type
-			$res = $this->{$this->type}();
-			
-			# If no result is returned (or NULL), then run #doTasks
-			if( is_null($res) ) return $this->doTasks();
-			
-		}
-		
-		/**
-		 * 
-		 */
 		public function doTasks(){
 		
 			$fixedParams = "'{$this->type}', '{$this->code}', '{$this->modifier}'";

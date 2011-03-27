@@ -62,12 +62,10 @@
  *             		When done fetching, it calls Handler#doTasks to have
  *             		each element do further tasks after printing (i.e. for
  *             		calling JS functions, adding styles, etc.)
- *             #ModulesAjaxCall(str:$type, str:$code, str:$modifier, mixed:$params)
- *                  is solely used for ajax calls issued by scripts that
- *             		Modules set itself (via a Handler, that is). It doesn't
- *             		perform any kind of validation or filter here. It forwards
- *             		params to the PageCreator#runAjaxCall and returns an Ajax
- *             		response object, whatever the outcome was.
+ *             #ajaxPrintPage(str:$name, str:$modifier, mixed:$params) used
+ *                  to print elements' HTML through ajax. $params.['writeTo']
+ *                  is the target element's ID. If omitted, the target is the
+ *                  page main element (PAGE_CONTENT_BOX constant).
  * 
  * @modules: adding modules requires only a definition class that follows the
  *           template's structure. Within the template you'll find documentation
@@ -130,7 +128,7 @@
 		 */
 		public function getElement($name, $modifier=NULL, $params=NULL){
 		
-			list($type, $code) = $this->PageChecker->parsePageName( $name );
+			list($code, $type) = $this->PageChecker->parsePageName( $name );
 			
 			return $this->PageCreator->getElement($type, $code, $modifier, $params);
 			
@@ -144,44 +142,43 @@
 		 * @returns: an HTML string
 		 */
 		public function getPage($name, $modifier=NULL, $params=NULL){
-		
-			list($type, $code) = $this->PageChecker->parsePageName( $name );
+			
+			list($code, $type) = is_array($name)
+				? $name
+				: $this->PageChecker->parsePageName( $name );
 			
 			return $this->PageCreator->getPage($type, $code, $modifier, $params);
 			
 		}
 	
 		/**
-		 * @overview: Gets a page's HTML using #getPage own method, and prints it through
-		 *            the Ajax Engine's write method (by default it maps to Xajax#assign).
-		 *            After printing, it calls PageCreator#doTasks( $params ) for further
-		 *            actions (adding scripts, running scripts, modifying other parts of
-		 *            the page, etc.).
-		 * @returns: an HTML string
+		 * @overview: Gets a page's HTML and prints it
+		 * @returns: NULL
 		 */
 		public function printPage($name, $modifier=NULL, $params=NULL){
-		
-			$HTML = $this->getPage($name, $modifier, $params);
 			
-			$this->AjaxEngine->write(PAGE_CONTENT_BOX, $HTML);
-			$this->PageCreator->doTasks( $params );
-			
-			return $HTML;
+			echo $this->getPage($name, $modifier, $params);
 		
 		}
-		
+	
 		/**
-		 * Handles all Ajax calls to Modules. First parameter is always the type
-		 * of request. All other arguments depend of the type of request (both in
-		 * number as in order).
+		 * @overview: Gets a page's HTML and prints it through the Ajax Engine's write
+		 *            method (by default it maps to Xajax#assign). It then calls
+		 *            PageCreator#doTasks for further actions (adding scripts, running
+		 *            scripts, modifying other parts of the page, etc.).
+		 * @returns: an ajax response object
 		 */
-		public function ModulesAjaxCall($type, $code, $modifier=NULL, $params=NULL){
+		public function ajaxPrintPage($name, $modifier=NULL, $params=NULL){
+			
+			$writeTo = empty($params['writeTo']) ? PAGE_CONTENT_BOX : $params['writeTo'];
+			$HTML = $this->getPage($name, $modifier, $params);
+			
+			$this->AjaxEngine->write($writeTo, $HTML);
+			
+			$this->PageCreator->doTasks();
+			
+			return $this->AjaxEngine->getResponse();
 		
-			$params['ajaxCall'] = true;
-			$this->PageCreator->runAjaxCall($type, $code, $modifier, $params);
-			
-			return oXajaxResp();
-			
 		}
 	
 	}

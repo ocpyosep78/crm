@@ -4,7 +4,7 @@
 	
 		private function supportedTypes(){
 		
-			return array('commonList', 'simpleList', 'create', 'edit', 'info');
+			return array('commonList', 'innerCommonList', 'simpleList', 'create', 'edit', 'info');
 		
 		}
 		
@@ -21,8 +21,8 @@
 			if( isset($parts[2]) ) $parts[2][0] = strtolower( $parts[2][0] );
 			
 			return array(
-				empty($parts) ? NULL : $parts[2],	# type
 				empty($parts) ? NULL : $parts[1],	# code
+				empty($parts) ? NULL : $parts[2],	# type
 			);
 			
 		}
@@ -35,7 +35,7 @@
 	
 		public function canBuildPage( $name ){
 		
-			list($type, $code) = $this->parsePageName( $name );
+			list($code, $type) = $this->parsePageName( $name );
 		
 			return $this->canBuildPageFor($type, $code);
 		

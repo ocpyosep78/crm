@@ -1,6 +1,6 @@
 /**
  * Pending: #comboList should rely only on Modules (currently it calls getPage)
- *          same goes for commonList rows' onclick (see #updateCommonList)
+ *          same goes for commonList rows' onclick (see #innerCommonList)
  */
  
 var MODULES_IMAGES = 'core/private/lib/Modules/static/images/';
@@ -61,12 +61,12 @@ var Modules = {
 	commonList: function (el, atts){					   /*** COMMON LIST ***/
 		// Enable column search and do a first search (without filters)
 		new ListSearch(el, atts).updateList();
-		// SyncTitles applies to commonList, but is called by updateCommonList,
-		// so it needs to be made available to updateCommonList on list update
+		// SyncTitles applies to commonList, but is called by innerCommonList,
+		// so it needs to be made available to innerCommonList on list update
 		el.getElement('.listWrapper').ST = new SyncTitles(el, atts).sync();
 	},
-	updateCommonList: function(el, atts){
-		// updateCommonList is usually loaded within a list, so it might
+	innerCommonList: function(el, atts){
+		// innerCommonList is usually loaded within a list, so it might
 		// need to sync titles width with it. If that's the case, SyncTitles
 		// object should be found in one of the parents, so we search for it
 		var oWrapper = el, ST = null;
@@ -198,7 +198,7 @@ function ListSearch(el, atts){
 	var oInput = oBox.getElement('INPUT');
 	var oList = el.getElement('.listWrapper');
 	var oFields = [];
-	var type = 'update' + atts.type.capitalize();
+	var type = 'inner' + atts.type.capitalize();
 	// Public methods
 	this.show = function( btn ){
 		that.hide();
@@ -218,8 +218,8 @@ function ListSearch(el, atts){
 	};
 	this.updateList = function( filters ){
 		oList.id = 'listWrapper_' + newSID().toString();
-		var params = {uID:oList.id, filters:filters||[], src:atts.params.src||''};
-		xajax_ModulesAjaxCall(type, atts.code, atts.modifier, params);
+		var params = {writeTo:oList.id, filters:filters||[], src:atts.params.src||''};
+		xajax_ajaxPrintPage([atts.code, type], atts.modifier, params);
 		return that;
 	};
 	// Add search buttons to each title field and set them up

@@ -116,7 +116,7 @@
 					
 		}
 		/* alias to getCommonListFields, needed when updating list */
-		public function getUpdateCommonListFields(){
+		public function getInnerCommonListFields(){
 			return $this->getCommonListFields();
 		}
 		

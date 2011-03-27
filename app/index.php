@@ -140,7 +140,7 @@
 		oXajax()->registerFunction('takeCall');
 		oXajax()->registerFunction(array('updateList', oLists(), 'updateList'));
 		oXajax()->registerFunction(array('switchTab', oTabs(), 'switchTab'));
-		oXajax()->registerFunction(array('ModulesAjaxCall', oModules(), 'ModulesAjaxCall'));
+		oXajax()->registerFunction(array('ajaxPrintPage', oModules(), 'ajaxPrintPage'));
 	}
 
 

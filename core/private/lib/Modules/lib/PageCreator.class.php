@@ -18,7 +18,6 @@
 		 */
 		public function getPage($type, $code, $modifier=NULL, $params=NULL){
 		
-			$args = func_get_args();
 			$HTML = $this->getElement($type, $code, $modifier, $params);
 			
 			# Add comboList to 'commonList', 'info', 'create', 'edit' pages
@@ -31,6 +30,11 @@
 			
 		}
 		
+		/**
+		 * @overview: given a $type, requests a handler for it, and calls its
+		 *            getElement method.
+		 * @returns: an HTML string
+		 */
 		public function getElement($type, $code, $modifier=NULL, $params=NULL){
 			
 			# Store main parameters in case we need them later
@@ -40,30 +44,7 @@
 			$this->Handlers[] = $this->getHandler();
 			if(!$code || !$this->getCurrentHandler()) return NULL;
 			
-			# Get the actual HTML
 			return $this->getCurrentHandler()->getElement();
-		
-		}
-		
-		/**
-		 * @overview: Ajax calls might be a lot less standard, so here we let
-		 *            the code in the right handler class handle it entirely.
-		 *            We simply pass all received parameters and forget about
-		 *            it. 
-		 * @returns: As in #getPage, we call and return Handler#doTasks
-		 */
-		public function runAjaxCall($type, $code, $modifier=NULL, $params=NULL){
-		
-			# Store main parameters in case we need them later
-			$this->storeProperties($type, $code, $modifier, $params);
-		
-			# See if we have a handler (and a code given, as it's required)
-			$this->Handlers[] = $this->getHandler();
-			
-			# Pass params to the handler, and it's not our problem anymore
-			if( $code && $this->getCurrentHandler() ){
-				$this->getCurrentHandler()->runAjaxCall();
-			}
 		
 		}
 		
@@ -92,19 +73,19 @@
 			
 			switch( $type ){
 				case 'commonList':
-				case 'updateCommonList':
+				case 'innerCommonList':
 				case 'simpleList':
 				case 'comboList':
-					require_once( dirname(__FILE__).'/../pages/Module_Lists.class.php' );
+					require_once( dirname(__FILE__).'/../handlers/Mod_h_Lists.class.php' );
 					$handler = 'Module_Handler_Lists';
 					break;
 				case 'create':
 				case 'edit':
-					require_once( dirname(__FILE__).'/../pages/Module_Edit.class.php' );
+					require_once( dirname(__FILE__).'/../handlers/Mod_h_Edit.class.php' );
 					$handler = 'Module_Handler_Edit';
 					break;
 				case 'info':
-					require_once( dirname(__FILE__).'/../pages/Module_Info.class.php' );
+					require_once( dirname(__FILE__).'/../handlers/Mod_h_Info.class.php' );
 					$handler = 'Module_Handler_Info';
 					break;
 				default:

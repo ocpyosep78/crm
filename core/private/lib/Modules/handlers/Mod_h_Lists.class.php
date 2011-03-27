@@ -8,34 +8,35 @@
 
 	class Module_Handler_Lists extends ModulesBase{
 		
+		/**
+		 * @overview: commonList at first just prints the frame in which the
+		 *            actual list will be loaded, and its initialize function
+		 *            will request the list to be loaded (innerCommonList)
+		 *            from the client, as soon as the frame is ready.
+		 */
 		protected function commonList(){
 		
 			return $this->fetch( 'lists/commonList' );
 			
 		}
-	
-		protected function updateCommonList(){
+		
+		/**
+		 * @overview: this is the actual list that goes within a commonList.
+		 *            There's nothing against calling it on its own as any
+		 *            regular element (to present it without the frame or in
+		 *            another frame, maybe)
+		 */
+		protected function innerCommonList(){
 			
 			# Get Data
-			$src = $this->params['src'];
-			$data = $this->getListData($src ? $src : 'common', $this->params['filters']);
+			$src = !empty($this->params['src']) ? $this->params['src'] : 'common';
+			$data = $this->getListData($src, $this->params['filters']);
 			$this->TemplateEngine->assign('data', $data);
 			
-			$HTML = $this->fetch( 'lists/updateCommonList' );
+/*			oSmarty()->assign('axns', $static['actions']);
+			oSmarty()->assign('tools', $static['tools']); */
 			
-			$this->AjaxEngine->write($this->params['uID'], $HTML);
-			
-/*			oSmarty()->assign('params', $static['params']);
-			oSmarty()->assign('fields', $static['fields']);
-			oSmarty()->assign('data', isset($data) ? $data : array());
-			oSmarty()->assign('axns', $static['actions']);
-			oSmarty()->assign('tools', $static['tools']);
-			oSmarty()->assign('infoPage', "{$this->code}Info");
-			
-			addAssign('TableSearchCache', 'innerHTML', $this->template('list'));
-			addScript("TableSearch.showResults('{$uID}');");
-			
-			return addScript("\$('listWrapper').update();"); */
+			return $this->fetch( 'lists/innerCommonList' );
 		
 		}
 		
@@ -103,7 +104,7 @@
 		
 
 ##################################
-############ GET DATA ############
+############ PRIVATE #############
 ##################################
 		
 		/**

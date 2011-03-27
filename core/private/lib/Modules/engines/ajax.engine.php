@@ -22,6 +22,12 @@
 		
 		}
 		
+		public function getResponse(){
+		
+			return oXajaxResp();
+		
+		}
+		
 		public function displayError( $msg ){
 			
 			return showStatus( $msg );
