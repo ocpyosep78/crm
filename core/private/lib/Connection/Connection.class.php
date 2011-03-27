@@ -43,18 +43,45 @@
 ***************/
 		
 		public function __construct( $params=NULL ){
+				
+			$this->isDevel = (getSes('id_profile') == 1) || DEVELOPER_MODE;
 		
 			if( is_null($params) ) $params = getConnectionParams();
-		
+			
 			$this->conn = mysql_connect($params['host'], $params['user'], $params['pass'], true)
 				or die('Unable to connect to database.');
-			mysql_select_db($params['db'], $this->conn)
-				or die('Unable to open database.');
-				
-			$this->isDevel = (getSes('id_profile') == 1);
+			if( !mysql_select_db($params['db'], $this->conn) ){
+				$this->isDevel
+					? $this->createDB( $params )
+					: die('Unable to open database.');
+			}
 			
 			$this->clear();
 			$this->clearMessages();
+			
+		}
+		
+		private function createDB( $params ){
+			
+			$HTML = <<<EOF
+			<div style='position:absolute; top:30%; width:100%; text-align:center;'>
+				<h1 style='color:300;'>No se puede abrir la base de datos</h1>
+				
+				<p>Pulse <strong>Crear Base de Datos</strong> para generar la base de datos de la aplicación</p>
+				
+				<p>	Si cree que puede haber un error en la configuración, revise los archivos<br />
+					app/cfg/config.cfg.php y app/cfg/local.cfg.php, asegúrese que el valor de<br />
+					la constante CRM_DB sea el correcto y recargue la página.</p>
+				
+				<input type='button' value='Crear Base de Datos' onclick="location.href = 'createDB.php';">
+				
+			</div>
+EOF;
+				
+			$HTML .= '<p>La base de datos actual es `'.CRM_DB.'`</p>';
+			
+			echo $HTML;
+			die();
 			
 		}
 		
@@ -121,7 +148,9 @@
 			$this->clearMessages();
 			
 			$this->sql = $sql;
+			
 			$res = mysql_query($this->sql , $this->conn);
+			if( !is_resource($this->conn) ) die('aquí');
 			
 			$this->findError();
 			$ans->buildAnswer($this->error, mysql_affected_rows($this->conn));
