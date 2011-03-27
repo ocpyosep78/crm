@@ -433,7 +433,6 @@ TABLE.data TD{
 }
 TABLE.data TD DIV{
 	min-width:60px;
-	white-space:nowrap;
 }
 .tableOutterWrapper{
 	padding:5px;
