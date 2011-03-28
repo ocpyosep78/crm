@@ -24,14 +24,14 @@
 
 <table {if $simpleListID}id='{$simpleListID}' {/if}class='data simpleList'>
 
-  {foreach from=$fields key=field item=name}											{* TITLES *}
-	<th for='{$field}'>{$name}</th>
+  {foreach from=$fields key=field item=atts}											{* TITLES *}
+	<th for='{$field}'>{$atts.name}</th>
   {/foreach}
   	<th>&nbsp;</th>
   
   {foreach from=$data key=id item=item}													{* ITEMS *}
 	<tr for='{$id}' bgcolor='{cycle values=$cycleValues}' class='listRows'>
-	  {foreach from=$fields key=field item=x}<td>{$item.$field}</td>{/foreach}			{* CELLS *}
+	  {foreach from=$fields key=field item=atts}<td>{$item.$field}</td>{/foreach}		{* CELLS *}
 	  <td class='simpleListTools'>
 		{foreach from=$item.tools key=axn item=permit}									{* TOOLS *}
 		  {if $Permits->can($permit)}

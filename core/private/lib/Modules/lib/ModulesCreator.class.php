@@ -110,7 +110,7 @@
 			
 			return is_null($handler)
 				? NULL
-				: new $handler($type, $this->code, $this->modifier, $this->params, $this);
+				: new $handler($type, $this->code, $this->modifier, $this->params);
 			
 		}
 		

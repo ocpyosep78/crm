@@ -10,8 +10,6 @@
 
 
 /* TEMP : this script is being used as a testing suite of pages for the development of Modules library */
-
-
 	
 	function page_customers( $modifier='customers' ){	/* Status: 'customers', 'potential', 'all' */
 		return oModules()->ajaxPrintPage('customersCommonList', $modifier);
@@ -23,11 +21,11 @@
 		oModules()->ajaxPrintPage('customersInfo', 'customers', $id);
 		return oTabs()->start( false );
 	}
-	function page_createCustomers(){
-		return page_editCustomers();
-	}
 	function page_editCustomers( $id=NULL ){
 		return oModules()->ajaxPrintPage('customersEdit', NULL, $id);
+	}
+	function page_createCustomers(){
+		return page_editCustomers();
 	}
 	
 	

@@ -90,6 +90,7 @@
 	require_once( dirname(__FILE__).'/engines/template.engine.php' );
 	
 	require_once( dirname(__FILE__).'/lib/ModulesBase.class.php' );
+	require_once( dirname(__FILE__).'/lib/ModulesActions.class.php' );
 	require_once( dirname(__FILE__).'/lib/ModulesDefaults.class.php' );
 	
 	require_once( dirname(__FILE__).'/lib/ModulesError.class.php' );
@@ -165,19 +166,35 @@
 		}
 	
 		/**
-		 * @overview: Gets a page's HTML and prints it through the Ajax Engine's write
-		 *            method (by default it maps to Xajax#assign). It then calls
-		 *            ModulesCreator#doTasks for further actions (adding scripts, running
-		 *            scripts, modifying other parts of the page, etc.).
+		 * @overview: Gets a page's HTML and prints it through the Ajax Engine's
+		 *            write method (by default it maps to Xajax#assign). It then
+		 *            calls ModulesCreator#doTasks for further actions (scripts,
+		 *            modifying other parts of the page, etc.).
 		 * @returns: an ajax response object
 		 */
 		public function ajaxPrintPage($name, $modifier=NULL, $params=NULL){
-			
-			$writeTo = empty($params['writeTo']) ? PAGE_CONTENT_BOX : $params['writeTo'];
+		
+			$writeTo = is_array($params) && !empty($params['writeTo'])
+				? $params['writeTo']
+				: PAGE_CONTENT_BOX;
+				
 			$HTML = $this->getPage($name, $modifier, $params);
 			
 			$this->AjaxEngine->write($writeTo, $HTML);
 			$this->ModulesCreator->doTasks();
+			
+			return $this->AjaxEngine->getResponse();
+		
+		}
+	
+		/**
+		 * @overview: actions to be performed over an item, always through ajax
+		 * @returns: an ajax response object
+		 */
+		public function ajaxDo($axn, $code, $modifier, $id){
+		
+			$Actions = new ModulesActions($axn, $code, $modifier, $id);
+			$Actions->ajaxDo();
 			
 			return $this->AjaxEngine->getResponse();
 		

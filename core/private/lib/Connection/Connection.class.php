@@ -258,8 +258,9 @@ EOF;
 		private function res2named($res, $keys=array()){
 			$this->formattedRes = array();
 			# Make sure keys are given as array, or fix it to be
-			if( !is_array($keys) ) $keys = array($keys);
-			$cntKeys = count($keys);	# Amount of keys
+			$keys = (array)$keys;
+			# Amount of keys
+			$cntKeys = count( $keys );
 			# Browse all rows and fix each index with key fields
 			while( $data=mysql_fetch_assoc($res) ){
 				$arrIDs = array();

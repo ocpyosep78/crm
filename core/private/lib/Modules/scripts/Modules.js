@@ -1,8 +1,4 @@
-/**
- * Pending: #comboList should rely only on Modules (currently it calls getPage)
- *          same goes for commonList rows' onclick (see #innerCommonList)
- */
- 
+
 var MODULES_IMAGES = 'core/private/lib/Modules/static/images/';
 
 
@@ -11,10 +7,18 @@ var MODULES_IMAGES = 'core/private/lib/Modules/static/images/';
  * You can edit these methods and properties to your own external tools
  */
 var ModulesPortability = {
-	// Map #showError to a function that handles warning/error output for the user
-	// It receives only one parameter: an error description string
+	// Map #showError to a function that handles warning/error output for the
+	// user. It receives only one parameter: an error description string.
 	// By default, it uses AppTemplate's built-in function showStatus(msg, type)
-	showError: function( msg ){ showStatus(msg, 'error'); }
+	showError: function(){ showStatus.apply(window, arguments); },
+	// Map #printHTML to the function that will request a page to be printed
+	// through ajax.
+	// By default, that is xajax_ajaxPrintPage
+	printHTML: function(){ xajax_ajaxPrintPage.apply(window, arguments); },
+	getPage: function(e, code, type, modifier, params){
+		getPage(e, code + type.capitalize(), params);
+	},
+	doAction: function(){ xajax_ajaxDo.apply(window, arguments); }
 };
 
 
@@ -22,13 +26,14 @@ var ModulesPortability = {
 var Modules = {
 	/**************************************************************************/
 	/********************************* TOOLS **********************************/
-	showError: function( msg ){
-		return ModulesPortability.showError( msg );
-	},
+	showError: ModulesPortability.showError,
+	printHTML: ModulesPortability.printHTML,
+	getPage: ModulesPortability.getPage,
+	do: ModulesPortability.doAction,
 	/**************************************************************************/
 	/********************************* COMMON *********************************/
 	initialize: function( type ){
-		var Elements = [], that = this;
+		var Elements = [];
 		// Collect uninitialized elements of type 'type', ignore the rest
 		$$('.Modules_Element.Wrapper_of_Type_'+type).forEach(function(dom){
 			if( dom.initialized ) return;
@@ -42,19 +47,18 @@ var Modules = {
 			Elements.push( {dom:dom, atts:dom.Atts} );
 		});
 		// We call the handler method on each element
-		Elements.forEach(function(el){
-			that[type].call(that, el.dom, el.atts);
-		});
+		Elements.forEach(function(el){ this[type](el.dom, el.atts); }, this);
 	},
 	/**************************************************************************/
 	/******************************** HANDLERS ********************************/
 	info: function(el, atts){									  /*** INFO ***/
-		return test( atts );
+		return; test( atts );
 	},
 	comboList: function(el, atts){							/*** COMBO LIST ***/
+		var that = this;
 		$$('.comboList').forEach(function(cl){
-			cl.addEvent('change', function(e){
-				getPage(e, atts.code + 'Info', [this.value]);												/* TEMP */
+			cl.evt = cl.addEvent('change', function(e){
+				that.getPage(e, atts.code, 'info', atts.modifier, [this.value]);
 			});
 		});
 	},
@@ -66,6 +70,7 @@ var Modules = {
 		el.getElement('.listWrapper').ST = new SyncTitles(el, atts).sync();
 	},
 	innerCommonList: function(el, atts){
+		var that = this;
 		// innerCommonList is usually loaded within a list, so it might
 		// need to sync titles width with it. If that's the case, SyncTitles
 		// object should be found in one of the parents, so we search for it
@@ -74,42 +79,28 @@ var Modules = {
 		if( ST ) ST.sync();
 		// Add highlight effects to list's rows
 		listRowsHighlight( el );
-		// Add link to infoPage for each item (rows' onclick)
+		// Configure tools behavior: set which ones need confirmation
+		var ask = { delete: '¿Realmente desea eliminar este elemento?',
+					block: '¿Realmente desea bloquear este elemento?' };
+		var sendRequest = function(axn, id){
+			(!ask[axn] || confirm(ask[axn]))
+				&& that.do(axn, atts.code, atts.modifier, id);
+		};
+		// Add event handlers
 		el.getElements('.listRows').forEach(function(row){
 			var id = row.getAttribute('FOR');
-			if( id ) row.addEvent('click', function(e){
-				getPage(e, atts.code + 'Info', [id]);														/* TEMP */
+			if( !id ) return;
+			// Link to info page for each item row
+			row.addEvent('click', function(e){
+				that.getPage(e, atts.code, 'info', atts.modifier, [id]);
 			});
-		});
-try{
-	
-		return;
-		
-		$$('.tblTools').forEach(function(tool){
-			var axn = tool.getAttribute('AXN');
-			var id = tool.getAttribute('FOR');
-			tool.addEvent('click', function(e){
+			// Links for each row's tools
+			row.getElement('.innerListTools').addEvent('click', function(e){
 				e.stop();
-				switch( axn ){
-					case 'delete':
-						if( confirm('¿Realmente desea eliminar este elemento?') ){
-							var handler = window['xajax_delete' + this.code.capitalize()];
-							if( handler ) handler(id, this.modifier);
-						};
-						break;
-					case 'block':
-						if( confirm('¿Realmente desea bloquear este elemento?') ){
-							var handler = window['xajax_block' + this.code.capitalize()];
-							if( handler ) handler(id, this.modifier);
-						};
-						break;
-					default: 
-						getPage(e, axn + this.code.capitalize(), [id, this.modifier]);
-						break;
-				};
+				if( e.target.nodeName.toLowerCase() != 'img' ) return;
+				sendRequest(e.target.getAttribute('TOOL'), id);
 			});
 		});
-}catch(e){ test(e); };
 	},
 	
 	
@@ -190,7 +181,38 @@ try{
 	}
 };
 
+
+
+/**
+ * @overview: adds animation to lists' rows on mouseover
+ * @arguments: Element:el[, string:fromColor[, string:toColor]]
+ * @returns: the list passed as first argument
+ * @notes: can call it with different params as many times as you wish
+ *         it will destroy previous handler and create one with new params
+ * @disclaimer: this tool is tied to AppTemplate's library 'Modules', so
+ *              it requires mootools and rows need to be of class listRows
+ */
+function listRowsHighlight(el, from, to){
+	el.getElements('.listRows').forEach(function(row){
+		row.removeEvent('mouseover', row.ref);
+		row.addEvent('mouseover', row.ref=function(){
+			this.highlight(from||'#f0f0e6', to||'#e0e0e6');
+		});
+	});
+	return el;
+};
+
+
+
+/**
+ * 
+ */
 function ListSearch(el, atts){
+	/**************************************************************************/
+	/********************************* TOOLS **********************************/
+	var showError = ModulesPortability.showError;
+	var printHTML = ModulesPortability.printHTML;
+	// Global reference to self
 	var that = el.ListSearch = this;
 	// Define most used elements and vars as private properties
 	var oBox = el.getElement('.listSearch');
@@ -219,7 +241,7 @@ function ListSearch(el, atts){
 	this.updateList = function( filters ){
 		oList.id = 'listWrapper_' + newSID().toString();
 		var params = {writeTo:oList.id, filters:filters||[], src:atts.params.src||''};
-		xajax_ajaxPrintPage([atts.code, type], atts.modifier, params);
+		printHTML([atts.code, type], atts.modifier, params);
 		return that;
 	};
 	// Add search buttons to each title field and set them up
@@ -261,6 +283,9 @@ function ListSearch(el, atts){
 
 
 
+/**
+ * 
+ */
 function SyncTitles(el, atts){
 	var that = this;
 	var oBox = el.getElement('.listTitles');
@@ -274,7 +299,7 @@ function SyncTitles(el, atts){
 			posX.push( $(cell).getPosition().x );
 		});
 		// ...and apply that info to titles
-		var startX = posX.length ? posX[0] - 5 : null;
+		var startX = posX.length ? posX[0] : null;
 		var availWidth = parseInt(oBox.getStyle('width'));
 		var defWidth = availWidth / (oTitles.length||1) - 10;
 		oTitles.forEach(function(oTtl, i){
@@ -288,24 +313,4 @@ function SyncTitles(el, atts){
 	// Re-sync if page is resized or menu is hidden
 	window.addEvent('resize', that.sync);
 	window.addEvent('menutoggled', that.sync);
-};
-
-
-/**
- * @overview: adds animation to lists' rows on mouseover
- * @arguments: Element:el[, string:fromColor[, string:toColor]]
- * @returns: the list passed as first argument
- * @notes: can call it with different params as many times as you wish
- *         it will destroy previous handler and create one with new params
- * @disclaimer: this tool is tied to AppTemplate's library 'Modules', so
- *              it requires mootools and rows need to be of class listRows
- */
-function listRowsHighlight(el, from, to){
-	el.getElements('.listRows').forEach(function(row){
-		row.removeEvent('mouseover', row.ref);
-		row.addEvent('mouseover', row.ref=function(){
-			this.highlight(from||'#f0f0e6', to||'#e0e0e6');
-		});
-	});
-	return el;
 };

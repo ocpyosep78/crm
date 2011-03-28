@@ -1,34 +1,24 @@
 {if not $data}
-	<div class='commonListEmpty'>
+	<div class='innerListEmpty'>
 		Sin resultados (ningún {$name|lower} cumple con los criterios de búsqueda aplicados)
 	</div>
 {else}
-	<table class='data'>
+	<table class='innerList'>
 	  {foreach from=$data key=id item=row}
 		<tr bgcolor='{cycle values=$cycleValues}' class='listRows' for='{$id}'
 		  {if $tipField && isset($row.$tipField)}title='{$row.$tipField}'{/if}>
-		  {foreach from=$fields item=field}
-			<td><div>{$row.$field|wordwrap:35:"<br />\n"}</div></td>
+		  {foreach from=$fields key=field item=atts}
+			<td><div>{$row.$field|wordwrap:30:"<br />\n"}</div></td>
 		  {/foreach}
-		  <td>{* Tools here *}</td>
+		  <td class='innerListTools'>
+			<div>
+			  {foreach from=$tools key=code item=tool}
+				<img tool='{$code}' src='{$MODULES_IMAGES}buttons/{$code}.png'
+				  alt='{$tool}' title='{$tool} {$name|lower}' />
+			  {/foreach}
+			</div>
+		  </td>
 		</tr>
 	  {/foreach}
 	</table>
 {/if}
-
-
-
-
-
-
-
-
-
-{*			{foreach from=$tools key=axn item=permit}
-			  {if $Permits->can($permit)}
-				<div class='tblTools' for='{$id}' axn='{$axn}'>
-				  <img src='{$MODULES_IMAGES}buttons/{$axn}.png' alt='{$axns[$axn]}'
-					title='{$axns[$axn]} {$params.name|lower}' />
-				</div>
-			  {/if}
-			{/foreach} *}

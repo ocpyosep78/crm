@@ -1,22 +1,18 @@
 <div class='infoData'>
 
-  <span>Detalle de {$name}</span>
+  <span>Detalle de {$name}{if $DEVELOPER_MODE} <strong>(objectID: {$params}){/if}</strong></span>
 
   {foreach from=$blocks item=block}
-	<div>
 	  <div>
 		<table>
-		  {foreach from=$block item=field}
-			{if isset($fieldsCfg.$field)}
-			  <tr{if $fieldsCfg.$field.hidden || not $fieldsCfg.$field.name} style='display:none;'{/if}>
-				<th>{$fieldsCfg.$field.name}</th>
-				<td><div>{$data.$field}</div></td>
-			  </tr>
-			{/if}
+		  {foreach from=$block key=field item=atts}
+			<tr{if $atts.hidden || not $atts.name} style='display:none;'{/if}>
+			  <th>{$atts.name}</th>
+			  <td><div>{$data.$field}</div></td>
+			</tr>
 		  {/foreach}
 		</table>
 	  </div>
-	</div>
   {/foreach}
   
 </div>

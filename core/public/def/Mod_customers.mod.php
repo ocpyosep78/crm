@@ -51,7 +51,7 @@
 		 * @returns: Array of code => attributes arrays. Attributes might have the following fields:
 				name		Screen name for this field
 				class		a class to add to this field, intended for CSS purposes
-				type		From: text, image, combo (defaults to text)
+				type		From: text, image, area, combo (defaults to text)
 							image will produce an image in infoPage, a file input in createPage and both in editPage
 							for lists, images will be shown miniaturized in lists, and link to the image in _blank page
 							combo will produce text in infoPage, a combo in both createPage and editPage
@@ -63,6 +63,7 @@
 		 * by default, infoPage, createPage and editPage will use all fields that are not hidden
 		 * to override this behaviour, use getCreateFields or getEditFields (infoPage cannot override it)
 		 * if one of these is created and the other one isn't, both will point to the one that is defined
+		 * @notes: See ModulesBase@fieldTypes for a list of possible field types
 		 */
 		public function getFields(){
 		
@@ -98,9 +99,9 @@
 		
 		/**
 		 * @overview: The code of the field that will be shown as a tooltip
-		 * for the row, in lists.
+		 * for each row in lists.
 		 * @returns: string
-		 * @default: defaults to '' if commented out (no tooltip shown)
+		 * @default: if commented out, no tooltip will be shown
 		 */
 /*		public function getTipField(){
 		}/**/
@@ -110,7 +111,7 @@
 		/**
 		 * @overview: list of fields to be shown in commonList
 		 * @returns: a numeric array with field codes
-		 * @default: if commented out, no page will be available
+		 * @default: if commented out, commonList won't be available
 		 */
 		public function getCommonListFields(){
 		
@@ -121,7 +122,7 @@
 		/**
 		 * @overview: list of fields to be shown in simpleList
 		 * @returns: a numeric array with field codes
-		 * @default: if commented out, simpleListPage won't be available
+		 * @default: if commented out, simpleList won't be available
 		 */
 /*		public function getSimpleListFields(){
 		}/**/
@@ -164,14 +165,6 @@
 		 */
 /*		public function getEditFields(){
 		}/**/
-		
-		private function getFilterFromModifier(){
-			switch( $this->modifier ){
-				case 'customers': return 'NOT ISNULL(`since`)';
-				case 'potential': return 'ISNULL(`since`)';
-			}
-			return '1';		# No filter for status (show all customers)
-		}
 		
 		/**
 		 * @overview: get data for a commonList
@@ -240,11 +233,11 @@
 		
 		/**
 		 * @overview: a list of tools taken from available ones:
-		 *  ~ create
-		 *	~ edit
-		 *	~ delete
-		 *	~ block
-		 * See ModulesBase#tools for an updated list of available tools
+		 *            ~ create
+		 *            ~ edit
+		 *            ~ delete
+		 *            ~ block
+		 *            or define your own (see #additionalTools)
 		 * @returns: a numeric array with tool codes, or (optionally) a
 		 * string if only one tool is set.
 		 * @default: if commented out, no tools will be present.
@@ -252,8 +245,10 @@
 		 *           is disabled too (edition, deletion, blocking).
 		 *           Use code 'all' to include all available tools, or
 		 *           'common' to add create, edit and delete.
+		 * @notes: See ModulesBase@toolsBase for a list of built-in tools
 		 */
-/*		public function getListTools(){
+		public function getTools(){
+			return array('create', 'edit', 'delete');
 		}/**/
 		
 		
@@ -307,6 +302,19 @@
 /*		public function strictValidation(){
 			return true;
 		}/**/
+
+
+/**
+ * CUSTOM FUNCTIONS (write your own methods below when needed)
+ */
+		
+		private function getFilterFromModifier(){
+			switch( $this->modifier ){
+				case 'customers': return 'NOT ISNULL(`since`)';
+				case 'potential': return 'ISNULL(`since`)';
+			}
+			return '1';		# No filter for status (show all customers)
+		}
 		
 	}
 

@@ -1,9 +1,8 @@
 <div class='listTitles'>
 
-	{foreach from=$fields item=field}
-	  {if $field && $fieldsCfg.$field.name && not $fieldsCfg.$field.hidden}
-		{assign var=fieldName value=$fieldsCfg.$field.name}
-		<div for='{$field}'>{$fieldName}</div>
+	{foreach from=$fields key=field item=atts}
+	  {if $field && $atts.name && not $atts.hidden}
+		<div for='{$field}'>{$atts.name}</div>
 	  {/if}
 	{/foreach}
 	

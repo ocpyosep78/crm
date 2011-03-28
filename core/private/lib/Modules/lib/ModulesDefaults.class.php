@@ -63,8 +63,7 @@
 		
 			$fields = array();
 			
-			$keys = $this->getKeys();
-			if( !is_array($keys) ) $keys = array( $keys );
+			$keys = (array)$this->getKeys();
 			
 			foreach( $keys as $key ){
 				$fields[$key] = array(

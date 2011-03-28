@@ -141,6 +141,7 @@
 		oXajax()->registerFunction(array('updateList', oLists(), 'updateList'));
 		oXajax()->registerFunction(array('switchTab', oTabs(), 'switchTab'));
 		oXajax()->registerFunction(array('ajaxPrintPage', oModules(), 'ajaxPrintPage'));
+		oXajax()->registerFunction(array('ajaxDo', oModules(), 'ajaxDo'));
 	}
 
 
