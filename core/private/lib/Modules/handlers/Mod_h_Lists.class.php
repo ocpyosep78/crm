@@ -59,14 +59,12 @@
 			$field = $this->DP->getComboListField();
 			
 			# Attempt to get data from its own function, or fall back to
-			# cached listData, or fall back to common, then simpleList
+			# common, then simpleList data
 			$data = $this->getListData('combo');
 			if( $data === NULL ){	# getComboListData was not set
-				if( is_null($extData=$this->getDataCache('common')) ){
-					$extData = ($aux=$this->getListData('common'))
-						? $aux
-						: $this->getListData('simple');
-				}
+				$extData = ($aux=$this->getListData('common'))
+					? $aux
+					: $this->getListData('simple');
 			}
 			
 			# If we still have no data, then we cannot present comboList

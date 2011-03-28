@@ -257,9 +257,7 @@
 		*/
 		public function getParagraphs( $data ){
 		
-			if( !is_array($data) ) $data = array( $data );
-		
-			foreach( $data as $code ){
+			foreach( (array)$data as $code ){
 				if( !is_null($pgph=$this->paragraphs($code)) ){
 					$pgphs[$this->paragraph_code2title($code)] = "    ".$pgph;
 				}

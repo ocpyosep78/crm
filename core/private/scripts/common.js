@@ -718,7 +718,7 @@ function initializeSimpleList(code, modifier){
 };
 
 function enableComboList(){
-	$$('.comboList').forEach(function(cl){
+	$$('.comboListOld').forEach(function(cl){
 		cl.addEvent('change', function(e){
 			getPage(e, this.getAttribute('FOR') + 'Info', [this.value]);
 		});

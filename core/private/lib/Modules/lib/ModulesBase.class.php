@@ -45,21 +45,35 @@
 ##################################
 ########### PROPERTIES ###########
 ##################################
+		
+		# Available tools with screen name
+		private $toolsBase = array(
+			'open'		=> 'abrir',
+			'create'	=> 'agregar',
+			'edit'		=> 'editar',
+			'block'		=> 'bloquear',
+			'unblock'	=> 'desbloquear',
+			'delete'	=> 'borrar',
+		);
+		
+		# Available field types
+		private $fieldTypes = array('text', 'image', 'area', 'combo');
+		
+		
+		protected $recordedError;
 	
 		protected $type;			/* Type of page, for page-handlers with multiple types (i.e. Module_Lists) */
 		protected $code;			/* Unique identifier for this module */
 		protected $modifier;		/* Some modules might have different behaviours depending on a parameter */
 		protected $params;			/* Wildcard var to pass extra parameters (each Handler knows its own) */
 		
-		protected $fieldsCfg;		/* List of fields for this module, with their attributes */
 		protected $fields;			/* List of fields for current page */
 		protected $keys;			/* Key fields for current module */
+		protected $tools;			/* Actions enabled for this module (create, edit, etc.) */
 		
 		protected $dataCache;		/* Cached lists data in case we need to reuse it */
 		
-		protected $Creator;			/* Object of class ModulesCreator that built this object's child */
 		protected $DP;				/* Data Provider for this module (user-configured) */
-		
 		protected $dataProvider;	/* Whether the data provider could be found (boolean) */
 		
 		protected $AjaxEngine;
@@ -71,11 +85,9 @@
 ########## CONSTRUCTOR ###########
 ##################################
 
-		public function __construct($type, $code, $modifier, $params, $Creator){
+		public function __construct($type, $code, $modifier, $params){
 		
 			parent::__construct();
-			
-			$this->Creator = $Creator;
 		
 			# Main parameters for this module
 			$this->type = $type;
@@ -84,33 +96,18 @@
 			$this->params = $params;
 			
 			# Initialize only
-			$this->fieldsCfg = array();
-			$this->fields = array();
 			$this->keys = array();
-			$this->listData = NULL;
+			$this->fields = array();
+			$this->tools = array();
 			
 			# Template engine
 			$this->AjaxEngine = new Modules_ajaxEngine;
 			$this->TemplateEngine = new Modules_templateEngine;
 			$this->vars = array();
-		
-		}
-
-
-##################################
-############# ERRORS #############
-##################################
-		
-		
-		/**
-		 * Returns a formatted error (HTML string)
-		 */
-		protected function Error( $msg ){
 			
-			$Error = new ModulesError;
-			
-			return $Error->fetch( $msg );
-			
+			# Keep track of errors between methods
+			$this->recordedError = NULL;
+		
 		}
 
 
@@ -119,24 +116,30 @@
 ##################################
 		
 		/**
-		 * @overview: This is the class' main method by far. Module Handlers (descended
-		 *            from this one) have here their initialization and validation of
-		 *            input. It is ModulesBase, through its few public methods, that
-		 *            calls methods in Handlers (they're all protected or private).
+		 * @overview: This is the class' main method. Module Handlers (descended from
+		 *            this one) have here their initialization and validation of input.
+		 *            It is ModulesBase, through its few public methods, that calls
+		 *            methods in Handlers (they're all protected or private).
 		 *            It is important to notice that Handlers have no knowledge of pages
 		 *            or how the returned HTML string is going to be presented. Handlers
-		 *            only know about atomic elements, that ModulesCreator (or another
-		 *            class) might combine or not, in order to make pages.
+		 *            only know about atomic elements, that ModulesCreator might combine
+		 *            (or not) in order to make pages.
 		 * @returns: an HTML string
 		 */
 		public function getElement(){
+			
+			# Check that we have no errors recorded from previous actions
+			if( $this->recordedError ) return $this->Error( $this->recordedError );
 		
-			$integrityCheckResult = $this->initialize();
+			# Make sure the type of page is valid
+			if( !is_callable(array($this, $this->type)) ){
+				return $this->Error('ModulesBase: wrong handler type provided');
+			}
 			
 			# Let the right method handle the rest, depending on $this->type
-			return ($integrityCheckResult === true)
-				? $this->{$this->type}()
-				: $integrityCheckResult;
+			$HTML = $this->{$this->type}();
+			
+			return $this->recordedError ? $this->Error($this->recordedError) : $HTML;
 			
 		}
 		
@@ -160,139 +163,162 @@
 ##################################
 
 		/**
-		 * Initialize and validate vars and config
+		 * Initialize and validate data provider and main vars
 		 */
-		private function initialize(){
-		
-			# Make sure the type of page is valid
-			if( !is_callable(array($this, $this->type)) ){
-				return $this->Error('ModulesBase: wrong type.');
-			}
+		public function initialize(){
 			
 			# Attempt to load data provider
-			$this->dataProvider = $this->setDataProvider();
-			if( $this->dataProvider !== true ){
-				return $this->Error($this->dataProvider);
-			}
-			
-			# Store and pass to template engine main vars and objects
-			$configIntegrity = $this->config();
-			if( $configIntegrity !== true ){
-				return $this->Error($configIntegrity);
-			}
-			
-			return true;
-			
-		}
-		
-		/**
-		 * Validate and store data provider class for this module.
-		 * Returns the data provider on success, false otherwise.
-		 */
-		private function setDataProvider(){
-			
 			$class = "Mod_{$this->code}";
 			$path = MOD_DEFINITIONS_PATH."{$class}.mod.php";
-			
-			if( !is_file($path) ){
-				return $this->Error('ModulesBase error: data provider not found');
+			if( is_file($path) ) require_once( $path );
+			if( !class_exists($class) ){
+				return $this->recordError('ModulesBase error: data provider not found');
 			}
-			
-			require_once( $path );
 			$this->DP = new $class($this->type, $this->code, $this->modifier);
-			
-			return true;
 			
 		}
 		
 		/**
-		 * Common elements to be registered in the template engine or stored.
-		 * These elements are not expected to require long processing times or
-		 * high CPU/RAM usage. It's basically configuration hardcoded in the
-		 * Data Provider.
-		 * @returns: returns true if everything's in place, or an error string
-		 *           if a required element is missing or corrupted
+		 * @overview: common elements to be registered in the template engine.
+		 *            These elements are not expected to require long processing
+		 *            times or high CPU/RAM usage. It's basically configuration
+		 *            hardcoded in the Data Provider.
+		 * @returns: NULL
 		 */
-		private function config(){
+		public function setCommonProperties( $toGet=array('keys', 'fields', 'tools') ){
+			
+			# Get and set keys, fields and/or tools
+			foreach( (array)$toGet as $get ) $this->{'provide'.ucfirst($get)}();
+			
+		}
+		
+		/**
+		 * @overview: common elements to be registered in the template engine.
+		 *            These elements are not expected to require long processing
+		 *            times or high CPU/RAM usage. It's basically configuration
+		 *            hardcoded in the Data Provider.
+		 * @returns: NULL
+		 */
+		public function feedTemplate(){
 		
 			# General and presentational
 			$this->assign('cycleValues', '#eaeaf5,#e0e0e3,#e5e6eb');
+			$this->assign('MODULES_TEMPLATES', MODULES_TEMPLATES);
 			$this->assign('MODULES_IMAGES', MODULES_IMAGES);
+			$this->assign('DEVELOPER_MODE', defined('DEVELOPER_MODE') ? DEVELOPER_MODE : false);
 			
 			# Internal attributes
 			$this->assign('type', $this->type);
 			$this->assign('code', $this->code);
 			$this->assign('modifier', $this->modifier);
-			$this->assign('params', $this->toJson($this->params));
+			
+			$strParams = is_string($this->params) ? $this->params : $this->toJson($this->params);
+			$this->assign('params', $strParams);
 			
 			# Common attributes
 			$this->assign('name', $this->DP->getName());
 			$this->assign('plural', $this->DP->getPlural());
 			$this->assign('tipField', $this->DP->getTipField());
-			
-			# Keys
-			$keys = $this->DP->getKeys();
-			$this->sanitizeAndStoreKeys( &$keys );
-			$this->assign('keys', $keys);
-			
-			# Fields configuration
-			$fieldsCfg = $this->DP->getFields();
-			if( empty($fieldsCfg) || !is_array($fieldsCfg)){
-				return $this->Error('ModulesBase error: no fields defined');
-			}
-			$this->sanitizeAndStoreFieldsCfg( &$fieldsCfg );
-			$this->assign('fieldsCfg', $fieldsCfg);
-			
-			# Fields for current page
-			if( !method_exists($this->DP, $method='get'.ucfirst($this->type).'Fields') ){
-				return $this->Error('ModulesBase error: requested type does not exist');
-			}
-			$fields = $this->DP->{'get'.ucfirst($this->type).'Fields'}();
-			if( is_null($fields) ){
-				return $this->Error('ModulesBase error: requested page does not exist');
-			}
-			if( !is_array($fields) ) $fields = array( $fields );
-			$this->sanitizeAndStoreFields( &$fields );
-			$this->assign('fields', $fields);
-			
-			return true;
-			
+		
 		}
 
 
 ##################################
-############ TEMPLATE ############
+######### GET - SETTERS ##########
 ##################################
 		
 		/**
-		 * Returns an HTML string from a template, after assigning all vars
-		 * passed as $data.
+		 * Fields configuration can be set giving a string as attribute, which
+		 * is interpreted as its name (with all other attributes to defaults),
+		 * and most attributes are optional. Just make sure the configuration
+		 * is valid: well-formatted and with all fields set to avoid warnings.
 		 */
-		protected function fetch($name, $data=array()){
-		
-			# Register all stored vars in the Template Engine
-			foreach( $data + $this->vars as $k => $v ) $this->TemplateEngine->assign($k, $v);
-			$this->TemplateEngine->assign('MODULES_TEMPLATES', MODULES_TEMPLATES);
+		private function provideFields(){
 			
-			$name = preg_replace('/\.tpl$/', '', $name);
-			if( !is_file(MODULES_TEMPLATES.$name.'.tpl') ) $name = 'error';
-			$this->TemplateEngine->assign('pathToTemplate', MODULES_TEMPLATES.$name.'.tpl');
+			# Fields configuration (all defined fields for this module)
+			$base = $this->DP->getFields();
+			if( empty($base) ){
+				return $this->recordError('ModulesBase error: no fields defined');
+			}
+			if( !is_array($base) ){
+				return $this->recordError('ModulesBase error: invalid fields definition');
+			}
 			
-			return $this->TemplateEngine->fetch( 'global.tpl' );
+			# Accept field codes '>', used in pages for presentational purposes
+			$base += array('>' => NULL);
+			
+			# Fields for current page
+			$method = 'get'.ucfirst($this->type).'Fields';
+			if( method_exists($this->DP, $method) ){
+				$inclFields = $this->DP->{'get'.ucfirst($this->type).'Fields'}();
+			}
+			if( empty($inclFields) ){
+				return $this->recordError('ModulesBase error: requested page is not available');
+			}
+			if( is_string($inclFields) ) $inclFields = array( $inclFields );
+			
+			# Import $base into $fields (only for fields defined for this page)
+			$fields = @array_intersect_key(array_flip($inclFields), $base);
+			foreach( $fields as $key => &$field ) $field = $base[$key];
+			
+			if( empty($fields) ){
+				return $this->recordError('ModulesBase error: could not retrieve fields for this element');
+			}
+			
+			# Fill and/or fix each field's attributes
+			foreach( $fields as $id => &$atts ){
+				# Accept strings as attributes, assuming it's the name alone
+				if( is_string($atts) ) $atts = array('name' => $atts);
+				if( !isset($atts['name']) ) $atts['name'] = '';
+				# Set unnamed and key fields as hidden unless explicitly set otherwise
+				if( in_array($id, $this->keys) || empty($atts['name']) ){
+					if( !isset($atts['hidden']) || $atts['hidden'] !== false ){
+						$atts['hidden'] = true;
+					}	
+				}
+				if( !isset($atts['hidden']) ) $atts['hidden'] = false;
+				# Make sure type is defined
+				if( empty($atts['type']) || !in_array($atts['type'], $this->fieldTypes) ){
+					$atts['type'] = 'text';
+				}
+			}
+			
+			return $this->fields = $this->assign('fields', $fields);
 		
 		}
 		
-		protected function assign($var, $val=NULL){
+		/**
+		 * We can accept strings instead of an array of key fields, but then
+		 * we need to make it an array (with one single element)
+		 */	
+		private function provideKeys(){
 			
-			$this->vars[$var] = $val;
+			$keys = (array)$this->DP->getKeys();
+			
+			return $this->keys = $this->assign('keys', $keys);
 			
 		}
+
+		private function provideTools(){
 		
-		protected function clearVar( $var=NULL ){
-		
-			if( is_null($var) ) $this->vars = array();
-			else unset( $this->vars[$var] );
+			$base = $this->toolsBase;
 			
+			# If getTools is not callable, no tools will be available
+			if( !is_callable(array($this->DP, 'getTools')) ){
+				return $this->tools = $this->assign('tools', array());
+			}
+			
+			# Get defined tools (list of tool codes) and fix input if needed
+			$list = (array)$this->DP->getTools();
+			
+			# Extend $base with other attributes to build tools array
+			$tools = array();
+			foreach( $base as $id => &$axn ){
+				if( in_array($id, $list) ) $tools[$id] = $axn;
+			}
+			
+			return $this->tools = $this->assign('tools', $tools);
+		
 		}
 
 
@@ -301,8 +327,9 @@
 ##################################
 		
 		/**
-		 * Takes a row or col of data, and builds a unique ID for that
-		 * item based on that item's values for defined key fields
+		 * @overview: Takes an array of `keyField => fieldValue` pairs, and
+		 *             builds a unique ID for that item based on key values
+		 * @returns: string
 		 */
 		protected function keysArray2String( $item ){
 		
@@ -321,77 +348,47 @@
 		}
 		
 		/**
-		 * We can accept strings instead of an array of key fields, but then
-		 * we need to make it an array (with one single element)
+		 * @overview: keys are passed as either a string or an array, but always
+		 *            using @params. This method processes whatever @params is and
+		 *            attempts to return a valid filter to get this item's data
+		 * @returns: an associative array with `keyField => fieldValue` pairs
 		 */
-		protected function sanitizeAndStoreKeys( $keys ){
+		protected function keysString2Array(){
 		
-			if( !is_array($keys) ) $keys = array($keys);
+			$expected = $this->keys;
+			$received = $this->params;
 			
-			$this->keys = $keys;
-		
-		}
-		
-		
-		/**
-		 * Fields configuration can be set giving a string as attribute, which
-		 * is interpreted as its name (with all other attributes to defaults),
-		 * and most attributes are optional. Just make sure the configuration
-		 * is valid: well-formatted and with all fields set to avoid warnings.
-		 */
-		protected function sanitizeAndStoreFieldsCfg( $fieldsCfg ){
-			
-			foreach( $fieldsCfg as $key => &$atts ){
-				# Accept strings as attributes, assuming it's the name alone
-				if( is_string($atts) ) $atts = array('name' => $atts);
-				# Make sure all got a name defined, even if empty
-				if( !isset($atts['name']) || !is_string($atts['name']) ){
-					$atts['name'] = '';
-				}
-				# Set key fields as hidden unless explicitly set otherwise
-				if( in_array($key, $this->keys) ){
-					if( !isset($atts['hidden']) || $atts['hidden'] !== false ){
-						$atts['hidden'] = true;
-					}	
-				}
-				# Make sure all got hidden attribute defined (defaults to false)
-				if( !isset($atts['hidden']) ) $atts['hidden'] = false;
-				# Set type = text if nothing set
-				if( empty($atts['type']) ) $atts['type'] = 'text';
+			if( empty($received) ){
+				return $this->recordError('Mod_h_Info error: no id received for this item');
 			}
 			
-			$this->fieldsCfg = $fieldsCfg;
+			# As string, not compounded, and we have only one key and only one
+			if( is_string($received) && !strstr($received, '__|__') && count($expected) == 1 ){
+				return array_combine($expected, (array)$received);
+			}
 			
-		}
-		
-		/**
-		 * Force fields that do not have screen names to be hidden.
-		 */
-		protected function sanitizeAndStoreFields( $fields ){
-		
-			foreach( $fields as &$field ){
-				if( isset($this->fieldsCfg[$field]['name']) && $this->fieldsCfg[$field]['name'] === '' ){
-					$this->fieldsCfg[$field]['hidden'] = true;
+			# As string, general: parse and validate amount (contents validated below)
+			if( is_string($received) ){
+				$pairs = explode('__|__', $received);
+				foreach( $pairs as $pair ){
+					# Keys shall not include ':' but values might, so explode up to 2 parts only
+					$key = explode(':', $pair, 2);
+					if( count($key) != 2 ){
+						return $this->recordError('Mod_h_Info error: badly formatted keys received');
+					}
+					$received[$key[0]] = $key[1];
+				}
+				if( !is_array($received) or empty($received) ){
+					return $this->recordError('Mod_h_Info error: badly formatted keys received');
 				}
 			}
 			
-			$this->fields = $fields;
-		
-		}
-		
-		protected function sanitizeInfoKeys( $keys ){
+			# Verify we got all keys we expected and no others
+			if( array_intersect_key($received, array_fill_keys($expected, NULL)) != $received ){
+				return $this->recordError('Mod_h_Info error: received keys don\'t match expected keys');
+			}
 			
-			# Build and apply ID filter (check integrity first)
-			if( !is_array($keys) ){
-				# Only one key and one ID
-				if( count($this->keys) != 1 ) return false;
-				else return array($this->keys[0] => $keys);
-			}
-			else{
-				foreach( $this->keys as $key ) if( empty($keys[$key]) ) return false;
-				foreach( array_keys($keys) as $key ) if( !in_array($key, $this->keys) )return false;
-				return $keys;
-			}
+			return $received;
 			
 		}
 	
@@ -407,6 +404,66 @@
 			
 			return '{'.join(",", $json).'}';
 		
+		}
+
+
+##################################
+############ TEMPLATE ############
+##################################
+		
+		/**
+		 * Returns an HTML string from a template, after assigning all vars
+		 * passed as $data.
+		 */
+		protected function fetch($name, $data=array()){
+		
+			# Register all stored vars in the Template Engine
+			foreach( $data + $this->vars as $k => $v ) $this->TemplateEngine->assign($k, $v);
+			
+			$name = preg_replace('/\.tpl$/', '', $name);
+			if( !is_file(MODULES_TEMPLATES.$name.'.tpl') ) $name = 'error';
+			$this->TemplateEngine->assign('pathToTemplate', MODULES_TEMPLATES.$name.'.tpl');
+			
+			return $this->TemplateEngine->fetch( 'global.tpl' );
+		
+		}
+		
+		protected function assign($var, $val=NULL){
+			
+			return $this->vars[$var] = $val;
+			
+		}
+		
+		protected function clearVar( $var=NULL ){
+		
+			if( is_null($var) ) $this->vars = array();
+			else unset( $this->vars[$var] );
+			
+		}
+
+
+##################################
+############# ERRORS #############
+##################################
+
+		protected function recordError( $err ){
+		
+			$this->recordedError = $this->recordedError
+				? $this->recordedError . '<br />' . $err
+				: $err;
+			
+		}
+		
+		
+		/**
+		 * Returns a formatted error (HTML string)
+		 */
+		protected function Error( $msg ){
+			
+			$Error = new ModulesError;
+			
+			return $Error->fetch( $msg );
+			
 		}
 
 

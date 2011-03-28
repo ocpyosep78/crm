@@ -1,15 +1,15 @@
 /**
  * INFO PAGE
  */
-.infoData{ position:relative; float:left; margin:10px; padding:50px 0px 18px 0px; background:none; border:double 3px #f0f0f5; background:-webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#f0f0f7)); background:-moz-linear-gradient(top, #f0f0f5 #ffffff); filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#f0f0f5', endColorstr='#ffffff'); }
-.infoData > SPAN{ display:block; position:absolute; top:11px; right:17px; padding:2px 10px; border-top:solid 1px #e0e0e5; border-left:solid 1px #e0e0e5; color:#302050; font-size:16px; font-weight:bold; box-shadow:#909095 3px 3px 5px; -moz-box-shadow:#909095 3px 3px 5px; -webkit-box-shadow:#909095 3px 3px 5px; background:-webkit-gradient(linear, left top, left bottom, from(#e0f0ff), to(#b0a8b8)); background:-moz-linear-gradient(top, #e0f0ff #b0a8b8); filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#e0f0ff', endColorstr='#b0a8b8'); }
-.infoData > DIV{ display:inline-block; zoom:1/* IE */; *display: inline/* IE */; }
-.infoData > DIV > DIV{ float:none; margin:0px 15px; padding:10px; border:solid 1px #e0e0f0; border-radius:4px; -moz-border-radius:4px; -webkit-border-radius:4px; box-shadow:#808080 3px 3px 5px; -moz-box-shadow:#808080 3px 3px 5px; -webkit-box-shadow:#808080 3px 3px 5px; text-align:left;
+.infoData{ position:relative; float:left; margin:10px; padding:10px; border:double 3px #f0f0f5; border-radius:6px; -moz-border-radius:6px; -webkit-border-radius:6px; background:-webkit-gradient(linear, left top, left bottom, from(#f0f0f0), to(#c0c0c0)); background:-moz-linear-gradient(top, #f0f0f0 #c0c0c0); filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#f0f0f0', endColorstr='#c0c0c0'); opacity:0.8; }
+.infoData > SPAN{ display:block; padding:5px 10px; border-top:solid 1px #e0e0e5; border-left:solid 1px #e0e0e5; text-align:right; color:#607090; font-size:14px; font-weight:bold; box-shadow:#404045 2px 2px 4px; -moz-box-shadow:#404045 2px 2px 4px; -webkit-box-shadow:#404045 2px 2px 4px; background:-webkit-gradient(linear, left top, left bottom, from(#e0f0ff), to(#b0a8b8)); background:-moz-linear-gradient(top, #e0f0ff #b0a8b8); filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#e0f0ff', endColorstr='#b0a8b8'); }
+.infoData > SPAN > STRONG{ color:#302050; }	/* Debugging */
+.infoData > DIV{ float:left; margin:10px; margin-top:20px; padding:10px; border-top:solid 1px #c0c0d0; border-left:solid 1px #c0c0d0; border-radius:6px; -moz-border-radius:6px; -webkit-border-radius:6px; box-shadow:#404045 4px 4px 6px; -moz-box-shadow:#404045 4px 4px 6px; -webkit-box-shadow:#404045 4px 4px 6px; text-align:left;
 	background:-webkit-gradient(linear, left top, left bottom, from(#f0f0f5), to(#ffffff));
 	background:-moz-linear-gradient(top, #f0f0f5 #ffffff);
 	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#f0f0f5', endColorstr='#ffffff'); }
 .infoData TABLE{ margin:20px 30px; }
-.infoData TH{ height:1.5em; width:130px; padding-right:5px; white-space:nowrap; text-indent:0px !important; text-align:right !important; color:#606090 !important; }
+.infoData TH{ height:1.5em; padding-left:30px; padding-right:5px; white-space:nowrap; text-indent:0px !important; text-align:right !important; color:#606090 !important; }
 .infoData TD{ text-indent:0px !important; color:#000060 !important; }
 .infoData .Tip{color:#800000 !important;font-size:11px;}
 .infoData .Tip DIV{padding:2px;}
@@ -18,11 +18,20 @@
  * LISTS: GENERAL
  */
 .listWrapper{ height:auto; width:auto; overflow:hidden; }
+.innerListPreLoad, .innerListEmpty{ padding:37px 5px; text-align:center; color:#a0b0d0; font-family:"Times New Roman", Times, serif; font-size:16px; font-weight:bold; }
+.innerListPreLoad > IMG{ height:30px; width:30px; margin:0px 10px; vertical-align:middle; }
+.innerListEmpty{ color:#603020; }
+.innerList{ width:100%; padding:2px 2px 2px 2px; border-collapse:collapse; border-radius:8px; -moz-border-radius:8px; -webkit-border-radius:8px; }
+.innerList TD{ padding:4px 2px; font-size:12px; font-family:Arial, Helvetica, sans-serif; }
+.innerList TD > DIV{ min-width:70px; }
+.innerListTools > DIV{ padding:0px 3px; text-align:right; white-space:nowrap; }
+.innerListTools > DIV > IMG{ height:18px; width:18px; padding:0px; margin:2px 2px 0px 0px; }
+.innerList IMG:hover{ position:relative; left:-2px; height:26px; width:26px; margin:-2px -4px -4px -2px; opacity:0.6; filter:alpha(opacity=60); }
 
 /**
  * LISTS: TITLES
  */
-.listTitles{ height:18px; position:relative; width:auto; margin:0px -3px 5px -3px; padding:7px 0px 9px 0px; background:#eaeaf5; text-align:left; font-size:14px; color:#303000; font-weight:bold; font-family:"Times New Roman", Times, serif; white-space:nowrap; overflow:hidden; z-index:50; border:solid 1px #503030; border-radius:12px; -moz-border-radius:12px; -webkit-border-radius:12px; box-shadow:#000000 2px 1px 5px; -moz-box-shadow:#000000 2px 1px 5px; -webkit-box-shadow:#000000 2px 1px 5px; }
+.listTitles{ height:18px; position:relative; width:auto; margin:0px -3px 5px -3px; padding:7px 0px 9px 0px; background:#eaeaf5; text-align:left; font-size:14px; color:#303000; font-weight:bold; font-family:"Times New Roman", Times, serif; border:solid 1px #503030; border-radius:12px; -moz-border-radius:12px; -webkit-border-radius:12px; box-shadow:#000000 2px 1px 5px; -moz-box-shadow:#000000 2px 1px 5px; -webkit-box-shadow:#000000 2px 1px 5px; white-space:nowrap; overflow:hidden; z-index:50; }
 .listTitles > DIV{ position:absolute; margin:0px 5px; padding:0px; border:none; text-indent:1px; overflow:hidden; }
 
 /**
@@ -48,6 +57,3 @@
  */
 .commonListWrapper{ padding:5px; margin:0px 5px 15px 5px; }
 .commonListInnerWrapper{ overflow:auto; width:auto; min-height:100px; max-height:410px; padding:2px; margin:0px; border:solid 1px #503030; background:#eaeaf5; border-radius:8px; -moz-border-radius:8px; -webkit-border-radius:8px; box-shadow:#000000 2px 2px 5px; -moz-box-shadow:#000000 2px 2px 5px; -webkit-box-shadow:#000000 2px 2px 5px; }
-.commonListPreLoad, .commonListEmpty{ padding:37px 5px; text-align:center; color:#a0b0d0; font-family:"Times New Roman", Times, serif; font-size:16px; font-weight:bold; }
-.commonListPreLoad > IMG{ height:30px; width:30px; margin:0px 10px; vertical-align:middle; }
-.commonListEmpty{ color:#603020; }

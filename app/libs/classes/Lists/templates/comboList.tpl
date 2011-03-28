@@ -14,7 +14,7 @@
 
 	<div class='comboListBox'>
 		{if $combo.params.name}Ver Información detallada de {$combo.params.name}{else}Información detallada{/if}
-		<select class='comboList' for='{$combo.code}'>
+		<select class='comboListOld' for='{$combo.code}'>
 		  <option value=''{if not $combo.selected} selected='selected'{/if}>(seleccionar)</option>
 		  {foreach from=$combo.list key=k item=v}
 			<option value='{$k}'{if $k == $combo.selected} selected='selected'{/if}>{$v}</option>

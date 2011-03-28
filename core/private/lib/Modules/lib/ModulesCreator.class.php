@@ -58,6 +58,13 @@
 				return $this->Error('ModulesCreator error: requested element is not defined');
 			}
 			
+			# Initialize handler
+			$this->getCurrentHandler()->initialize();
+			# Let it process data and set common vars from Data Provider
+			$this->getCurrentHandler()->setCommonProperties();
+			# Let it store most common or general vars for the template engine
+			$this->getCurrentHandler()->feedTemplate();
+			
 			return $this->getCurrentHandler()->getElement();
 		
 		}
@@ -110,7 +117,7 @@
 			
 			return is_null($handler)
 				? NULL
-				: new $handler($type, $this->code, $this->modifier, $this->params, $this);
+				: new $handler($type, $this->code, $this->modifier, $this->params);
 			
 		}
 		

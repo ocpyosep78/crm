@@ -538,7 +538,7 @@ TABLE.simpleList .simpleListCreate{ white-space:nowrap; }
  * COMBO LIST
  */
 .comboListBox{ display:inline-block; zoom:1 /* IE */; *display: inline /* IE */; margin-left:10px; margin-bottom:15px; padding:3px 8px; border:solid 1px #909095; border-radius:4px; -moz-border-radius:4px; -webkit-border-radius:4px; background:-webkit-gradient(linear, left top, left bottom, from(#e0f0ff), to(#b0a8b8)); background:-moz-linear-gradient(top, #e0f0ff #b0a8b8); filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#e0f0ff', endColorstr='#b0a8b8'); box-shadow:#808080 3px 3px 5px; -moz-box-shadow:#808080 3px 3px 5px; -webkit-box-shadow:#808080 3px 3px 5px; }
-.comboList{ max-width:500px; }
+.comboListOld{ max-width:500px; }
 .infoPageTools{ float:right; display:block; padding:8px 12px; }
 .infoPageTools:hover{ background:#cccce0; }
 #firstLoginMsg{ color:#600000; font-size:12px; font-weight:bold; }
