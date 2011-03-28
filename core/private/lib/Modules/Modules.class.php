@@ -80,9 +80,8 @@
  */
 
 
-	define('MODULES_TEMPLATES', 'core/private/lib/Modules/templates/');
-	define('MODULES_IMAGES', 'core/private/lib/Modules/static/images/');
-	
+	define('MODULES_TEMPLATES', realpath(MODULES_PATH.'templates').'/');
+	define('MODULES_IMAGES', MODULES_PATH.'static/images/');
 
 	require_once( CONNECTION_PATH );
 	
@@ -173,7 +172,7 @@
 		 * @returns: an ajax response object
 		 */
 		public function ajaxPrintPage($name, $modifier=NULL, $params=NULL){
-		
+			
 			$writeTo = is_array($params) && !empty($params['writeTo'])
 				? $params['writeTo']
 				: PAGE_CONTENT_BOX;

@@ -145,8 +145,9 @@
 		
 			$fixedParams = "'{$this->type}', '{$this->code}', '{$this->modifier}'";
 			$extraParams = $this->toJson($this->params);
-		
-			$cmd = "Modules.initialize({$fixedParams}, {$extraParams});";
+			
+			$cmd = "Modules.setImgPath('".MODULES_IMAGES."');";
+			$cmd .= "Modules.initialize({$fixedParams}, {$extraParams});";
 			
 			$this->AjaxEngine->addScript( $cmd );
 			
@@ -171,6 +172,7 @@
 			$class = "Mod_{$this->code}";
 			$path = MOD_DEFINITIONS_PATH."{$class}.mod.php";
 			if( is_file($path) ) require_once( $path );
+			
 			if( !class_exists($class) ){
 				return $this->recordError('ModulesBase error: data provider not found');
 			}
