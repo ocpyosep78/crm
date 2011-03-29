@@ -255,7 +255,7 @@
 		 * @notes: See ModulesBase@toolsBase for a list of built-in tools
 		 */
 		public function getTools(){
-			return array('create', 'edit', 'delete');
+			return array('view', 'create', 'edit', 'delete');
 		}/**/
 		
 		

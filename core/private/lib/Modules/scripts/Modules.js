@@ -1,7 +1,3 @@
-
-var MODULES_IMAGES = 'core/private/lib/Modules/static/images/';
-
-
 /**
  * ModulesPortability is a layer between Modules and external objects/tools.
  * You can edit these methods and properties to your own external tools
@@ -32,6 +28,9 @@ var Modules = {
 	do: ModulesPortability.doAction,
 	/**************************************************************************/
 	/********************************* COMMON *********************************/
+	setImgPath: function( path ){
+		window.MODULES_IMAGES = path||'core/private/lib/Modules/static/images/';
+	},
 	initialize: function( type ){
 		var Elements = [];
 		// Collect uninitialized elements of type 'type', ignore the rest

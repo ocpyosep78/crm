@@ -54,6 +54,7 @@
 		
 			# See if we have a handler (and a code given, as it's required)
 			$this->Handlers[] = $this->getHandler();
+			
 			if(!$code || !$this->getCurrentHandler()){
 				return $this->Error('ModulesCreator error: requested element is not defined');
 			}

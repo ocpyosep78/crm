@@ -7,8 +7,7 @@
  * Licence: GNU GENERAL PUBLIC LICENSE <http://www.gnu.org/licenses/gpl.txt>
  */
  
- 	define('CORE_PRIVATE', 'core/private/');
- 	define('CORE_PUBLIC', 'core/public/');
+ 	define('CORE_PRIVATE', CORE_PATH.'private/');
  
 	# Core paths
 	define('CORE_LIB', CORE_PRIVATE.'lib/');

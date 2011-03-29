@@ -48,7 +48,7 @@
 		
 		# Available tools with screen name
 		private $toolsBase = array(
-			'open'		=> 'abrir',
+			'view'		=> 'abrir',
 			'create'	=> 'agregar',
 			'edit'		=> 'editar',
 			'block'		=> 'bloquear',
@@ -130,7 +130,7 @@
 			
 			# Check that we have no errors recorded from previous actions
 			if( $this->recordedError ) return $this->Error( $this->recordedError );
-		
+			
 			# Make sure the type of page is valid
 			if( !is_callable(array($this, $this->type)) ){
 				return $this->Error('ModulesBase: wrong handler type provided');
@@ -150,8 +150,9 @@
 		
 			$fixedParams = "'{$this->type}', '{$this->code}', '{$this->modifier}'";
 			$extraParams = $this->toJson($this->params);
-		
-			$cmd = "Modules.initialize({$fixedParams}, {$extraParams});";
+			
+			$cmd = "Modules.setImgPath('".MODULES_IMAGES."');";
+			$cmd .= "Modules.initialize({$fixedParams}, {$extraParams});";
 			
 			$this->AjaxEngine->addScript( $cmd );
 			
@@ -171,6 +172,7 @@
 			$class = "Mod_{$this->code}";
 			$path = MOD_DEFINITIONS_PATH."{$class}.mod.php";
 			if( is_file($path) ) require_once( $path );
+			
 			if( !class_exists($class) ){
 				return $this->recordError('ModulesBase error: data provider not found');
 			}
@@ -346,6 +348,25 @@
 			return isset($keysArr) ? join('__|__', $keysArr) : '';
 			
 		}
+	
+		protected function toJson( $arr=array() ){
+			
+			if( !is_array($arr) || !count($arr) ) return '{}';
+			foreach( $arr as $k => $v ){
+				$json[] = '"'.$k.'":'.(is_array($v)
+					? $this->toJson($v)
+					: (is_numeric($v) ? $v : '"'.addslashes($v).'"')
+				);
+			}
+			
+			return '{'.join(",", $json).'}';
+		
+		}
+
+
+##################################
+############ TEMPLATE ############
+##################################
 		
 		/**
 		 * @overview: keys are passed as either a string or an array, but always
@@ -390,20 +411,6 @@
 			
 			return $received;
 			
-		}
-	
-		protected function toJson( $arr=array() ){
-			
-			if( !is_array($arr) || !count($arr) ) return '{}';
-			foreach( $arr as $k => $v ){
-				$json[] = '"'.$k.'":'.(is_array($v)
-					? $this->toJson($v)
-					: (is_numeric($v) ? $v : '"'.addslashes($v).'"')
-				);
-			}
-			
-			return '{'.join(",", $json).'}';
-		
 		}
 
 

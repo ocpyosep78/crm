@@ -22,9 +22,6 @@
 	{* Xajax *}
 	{$Xajax->printJavascript()}
 	
-	{* Pajax *}
-	{$Pajax->printJavascript()}
-	
 	{* javaScript files *}
 	<script type='text/javascript'>var IN_FRAME = {$IN_FRAME}</script>
 	{foreach from=$Page->jScripts item=jScript}
