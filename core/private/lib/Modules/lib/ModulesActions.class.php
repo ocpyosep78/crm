@@ -23,7 +23,7 @@
 			
 			# Initialize, get keys and pass all to the template engine
 			$this->initialize();
-			$this->setCommonProperties( 'keys' );
+			$this->setCommonProperties();
 			$this->feedTemplate();
 			
 			# Let the right method handle the rest, depending on $this->type

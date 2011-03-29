@@ -72,7 +72,6 @@
 	<div id='main_logoArea' colspan="2">
 		<img src="{$Page->appImg}" />
 		<span>{$Page->appName}</span>
-		{include file='widgets/bigTools.tpl'}
 	</div>
 			
 			

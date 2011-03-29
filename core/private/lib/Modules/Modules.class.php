@@ -1,7 +1,7 @@
 <?php
 
 /**
- * CRMTemplate - PHP Framework for building CRM-like applications
+ * AppTemplate - PHP Framework for building CRM-like applications
  * GitHub https://github.com/dbarreiro/crm_template/
  * Copyright (C) 2011 Diego Barreiro <diego.bindart@gmail.com>
  * Licence: GNU GENERAL PUBLIC LICENSE <http://www.gnu.org/licenses/gpl.txt>
@@ -102,14 +102,20 @@
 		private $ModulesChecker;
 		private $ModulesCreator;
 		
+		private $TemplateEngine;
 		private $AjaxEngine;
 		
-		public function __construct(){
+		public function __construct($type, $code, $modifier=NULL, $params=NULL){
+			
+			$this->code = $code;
+			$this->modifier = $modifier;
+			$this->params = $params;
 			
 			$this->ModulesChecker = new ModulesChecker;
 			$this->ModulesCreator = new ModulesCreator;
 			
 			$this->AjaxEngine = new Modules_ajaxEngine;
+			$this->TemplateEngine = new Modules_templateEngine;
 		
 		}
 	
@@ -117,7 +123,7 @@
 		 * Whether a page can be built. Takes a single argument that's assumed
 		 * to be a page name (i.e. usersInfo, customersEdit, etc.).
 		 */
-		public function canBuildPage( $page ){
+		public function canBuildPage(){
 			
 			return $this->ModulesChecker->canBuildPage( $page );
 			
@@ -129,11 +135,13 @@
 		 *            This will not produce any output or storage, it's just plain HTML.
 		 * @returns: an HTML string
 		 */
-		public function getElement($name, $modifier=NULL, $params=NULL){
+		public function getElement( $type ){
 		
 			list($code, $type) = $this->ModulesChecker->parsePageName( $name );
+		
+			$ModulesCreator = new ModulesCreator($type, $code, $modifier, $params);
 			
-			return $this->ModulesCreator->getElement($type, $code, $modifier, $params);
+			return $ModulesCreator->getElement();
 			
 		}
 	
@@ -149,8 +157,10 @@
 			list($code, $type) = is_array($name)
 				? $name
 				: $this->ModulesChecker->parsePageName( $name );
+				
+			$ModulesCreator = new ModulesCreator($type, $code, $modifier, $params);
 			
-			return $this->ModulesCreator->getPage($type, $code, $modifier, $params);
+			return $ModulesCreator->getPage();
 			
 		}
 	
@@ -180,7 +190,13 @@
 			$HTML = $this->getPage($name, $modifier, $params);
 			
 			$this->AjaxEngine->write($writeTo, $HTML);
-			$this->ModulesCreator->doTasks();
+			
+			list($code, $type) = is_array($name)
+				? $name
+				: $this->ModulesChecker->parsePageName( $name );
+				
+			$ModulesCreator = new ModulesCreator($type, $code, $modifier, $params);
+			$ModulesCreator->doTasks();
 			
 			return $this->AjaxEngine->getResponse();
 		

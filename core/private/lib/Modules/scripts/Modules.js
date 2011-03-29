@@ -68,6 +68,24 @@ var Modules = {
 		// so it needs to be made available to innerCommonList on list update
 		el.getElement('.listWrapper').ST = new SyncTitles(el, atts).sync();
 	},
+	bigTools: function(el, atts){
+		var tools = [];
+		el.getElement('.bigTools').getElements('[tool]').forEach(function(tool){
+			tools[tool.getAttribute('TOOL')] = tool;
+			tool.addEvent('click', function(e){
+				if( !this.hasClass('bigToolEnabled') ) return;
+				alert('clicked!');
+			});
+		});
+		var bigTools = {
+			enableTool: function( tl ){
+				if(tl && tools[tl]) tools[tl].addClass('bigToolEnabled');
+			},
+			disableTool: function( tl ){
+				if(tl && tools[tl]) tools[tl].removeClass('bigToolEnabled');
+			}
+		};
+	},
 	innerCommonList: function(el, atts){
 		var that = this;
 		// innerCommonList is usually loaded within a list, so it might

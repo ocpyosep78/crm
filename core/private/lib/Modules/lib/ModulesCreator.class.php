@@ -10,6 +10,15 @@
 		private $Handlers=array();	/* Handlers involved in fetching this page */
 		
 		
+		public function __construct($type, $code, $modifier=NULL, $params=NULL){
+			
+			$this->type = $type;
+			$this->code = $code;
+			$this->modifier = $modifier;
+			$this->params = $params;
+			
+		}
+		
 		/**
 		 * Returns a formatted error (HTML string)
 		 */
@@ -28,15 +37,22 @@
 		 *            HTML.
 		 * @returns: an HTML string
 		 */
-		public function getPage($type, $code, $modifier=NULL, $params=NULL){
-		
-			$HTML = $this->getElement($type, $code, $modifier, $params);
+		public function getPage(){
 			
-			# Add comboList to 'commonList', 'info', 'create', 'edit' pages
-			if( in_array($type, array('commonList', 'info', 'create', 'edit')) ){
-				$comboHTML = $this->getElement('comboList', $code, $modifier, $params);
-				$HTML = $comboHTML.$HTML;
+			$HTML = '';
+			
+			switch($this->type){
+				case 'commonList':
+					$HTML .= $this->getElement('bigTools');
+				case 'info':
+				case 'create':
+				case 'edit':
+					$HTML .= $this->getElement('comboList');
+				break;
 			}
+		
+			$HTML .= $this->getElement();
+			$this->params['page_uID'] = microtime();
 			
 			return $HTML;
 			
@@ -47,24 +63,29 @@
 		 *            getElement method.
 		 * @returns: an HTML string
 		 */
-		public function getElement($type, $code, $modifier=NULL, $params=NULL){
+		public function getElement( $type=NULL ){
+		
+			$oldType = $this->type;
+		
+			if( count(func_get_args()) ) $this->type = $type;
 			
-			# Store main parameters in case we need them later
-			$this->storeProperties($type, $code, $modifier, $params);
+			if(!$this->code || !$this->type){
+				$this->type = $oldType;
+				return $this->Error('ModulesCreator error: missing params');
+			}
 		
 			# See if we have a handler (and a code given, as it's required)
-			$this->Handlers[] = $this->getHandler();
+			$hdl = $this->Handlers[] = $this->getHandler();
 			
-			if(!$code || !$this->getCurrentHandler()){
+			# Restore type
+			$this->type = $oldType;
+			
+			if( !$hdl ){
 				return $this->Error('ModulesCreator error: requested element is not defined');
 			}
 			
 			# Initialize handler
-			$this->getCurrentHandler()->initialize();
-			# Let it process data and set common vars from Data Provider
-			$this->getCurrentHandler()->setCommonProperties();
-			# Let it store most common or general vars for the template engine
-			$this->getCurrentHandler()->feedTemplate();
+			$hdl->initialize()->setCommonProperties()->feedTemplate();
 			
 			return $this->getCurrentHandler()->getElement();
 		
@@ -99,26 +120,33 @@
 				case 'commonList':
 				case 'innerCommonList':
 				case 'simpleList':
-				case 'comboList':
-					require_once( dirname(__FILE__).'/../handlers/Mod_h_Lists.class.php' );
-					$handler = 'Mod_h_Lists';
+					$handler = 'Lists';
 					break;
 				case 'create':
 				case 'edit':
-					require_once( dirname(__FILE__).'/../handlers/Mod_h_Edit.class.php' );
-					$handler = 'Mod_h_Edit';
+					$handler = 'Edit';
 					break;
 				case 'info':
-					require_once( dirname(__FILE__).'/../handlers/Mod_h_Info.class.php' );
-					$handler = 'Mod_h_Info';
+					$handler = 'Info';
+					break;
+				case 'comboList':
+				case 'bigTools':
+					$handler = 'Widgets';
 					break;
 				default:
 					$handler = NULL;
 			}
 			
-			return is_null($handler)
-				? NULL
-				: new $handler($type, $this->code, $this->modifier, $this->params);
+			# Return new object on success
+			if( $handler && is_file($path=dirname(__FILE__)."/../handlers/Mod_h_{$handler}.class.php") ){
+				require_once( $path );
+				if( class_exists($class="Mod_h_{$handler}") ){
+					return new $class($type, $this->code, $this->modifier, $this->params);
+				}
+			}
+			
+			# Failure
+			return NULL;
 			
 		}
 		
@@ -127,19 +155,6 @@
 			$cnt = count($this->Handlers);
 			
 			return $cnt ? $this->Handlers[$cnt-1] : NULL;
-			
-		}
-		
-		/**
-		 * @overview: Store main parameters for future reference
-		 * @returns: NULL
-		 */
-		private function storeProperties($type, $code, $modifier, $params){
-			
-			$this->type = $type;
-			$this->code = $code;
-			$this->modifier = $modifier;
-			$this->params = $params;
 			
 		}
 	

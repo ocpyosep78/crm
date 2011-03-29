@@ -1,7 +1,7 @@
 <?php
 
 /**
- * CRMTemplate - PHP Framework for building CRM-like applications
+ * AppTemplate - PHP Framework for building CRM-like applications
  * GitHub https://github.com/dbarreiro/crm_template/
  * Copyright (C) 2011 Diego Barreiro <diego.bindart@gmail.com>
  * Licence: GNU GENERAL PUBLIC LICENSE <http://www.gnu.org/licenses/gpl.txt>
@@ -48,8 +48,8 @@
 		
 		# Available tools with screen name
 		private $toolsBase = array(
-			'view'		=> 'abrir',
 			'create'	=> 'agregar',
+			'view'		=> 'ver información de',
 			'edit'		=> 'editar',
 			'block'		=> 'bloquear',
 			'unblock'	=> 'desbloquear',
@@ -174,9 +174,11 @@
 			if( is_file($path) ) require_once( $path );
 			
 			if( !class_exists($class) ){
-				return $this->recordError('ModulesBase error: data provider not found');
+				$this->recordError('ModulesBase error: data provider not found');
 			}
-			$this->DP = new $class($this->type, $this->code, $this->modifier);
+			else $this->DP = new $class($this->type, $this->code, $this->modifier);
+			
+			return $this;
 			
 		}
 		
@@ -187,10 +189,14 @@
 		 *            hardcoded in the Data Provider.
 		 * @returns: NULL
 		 */
-		public function setCommonProperties( $toGet=array('keys', 'fields', 'tools') ){
+		public function setCommonProperties(){
 			
 			# Get and set keys, fields and/or tools
-			foreach( (array)$toGet as $get ) $this->{'provide'.ucfirst($get)}();
+			$this->provideKeys();
+			$this->provideFields();
+			$this->provideTools();
+			
+			return $this;
 			
 		}
 		
@@ -221,6 +227,8 @@
 			$this->assign('name', $this->DP->getName());
 			$this->assign('plural', $this->DP->getPlural());
 			$this->assign('tipField', $this->DP->getTipField());
+			
+			return $this;
 		
 		}
 
@@ -254,18 +262,12 @@
 			if( method_exists($this->DP, $method) ){
 				$inclFields = $this->DP->{'get'.ucfirst($this->type).'Fields'}();
 			}
-			if( empty($inclFields) ){
-				return $this->recordError('ModulesBase error: requested page is not available');
-			}
+			if( empty($inclFields) ) $inclFields = array();
 			if( is_string($inclFields) ) $inclFields = array( $inclFields );
 			
 			# Import $base into $fields (only for fields defined for this page)
 			$fields = @array_intersect_key(array_flip($inclFields), $base);
 			foreach( $fields as $key => &$field ) $field = $base[$key];
-			
-			if( empty($fields) ){
-				return $this->recordError('ModulesBase error: could not retrieve fields for this element');
-			}
 			
 			# Fill and/or fix each field's attributes
 			foreach( $fields as $id => &$atts ){
@@ -327,26 +329,14 @@
 ##################################
 ############# TOOLS ##############
 ##################################
-		
-		/**
-		 * @overview: Takes an array of `keyField => fieldValue` pairs, and
-		 *             builds a unique ID for that item based on key values
-		 * @returns: string
-		 */
-		protected function keysArray2String( $item ){
-		
-			if( !is_array($item) ){
-				if( count($this->keys) != 1 ) return NULL;
-				$item = array($this->keys[0] => $item);
-			}
-		
-			foreach( $this->keys as $key ){
-				if(isset($item[$key]) ) $keysArr[] = $item[$key];
-				else return NULL;
-			}
 			
-			return isset($keysArr) ? join('__|__', $keysArr) : '';
+		protected function filterToolsForThisElement( $tools ){
+		
+			$wanted = array_fill_keys((array)$tools, NULL);
+			$accepted = array_intersect_key($this->tools, $wanted);
 			
+			return $this->assign('tools', $accepted);
+		
 		}
 	
 		protected function toJson( $arr=array() ){
@@ -362,11 +352,6 @@
 			return '{'.join(",", $json).'}';
 		
 		}
-
-
-##################################
-############ TEMPLATE ############
-##################################
 		
 		/**
 		 * @overview: keys are passed as either a string or an array, but always
@@ -410,6 +395,44 @@
 			}
 			
 			return $received;
+			
+		}
+		
+		/**
+		 * @overview: Takes an array of `keyField => fieldValue` pairs, and
+		 *             builds a unique ID for that item based on key values
+		 * @returns: string
+		 */
+		protected function keysArray2String( $item ){
+		
+			if( !is_array($item) ){
+				if( count($this->keys) != 1 ) return NULL;
+				$item = array($this->keys[0] => $item);
+			}
+		
+			foreach( $this->keys as $key ){
+				if(isset($item[$key]) ) $keysArr[] = $item[$key];
+				else return NULL;
+			}
+			
+			return isset($keysArr) ? join('__|__', $keysArr) : '';
+			
+		}
+		
+		/**
+		 * @overview: Gets a data array from user-configured sql query
+		 * @returns: - on success, an array
+		 *           - on sql error, false
+		 *           - if missing, NULL
+		 */
+		protected function getListData($listCode, $filters=array()){
+		
+			$method = 'get'.ucfirst($listCode).'ListData';
+			$formatAs = ($listCode == 'combo') ? 'asHash' : 'asList';
+			
+			$sql = $this->DP->$method( $filters );
+			
+			return $sql ? $this->$formatAs($sql, $this->keys) : NULL;
 			
 		}
 
