@@ -13,7 +13,7 @@
 			foreach( $this->fields as $field => $atts ){
 				($field == '>') ?  $block++ : $blocks[$block][$field] = $atts;
 			}
-			
+			test( $data );
 			$this->assign('data', $data);
 			$this->assign('blocks', $blocks);
 		

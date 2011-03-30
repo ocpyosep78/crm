@@ -30,7 +30,7 @@
 			$this->hideTools('create');
 			
 			# Get Data
-			$data = $this->Source->getData('list', $params['filters']);
+			$data = $this->Source->getData('list', $params['modifier']);
 			$this->assign('data', $data);
 			
 			return $this->fetch( 'lists/innerCommonList' );

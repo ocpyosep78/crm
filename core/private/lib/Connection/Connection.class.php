@@ -96,7 +96,8 @@ EOF;
 			'named':	...a comma separated string
 			'list':		...a comma separated string
 		 */
-		protected function query($sql, $mode=NULL, $atts=NULL){
+/* TEMP : should be protected (used in Snippet temporarily) */
+		public function query($sql, $mode=NULL, $atts=NULL){
 		
 			$this->clear();
 			
@@ -377,7 +378,7 @@ EOF;
 		
 /* TEMP : should be protected (used in Snippet temporarily) */
 		public function array2filter($arr, $joint='AND', $compare='LIKE'){
-			
+		
 			# Build template string for different possible operators
 			$cmpStr['LIKE'] = "%s LIKE '%%%s%%'";
 			foreach( array('=', '<>', '>', '<') as $operator ){

@@ -70,15 +70,22 @@
 		# $type: list, item, hash
 		public function getData($type, $filters=array()){
 		
-			$keys = $this->getSummary('keys');
-			$method = ($type == 'hash') ? 'asHash' : 'asList';
+			switch( $type ){
+				case 'list':		# Multidimensional, named
+					$sql = $this->getListData( $filters );
+					$format = 'named';
+					break;
+				case 'hash':		# Unidimensional, col
+					$sql = $this->getListData( $filters );
+					$format = 'col';
+					break;
+				case 'item':		# Unidimensional, row
+					$sql = $this->getItemData( $filters );
+					$format = 'row';
+					break;
+			}
 			
-			$map = array('list' => 'List', 'hash' => 'List', 'item' => 'Item');
-			$sql = $this->{"get{$map[$type]}Data"}( $filters );
-			
-			$data = $sql ? $this->sqlEngine->$method($sql, $keys) : NULL;
-						
-			return (array)$data;
+			return $this->sqlEngine->query($sql, $format, $this->getSummary('keys'));
 			
 		}
 		
