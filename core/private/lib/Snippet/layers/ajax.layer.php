@@ -3,7 +3,7 @@
 	class SnippetLayer_ajax{
 		
 		public function write($element, $text){
-		
+			
 			return addAssign($element, 'innerHTML', $text);
 		
 		}

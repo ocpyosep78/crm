@@ -88,7 +88,7 @@
 			if( class_exists($class) ){
 				$this->Source = new $class;
 			}
-			else
+			else{
 				$this->registerWarning('definition class missing');
 				$this->Source = new Snippets_Handler_Interpreter;
 			}
@@ -106,7 +106,7 @@
 	
 		public function getSnippet(){
 			
-			
+			return $this->Source->test();
 			
 		}
 	

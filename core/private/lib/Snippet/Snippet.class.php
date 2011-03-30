@@ -22,6 +22,10 @@
 	defined('SNIPPETS_ERROR_OUTPUT')
 		|| define('SNIPPETS_ERROR_OUTPUT', 'status');
 	
+	# Engines supported: mysql
+	defined('SNIPPETS_SQL_ENGINE')
+		|| define('SNIPPETS_SQL_ENGINE', 'mysql');
+	
 	
 	# Internal library structure
 	define('SNIPPETS_LIB_PATH', dirname(__FILE__).'/lib');
@@ -34,9 +38,9 @@
 		
 
 	# Include
-	require_once( SNIPPETS_LIB_PATH.'/lib/Layers.lib.php' );
-	require_once( SNIPPETS_LIB_PATH.'/lib/Handlers.lib.php' );
-	require_once( SNIPPETS_LIB_PATH.'/lib/Pages.lib.php' );
+	require_once( SNIPPETS_LIB_PATH.'/Layers.lib.php' );
+	require_once( SNIPPETS_LIB_PATH.'/Handlers.lib.php' );
+	require_once( SNIPPETS_LIB_PATH.'/Pages.lib.php' );
 	
 
 	class Snippet{
@@ -44,7 +48,7 @@
 		private $Layers;
 	
 		public function __construct(){
-		
+			
 			$this->Layers = new Snippet_Layers;
 		
 		}
@@ -62,6 +66,9 @@
 		 * @returns: an HTML string
 		 */
 		public function getSnippet($snippet, $code, $params=array()){
+			
+			# Accept a string as params, taking it as $params['modifier']
+			is_array($params) || $params = array('modifier' => $params);
 			
 			$Pages = new Snippet_Pages($code, $params);
 			
@@ -81,6 +88,9 @@
 		 * @returns: an ajax Response Object, provided by the ajax layer
 		 */
 		public function addSnippet($snippet, $code, $params=array()){
+			
+			# Accept a string as params, taking it as $params['modifier']
+			is_array($params) || $params = array('modifier' => $params);
 			
 			# Make sure the param 'writeTo' is set (it flags the request
 			# as addSnippet, which means it needs to be printed)

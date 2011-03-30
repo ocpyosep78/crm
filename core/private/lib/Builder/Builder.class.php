@@ -19,7 +19,7 @@
 		
 	}
 	
-	function oModules( $code=NULL )		{	return getBuilderObject('Modules', $code);		}
+	function oSnippet( $code=NULL )		{	return getBuilderObject('Snippet', $code);		}
 	function oLists( $code=NULL )		{	return getBuilderObject('Lists', $code);		}		/* TEMP untill Modules is ready */
 	function oStats( $code=NULL )		{	return getBuilderObject('Stats', $code);		}		/* TEMP untill Modules is ready */
 	function oFormTable( $code=NULL )	{	return getBuilderObject('FormTable', $code);	}		/* TEMP untill Modules is ready */
@@ -101,8 +101,8 @@
 				case 'Lists':
 					$Lists = new Lists;	/* TEMP */
 				break;
-				case 'Modules':
-					$Modules = new Modules( $code );
+				case 'Snippet':
+					$Snippet = new Snippet();
 				break;
 				case 'Nav':
 					$Nav = new Nav;

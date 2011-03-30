@@ -49,7 +49,7 @@
 					'id_location'	=> '',
 					'phone'			=> 'Teléfono',
 					'email'			=> 'Email',
-					'seller'		=> '',
+					'seller'		=> array('FK' => '_users.user', 'hidden' => true),
 					'since'			=> 'Fecha Ingreso',
 					'subscribed'	=> array('name' => 'Subscripción', 'hidden' => true),
 				),
@@ -58,8 +58,8 @@
 					'location'		=> 'Ciudad/Localidad',
 				),
 				'_users' => array(
-					'user'				=> array('FK' => 'customers.seller', 'hidden' => true),
-					'$name $lastName'	=> 'Vendedor',
+					'user'		=> '',
+					'seller'	=> array('name' =>'Vendedor', 'aliasOf' => '$name $lastName'),
 				),
 			);
 			
@@ -118,14 +118,6 @@
 /*		public function strictValidation(){
 			return true;
 		}/**/
-		
-		private function getFilterFromModifier(){
-			switch( $this->modifier ){
-				case 'customers': return 'NOT ISNULL(`since`)';
-				case 'potential': return 'ISNULL(`since`)';
-			}
-			return '1';		# No filter for status (show all customers)
-		}
 		
 	}
 

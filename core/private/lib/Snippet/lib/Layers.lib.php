@@ -14,11 +14,10 @@
 			if( !empty($this->list[$layer]) ) return $this->list[$layer];
 		
 			$path = SNIPPETS_LAYERS."/{$layer}.layer.php";
-			$class = "SnippetLayer_{$path}";
-			
-			if( is_file($path) ) require_once( $path );
+			$class = "SnippetLayer_{$layer}";
 			
 			# Success
+			if( is_file($path) ) require_once( $path );
 			if( class_exists($class) ) return $this->list[$layer] = new $class;
 			
 			# Failure

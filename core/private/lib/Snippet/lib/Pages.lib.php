@@ -111,23 +111,26 @@
 		
 		private function getSingleSnippet( $snippet ){
 			
+			$code = $this->code;
+			$params = $this->params;
+			
 			# Get Handler, redirect error output on failure
 			$Handler = $this->Handlers->getHandlerFor( $snippet );
 			if( !$Handler ){
 				$msg = "Snippets Pages: Handler not found for {$snippet}";
 				# Output error through ajax layer's #display method
-				if( $this->params['reportTo'] == 'status' ){
+				if( $params['reportTo'] == 'status' ){
 					$this->Layers->get('ajax')->display($msg, 'error');
 					return '';
 				}
 				# Output error through the returned HTML string
-				elseif( $this->params['reportTo'] == 'html' ){
+				elseif( $params['reportTo'] == 'html' ){
 					return $this->Layers->get('error')->Error( $msg );
 				}
 			}
 			
 			# Handler#start should cover most common actions to initialize
-			$Handler->start($this->code, $this->params);
+			$Handler->start($code, $params);
 			$HTML = $Handler->getSnippet();
 			
 			# If writeTo param is set, it means we're expected to print
