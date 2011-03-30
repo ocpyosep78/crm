@@ -1,4 +1,5 @@
 # ignore whole folder
+.svn/
 (docs)/
 /app/images/temp/
 /batch/
