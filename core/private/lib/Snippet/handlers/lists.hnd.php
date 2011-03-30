@@ -24,10 +24,14 @@
 		 */
 		protected function handle_innerCommonList(){
 			
+			$params = $this->params;
+			
+			# This snippet doesn't include a create button
+			$this->hideTools('create');
+			
 			# Get Data
-			$src = !empty($this->params['src']) ? $this->params['src'] : 'common';
-			$data = $this->getListData($src, $this->params['filters']);
-			$this->TemplateEngine->assign('data', $data);
+			$data = $this->Source->getData('list', $params['filters']);
+			$this->assign('data', $data);
 			
 			return $this->fetch( 'lists/innerCommonList' );
 		

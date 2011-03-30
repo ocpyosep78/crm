@@ -9,7 +9,9 @@
  */
  
  
- 	require_once(SNIPPET_HANDLERS_PATH.'/Handler_Commons.class.php');
+  	require_once(dirname(__FILE__).'/Handler_Defaults.lib.php');
+  	require_once(dirname(__FILE__).'/Handler_Interpreter.lib.php');
+ 	require_once(dirname(__FILE__).'/Handler_Commons.lib.php');
  
  	
 	class Snippet_Handlers{
@@ -35,8 +37,13 @@
 					return 'lists';
 				case 'create':
 				case 'edit':
-				case 'info':
+				case 'view':
 					return 'items';
+				case 'axn_edit':
+				case 'axn_block':
+				case 'axn_unblock':
+				case 'axn_delete':
+					return 'actions';
 				default:
 					return NULL;
 			}

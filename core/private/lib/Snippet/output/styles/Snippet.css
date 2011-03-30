@@ -1,7 +1,7 @@
 .Snippet{ position:relative; }
-.Wrapper_for_commonList{ z-index:280; }
-.Wrapper_for_comboList{ float:right; margin-right:10px; z-index:300; }
-.Wrapper_for_bigTools{ float:left; z-index:300; }
+.Wrapper_for_commonList{ position:relative; }
+.Wrapper_for_comboList{ float:right; margin-right:10px; z-index:195; }
+.Wrapper_for_bigTools{ float:left; z-index:200; }
 
 /**
  * BIGTOOLS
@@ -67,10 +67,7 @@
 .infoData{ position:relative; float:left; margin:10px; padding:10px; border:double 3px #f0f0f5; border-radius:6px; -moz-border-radius:6px; -webkit-border-radius:6px; background:-webkit-gradient(linear, left top, left bottom, from(#f0f0f0), to(#c0c0c0)); background:-moz-linear-gradient(top, #f0f0f0 #c0c0c0); filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#f0f0f0', endColorstr='#c0c0c0'); opacity:0.8; }
 .infoData > SPAN{ display:block; padding:5px 10px; border-top:solid 1px #e0e0e5; border-left:solid 1px #e0e0e5; text-align:right; color:#607090; font-size:14px; font-weight:bold; box-shadow:#404045 2px 2px 4px; -moz-box-shadow:#404045 2px 2px 4px; -webkit-box-shadow:#404045 2px 2px 4px; background:-webkit-gradient(linear, left top, left bottom, from(#e0f0ff), to(#b0a8b8)); background:-moz-linear-gradient(top, #e0f0ff #b0a8b8); filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#e0f0ff', endColorstr='#b0a8b8'); }
 .infoData > SPAN > STRONG{ color:#302050; }	/* Debugging */
-.infoData > DIV{ float:left; margin:10px; margin-top:20px; padding:10px; border-top:solid 1px #c0c0d0; border-left:solid 1px #c0c0d0; border-radius:6px; -moz-border-radius:6px; -webkit-border-radius:6px; box-shadow:#404045 4px 4px 6px; -moz-box-shadow:#404045 4px 4px 6px; -webkit-box-shadow:#404045 4px 4px 6px; text-align:left;
-	background:-webkit-gradient(linear, left top, left bottom, from(#f0f0f5), to(#ffffff));
-	background:-moz-linear-gradient(top, #f0f0f5 #ffffff);
-	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#f0f0f5', endColorstr='#ffffff'); }
+.infoData > DIV{ float:left; margin:10px; margin-top:20px; padding:10px; border-top:solid 1px #c0c0d0; border-left:solid 1px #c0c0d0; border-radius:6px; -moz-border-radius:6px; -webkit-border-radius:6px; box-shadow:#404045 4px 4px 6px; -moz-box-shadow:#404045 4px 4px 6px; -webkit-box-shadow:#404045 4px 4px 6px; text-align:left; background:-webkit-gradient(linear, left top, left bottom, from(#f0f0f5), to(#ffffff)); background:-moz-linear-gradient(top, #f0f0f5 #ffffff); filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#f0f0f5', endColorstr='#ffffff'); }
 .infoData TABLE{ margin:20px 30px; }
 .infoData TH{ height:1.5em; padding-left:30px; padding-right:5px; white-space:nowrap; text-indent:0px !important; text-align:right !important; color:#606090 !important; }
 .infoData TD{ text-indent:0px !important; color:#000060 !important; }
@@ -94,17 +91,19 @@
 /**
  * LISTS: TITLES
  */
-.listTitles{ height:18px; position:relative; width:auto; margin:0px -3px 5px -3px; padding:7px 0px 9px 0px; background:#eaeaf5; text-align:left; font-size:14px; color:#303000; font-weight:bold; font-family:"Times New Roman", Times, serif; border:solid 1px #503030; border-radius:12px; -moz-border-radius:12px; -webkit-border-radius:12px; box-shadow:#000000 2px 1px 5px; -moz-box-shadow:#000000 2px 1px 5px; -webkit-box-shadow:#000000 2px 1px 5px; white-space:nowrap; overflow:hidden; z-index:50; }
-.listTitles > DIV{ position:absolute; margin:0px 5px; padding:0px; border:none; text-indent:1px; overflow:hidden; }
+.listTitles{ height:18px; position:relative; width:auto; margin:0px -6px 5px -6px; padding:8px 0px 9px 0px; text-align:left; font-size:14px; font-weight:bold; font-family:"Times New Roman", Times, serif; border-radius:12px; -moz-border-radius:12px; -webkit-border-radius:12px; box-shadow:#000000 2px 1px 5px; -moz-box-shadow:#000000 2px 1px 5px; -webkit-box-shadow:#000000 2px 1px 5px; white-space:nowrap; overflow:hidden; z-index:50; background:-webkit-gradient(linear, left top, left bottom, from(#203050), to(#e4e5e8)); background:-moz-linear-gradient(top, #003366, #d0d0d0); filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#204060', endColorstr='#d0d0d0'); }
+.listTitles > DIV{ position:absolute; margin:0px 5px; padding:0px; text-indent:1px; color:#ffffff; overflow:hidden; }
+.listTitles > DIV:hover{ color:#ffffc0; }
 
 /**
  * LIST SEARCH
  */
-.listSearch{ position:absolute; height:50px; width:203px; margin-top:-90px; padding:5px 10px; background:#003060; border:ridge 2px #003000; display:none; z-index:200; border-radius:6px; -moz-border-radius:6px; -webkit-border-radius:6px; box-shadow:#a0a0a0 3px 3px 4px; -moz-box-shadow:#a0a0a0 3px 3px 4px; -webkit-box-shadow:#a0a0a0 3px 3px 4px; }
+.listSearch{ display:none; position:fixed; height:50px; width:203px; margin-top:-90px; padding:5px 10px; background:#003060; border:ridge 1px #003000; border-radius:6px; -moz-border-radius:6px; -webkit-border-radius:6px; box-shadow:#a0a0a0 2px 2px 4px; -moz-box-shadow:#a0a0a0 2px 2px 4px; -webkit-box-shadow:#a0a0a0 2px 2px 4px; background:-webkit-gradient(linear, left top, left bottom, from(#003366), to(#d0d0d0)); background:-moz-linear-gradient(top, #003366, #d0d0d0); filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#204060', endColorstr='#d0d0d0'); z-index:205; }
 .listSearch > DIV{ font-family:Arial, Helvetica, sans-serif; font-size:11px; font-weight:bold; color:#c0c0c0; }
 .listSearch > DIV > SPAN{ position:relative; left:3px; font-size:13px; color:#ccddaa; text-shadow:none; filter:shadow(color=#ffa0a0, direction=120, strength=0); }
 .listSearch > INPUT{ height:1.5em; width:200px; margin:5px 0px; background:#ccddaa; border:2px solid #000000; }
-.listSearchBtn{ position:relative; top:2px; left:2px; height:16px; width:16px; cursor:pointer; }
+.listSearchBtn{ position:relative; top:-1px; left:-10px; height:22px; width:22px; vertical-align:middle; opacity:0.5; filter:alpha(opacity=50); }
+.listTitles > DIV:hover .listSearchBtn{ opacity:1; filter:alpha(opacity=100); }
 
 /**
  * COMBO LIST
@@ -118,5 +117,5 @@
 /**
  * COMMON LIST
  */
-.commonListWrapper{ clear:both; padding:5px; margin:0px 5px 15px 5px; }
+.commonListWrapper{ clear:both; padding:5px; margin:0px 5px 15px 5px; z-index:190; }
 .commonListInnerWrapper{ overflow:auto; width:auto; min-height:100px; max-height:410px; padding:2px; margin:0px; border:solid 1px #503030; background:#eaeaf5; border-radius:8px; -moz-border-radius:8px; -webkit-border-radius:8px; box-shadow:#000000 2px 2px 5px; -moz-box-shadow:#000000 2px 2px 5px; -webkit-box-shadow:#000000 2px 2px 5px; }

@@ -124,14 +124,16 @@ EOF;
 		/**
 		 * Shortcut to queries of type col
 		 */
-		protected function asHash( $sql ){
+/* TEMP : should be protected (used in Snippet temporarily) */
+		public function asHash( $sql ){
 			return $this->query($sql, 'col');
 		}
 		
 		/**
 		 * Shortcut to queries of type named (array if id omitted)
 		 */
-		protected function asList($sql, $id=NULL){
+/* TEMP : should be protected (used in Snippet temporarily) */
+		public function asList($sql, $id=NULL){
 			return $this->query($sql, $id ? 'named' : 'array', $id);
 		}
 		
@@ -334,8 +336,9 @@ EOF;
 /***************
 ** F O R M A T T I N G   M E T H O D S
 ***************/
-		
-		protected function fixFilters($filters, $substitutions=array()){
+
+/* TEMP : should be protected (used in Snippet temporarily) */
+		public function fixFilters($filters, $substitutions=array()){
 			foreach( $substitutions as $old => $new ){
 				if( isset($filters[$old]) ) $filters[$new] = $filters[$old];
 				unset( $filters[$old] );
@@ -372,7 +375,8 @@ EOF;
 			return join(',', $assign);
 		}
 		
-		protected function array2filter($arr, $joint='AND', $compare='LIKE'){
+/* TEMP : should be protected (used in Snippet temporarily) */
+		public function array2filter($arr, $joint='AND', $compare='LIKE'){
 			
 			# Build template string for different possible operators
 			$cmpStr['LIKE'] = "%s LIKE '%%%s%%'";
@@ -388,9 +392,13 @@ EOF;
 					$cmp = isset($v[1])
 						? (isset($cmpStr[$v[1]]) ? $cmpStr[$v[1]] : $cmpStr['='])
 						: $compareTpl;
-					if( isset($v[0]) && $v[0] !== '' ) $cond[] = sprintf($cmp, $k, $v[0]);
+					if( isset($v[0]) && $v[0] !== '' ){
+						$cond[] = sprintf($cmp, $k, addslashes($v[0]));
+					}
 				}
-				elseif( $v !== '' ) $cond[] = sprintf($compareTpl, $k, $v);
+				elseif( $v !== '' ){
+					$cond[] = sprintf($compareTpl, $k, addslashes($v));
+				}
 			}
 			return isset($cond) ? join(" {$joint} ", $cond) : '1';
 		}

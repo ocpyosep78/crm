@@ -9,14 +9,13 @@ var SnippetPort = {
 	// user. It receives only one parameter: an error description string.
 	// By default, it uses AppTemplate's built-in function showStatus(msg, type)
 	showError: function(){ showStatus.apply(window, arguments); },
-	// Map #printHTML to the function that will request a page to be printed
+	// Map #addSnippet to the function that will request a page to be printed
 	// through ajax.
 	// By default, that is xajax_addSnippet
-	printHTML: function(){ xajax_addSnippet.apply(window, arguments); },
+	addSnippet: function(){ xajax_addSnippet.apply(window, arguments); },
 	getPage: function(e, code, snippet, params){
 		getPage(e, code + snippet.capitalize(), params);
-	},
-	doAction: function(){ xajax_ajaxDo.apply(window, arguments); }
+	}
 };
 
 
@@ -25,9 +24,8 @@ var Snippet = {
 	/**************************************************************************/
 	/********************************* TOOLS **********************************/
 	showError: SnippetPort.showError,
-	printHTML: SnippetPort.printHTML,
+	addSnippet: SnippetPort.addSnippet,
 	getPage: SnippetPort.getPage,
-	do: SnippetPort.doAction,
 	/**************************************************************************/
 	/********************************* COMMON *********************************/
 	initialize: function( snippet ){
@@ -51,7 +49,13 @@ try{
 	},
 	/**************************************************************************/
 	/******************************** HANDLERS ********************************/
-	info: function(el, atts){									  /*** INFO ***/
+	create: function(el, atts){									  /*** INFO ***/
+		return;
+	},
+	edit: function(el, atts){									  /*** INFO ***/
+		return;
+	},
+	view: function(el, atts){									  /*** INFO ***/
 		return;
 	},
 	comboList: function(el, atts){							/*** COMBO LIST ***/
@@ -61,13 +65,6 @@ try{
 				that.getPage(e, atts.code, 'info', [this.value]);
 			});
 		});
-	},
-	commonList: function (el, atts){					   /*** COMMON LIST ***/
-		// Enable column search and do a first search (without filters)
-		new ListSearch(el, atts).updateList();
-		// SyncTitles applies to commonList, but is called by innerCommonList,
-		// so it needs to be made available to innerCommonList on list update
-		el.getElement('.listWrapper').ST = new SyncTitles(el, atts).sync();
 	},
 	bigTools: function(el, atts){
 		var tools = [];
@@ -86,6 +83,16 @@ try{
 				if(tl && tools[tl]) tools[tl].removeClass('bigToolEnabled');
 			}
 		};
+		bigTools.enableTool( 'create' );
+	},
+	commonList: function (el, atts){					   /*** COMMON LIST ***/
+		// Mark listWrapper with this snippet's unique ID
+		el.getElement('.listWrapper').id = 'tgt' + atts.params.page_uID;
+		// Enable column search and do a first search (without filters)
+		new ListSearch(el, atts).updateList();
+		// SyncTitles applies to commonList, but is called by innerCommonList,
+		// so it needs to be made available to innerCommonList on list update
+		el.getElement('.listWrapper').ST = new SyncTitles(el, atts).sync();
 	},
 	innerCommonList: function(el, atts){
 		var that = this;
@@ -102,7 +109,7 @@ try{
 					block: '¿Realmente desea bloquear este elemento?' };
 		var sendRequest = function(axn, id){
 			(!ask[axn] || confirm(ask[axn]))
-				&& that.do(axn, atts.code, id);
+				&& that.addSnippet(axn, atts.code, id);
 		};
 		// Add event handlers
 		el.getElements('.listRows').forEach(function(row){
@@ -115,8 +122,8 @@ try{
 			// Links for each row's tools
 			row.getElement('.innerListTools').addEvent('click', function(e){
 				e.stop();
-				if( e.target.nodeName.toLowerCase() != 'img' ) return;
-				sendRequest(e.target.getAttribute('TOOL'), id);
+				var tool = e.target.getAttribute('TOOL');
+				if( tool ) sendRequest(tool, id);
 			});
 		});
 	},
@@ -229,22 +236,22 @@ function ListSearch(el, atts){
 	/**************************************************************************/
 	/********************************* TOOLS **********************************/
 	var showError = SnippetPort.showError;
-	var printHTML = SnippetPort.printHTML;
+	var addSnippet = SnippetPort.addSnippet;
 	// Global reference to self
 	var that = el.ListSearch = this;
 	// Define most used elements and vars as private properties
 	var oBox = el.getElement('.listSearch');
 	var oBoxLbl = oBox.getElement('SPAN');
 	var oInput = oBox.getElement('INPUT');
-	var oList = el.getElement('.listWrapper');
 	var oFields = [];
 	var innerSnippet = 'inner' + atts.snippet.capitalize();
 	// Public methods
 	this.show = function( btn ){
 		that.hide();
+		if( !btn ) return;
 		oBoxLbl.innerHTML = btn.alt;
 		var left = btn.getPosition().x - 100;
-		var top = btn.getPosition().y + 60;
+		var top = btn.getPosition().y + 62;
 		oBox.setStyles({left:left, top:top, display:'block'});
 		oBox.pos = parseInt( btn.get('pos') );
 		oBox.code = btn.get('code');
@@ -257,25 +264,28 @@ function ListSearch(el, atts){
 		return that;
 	};
 	this.updateList = function( filters ){
-		oList.id = atts.params.page_uID;
-		var params = {writeTo:oList.id, filters:filters||[], src:atts.params.src||''};
-		printHTML(innerSnippet, atts.code, params);
+		var params = {filters:filters||[], src:atts.params.src||''};
+		params.writeTo = 'tgt' + (params.page_uID  = atts.params.page_uID);
+		addSnippet(innerSnippet, atts.code, params);
 		return that;
 	};
 	// Add search buttons to each title field and set them up
 	el.getElement('.listTitles').getElements('DIV').forEach(function(field, i){
 		if( !field.innerHTML ) return;	// Only for used title fields
 		var code = field.getAttribute('FOR');
-		new Element('IMG', {
+		// Create and insert one search image per title
+		var img = new Element('IMG', {
 			'pos': i,
 			'code': code,
 			'class': 'listSearchBtn',
-			'src': SNIPPET_IMAGES + '/buttons/search.gif',
+			'src': SNIPPET_IMAGES + '/buttons/search.png',
 			'alt': field.innerHTML.toLowerCase(),
 			'title': 'filtrar por campo ' + field.innerHTML.toLowerCase()
-		}).inject( field ).addEvent('click', function(){
-			that[(oBox.code == code) ? 'hide' : 'show']( this );
-		}).parentNode.setStyle('display', 'block');
+		}).inject(field, 'bottom');
+		// Style and attach event handler to each title field
+		field.setStyle('cursor', 'pointer').addEvent('click', function(){
+			that[(oBox.code == code) ? 'hide' : 'show']( img );
+		}).setStyle('display', 'block');
 		oFields[i] = field;
 	});
 	// Attach event handlers

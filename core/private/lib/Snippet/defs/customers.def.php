@@ -72,12 +72,12 @@
 			
 		}
 		
-/*		public function getItemFields(){
+		public function getItemFields(){
 		
 			return array('number', 'customer', 'legal_name', 'rut', 'since', '>',
 				'phone', 'email', 'address', 'location', 'sellerName');
 			
-		}/**/
+		}
 		
 		public function getListData( $filters=array() ){
 			$this->fixFilters(&$filters, array(
@@ -95,6 +95,16 @@
 					AND {$this->getFilterFromModifier()}
 					ORDER BY `c`.`customer`";
 		}
+public function getItemData( $id ){
+	return $this->getListData( array('id_customer' => $id) );
+}
+private function getFilterFromModifier(){
+	switch( $this->params['modifier'] ){
+		case 'customers': return 'NOT ISNULL(`since`)';
+		case 'potential': return 'ISNULL(`since`)';
+	}
+	return '1';		# No filter for status (show all customers)
+}
 		public function getComboListData( $filters=array() ){
 			return "SELECT	`id_customer`,
 							`customer`

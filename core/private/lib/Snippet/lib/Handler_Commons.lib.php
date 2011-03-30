@@ -54,8 +54,6 @@
 		}
 	
 */
- 
-  	require_once(dirname(__FILE__).'/Handler_Interpreter.class.php');
 	
 
 	abstract class Snippets_Handlers_Commons{
@@ -67,10 +65,15 @@
 		protected $code;
 		protected $params;
 		
-		private $Layers;
-		private $Source;
+		protected $Layers;
+		protected $Source;
 		
 		private $tplVars;
+		
+		protected $basics;
+		protected $fields;
+		protected $keys;
+		protected $tools;
 		
 	
 		public function __construct( $snippet ){
@@ -100,9 +103,7 @@
 			# Get a general idea of the integrity of the definitions
 			$integrity = $this->Source->validate();
 			
-			if( $integrity !== true ){
-				$this->registerWarning( $integrity );
-			}
+			return $this;
 			
 		}
 	
@@ -114,19 +115,7 @@
 			# Pass control to the specific handler
 			# (child that inherited from this one)
 			return $this->{"handle_{$this->snippet}"}();
-			
 		
-		}
-	
-		public function initializeSnippet(){
-			
-			$snippet = $this->snippet;
-			$code = $this->code;
-			$paramsStr = $this->toJson($this->params);
-			$cmd = "Snippet.initialize('{$snippet}', '{$code}', {$paramsStr});";
-			
-			$this->Layers->get('ajax')->addScript( $cmd );
-			
 		}
 
 
@@ -168,13 +157,13 @@
 			# Internal attributes
 			$this->assign('snippet', $this->snippet);
 			$this->assign('code', $this->code);
-			$this->assign('params', $this->toJson($this->params));
+			$this->assign('params', Snippet_Tools::toJson($this->params));
 			
 			# Common attributes
-			$basics = $this->Source->getBasics();
-			$this->assign('name', $basics['name']);
-			$this->assign('plural', $basics['plural']);
-			$this->assign('tipField', $basics['tip']);
+			$this->basics = $this->Source->getBasics();
+			$this->assign('name', $this->basics['name']);
+			$this->assign('plural', $this->basics['plural']);
+			$this->assign('tipField', $this->basics['tip']);
 			
 			return $this;
 			
@@ -189,17 +178,18 @@
 				$found = preg_match('/Snippet_hnd_(.+)/', get_class($this), $class);
 				if( $found ) $this->dataType = $class[1];
 			}
+			
 			# Get fields for this dataType (with attributes)
 			$fields = $this->Source->getFieldsWithAtts( $this->dataType );
-			$this->assign('fields', $fields);
+			$this->fields = $this->assign('fields', $fields);
 			
 			########## KEYS ###########
 			
-			$this->assign('keys', $this->Source->getSummary('keys'));
+			$this->keys = $this->assign('keys', $this->Source->getSummary('keys'));
 			
 			########## TOOLS ###########
 			
-			$this->assign('tools', $this->Source->getSummary('tools'));
+			$this->tools = $this->assign('tools', $this->Source->getSummary('tools'));
 			
 			return $this;
 		
@@ -238,55 +228,14 @@
 			else unset( $this->tplVars[$var] );
 			
 		}
-
-
-##################################
-########### FORMATTING ###########
-##################################
 		
-	
-		protected function toJson( $arr=array() ){
+		protected function hideTools( $tools ){
 			
-			if( !is_array($arr) || !count($arr) ) return '{}';
-			foreach( $arr as $k => $v ){
-				$json[] = '"'.$k.'":'.(is_array($v)
-					? $this->toJson($v)
-					: (is_numeric($v) ? $v : '"'.addslashes($v).'"')
-				);
+			foreach( (array)$tools as $tool ){
+				unset( $this->tplVars['tools'][$tool] );
 			}
-			
-			return '{'.join(",", $json).'}';
 		
 		}
-
-
-##################################
-############# ERRORS #############
-##################################
-
-		private function registerWarning( $msg ){
-		
-			test( $msg );		/* TEMP */
-		
-		}
-		
-		
-		
-		/* TEMP */
-		
-		protected function getListData($listCode, $filters=array()){
-		
-			$method = 'get'.ucfirst($listCode).'ListData';
-			$formatAs = ($listCode == 'combo') ? 'asHash' : 'asList';
-			
-			$sql = $this->Source->$method( $filters );
-			
-			return $sql ? $this->Source->$formatAs($sql, $this->Source->getSummary('keys')) : NULL;
-			
-		}
-		
-		
-		
 		
 	}
 

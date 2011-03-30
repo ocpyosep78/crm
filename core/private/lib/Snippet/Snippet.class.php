@@ -45,6 +45,7 @@
 		
 
 	# Include
+	require_once( SNIPPET_LIB_PATH.'/Tools.lib.php' );
 	require_once( SNIPPET_LIB_PATH.'/Layers.lib.php' );
 	require_once( SNIPPET_LIB_PATH.'/Handlers.lib.php' );
 	require_once( SNIPPET_LIB_PATH.'/Pages.lib.php' );

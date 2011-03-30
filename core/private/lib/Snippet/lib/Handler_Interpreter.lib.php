@@ -1,14 +1,14 @@
 <?php
- 
-  	require_once(dirname(__FILE__).'/Handler_Defaults.class.php');
 	
 	class Snippets_Handler_Interpreter extends Snippets_Handler_Defaults{
 	
+		private $sqlEngine;
+		
 		private $warnings;
 	
-		private $snippet;
-		private $code;
-		private $params;
+		protected $snippet;
+		protected $code;
+		protected $params;
 		
 		private $basics;
 		
@@ -29,10 +29,17 @@
 		public function __construct(){
 			
 			$this->Layers = new Snippet_Layers;
+			
+			$this->sqlEngine = $this->Layers->get( SNIPPETS_SQL_ENGINE );
 		
 			$this->warnings = array();
 			
 		}
+		
+		
+/**************************************************/
+/********************** GET ***********************/
+/**************************************************/
 		
 		public function getBasics(){
 		
@@ -51,15 +58,35 @@
 			$atts = $this->summary['fieldsAtts'];
 			
 			$filter = array();
-			if( $for == 'list' ) $filter = $this->getListFields();
-			elseif( $for == 'item' ) $filter = $this->getItemFields();
+			if( $for == 'lists' ) $filter = $this->getListFields();
+			elseif( $for == 'items' ) $filter = $this->getItemFields();
 			
 			$fields = array_intersect_key($atts, array_flip($filter));
 		
 			return $fields;
 		
 		}
-	
+		
+		# $type: list, item, hash
+		public function getData($type, $filters=array()){
+		
+			$keys = $this->getSummary('keys');
+			$method = ($type == 'hash') ? 'asHash' : 'asList';
+			
+			$map = array('list' => 'List', 'hash' => 'List', 'item' => 'Item');
+			$sql = $this->{"get{$map[$type]}Data"}( $filters );
+			
+			$data = $sql ? $this->sqlEngine->$method($sql, $keys) : NULL;
+						
+			return (array)$data;
+			
+		}
+		
+		
+/**************************************************/
+/******************* READ / SET *******************/
+/**************************************************/
+
 		/**
 		 * Initiate required properties of the object
 		 */
@@ -89,24 +116,9 @@
 			$this->buildDBSummary();
 			
 			# Build the sql layer and feed it what we have aquired
-			$this->sqlEngine = $this->Layers->get( SNIPPETS_SQL_ENGINE );
 			$this->sqlEngine->feed( $this->summary );
 		
 		}
-	
-		/**
-		 * Validate (in general) the integrity of the defintions
-		 */
-		public function validate(){
-		
-			return true;
-		
-		}
-		
-		
-/*****************************************/
-/**************** PRIVATE ****************/
-/*****************************************/
 		
 		/**
 		 * Read and validate input from definition file, for database
@@ -211,7 +223,7 @@
 					# List of shown fields, by fullID
 					$atts['hidden'] || $shown[] = $fullID;
 					# List of key fields, by field name
-					if( $atts['isKey'] && $mainTable == $code ){
+					if( $atts['isKey'] && isset($mainTable[$code])  ){
 						$keys[] = $field;
 					}
 					# List of foreign keys, by field (always from mainTable)
@@ -221,9 +233,6 @@
 					);
 				}
 			}
-			
-//			$forLists = (array)$this->getListFields();
-//			$fieldsFor['lists'] = array_intersect_keys($forLists, $fields);
 			
 			$this->summary = array(
 				'mainTable' 	=> $mainTable,
@@ -239,6 +248,11 @@
 			return $this;
 			
 		}
+		
+		
+/**************************************************/
+/********************* TOOLS **********************/
+/**************************************************/
 		
 		/*
 		 * Find a unique shortname for each table
@@ -264,10 +278,36 @@
 			
 		}
 		
+		protected function fixFilters(&$filters, $fix){
+			return $this->sqlEngine->fixFilters(&$filters, $fix);
+		}
+		protected function array2filter($arr, $joint='AND', $compare='LIKE'){
+			return $this->sqlEngine->array2filter($arr, $joint, $compare);
+		}
+		
+		
+/**************************************************/
+/***************** ERROR HANDLING *****************/
+/**************************************************/
+	
+		/**
+		 * Validate (in general) the integrity of the defintions
+		 */
+		public function validate(){
+		
+			return true;
+		
+		}
 		
 		private function raise( $msg ){
 			$this->test( $msg );				/* TEMP */
 		}
+		
+		
+/**************************************************/
+/******************* DEBUGGING ********************/
+/**************************************************/
+		
 		public function test( $var=NULL ){
 			
 			$var = $this->sqlEngine->generate('list');
