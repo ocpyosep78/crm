@@ -5,11 +5,11 @@
  * 
  *    class Handler (one of its children is dinamically created, on success)
  *        #__construct( string $snippet )
- *    constant SNIPPETS_HANDLERS_PATH (always)
+ *    constant SNIPPET_HANDLERS_PATH (always)
  */
  
  
- 	require_once(SNIPPETS_HANDLERS_PATH.'/Handler_Commons.class.php');
+ 	require_once(SNIPPET_HANDLERS_PATH.'/Handler_Commons.class.php');
  
  	
 	class Snippet_Handlers{
@@ -31,7 +31,7 @@
 					return 'widgets';
 				case 'simpleList':
 				case 'commonList':
-				case 'innerList':
+				case 'innerCommonList':
 					return 'lists';
 				case 'create':
 				case 'edit':
@@ -59,7 +59,7 @@
 			if( !$hndName ) return NULL;
 			
 			# Get class path and name
-			$path = SNIPPETS_HANDLERS_PATH."/{$hndName}.hnd.php";
+			$path = SNIPPET_HANDLERS_PATH."/{$hndName}.hnd.php";
 			$class = "Snippet_hnd_{$hndName}";
 			
 			# Check path and class are right

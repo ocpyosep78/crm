@@ -14,7 +14,7 @@
  *        #validate()
  *        #
  *        #
- *    constant SNIPPETS_DEFINITIONS_PATH
+ *    constant SNIPPET_DEFINITION_PATH
  */
 
 /**
@@ -60,17 +60,26 @@
 
 	abstract class Snippets_Handlers_Commons{
 	
+		protected $dataType;		# list, item
+	
 		protected $snippet;
 		
 		protected $code;
 		protected $params;
 		
+		private $Layers;
 		private $Source;
+		
+		private $tplVars;
 		
 	
 		public function __construct( $snippet ){
+		
+			$this->Layers = new Snippet_Layers;
 			
 			$this->snippet = $snippet;
+			
+			$this->tplVars = array();
 			
 		}
 		
@@ -79,19 +88,8 @@
 			$this->code = $code;
 			$this->params = $params;
 			
-			# Attempt to load the definition file
-			$file = SNIPPETS_DEFINITIONS_PATH."/{$code}.def.php";
-			$class = "Snippet_def_{$code}";
-			if( is_file($file) ) require_once( $file );
-			
-			# If not found, use the naked Interpreter as $Source
-			if( class_exists($class) ){
-				$this->Source = new $class;
-			}
-			else{
-				$this->registerWarning('definition class missing');
-				$this->Source = new Snippets_Handler_Interpreter;
-			}
+			# Set @Source for the current $code (module's code name)
+			$this->defineSource();
 			
 			# Initiate required properties of the object
 			$this->Source->inject($this->snippet, $code, $params);
@@ -102,19 +100,193 @@
 			# Get a general idea of the integrity of the definitions
 			$integrity = $this->Source->validate();
 			
+			if( $integrity !== true ){
+				$this->registerWarning( $integrity );
+			}
+			
 		}
 	
 		public function getSnippet(){
+		
+			# Register common/config data (fields, keys, tools)
+			$this->registerCommonVars()->registerConfig();
 			
-			return $this->Source->test();
+			# Pass control to the specific handler
+			# (child that inherited from this one)
+			return $this->{"handle_{$this->snippet}"}();
 			
+		
 		}
 	
 		public function initializeSnippet(){
 			
+			$snippet = $this->snippet;
+			$code = $this->code;
+			$paramsStr = $this->toJson($this->params);
+			$cmd = "Snippet.initialize('{$snippet}', '{$code}', {$paramsStr});";
 			
+			$this->Layers->get('ajax')->addScript( $cmd );
 			
 		}
+
+
+##################################
+########### GET SOURCE ###########
+##################################
+		
+		private function defineSource(){
+			
+			$file = SNIPPET_DEFINITION_PATH."/{$this->code}.def.php";
+			$class = "Snippet_def_{$this->code}";
+			
+			# Attempt to load the definition file
+			if( is_file($file) ) require_once( $file );
+			if( class_exists($class) ){
+				$this->Source = new $class;
+			}
+			# If not found, use the naked Interpreter as $Source
+			else{
+				$this->registerWarning('definition class missing');
+				$this->Source = new Snippets_Handler_Interpreter;
+			}
+			
+		}
+
+
+##################################
+############ TEMPLATE ############
+##################################
+		
+		private function registerCommonVars(){
+		
+			# General and presentational
+			$this->assign('cycleValues', '#eaeaf5,#e0e0e3,#e5e6eb');
+			$this->assign('SNIPPET_TEMPLATES', SNIPPET_TEMPLATES);
+			$this->assign('SNIPPET_IMAGES', SNIPPET_IMAGES);
+			$this->assign('DEVELOPER_MODE', defined('DEVELOPER_MODE') ? DEVELOPER_MODE : false);
+			
+			# Internal attributes
+			$this->assign('snippet', $this->snippet);
+			$this->assign('code', $this->code);
+			$this->assign('params', $this->toJson($this->params));
+			
+			# Common attributes
+			$basics = $this->Source->getBasics();
+			$this->assign('name', $basics['name']);
+			$this->assign('plural', $basics['plural']);
+			$this->assign('tipField', $basics['tip']);
+			
+			return $this;
+			
+		}
+		
+		private function registerConfig(){
+			
+			########## FIELDS ###########
+			
+			# If dataType (item, list) wasn't explicitly set, try to guess it
+			if( !$this->dataType ){
+				$found = preg_match('/Snippet_hnd_(.+)/', get_class($this), $class);
+				if( $found ) $this->dataType = $class[1];
+			}
+			# Get fields for this dataType (with attributes)
+			$fields = $this->Source->getFieldsWithAtts( $this->dataType );
+			$this->assign('fields', $fields);
+			
+			########## KEYS ###########
+			
+			$this->assign('keys', $this->Source->getSummary('keys'));
+			
+			########## TOOLS ###########
+			
+			$this->assign('tools', $this->Source->getSummary('tools'));
+			
+			return $this;
+		
+		}
+		
+		/**
+		 * Returns an HTML string from a template, after assigning all vars
+		 * passed as $data (retains previously assigned vars).
+		 */
+		protected function fetch($name, $data=array()){
+		
+			# Register all stored vars in the Template Engine
+			foreach( $data + $this->tplVars as $k => $v ){
+				$this->Layers->get('templates')->assign($k, $v);
+			}
+			
+			$name = preg_replace('/\.tpl$/', '', $name);
+			if( !is_file(SNIPPET_TEMPLATES."/{$name}.tpl") ) $name = '404';
+			
+			$pathToFile = SNIPPET_TEMPLATES."/{$name}.tpl";
+			$this->Layers->get('templates')->assign('pathToTemplate', $pathToFile);
+			
+			return $this->Layers->get('templates')->fetch('global.tpl');
+		
+		}
+		
+		protected function assign($var, $val=NULL){
+			
+			return $this->tplVars[$var] = $val;
+			
+		}
+		
+		protected function clearVar( $var=NULL ){
+		
+			if( is_null($var) ) $this->tplVars = array();
+			else unset( $this->tplVars[$var] );
+			
+		}
+
+
+##################################
+########### FORMATTING ###########
+##################################
+		
+	
+		protected function toJson( $arr=array() ){
+			
+			if( !is_array($arr) || !count($arr) ) return '{}';
+			foreach( $arr as $k => $v ){
+				$json[] = '"'.$k.'":'.(is_array($v)
+					? $this->toJson($v)
+					: (is_numeric($v) ? $v : '"'.addslashes($v).'"')
+				);
+			}
+			
+			return '{'.join(",", $json).'}';
+		
+		}
+
+
+##################################
+############# ERRORS #############
+##################################
+
+		private function registerWarning( $msg ){
+		
+			test( $msg );		/* TEMP */
+		
+		}
+		
+		
+		
+		/* TEMP */
+		
+		protected function getListData($listCode, $filters=array()){
+		
+			$method = 'get'.ucfirst($listCode).'ListData';
+			$formatAs = ($listCode == 'combo') ? 'asHash' : 'asList';
+			
+			$sql = $this->Source->$method( $filters );
+			
+			return $sql ? $this->Source->$formatAs($sql, $this->Source->getSummary('keys')) : NULL;
+			
+		}
+		
+		
+		
 		
 	}
 

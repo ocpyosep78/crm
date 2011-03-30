@@ -22,7 +22,7 @@
 	
 	# Core shortcut to library paths
 	define('CONNECTION_PATH', CORE_LIB.'Connection/Connection.class.php');
-	define('MODULES_PATH', CORE_LIB.'Modules/');
+	define('SNIPPET_PATH', CORE_LIB.'SNIPPET');
 	
 	# Agenda
 	define('AGENDA_DAYS_TO_SHOW', 7);
@@ -40,8 +40,8 @@
 	define('MAX_LOGS_GLOBAL', 5000);
 	define('MAX_ALERTS_PER_USER', 50);
 	
-	# Modules
-	define('MOD_DEFINITIONS_PATH', CORE_PUBLIC.'/def/');
+	# Snippet
+//	define('SNIPPET_DEFINITION_PATH', CORE_PUBLIC.'/def/');
 	
 	# Permissions
 	define('PERMITS_CACHE_TIMEOUT', 1800, true);		/* Time to cache Permissions and structure */

@@ -15,7 +15,7 @@
  *        #start(string $code, array $params)
  *        #getSnippet()
  *        #initializeSnippet()
- *    constant SNIPPETS_ERROR_OUTPUT (always)
+ *    constant SNIPPET_ERROR_OUTPUT (always)
  */
 	
 	class Snippet_Pages{
@@ -37,7 +37,7 @@
 			$this->params = $params + array(
 				'modifier'	=> NULL,
 				'writeTo'	=> NULL,
-				'reportTo'	=> SNIPPETS_ERROR_OUTPUT,
+				'reportTo'	=> SNIPPET_ERROR_OUTPUT,
 				'keys'		=> array(),
 				'uID'		=> microtime(),
 			);

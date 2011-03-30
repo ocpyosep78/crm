@@ -9,7 +9,7 @@
 
 
 
-/* TEMP : this script is being used as a testing suite of pages for the development of Modules library */
+/* TEMP : this script is being used as a testing suite of pages for the development of Snippet library */
 	
 	function page_customers( $modifier='customers' ){	/* Status: 'customers', 'potential', 'all' */
 		return oSnippet()->addSnippet('commonList', 'customers', $modifier);
@@ -31,22 +31,22 @@
 	
 	
 	function page_sales(){
-		return oSnippet()->ajaxPrintPage('salesCommonList', 'sale');
+		return oSnippet()->addSnippet('salesCommonList', 'sale');
 	}
 	function page_installs(){
-		return oSnippet()->ajaxPrintPage('salesCommonList', 'install');
+		return oSnippet()->addSnippet('salesCommonList', 'install');
 	}
 	function page_techVisits(){
-		return oSnippet()->ajaxPrintPage('salesCommonList', 'service');
+		return oSnippet()->addSnippet('salesCommonList', 'service');
 	}
 	function page_salesInfo( $id ){
-		return oSnippet()->ajaxPrintPage('salesInfo', 'sale', $id);
+		return oSnippet()->addSnippet('salesInfo', 'sale', $id);
 	}
 	function page_createSales(){
 		return page_editSales();
 	}
 	function page_editSales( $id=NULL ){
-		return oSnippet()->ajaxPrintPage('salesEdit', NULL, $id);
+		return oSnippet()->addSnippet('salesEdit', NULL, $id);
 	}
 
 ?>

@@ -15,6 +15,16 @@
 		private $db;
 		private $summary;
 		
+		# Available tools `code => screenName`
+		private $toolsBase = array(
+			'create'	=> 'agregar',
+			'view'		=> 'ver información de',
+			'edit'		=> 'editar',
+			'block'		=> 'bloquear',
+			'unblock'	=> 'desbloquear',
+			'delete'	=> 'borrar',
+		);
+		
 		
 		public function __construct(){
 			
@@ -22,6 +32,32 @@
 		
 			$this->warnings = array();
 			
+		}
+		
+		public function getBasics(){
+		
+			return $this->basics;
+			
+		}
+		
+		public function getSummary( $key=NULL ){
+		
+			return $key ? $this->summary[$key] : $this->summary;
+			
+		}
+		
+		public function getFieldsWithAtts( $for=NULL ){
+		
+			$atts = $this->summary['fieldsAtts'];
+			
+			$filter = array();
+			if( $for == 'list' ) $filter = $this->getListFields();
+			elseif( $for == 'item' ) $filter = $this->getItemFields();
+			
+			$fields = array_intersect_key($atts, array_flip($filter));
+		
+			return $fields;
+		
 		}
 	
 		/**
@@ -44,11 +80,10 @@
 			$this->basics = (array)$this->getBasicAttributes()
 				+ array('name' => NULL, 'plural' => NULL, 'tip' => NULL);
 			
-			# Get tables from database definition (@tables)
-			$this->aquireDB();
-			
-			# Fill unset attributes with defaults
-			$this->fillAttributes();
+			# 1. Get tables from database definition (@tables)
+			# 2. Fill unset attributes with defaults
+			# 3. Get tools set in definition and mix it with @toolsBase
+			$this->aquireDB()->fillAttributes()->storeTools();
 			
 			# Build lists from tables (@hidden, @keys)
 			$this->buildDBSummary();
@@ -64,7 +99,7 @@
 		 */
 		public function validate(){
 		
-			
+			return true;
 		
 		}
 		
@@ -100,6 +135,8 @@
 			
 			$this->db = $db;
 			
+			return $this;
+			
 		}
 		
 		/**
@@ -122,6 +159,23 @@
 					!isset($atts['FK']) && $atts['FK'] = NULL;
 				}
 			}
+			
+			return $this;
+			
+		}
+		
+		private function storeTools(){
+		
+			$base = $this->toolsBase;
+			$list = (array)$this->getTools();
+			
+			# Extend $base with other attributes to build final tools
+			$this->tools = array();
+			foreach( $base as $id => &$axn ){
+				!in_array($id, $list) || $this->tools[$id] = $axn;
+			}
+			
+			return $this;
 			
 		}
 		
@@ -148,12 +202,19 @@
 					: $tables[$code] = $table;
 				# Go through all fields and record them as list
 				foreach( $content as $field => $atts ){
+					# Field full name (formatted as tableCode.fieldName)
 					$fullID = "{$code}.{$field}";
+					# List of fields in one dimension, by fullID
 					$fields[] = $fullID;
+					# List of fields with their atts, by field (first kept)
+					isset($fieldsAtts[$field]) || $fieldsAtts[$field] = $atts;
+					# List of shown fields, by fullID
+					$atts['hidden'] || $shown[] = $fullID;
+					# List of key fields, by field name
 					if( $atts['isKey'] && $mainTable == $code ){
 						$keys[] = $field;
 					}
-					$atts['hidden'] || $shown[] = $fullID;
+					# List of foreign keys, by field (always from mainTable)
 					!$atts['FK'] || $FKs[$field] = array(
 						'table'		=> $code,
 						'target'	=> $atts['FK'],
@@ -165,13 +226,17 @@
 //			$fieldsFor['lists'] = array_intersect_keys($forLists, $fields);
 			
 			$this->summary = array(
-				'mainTable' => $mainTable,
-				'tables'	=> $tables,
-				'fields'	=> $fields,
-				'shown'		=> $shown,
-				'keys'		=> $keys,
-				'FKs'		=> $FKs,
+				'mainTable' 	=> $mainTable,
+				'tables'		=> $tables,
+				'fields'		=> $fields,
+				'fieldsAtts'	=> $fieldsAtts,
+				'shown'			=> $shown,
+				'keys'			=> $keys,
+				'FKs'			=> $FKs,
+				'tools'			=> $this->tools,
 			);
+			
+			return $this;
 			
 		}
 		

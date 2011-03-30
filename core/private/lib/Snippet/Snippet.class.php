@@ -19,8 +19,8 @@
 	# 'html'  : HTML on error is the formatted error message, no status msg shown
 	# 
 	# NOTE: On success, the only output type is status
-	defined('SNIPPETS_ERROR_OUTPUT')
-		|| define('SNIPPETS_ERROR_OUTPUT', 'status');
+	defined('SNIPPET_ERROR_OUTPUT')
+		|| define('SNIPPET_ERROR_OUTPUT', 'status');
 	
 	# Engines supported: mysql
 	defined('SNIPPETS_SQL_ENGINE')
@@ -28,19 +28,26 @@
 	
 	
 	# Internal library structure
-	define('SNIPPETS_LIB_PATH', dirname(__FILE__).'/lib');
-	define('SNIPPETS_HANDLERS_PATH', dirname(__FILE__).'/handlers');
+	define('SNIPPET_LIB_PATH', dirname(__FILE__).'/lib');
+	define('SNIPPET_HANDLERS_PATH', dirname(__FILE__).'/handlers');
+	
+	# Paths for output (templates, images, styles, jScripts)
+	define('SNIPPET_OUTPUT', SNIPPET_PATH.'/output');
+	define('SNIPPET_TEMPLATES', SNIPPET_OUTPUT.'/templates');
+	define('SNIPPET_IMAGES', SNIPPET_OUTPUT.'/images');
+	define('SNIPPET_STYLES', SNIPPET_OUTPUT.'/styles');
+	define('SNIPPET_SCRIPTS', SNIPPET_OUTPUT.'/scripts');
 	
 	
-	# Path to modules definition files
-	defined('SNIPPETS_DEFINITIONS_PATH')
-		|| define('SNIPPETS_DEFINITIONS_PATH', dirname(__FILE__).'/defs');
+	# Path to snippet definition files
+	defined('SNIPPET_DEFINITION_PATH')
+		|| define('SNIPPET_DEFINITION_PATH', dirname(__FILE__).'/defs');
 		
 
 	# Include
-	require_once( SNIPPETS_LIB_PATH.'/Layers.lib.php' );
-	require_once( SNIPPETS_LIB_PATH.'/Handlers.lib.php' );
-	require_once( SNIPPETS_LIB_PATH.'/Pages.lib.php' );
+	require_once( SNIPPET_LIB_PATH.'/Layers.lib.php' );
+	require_once( SNIPPET_LIB_PATH.'/Handlers.lib.php' );
+	require_once( SNIPPET_LIB_PATH.'/Pages.lib.php' );
 	
 
 	class Snippet{

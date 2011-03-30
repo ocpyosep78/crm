@@ -59,7 +59,7 @@
 		oSmarty()->assign('VERSION', VERSION);
 		oSmarty()->assign('VERSION_STATUS', VERSION_STATUS);
 		
-		oSmarty()->assign('cycleValues', '#eaeaf5,#e5e5e5,#e5e5e5');		/* TEMP till Modules is ready */
+		oSmarty()->assign('cycleValues', '#eaeaf5,#e5e5e5,#e5e5e5');		/* TEMP till Modules & Snippet are ready */
 	
 		oSmarty()->assign('DATES', array(
 			'today'		=> date('Y-m-d h:i:s'),

@@ -33,7 +33,7 @@
 			foreach( $this->shown as $field ){
 				$fields[] = '`'.str_replace('.', '`.`', $field).'`';
 			}
-			$sql .= isset($fields) ? join("\n       ", $fields) : '*';
+			$sql .= isset($fields) ? join(",\n       ", $fields) : '*';
 			
 			foreach( $this->mainTable as $code => $name ){
 				$sql .= "\nFROM `{$name}` `{$code}`";

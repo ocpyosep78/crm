@@ -140,8 +140,7 @@
 		oXajax()->registerFunction('takeCall');
 		oXajax()->registerFunction(array('updateList', oLists(), 'updateList'));
 		oXajax()->registerFunction(array('switchTab', oTabs(), 'switchTab'));
-		oXajax()->registerFunction(array('ajaxPrintPage', oSnippet(), 'ajaxPrintPage'));
-		oXajax()->registerFunction(array('ajaxDo', oSnippet(), 'ajaxDo'));
+		oXajax()->registerFunction(array('addSnippet', oSnippet(), 'addSnippet'));
 	}
 
 
@@ -167,8 +166,8 @@
 ** M O D U L E S			/* TEMP */ /*
 ***************/
 
-	oPageCfg()->add_jScripts(MODULES_PATH.'scripts/Modules.js');
-	oPageCfg()->add_styleSheets(MODULES_PATH.'static/styles/Modules.css');
+	oPageCfg()->add_jScripts(SNIPPET_PATH.'/output/scripts/Snippet.js');
+	oPageCfg()->add_styleSheets(SNIPPET_PATH.'/output/styles/Snippet.css');
 
 
 

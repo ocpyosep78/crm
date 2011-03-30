@@ -44,6 +44,9 @@
 	
 	# Connection Class and subclasses
 	define('SQL_PATH', 'app/libs/classes/SQL/');										# Folder
+	
+	# CORE
+ 	define('CORE_PUBLIC', 'core/public/');
 
 	# Database access
 	define('CRM_HOST', 'localhost', true);
@@ -56,8 +59,5 @@
 	define('PDF_FONT', 'Arial');
 	define('PDF_FONT_SIZE', 12);
 	define('PDF_CELL_BORDER', 0, true);		/* 1 for designing/testing/debugging, 0 for production */
-	
-	# Modules
- 	define('CORE_PUBLIC', 'core/public/');
 
 ?>
