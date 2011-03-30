@@ -9,7 +9,7 @@
 
 
 
-	require_once( CLASSES_PATH.'fPDF/ExtendedFPDF.class.php' );
+	require_once( THIRD_PARTY_PATH.'fPDF/ExtendedFPDF.class.php' );
 	require_once( dirname(__FILE__).'/PDF.Estimates.class.php' );
 	require_once( dirname(__FILE__).'/PDF.Estimates.SQL.class.php' );
 	require_once( dirname(__FILE__).'/PDF.Estimates.Provider.class.php' );

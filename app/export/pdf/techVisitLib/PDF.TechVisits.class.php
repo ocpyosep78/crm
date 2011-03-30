@@ -9,7 +9,7 @@
 
 
 
-	require_once( CLASSES_PATH.'fPDF/ExtendedFPDF.class.php' );
+	require_once( THIRD_PARTY_PATH.'fPDF/ExtendedFPDF.class.php' );
 	require_once( dirname(__FILE__).'/PDF.TechVisits.Provider.class.php' );
 	
 	class PDF_TechVisits extends ExtendedFPDF{
