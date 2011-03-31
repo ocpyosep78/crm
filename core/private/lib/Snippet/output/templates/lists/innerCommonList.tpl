@@ -5,7 +5,7 @@
 {else}
 	<table class='innerList'>
 	  {foreach from=$data key=id item=row}
-		<tr bgcolor='{cycle values=$cycleValues}' class='listRows' for='{$id}'
+		<tr bgcolor='{cycle values=$cycleValues}' class='innerListRow' for='{$id}'
 		  {if $tipField && isset($row.$tipField)}title='{$row.$tipField}'{/if}>
 		  {foreach from=$fields key=field item=atts}
 			<td><div>{$row.$field|wordwrap:30:"<br />\n"}</div></td>
@@ -13,8 +13,10 @@
 		  <td class='innerListTools'>
 			<div>
 			  {foreach from=$tools key=code item=tool}
-				<img btn='{$code}' src='{$SNIPPET_IMAGES}/buttons/{$code}.png'
-				  alt='{$tool}' title='{$tool} {$name|lower}' />
+				{if not $tool.disabled}
+				  <img btn='{$code}' src='{$SNIPPET_IMAGES}/buttons/{$code}.png'
+					alt='{$tool.name}' title='{$tool.name} {$name|lower}' />
+				{/if}
 			  {/foreach}
 			</div>
 		  </td>

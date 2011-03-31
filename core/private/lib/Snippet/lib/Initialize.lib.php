@@ -66,6 +66,7 @@
 				'group_uID'		=> microtime(),
 				'writeTo'		=> NULL,
 				'initialize'	=> !empty($params['writeTo']),
+				'main'			=> NULL,
 			);
 			
 		}
@@ -77,14 +78,18 @@
 		 *            snippets that go together (plus the requested snippet
 		 *            itself), in the order they're expected to be loaded
 		 * @returns: a list of snippet codes (strings)
+		 * @notes: $snippet is passed by reference, to be able to alias
 		 */
-		private function getComposedList( $snippet ){
+		private function getComposedList( &$snippet ){
 		
 			switch( $snippet ){
+				case 'listItem':
+					$snippet = 'commonList';
 				case 'commonList':
 				case 'simpleList':
 				case 'viewItem':
 				case 'editItem':
+				case 'deleteItem':
 					return array('bigTools', 'comboList', $snippet);
 				case 'createItem':
 					return array('createSummary', $snippet);
@@ -115,10 +120,10 @@
 					return 'lists';
 				case 'createItem':
 				case 'editItem':
-				case 'viewItem':
-				case 'deleteItem':	/* alias of delete for now */
 test( array('snippet' => $snippet, 'code' => $this->code) + $this->params );
+				case 'viewItem':
 					return 'items';
+				case 'deleteItem':	/* TEMP : alias of delete for now, back in items later */
 				case 'edit':
 				case 'block':
 				case 'unblock':
@@ -179,6 +184,9 @@ test( array('snippet' => $snippet, 'code' => $this->code) + $this->params );
 			# meant to be a whole working page)
 			$list = $this->getComposedList( $snippet );
 			
+			# Record main snippet for composed HTML
+			$this->params['main'] = $snippet;
+						
 			# Clear writeTo param to avoid each snippet being printed
 			$writeTo = $this->params['writeTo'];
 			$this->params['writeTo'] = NULL;
@@ -189,7 +197,9 @@ test( array('snippet' => $snippet, 'code' => $this->code) + $this->params );
 			
 			# Get each individual snippet and tie them in one piece of HTML
 			$HTML = '';
-			foreach( $list as $snp ) $HTML .= $this->getSingleSnippet($snp);
+			foreach( $list as $snp ){
+				$HTML .= $this->getSingleSnippet($snp);
+			}
 			
 			# Print composed HTML and run snippet (if writeTo param not empty)
 			!$writeTo || $this->printSnippet($writeTo, $HTML);

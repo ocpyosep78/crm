@@ -18,11 +18,11 @@
 		return page_customers( 'potential' );
 	}
 	function page_customersInfo( $id ){
-		oSnippet()->addSnippet('info', 'customers', $id);
+		oSnippet()->addSnippet('viewItem', 'customers', array('filters' => $id));
 		return oTabs()->start( false );
 	}
 	function page_editCustomers( $id=NULL ){
-		return oSnippet()->addSnippet('edit', 'customers', $id);
+		return oSnippet()->addSnippet('edit', 'customers', array('filters' => $id));
 	}
 	function page_createCustomers(){
 		return page_editCustomers();

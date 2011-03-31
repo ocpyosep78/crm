@@ -2,8 +2,16 @@
 
 	class Snippet_hnd_items extends Snippets_Handlers_Commons{
 	
+		protected function handle_viewItem2(){
+		
+		}
 		protected function handle_viewItem(){
 		
+			if( $_POST['xajax'] == 'addSnippet' ){
+				oNav()->getPage("{$this->code}Info", (array)$this->params['filters']);
+				return '';
+			}
+			
 /* Array(
 	[code] => customers
 	[snippet] => viewItem
@@ -13,19 +21,19 @@
 	[group_uID] => 0.64424800 1301574930
 	[initialize] => 
 ) */
-		
-			$data = $this->Source->getData('item', $this->params['modifier']);
+			$data = $this->Source->getData('item', $this->params['filters']);
 			
 			# Form data blocks (for presentational purposes)
 			$block = 0;
 			$blocks = array();
-			
+
 			foreach( $this->fields as $field => $atts ){
 				($field == '>') ?  $block++ : $blocks[$block][$field] = $atts;
 			}
-			test( $data );
+			
 			$this->assign('data', $data);
 			$this->assign('blocks', $blocks);
+			$this->assign('objectID', $this->params['filters']);
 		
 			return $this->fetch( 'items/view' );
 		

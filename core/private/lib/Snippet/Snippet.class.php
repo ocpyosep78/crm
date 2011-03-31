@@ -95,18 +95,18 @@
 		 * @returns: an ajax Response Object, provided by the ajax layer
 		 */
 		public function addSnippet($snippet, $code, $params=array()){
-			
+		
 			# Accept a string as params, taking it as $params['modifier']
 			is_array($params) || $params = array('modifier' => $params);
 			
 			# Make sure the param 'writeTo' is set (it flags the request
 			# as addSnippet, which means it needs to be printed)
-			!empty($params['writeTo']) ||  $params['writeTo'] = PAGE_CONTENT_BOX;
+			isset($params['writeTo']) ||  $params['writeTo'] = PAGE_CONTENT_BOX;
 			
 			# We don't want the resulting HTML here. Initialize object will
 			# print it and initialize it (through the ajax layer) when
 			# it sees the writeTo parameter
-			$this->getSnippet($snippet, $code, &$params);
+			$this->getSnippet($snippet, $code, $params);
 			
 			# We do return, instead, the ajax response object, that holds
 			# the actual responses built elsewhere

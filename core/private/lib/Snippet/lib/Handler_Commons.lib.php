@@ -215,10 +215,10 @@
 			
 		}
 		
-		protected function hideTools( $tools ){
-			
+		protected function disableBtns( $tools ){
+		
 			foreach( (array)$tools as $tool ){
-				unset( $this->tplVars['tools'][$tool] );
+				$this->tplVars['tools'][$tool]['disabled'] = true;
 			}
 		
 		}

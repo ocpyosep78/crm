@@ -41,6 +41,26 @@ var Snippet = {
 		(!ask[snippet] || confirm(ask[snippet]))
 			&& this.addSnippet(snippet, atts.code, params);
 	},
+	// Searchs for corresponding bigTools snippet. If found, it first disables
+	// all buttons, then it attempts to enable buttons described in parameter
+	// btns. This could be an array of btn codenames, or a single codename as
+	// array. For buttons that need a uID, pass it as fourth parameter.
+	// When btns is passed, it is recorded for subsequent calls that don't
+	// include a btns parameter, thus serving for initializations of the
+	// snippet's state.
+	resetBigTools: function(el, atts, btns, uID){
+			var BT = this.groups[atts.params.group_uID]['bigTools'];
+			if( !BT || !BT.el ) return;
+			BT.el.all('disable');
+			// Make it an array if it's a string
+			if(typeof(btns) != 'object' && btns) btns = [btns];
+			// If omitted, take the last recorded snapshot. Walk its members
+			(btns||BT.el.lastSS||[]).forEach(function(btn){
+				BT.el.enable(btn||null, uID||null);
+			});
+			// Save snapshot as initial state
+			if( btns ) BT.el.lastSS = btns;
+		},
 	/**************************************************************************/
 	/********************************* COMMON *********************************/
 	initialize: function( snippet ){
@@ -77,9 +97,17 @@ try{
 		});
 	},
 	bigTools: function(el, atts){
-		var that = this, btns = {}, btnOn = 'bigToolEnabled';
-		function enable( uID ){ this.addClass(btnOn).uID = uID || ''; };
-		function disable(){ this.removeClass(btnOn).uID = ''; };
+		var that = this, btns = {}
+		var btnOn = 'bigToolEnabled';
+		var btnOff = 'bigToolDisabled';
+		function enable( uID ){
+			this.hasClass( btnOff ) || this.addClass( btnOn );
+			this.uID = uID || '';
+		};
+		function disable(){
+			this.removeClass( btnOn );
+			this.uID = '';
+		};
 		// Trip through all buttons to set event handlers and register each
 		el.getElement('.bigTools').getElements('[btn]').forEach(function(btn){
 			Object.append(btn, {enable: enable, disable: disable});
@@ -96,13 +124,14 @@ try{
 		el.all = function(onOff, uID){
 			Object.each(btns, function(btn){ btn[onOff] && btn[onOff]( uID ); });
 		};
-		// Always enable Create button at startup
-		el.enable( 'create' );
 	},
 	commonList: function (el, atts){					   /*** COMMON LIST ***/
+		var that = this;
 		// Mark listWrapper with this snippet's unique ID
 		el.getElement('.listWrapper').id = 'tgt' + atts.params.group_uID;
-		// Enable column search and do a first search (without filters)
+		// Set initial state for bigTools snippet (and reset it to that state)
+		this.resetBigTools(el, atts, 'create');
+		// Enable column search and do first search without filters
 		new ListSearch(el, atts).updateList();
 		// SyncTitles applies to commonList, but is called by innerCommonList,
 		// so it needs to be made available to innerCommonList on list update
@@ -121,7 +150,7 @@ try{
 		// Add highlight effects to list's rows
 		listRowsHighlight( el );
 		// Add event handlers
-		el.getElements('.listRows').forEach(function(row){
+		el.getElements('.innerListRow').forEach(function(row){
 			var id = row.getAttribute('FOR');
 			if( !id ) return;
 			// Link to info page for each item row
@@ -148,7 +177,8 @@ try{
 		return;
 	},
 	viewItem: function(el, atts){									  /*** INFO ***/
-		return;
+		// Set initial state for bigTools snippet (and reset it to that state)
+		this.resetBigTools(el, atts, ['list', 'create', 'edit', 'delete'], atts.params.filters);
 	},
 	
 	
@@ -198,7 +228,7 @@ try{
 			SL.inputs.forEach(function(input){
 				input.addEvent('enter', function(){ $('SLcreateItem').fireEvent('click'); });
 			});
-			$list.getElements('.listRows').forEach(function(row){
+			$list.getElements('.innerListRow').forEach(function(row){
 				row.addEvent('mouseover', function(){ highLight(this); });
 				row.addEvent('click', function(){ SL.enableEditItem( this.getAttribute('FOR') ); });
 			});
@@ -238,10 +268,10 @@ try{
  * @notes: can call it with different params as many times as you wish
  *         it will destroy previous handler and create one with new params
  * @disclaimer: this tool is tied to AppTemplate's library 'Snippet', so
- *              it requires mootools, and rows need to be of class listRows
+ *              it requires mootools, and rows are of class innerListRow
  */
 function listRowsHighlight(el, from, to){
-	el.getElements('.listRows').forEach(function(row){
+	el.getElements('.innerListRow').forEach(function(row){
 		row.removeEvent('mouseover', row.ref);
 		row.addEvent('mouseover', row.ref=function(){
 			this.highlight(from||'#f0f0e6', to||'#e0e0e6');
@@ -317,11 +347,11 @@ function ListSearch(el, atts){
 		keyup: function(e){			// Input or escape
 			if( e.key == 'esc' ) return that.hide();
 			var newSrch = oInput.value.replace('*', '%');
-			if( newSrch != oBox.lastSrch ){
-				var aux = {};
-				aux[oBox.code] = oBox.lastSrch = newSrch;
-				that.updateList( aux );
-			};
+			if( newSrch == oBox.lastSrch ) return;
+			var aux = {};
+			aux[oBox.code] = oBox.lastSrch = newSrch;
+			that.updateList( aux );
+			Snippet.resetBigTools(el, atts);
 		},
 		keydown: function(e){		// Tab or shift+tab
 			if( e.key != 'tab' ) return;
@@ -340,24 +370,26 @@ function ListSearch(el, atts){
 function SyncTitles(el, atts){
 	var that = this;
 	var oBox = el.getElement('.listTitles');
-	var oTitles = oBox.getElements('DIV')||[];
+	var oTitles = oBox.getElements('DIV').setStyle('display', 'none');
 	// No need to attempt to sync titles each time if there's no titles
 	this.sync = !oTitles.length ? function(){} : function(){
-		var oRow = el.getElement('.listWrapper').getElement('TR')||{};
+		var oRow = el.getElement('.listWrapper').getElement('TR');
 		// Store horizontal position and width of each cell...
 		var posX = [];
-		Array.from(oRow.cells||[]).forEach(function(cell){
+		Array.from((oRow||{}).cells||[]).forEach(function(cell){
 			posX.push( $(cell).getPosition().x );
 		});
 		// ...and apply that info to titles
 		var startX = posX.length ? posX[0] : null;
 		var availWidth = parseInt(oBox.getStyle('width'));
 		var defWidth = availWidth / (oTitles.length||1) - 10;
-		oTitles.forEach(function(oTtl, i){
+		// If we have results, fix width of each title
+		oRow && oTitles.forEach(function(oTtl, i){
 			oTtl.setStyles({
 				left: (posX[i] || (startX + availWidth)) - startX,
-				width: oRow ? (posX[i+1] ? posX[i+1]-posX[i] : 0) : defWidth
+				width: posX[i+1] ? posX[i+1]-posX[i] : 0
 			});
+			oTitles.setStyle('display', '');
 		});
 		return that;
 	};

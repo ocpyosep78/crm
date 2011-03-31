@@ -1,6 +1,6 @@
 <div class='infoData'>
 
-  <span>Detalle de {$name}{if $DEVELOPER_MODE} <strong>(objectID: {$params}){/if}</strong></span>
+  <span>Detalle de {$name}{if $DEVELOPER_MODE} <strong>(objectID: {$objectID}){/if}</strong></span>
 
   {foreach from=$blocks item=block}
 	  <div>

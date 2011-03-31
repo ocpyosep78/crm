@@ -4,6 +4,28 @@
 	
 		protected function handle_bigTools(){
 		
+			# Disable certain buttons depending on which snippet is using this one
+			switch( $this->params['main'] ){
+				case 'commonList':
+				case 'simpleList':
+					$this->disableBtns( 'list' );
+					break;
+				case 'createItem':
+					$this->disableBtns( 'create' );
+					break;
+				case 'viewItem':
+					$this->disableBtns( 'view' );
+					break;
+				case 'editItem':
+					$this->disableBtns( 'edit' );
+					break;
+				case 'deleteItem':
+					$this->disableBtns( 'delete' );
+					break;
+				default:
+					break;
+			}
+		
 			return $this->fetch('widgets/bigTools');
 			
 		}

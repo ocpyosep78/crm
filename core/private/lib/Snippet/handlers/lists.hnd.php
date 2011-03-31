@@ -27,7 +27,7 @@
 			$params = $this->params;
 			
 			# This snippet doesn't include a create button
-			$this->hideTools('create');
+			$this->disableBtns(array('list', 'create'));
 			
 			# Get Data
 			$data = $this->Source->getData('list', $params['filters']);

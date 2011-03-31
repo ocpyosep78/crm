@@ -17,12 +17,13 @@
 		
 		# Available tools `code => screenName`
 		private $toolsBase = array(
+			'list'		=> 'listado',
 			'create'	=> 'agregar',
 			'view'		=> 'ver información de',
 			'edit'		=> 'editar',
 			'block'		=> 'bloquear',
 			'unblock'	=> 'desbloquear',
-			'delete'	=> 'borrar',
+			'delete'	=> 'eliminar',
 		);
 		
 		
@@ -53,15 +54,18 @@
 			
 		}
 		
-		public function getFieldsWithAtts( $for=NULL ){
+		public function getFieldsWithAtts( $type='lists' ){
 		
-			$atts = $this->summary['fieldsAtts'];
+			# Take '>' as a valid field (it's for presentational purposes)
+			$fieldsAtts = $this->summary['fieldsAtts'] + array('>' => NULL);
 			
-			$filter = array();
-			if( $for == 'lists' ) $filter = $this->getListFields();
-			elseif( $for == 'items' ) $filter = $this->getItemFields();
-			
-			$fields = array_intersect_key($atts, array_flip($filter));
+			# Take the list of fields from either lists or items method
+			$setFields = ($type == 'items')
+				? $this->getItemFields()
+				: $this->getListFields();
+				
+			$fields = array_intersect_key(array_flip($setFields), $fieldsAtts);
+			foreach( $fields as $field => &$atts ) $atts = $fieldsAtts[$field];
 		
 			return $fields;
 		
@@ -86,7 +90,7 @@
 					break;
 				case 'item':		# query, type row
 					$format = 'row';
-					$params = $this->getSummary('keys');
+					$params = NULL;
 					$sql = $this->getItemData( $filters );
 					break;
 			}
@@ -143,7 +147,7 @@
 			if( !is_array($db) ){
 				# Keep defaults when definition fails
 				$db = array();
-				$this->raise('db structure definition is invalid');
+				$this->issueWarning('db structure definition is invalid');
 			}
 			else{
 				$correct = true;
@@ -154,7 +158,7 @@
 				if( !$correct || empty($db) ){
 					# Keep defaults when definition fails
 					$db = array();
-					$this->raise('db structure definition is empty or invalid');
+					$this->issueWarning('db structure definition is empty or invalid');
 				}
 			}
 			
@@ -191,13 +195,16 @@
 		
 		private function storeTools(){
 		
+			# Get all available tools
 			$base = $this->toolsBase;
-			$list = (array)$this->getTools();
+			
+			# Always include list button in bigTools
+			$btns = array_merge(array('list'), (array)$this->getTools());
 			
 			# Extend $base with other attributes to build final tools
 			$this->tools = array();
 			foreach( $base as $id => &$axn ){
-				!in_array($id, $list) || $this->tools[$id] = $axn;
+				!in_array($id, $btns) || $this->tools[$id] = $axn;
 			}
 			
 			return $this;
@@ -217,6 +224,7 @@
 			$shown = array();
 			$keys = array();
 			$FKs = array();
+			$tools = $this->tools;
 			
 			foreach( $db as $table => $content ){
 				# Store tables as `code => name` pairs
@@ -247,6 +255,11 @@
 				}
 			}
 			
+			# Tools are enabled by default
+			foreach( $tools as $k => &$v ){
+				$v = array('name' => $v, 'disabled' => false);
+			}
+			
 			$this->summary = array(
 				'mainTable' 	=> $mainTable,
 				'tables'		=> $tables,
@@ -256,7 +269,7 @@
 				'keys'			=> $keys,
 				'keysString'	=> join('__|__', $keys),
 				'FKs'			=> $FKs,
-				'tools'			=> $this->tools,
+				'tools'			=> $tools,
 			);
 			
 			return $this;
@@ -311,23 +324,6 @@
 		
 			return true;
 		
-		}
-		
-		private function raise( $msg ){
-			$this->test( $msg );				/* TEMP */
-		}
-		
-		
-/**************************************************/
-/******************* DEBUGGING ********************/
-/**************************************************/
-		
-		public function test( $var=NULL ){
-			
-			$var = $this->sqlEngine->generate('list');
-			
-			return '<pre>'.var_export($var, true).'</pre>';
-			
 		}
 	
 	}
