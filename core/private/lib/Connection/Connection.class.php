@@ -113,7 +113,7 @@ EOF;
 				case 'bool':	$this->res2bool( $res );		break;	/* ...as a boolean */
 				case 'row':		$this->res2row($res, $atts);	break;	/* ...as a numeric array (first record) or string */
 				case 'field':	$this->res2field($res, $atts);	break;	/* ...as a string, first field of first record */
-				case 'col':		$this->res2col( $res );			break;	/* ...as an associative array (field 0 => field 1) */
+				case 'col':		$this->res2col($res, $atts);	break;	/* ...as an associative array (field 0 => field 1) */
 				case 'named':	$this->res2named($res, $atts);	break;	/* ...as array but keys are taken from fields in $atts */
 				case 'list':	$this->res2list( $res );		break;	/* ...as a comma separated string */
 				default:		return $res;
@@ -153,7 +153,6 @@ EOF;
 			$this->sql = $sql;
 			
 			$res = mysql_query($this->sql , $this->conn);
-			if( !is_resource($this->conn) ) die('aquí');
 			
 			$this->findError();
 			$ans->buildAnswer($this->error, mysql_affected_rows($this->conn));
@@ -250,10 +249,13 @@ EOF;
 				: (isset($row[0]) ? $row[0] : NULL);
 		}
 		
-		private function res2col( $res ){
-			$this->formattedRes = array();
-			while( $data=mysql_fetch_row($res) ){
-				if( count($data) > 1 ) $this->formattedRes[$data[0]] = $data[1];
+		private function res2col($res, $atts){
+			$key = !is_array($atts) || empty($atts['key']) ? 0 : $atts['key'];
+			$val = !is_array($atts) || empty($atts['val']) ? 1 : $atts['val'];
+			while( $data=mysql_fetch_array($res) ){
+				if(isset($data[1]) && isset($data[$key]) && isset($data[$val])){
+					$this->formattedRes[$data[$key]] = $data[$val];
+				}
 				else $this->formattedRes[] = $data[0];
 			}
 		}
