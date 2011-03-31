@@ -13,7 +13,7 @@
 		  <td class='innerListTools'>
 			<div>
 			  {foreach from=$tools key=code item=tool}
-				<img tool='{$code}' src='{$SNIPPET_IMAGES}/buttons/{$code}.png'
+				<img btn='{$code}' src='{$SNIPPET_IMAGES}/buttons/{$code}.png'
 				  alt='{$tool}' title='{$tool} {$name|lower}' />
 			  {/foreach}
 			</div>

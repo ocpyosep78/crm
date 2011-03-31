@@ -378,7 +378,6 @@ EOF;
 		
 /* TEMP : should be protected (used in Snippet temporarily) */
 		public function array2filter($arr, $joint='AND', $compare='LIKE'){
-		
 			# Build template string for different possible operators
 			$cmpStr['LIKE'] = "%s LIKE '%%%s%%'";
 			foreach( array('=', '<>', '>', '<') as $operator ){

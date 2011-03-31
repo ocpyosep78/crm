@@ -6,7 +6,7 @@
  *    class Snippet_Layers (always)
  *        layer ajax (always for #addSnippet)
  *            #getResponse()
- *    class Snippet_Pages (always)
+ *    class Snippet_Initialize (always)
  *        #getSnippet( string $snippet )
  *    constant PAGE_CONTENT_BOX (for #addSnippet when $params['writeTo'] is empty)
  */
@@ -47,8 +47,7 @@
 	# Include
 	require_once( SNIPPET_LIB_PATH.'/Tools.lib.php' );
 	require_once( SNIPPET_LIB_PATH.'/Layers.lib.php' );
-	require_once( SNIPPET_LIB_PATH.'/Handlers.lib.php' );
-	require_once( SNIPPET_LIB_PATH.'/Pages.lib.php' );
+	require_once( SNIPPET_LIB_PATH.'/Initialize.lib.php' );
 	
 
 	class Snippet{
@@ -65,7 +64,7 @@
 		 * string getSnippet ( string $snippet , string $code [, array $params] )
 		 * @access: public
 		 * 
-		 * @overview: creates a Pages object and calls Pages#getSnippet,
+		 * @overview: creates an Initialize object and calls its #getSnippet,
 		 *            forwarding what it returns as its own return value
 		 *            (HTML string expected)
 		 * 
@@ -78,9 +77,9 @@
 			# Accept a string as params, taking it as $params['modifier']
 			is_array($params) || $params = array('modifier' => $params);
 			
-			$Pages = new Snippet_Pages($code, $params);
+			$Initialize = new Snippet_Initialize($code, $params);
 			
-			return $Pages->getSnippet( $snippet );
+			return $Initialize->getSnippet( $snippet );
 			
 		}
 	
@@ -102,11 +101,9 @@
 			
 			# Make sure the param 'writeTo' is set (it flags the request
 			# as addSnippet, which means it needs to be printed)
-			if( empty($params['writeTo']) ){
-				$params['writeTo'] = PAGE_CONTENT_BOX;
-			}
+			!empty($params['writeTo']) ||  $params['writeTo'] = PAGE_CONTENT_BOX;
 			
-			# We don't want the resulting HTML here. Pages object will
+			# We don't want the resulting HTML here. Initialize object will
 			# print it and initialize it (through the ajax layer) when
 			# it sees the writeTo parameter
 			$this->getSnippet($snippet, $code, &$params);

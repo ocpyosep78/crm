@@ -22,42 +22,52 @@ var SnippetPort = {
 
 var Snippet = {
 	/**************************************************************************/
+	/********************************* GROUPS *********************************/
+	groups: {},
+	/**************************************************************************/
 	/********************************* TOOLS **********************************/
 	showError: SnippetPort.showError,
 	addSnippet: SnippetPort.addSnippet,
 	getPage: SnippetPort.getPage,
+	/* sendRequest is used by different buttons (bigTools, listRowTools, etc.) */
+	sendRequest: function(snippet, atts, filters){
+		// Configure btns behavior: set which ones need confirmation
+		var ask = { deleteItem: '¿Realmente desea eliminar este elemento?',
+					blockItem: '¿Realmente desea bloquear este elemento?' };
+		// Merge default params over original params
+		var toAdd = {filters:filters||'', writeTo:'', initialize:1};
+		var params = Object.merge(Object.clone(atts.params), toAdd);
+		// Request confirmation if set, then request snippet if not aborted
+		(!ask[snippet] || confirm(ask[snippet]))
+			&& this.addSnippet(snippet, atts.code, params);
+	},
 	/**************************************************************************/
 	/********************************* COMMON *********************************/
 	initialize: function( snippet ){
 try{
+		var that = this;
 		var Elements = [];
 		// Collect uninitialized snippets of type 'snippet', ignore the rest
-		$$('.Snippet.Wrapper_for_'+snippet).forEach(function(dom){
-			if( dom.initialized ) return;
-			dom.initialized = true;
-			dom.Atts = {snippet:snippet};
-			dom.getElement('FORM').getElements('INPUT').forEach(function(inp){
-				dom.Atts[inp.name] = inp.value;
+		$$('.Snippet.Wrapper_for_'+snippet).forEach(function(el){
+			if( el.initialized ) return;
+			el.initialized = true;
+			var atts = {snippet: snippet};
+			el.getElement('FORM').getElements('INPUT').forEach(function(inp){
+				atts[inp.name] = inp.value;
 			});
-			// Remember params came as a JSON string
-			dom.Atts.params = eval('('+dom.Atts.params+')');
-			Elements.push( {dom:dom, atts:dom.Atts} );
+			// atts.params came as a JSON string, eval it
+			atts.params = eval('('+atts.params+')');
+			// Store this snippet in Snippet's @groups, grouped by group_uID
+			var entry = {el: el, atts: atts};
+			var uID = atts.params.group_uID;
+			uID && ((that.groups[uID]=that.groups[uID]||{})[snippet] = entry);
+			// Call the handler method on each element
+			that[snippet].apply(that, Object.values(entry));
 		});
-		// We call the handler method on each element
-		Elements.forEach(function(el){ this[snippet](el.dom, el.atts); }, this);
 }catch(e){ test( e ) };
 	},
 	/**************************************************************************/
 	/******************************** HANDLERS ********************************/
-	create: function(el, atts){									  /*** INFO ***/
-		return;
-	},
-	edit: function(el, atts){									  /*** INFO ***/
-		return;
-	},
-	view: function(el, atts){									  /*** INFO ***/
-		return;
-	},
 	comboList: function(el, atts){							/*** COMBO LIST ***/
 		var that = this;
 		$$('.comboList').forEach(function(cl){
@@ -67,27 +77,31 @@ try{
 		});
 	},
 	bigTools: function(el, atts){
-		var tools = [];
-		el.getElement('.bigTools').getElements('[tool]').forEach(function(tool){
-			tools[tool.getAttribute('TOOL')] = tool;
-			tool.addEvent('click', function(e){
-				if( !this.hasClass('bigToolEnabled') ) return;
-				alert('clicked!');
+		var that = this, btns = {}, btnOn = 'bigToolEnabled';
+		function enable( uID ){ this.addClass(btnOn).uID = uID || ''; };
+		function disable(){ this.removeClass(btnOn).uID = ''; };
+		// Trip through all buttons to set event handlers and register each
+		el.getElement('.bigTools').getElements('[btn]').forEach(function(btn){
+			Object.append(btn, {enable: enable, disable: disable});
+			btn.axn = btn.getAttribute('BTN');
+			btn.addEvent('click', function(e){
+				btn.hasClass(btnOn)
+					&& that.sendRequest(btn.axn + 'Item', atts, btn.uID);
 			});
+			btns[btn.axn] = btn;		// Register this btn
 		});
-		var bigTools = {
-			enableTool: function( tl ){
-				if(tl && tools[tl]) tools[tl].addClass('bigToolEnabled');
-			},
-			disableTool: function( tl ){
-				if(tl && tools[tl]) tools[tl].removeClass('bigToolEnabled');
-			}
+		// Enable/disable buttons, by code and globally for all at once
+		el.enable = function(axn, uID){ btns[axn] && btns[axn].enable( uID ); };
+		el.disable = function( axn ){ btns[axn] && btns[axn].disable(); };
+		el.all = function(onOff, uID){
+			Object.each(btns, function(btn){ btn[onOff] && btn[onOff]( uID ); });
 		};
-		bigTools.enableTool( 'create' );
+		// Always enable Create button at startup
+		el.enable( 'create' );
 	},
 	commonList: function (el, atts){					   /*** COMMON LIST ***/
 		// Mark listWrapper with this snippet's unique ID
-		el.getElement('.listWrapper').id = 'tgt' + atts.params.page_uID;
+		el.getElement('.listWrapper').id = 'tgt' + atts.params.group_uID;
 		// Enable column search and do a first search (without filters)
 		new ListSearch(el, atts).updateList();
 		// SyncTitles applies to commonList, but is called by innerCommonList,
@@ -102,30 +116,39 @@ try{
 		var oWrapper = el, ST = null;
 		while( !ST && (oWrapper=oWrapper.parentNode) ) ST = oWrapper.ST;
 		if( ST ) ST.sync();
+		// See if we have a bigTools snippet attached, and store a reference
+		var bigTools = that.groups[atts.params.group_uID]['bigTools'];
 		// Add highlight effects to list's rows
 		listRowsHighlight( el );
-		// Configure tools behavior: set which ones need confirmation
-		var ask = { delete: '¿Realmente desea eliminar este elemento?',
-					block: '¿Realmente desea bloquear este elemento?' };
-		var sendRequest = function(axn, id){
-			(!ask[axn] || confirm(ask[axn]))
-				&& that.addSnippet(axn, atts.code, id);
-		};
 		// Add event handlers
 		el.getElements('.listRows').forEach(function(row){
 			var id = row.getAttribute('FOR');
 			if( !id ) return;
 			// Link to info page for each item row
+			var selClass = 'selectedListRow';
 			row.addEvent('click', function(e){
-				that.getPage(e, atts.code, 'info', [id]);
+				el.getElements('.'+selClass).forEach(function(row){
+					row.removeClass( selClass );
+				});
+				this.addClass(selClass);
+				// Enable all available bigTools
+				if( bigTools ) bigTools.el.all('enable', id);
 			});
-			// Links for each row's tools
+			// Links for each row's btns
 			row.getElement('.innerListTools').addEvent('click', function(e){
-				e.stop();
-				var tool = e.target.getAttribute('TOOL');
-				if( tool ) sendRequest(tool, id);
+				var btn = e.stop().target.getAttribute('BTN');
+				!btn || that.sendRequest(btn+'Item', atts, id);
 			});
 		});
+	},
+	createItem: function(el, atts){									  /*** INFO ***/
+		return;
+	},
+	editItem: function(el, atts){									  /*** INFO ***/
+		return;
+	},
+	viewItem: function(el, atts){									  /*** INFO ***/
+		return;
 	},
 	
 	
@@ -180,11 +203,11 @@ try{
 				row.addEvent('click', function(){ SL.enableEditItem( this.getAttribute('FOR') ); });
 			});
 			$('createItemText').onclick = SL.createItem;
-			$list.getElements('.tblTools').forEach(function(tool){
-				var id = tool.getAttribute('FOR');
-				var axn = tool.getAttribute('AXN');
+			$list.getElements('.tblTools').forEach(function(btn){
+				var id = btn.getAttribute('FOR');
+				var axn = btn.getAttribute('AXN');
 				var func = 'xajax_' + axn + code.capitalize();
-				tool.addEvent('click', function(e){
+				btn.addEvent('click', function(e){
 					if( e ) e.stop();
 					switch( axn ){
 						case 'create':
@@ -215,7 +238,7 @@ try{
  * @notes: can call it with different params as many times as you wish
  *         it will destroy previous handler and create one with new params
  * @disclaimer: this tool is tied to AppTemplate's library 'Snippet', so
- *              it requires mootools and rows need to be of class listRows
+ *              it requires mootools, and rows need to be of class listRows
  */
 function listRowsHighlight(el, from, to){
 	el.getElements('.listRows').forEach(function(row){
@@ -264,9 +287,9 @@ function ListSearch(el, atts){
 		return that;
 	};
 	this.updateList = function( filters ){
-		var params = {filters:filters||[], src:atts.params.src||''};
-		params.writeTo = 'tgt' + (params.page_uID  = atts.params.page_uID);
-		addSnippet(innerSnippet, atts.code, params);
+		// Append set filters, and tgt ID to parent's atts
+		var params = {filters:filters||[], writeTo:'tgt'+atts.params.group_uID};
+		addSnippet(innerSnippet, atts.code, Object.append(atts.params, params));
 		return that;
 	};
 	// Add search buttons to each title field and set them up

@@ -87,11 +87,12 @@
 .innerListTools > DIV{ padding:0px 3px; text-align:right; white-space:nowrap; }
 .innerListTools > DIV > IMG{ height:18px; width:18px; padding:0px; margin:2px 2px 0px 0px; }
 .innerList IMG:hover{ position:relative; left:-2px; height:26px; width:26px; margin:-2px -4px -4px -2px; opacity:0.6; filter:alpha(opacity=60); }
+.selectedListRow{ border-top: solid 1px #e0e0ff; background:-webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#7070a0)); background:-moz-linear-gradient(top, #e4e5eb, #7070a0); filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#e4e5eb', endColorstr='#7070a0'); }
 
 /**
  * LISTS: TITLES
  */
-.listTitles{ height:18px; position:relative; width:auto; margin:0px -6px 5px -6px; padding:8px 0px 9px 0px; text-align:left; font-size:14px; font-weight:bold; font-family:"Times New Roman", Times, serif; border-radius:12px; -moz-border-radius:12px; -webkit-border-radius:12px; box-shadow:#000000 2px 1px 5px; -moz-box-shadow:#000000 2px 1px 5px; -webkit-box-shadow:#000000 2px 1px 5px; white-space:nowrap; overflow:hidden; z-index:50; background:-webkit-gradient(linear, left top, left bottom, from(#203050), to(#e4e5e8)); background:-moz-linear-gradient(top, #003366, #d0d0d0); filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#204060', endColorstr='#d0d0d0'); }
+.listTitles{ height:18px; position:relative; width:auto; margin:0px -6px 5px -6px; padding:8px 0px 9px 0px; text-align:left; font-size:14px; font-weight:bold; font-family:"Times New Roman", Times, serif; border-radius:12px; -moz-border-radius:12px; -webkit-border-radius:12px; box-shadow:#000000 2px 1px 5px; -moz-box-shadow:#000000 2px 1px 5px; -webkit-box-shadow:#000000 2px 1px 5px; white-space:nowrap; overflow:hidden; z-index:50; background:-webkit-gradient(linear, left top, left bottom, from(#203050), to(#e4e5e8)); background:-moz-linear-gradient(top, #203050, #e4e5e8); filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#203050', endColorstr='#e4e5e8'); }
 .listTitles > DIV{ position:absolute; margin:0px 5px; padding:0px; text-indent:1px; color:#ffffff; overflow:hidden; }
 .listTitles > DIV:hover{ color:#ffffc0; }
 

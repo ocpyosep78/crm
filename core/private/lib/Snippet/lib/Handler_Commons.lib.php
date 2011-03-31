@@ -40,20 +40,6 @@
  *            in the shape of messages for the user, by calling the ajax layer
  *            method #display(string $msg, mixed $type).
  */
-
-
-/*
-
-	How it's used by Pages:
-
-		$Handler->start($code, $params);
-		$HTML = $Handler->getSnippet();
-		if( $params['writeTo'] ){
-			$this->Layers->get('ajax')->write($params['writeTo'], $HTML);
-			$Handler->initializeSnippet();
-		}
-	
-*/
 	
 
 	abstract class Snippets_Handlers_Commons{

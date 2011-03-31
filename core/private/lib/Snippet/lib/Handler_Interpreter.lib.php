@@ -71,15 +71,15 @@
 		public function getData($type, $filters=array()){
 		
 			switch( $type ){
-				case 'list':		# Multidimensional, named
+				case 'list':		# asList
 					$sql = $this->getListData( $filters );
 					$format = 'named';
 					break;
-				case 'hash':		# Unidimensional, col
+				case 'hash':		# asHash
 					$sql = $this->getListData( $filters );
 					$format = 'col';
 					break;
-				case 'item':		# Unidimensional, row
+				case 'item':		# query, type row
 					$sql = $this->getItemData( $filters );
 					$format = 'row';
 					break;
