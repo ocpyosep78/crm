@@ -15,7 +15,7 @@
 			return array(
 				'name'		=> 'Cliente',
 				'plural'	=> 'Clientes',
-				'tip'		=> '($number) $legal_name - $phone - $email',
+				'tip'		=> array('(', '$number', ') ', '$legal_name', ' - ', '$phone', ' - ', '$email'),
 			);
 			
 		}
@@ -87,7 +87,10 @@
 			));
 			return "SELECT	`c`.*,
 							CONCAT(`u`.`name`,' ',`u`.`lastName`) AS 'sellerName',
-							`lc`.*
+							`lc`.*,
+							CONCAT(`c`.`customer`,
+								' (', `c`.`legal_name`, ') ',
+								'(Cliente ', `c`.`number`, ')') AS 'tipToolText'
 					FROM `customers` `c`
 					LEFT JOIN `_users` `u` ON (`u`.`user` = `c`.`seller`)
 					LEFT JOIN `_locations` `lc` USING (`id_location`)

@@ -72,20 +72,26 @@
 		
 			switch( $type ){
 				case 'list':		# asList
-					$sql = $this->getListData( $filters );
 					$format = 'named';
+					$params = $this->getSummary('keys');
+					$sql = $this->getListData( $filters );
 					break;
 				case 'hash':		# asHash
-					$sql = $this->getListData( $filters );
 					$format = 'col';
+					$params = array(
+						'key' => $this->getSummary('keysString'),
+						'val' => 'tipToolText',
+					);
+					$sql = $this->getListData( $filters );
 					break;
 				case 'item':		# query, type row
-					$sql = $this->getItemData( $filters );
 					$format = 'row';
+					$params = $this->getSummary('keys');
+					$sql = $this->getItemData( $filters );
 					break;
 			}
 			
-			return $this->sqlEngine->query($sql, $format, $this->getSummary('keys'));
+			return $this->sqlEngine->query($sql, $format, $params);
 			
 		}
 		
@@ -248,6 +254,7 @@
 				'fieldsAtts'	=> $fieldsAtts,
 				'shown'			=> $shown,
 				'keys'			=> $keys,
+				'keysString'	=> join('__|__', $keys),
 				'FKs'			=> $FKs,
 				'tools'			=> $this->tools,
 			);

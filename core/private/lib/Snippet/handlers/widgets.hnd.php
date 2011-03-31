@@ -15,6 +15,7 @@
 		protected function handle_comboList(){
 			
 			$data = $this->Source->getData('hash');
+			
 			$this->assign('combo', array(
 				'list'		=> $data,
 				'selected'	=> $this->params['modifier'],

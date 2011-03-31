@@ -72,7 +72,7 @@ try{
 		var that = this;
 		$$('.comboList').forEach(function(cl){
 			cl.evt = cl.addEvent('change', function(e){
-				that.getPage(e, atts.code, 'info', [this.value]);
+				that.sendRequest('viewItem', atts, this.value);
 			});
 		});
 	},

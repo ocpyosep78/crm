@@ -82,14 +82,14 @@
 		
 			switch( $snippet ){
 				case 'commonList':
-					return array('bigTools', 'comboList', 'commonList');
 				case 'simpleList':
-					return array('comboList', 'simpleList');
 				case 'viewItem':
-				case 'createItem':
 				case 'editItem':
-					return array('comboList', $snippet);
-				default:	# Not actually composed
+					return array('bigTools', 'comboList', $snippet);
+				case 'createItem':
+					return array('createSummary', $snippet);
+				default:
+					# Snippet's that don't merge with other snippets
 					return (array)$snippet;
 			}
 			
@@ -116,14 +116,14 @@
 				case 'createItem':
 				case 'editItem':
 				case 'viewItem':
-					test( array('code' => $this->code, 'snippet' => $snippet) + $this->params );
+				case 'deleteItem':	/* alias of delete for now */
+test( array('snippet' => $snippet, 'code' => $this->code) + $this->params );
 					return 'items';
 				case 'edit':
 				case 'block':
 				case 'unblock':
 				case 'delete':
-				case 'deleteItem':	/* alias of delete, reusing tools methods */
-					test( array('code' => $this->code, 'snippet' => $snippet) + $this->params );
+test( array('snippet' => $snippet, 'code' => $this->code) + $this->params );
 					return 'actions';
 				default:
 					return NULL;
