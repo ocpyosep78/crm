@@ -22,20 +22,13 @@
  */
 
 	defined('MODULES_DEFINITIONS')
-		|| define('MODULES_DEFINITIONS', '');
+		|| define('MODULES_DEFINITIONS', dirname(__FILE__).'/defs');
 		
 	defined('MODULES_SQL_ENGINE')
 		|| define('MODULES_SQL_ENGINE', 'mysql');
 	
 	require_once( dirname(__FILE__).'/lib/Engine.lib.php' );
 	require_once( dirname(__FILE__).'/lib/Parser.lib.php' );
-	
-	require_once( dirname(__FILE__).'/lib/ModulesActions.class.php' );
-	require_once( dirname(__FILE__).'/lib/ModulesDefaults.class.php' );
-	
-	require_once( dirname(__FILE__).'/lib/ModulesError.class.php' );
-	require_once( dirname(__FILE__).'/lib/ModulesChecker.class.php' );
-	require_once( dirname(__FILE__).'/lib/ModulesCreator.class.php' );
 	
 
 	class Modules{
@@ -47,17 +40,17 @@
 		
 		public function __construct($mod, $cat=NULL, $engine=MODULES_SQL_ENGINE){
 			
-			$this->mod = $module;
-			$this->cat = $cat;
+			$this->mod = $mod;
+			$this->setCategory( $cat );
 			
-			$this->Engine = Modules_SQL_Engines::load( $engine );
-			$this->Parser = new Modules_Parser;
+			$this->Engine = Modules_SQL_Engine::load( $engine );
 		
 		}
 		
-		public function changeCategory( $cat ){
+		public function setCategory( $cat ){
 			
 			$this->cat = $cat;
+			$this->Parser = new Modules_Parser($this->mod, $cat);
 			
 		}
 		
@@ -75,7 +68,9 @@
 		 */
 		public function readDefinition(){
 			
+			$data = $this->Parser->getBuffer();
 			
+			test( $data );
 			
 		}
 	

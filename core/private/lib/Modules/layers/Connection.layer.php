@@ -1,6 +1,6 @@
 <?php
 
-	class Modules_Layers_connection{
+	class Modules_Layers_Connection{
 		
 		
 		

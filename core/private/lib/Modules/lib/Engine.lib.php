@@ -13,13 +13,13 @@
 		
 		static public function load( $engine ){
 
-			$class = 'Modules_Engines_'.strtolower($engine);
-			$path = dirname(__FILE__).'/../'.strtolower($engine).'.engine.php';
+			$class = 'Modules_Engine_'.strtolower($engine);
+			$path = dirname(__FILE__).'/../engines/'.strtolower($engine).'.engine.php';
 
 			if( is_file($path) ) require_once( $path );
 			
 			class_exists($class)
-				or die("Modules Engines: failed loading required engine {$engine}");
+				or die("Modules Engine: failed loading required engine {$engine}");
 			
 			return new $class;
 			

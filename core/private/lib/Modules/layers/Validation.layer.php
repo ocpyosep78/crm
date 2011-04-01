@@ -1,6 +1,6 @@
 <?php
 
-	class Modules_Layers_validation{
+	class Modules_Layers_Validation{
 		
 		
 		

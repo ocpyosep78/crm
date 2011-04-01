@@ -67,7 +67,7 @@
 	
 	function suggestProduct($txt, $reqID){
 		
-		$all = oSQL()->getProductSuggest(mysql_escape_string($txt));
+		$all = oSQL()->getProductSuggest(mysql_real_escape_string($txt));
 		
 		$list = array();
 		foreach( $all as $product ) $list[] = toJson($product);
