@@ -11,7 +11,7 @@
 		protected function handle_commonList(){
 		
 			/* TEMP : untill this library handles navigation issues */
-			if( $_POST['xajax'] == 'addSnippet' ){
+			if( $_POST['xajax'] == 'addSnippet' && !$this->params['writeTo'] ){
 				$_POST['xajax'] = 'getPage';
 				oNav()->getPage($this->code, (array)$this->params['modifier']);
 				return '';

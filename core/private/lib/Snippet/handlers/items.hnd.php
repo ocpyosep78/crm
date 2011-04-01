@@ -5,7 +5,7 @@
 		protected function handle_viewItem(){
 		
 			/* TEMP : untill this library handles navigation issues */
-			if( $_POST['xajax'] == 'addSnippet' ){
+			if( $_POST['xajax'] == 'addSnippet' && !$this->params['writeTo'] ){
 				$_POST['xajax'] = 'getPage';
 				oNav()->getPage("{$this->code}Info", (array)$this->params['filters']);
 				return '';
@@ -32,7 +32,7 @@
 		protected function handle_createItem(){
 		
 			/* TEMP : untill this library handles navigation issues */
-			if( $_POST['xajax'] == 'addSnippet' ){
+			if( $_POST['xajax'] == 'addSnippet' && !$this->params['writeTo'] ){
 				$_POST['xajax'] = 'getPage';
 				oNav()->getPage( 'edit'.ucfirst($this->code) );
 				return '';
@@ -45,7 +45,7 @@
 		protected function handle_editItem(){
 		
 			/* TEMP : untill this library handles navigation issues */
-			if( $_POST['xajax'] == 'addSnippet' ){
+			if( $_POST['xajax'] == 'addSnippet' && !$this->params['writeTo'] ){
 				$_POST['xajax'] = 'getPage';
 				oNav()->getPage('edit'.ucfirst($this->code), (array)$this->params['filters']);
 				return '';

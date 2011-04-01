@@ -49,18 +49,18 @@ var Snippet = {
 	// include a btns parameter, thus serving for initializations of the
 	// snippet's state.
 	resetBigTools: function(el, atts, btns, uID){
-			var BT = this.groups[atts.params.group_uID]['bigTools'];
-			if( !BT || !BT.el ) return;
-			BT.el.all('disable');
-			// Make it an array if it's a string
-			if(typeof(btns) != 'object' && btns) btns = [btns];
-			// If omitted, take the last recorded snapshot. Walk its members
-			(btns||BT.el.lastSS||[]).forEach(function(btn){
-				BT.el.enable(btn||null, uID||null);
-			});
-			// Save snapshot as initial state
-			if( btns ) BT.el.lastSS = btns;
-		},
+		var BT = this.groups[atts.params.group_uID]['bigTools'];
+		if( !BT || !BT.el ) return;
+		BT.el.all('disable');
+		// Make it an array if it's a string
+		if(typeof(btns) != 'object' && btns) btns = [btns];
+		// If omitted, take the last recorded snapshot. Walk its members
+		(btns||BT.el.lastSS||[]).forEach(function(btn){
+			BT.el.enable(btn||null, uID||null);
+		});
+		// Save snapshot as initial state
+		if( btns ) BT.el.lastSS = btns;
+	},
 	/**************************************************************************/
 	/********************************* COMMON *********************************/
 	initialize: function( snippet ){
@@ -83,6 +83,9 @@ try{
 			uID && ((that.groups[uID]=that.groups[uID]||{})[snippet] = entry);
 			// Call the handler method on each element
 			that[snippet].apply(that, Object.values(entry));
+			// See if it was embedded and given an initialize function
+			var dad = el.getParent('[id=embed_'+uID+']');
+			if( dad ) dad.fireEvent('embed');
 		});
 }catch(e){ test( e ) };
 	},
@@ -119,10 +122,10 @@ try{
 			btns[btn.axn] = btn;		// Register this btn
 		});
 		// Enable/disable buttons, by code and globally for all at once
-		el.enable = function(axn, uID){ btns[axn] && btns[axn].enable( uID ); };
+		el.enable = function(axn, uID){ btns[axn] && btns[axn].enable(uID); };
 		el.disable = function( axn ){ btns[axn] && btns[axn].disable(); };
 		el.all = function(onOff, uID){
-			Object.each(btns, function(btn){ btn[onOff] && btn[onOff]( uID ); });
+			Object.each(btns, function(btn){ btn[onOff] && btn[onOff](uID); });
 		};
 	},
 	commonList: function (el, atts){					   /*** COMMON LIST ***/
@@ -163,10 +166,32 @@ try{
 				// Enable all available bigTools
 				if( bigTools ) bigTools.el.all('enable', id);
 			});
+			row.addEvent('dblclick', function(e){
+				// Remove previous embeddedViews if found
+				var prev = el.getElement('TD.embeddedView');
+				if( prev ) prev.getParent('TR').dispose();
+				if( this.embeddedView ) return this.embeddedView = false;
+				// Create new embeddedView
+				new Element('TD', {
+					'class': 'embeddedView',
+					'id': 'embed_'+atts.params.group_uID,
+					'colspan': row.cells.length,
+				})
+				.inject(new Element('TR').inject(row, 'after'))
+				.addEvent('embed', function(){ row.scrollIntoView(true); });
+				// Request the embeddedView content
+				var fixedParams = {filters:id, writeTo:'embed_'+atts.params.group_uID};
+				var params = Object.append(atts.params, fixedParams);
+				that.addSnippet('snp_viewItem', atts.code, params);
+				this.embeddedView = true; // Flag
+			});
 			// Links for each row's btns
 			row.getElement('.innerListTools').addEvent('click', function(e){
 				var btn = e.stop().target.getAttribute('BTN');
 				!btn || that.sendRequest(btn+'Item', atts, id);
+			});
+			row.getElements('TD DIV').forEach(function(cell){
+				cell.unselectable();
 			});
 		});
 	},
@@ -274,6 +299,7 @@ function listRowsHighlight(el, from, to){
 	el.getElements('.innerListRow').forEach(function(row){
 		row.removeEvent('mouseover', row.ref);
 		row.addEvent('mouseover', row.ref=function(){
+//			this.flash(from||'#f0f0e6', to||'#e0e0e6');
 			this.highlight(from||'#f0f0e6', to||'#e0e0e6');
 		});
 	});
