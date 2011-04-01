@@ -32,6 +32,8 @@
 			$this->Layers = new Snippet_Layers;
 			
 			$this->sqlEngine = $this->Layers->get( SNIPPETS_SQL_ENGINE );
+			
+			$this->Access = $this->Layers->get( 'access' );
 		
 			$this->warnings = array();
 			
@@ -199,7 +201,7 @@
 			$base = $this->toolsBase;
 			
 			# Always include list button in bigTools
-			$btns = array_merge(array('list'), (array)$this->getTools());
+			$btns = array_merge((array)'list', (array)$this->getTools());
 			
 			# Extend $base with other attributes to build final tools
 			$this->tools = array();
@@ -259,6 +261,15 @@
 			foreach( $tools as $k => &$v ){
 				$v = array('name' => $v, 'disabled' => false);
 			}
+
+/* TEMP */
+$Access = $this->Access;
+$snippet = $this->snippet;
+$Access->can($snippet)						|| $tools['list']['disabled'] = true;
+$Access->can($snippet.'Info')				|| $tools['view']['disabled'] = true;
+$Access->can('create'.ucfirst($snippet))	|| $tools['create']['disabled'] = true;
+$Access->can('edit'.ucfirst($snippet))		|| $tools['edit']['disabled'] = true;
+$Access->can('delete'.ucfirst($snippet))	|| $tools['delete']['disabled'] = true;
 			
 			$this->summary = array(
 				'mainTable' 	=> $mainTable,
