@@ -282,7 +282,7 @@ EOF;
 		}
 		
 		private function res2list( $res ){
-			$this->res2col( $res );
+			$this->res2col($res, NULL);
 			$this->formattedRes = "'".join("','", $this->formattedRes)."'";
 		}
 		
