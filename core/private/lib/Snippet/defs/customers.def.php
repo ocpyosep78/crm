@@ -15,7 +15,6 @@
 			return array(
 				'name'		=> 'Cliente',
 				'plural'	=> 'Clientes',
-				'tip'		=> array('(', '$number', ') ', '$legal_name', ' - ', '$phone', ' - ', '$email'),
 			);
 			
 		}
