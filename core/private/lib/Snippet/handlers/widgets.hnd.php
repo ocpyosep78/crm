@@ -46,6 +46,12 @@
 			return $this->fetch( 'widgets/comboList' );
 			
 		}
+		
+		protected function handle_intro(){
+		
+			return '';
+		
+		}
 	
 	}
 

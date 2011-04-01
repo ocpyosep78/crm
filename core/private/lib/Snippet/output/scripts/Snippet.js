@@ -155,9 +155,9 @@ try{
 		// Add event handlers
 		el.getElements('.innerListRow').forEach(function(row){
 			var id = row.getAttribute('FOR');
+			var selClass = 'selectedListRow';
 			if( !id ) return;
 			// Link to info page for each item row
-			var selClass = 'selectedListRow';
 			row.addEvent('click', function(e){
 				el.getElements('.'+selClass).forEach(function(row){
 					row.removeClass( selClass );
@@ -165,12 +165,13 @@ try{
 				this.addClass(selClass);
 				// Enable all available bigTools
 				if( bigTools ) bigTools.el.all('enable', id);
+				if( !this.embeddedView ) hideEmbeddedView();
 			});
 			row.addEvent('dblclick', function(e){
 				// Remove previous embeddedViews if found
-				var prev = el.getElement('TD.embeddedView');
-				if( prev ) prev.getParent('TR').dispose();
-				if( this.embeddedView ) return this.embeddedView = false;
+				hideEmbeddedView();
+				this.embeddedView = !this.embeddedView;
+				if( !this.embeddedView ) return;
 				// Create new embeddedView
 				new Element('TD', {
 					'class': 'embeddedView',
@@ -183,17 +184,17 @@ try{
 				var fixedParams = {filters:id, writeTo:'embed_'+atts.params.group_uID};
 				var params = Object.append(atts.params, fixedParams);
 				that.addSnippet('snp_viewItem', atts.code, params);
-				this.embeddedView = true; // Flag
 			});
 			// Links for each row's btns
 			row.getElement('.innerListTools').addEvent('click', function(e){
 				var btn = e.stop().target.getAttribute('BTN');
 				!btn || that.sendRequest(btn+'Item', atts, id);
 			});
-			row.getElements('TD DIV').forEach(function(cell){
-				cell.unselectable();
-			});
 		});
+		function hideEmbeddedView(){
+			var prev = el.getElement('TD.embeddedView');
+			if( prev ) prev.getParent('TR').dispose();
+		}
 	},
 	createItem: function(el, atts){									  /*** INFO ***/
 		return;
@@ -299,7 +300,6 @@ function listRowsHighlight(el, from, to){
 	el.getElements('.innerListRow').forEach(function(row){
 		row.removeEvent('mouseover', row.ref);
 		row.addEvent('mouseover', row.ref=function(){
-//			this.flash(from||'#f0f0e6', to||'#e0e0e6');
 			this.highlight(from||'#f0f0e6', to||'#e0e0e6');
 		});
 	});
@@ -323,13 +323,16 @@ function ListSearch(el, atts){
 	var oBoxLbl = oBox.getElement('SPAN');
 	var oInput = oBox.getElement('INPUT');
 	var oFields = [];
+	var boxWidth = null;
 	var innerSnippet = 'inner' + atts.snippet.capitalize();
 	// Public methods
 	this.show = function( btn ){
 		that.hide();
 		if( !btn ) return;
 		oBoxLbl.innerHTML = btn.alt;
-		var left = btn.getPosition().x - 100;
+		if( !boxWidth ) boxWidth = oBox.setStyle('display', 'block').getWidth();
+		var rightLimit = el.getPosition().x + el.getWidth() - boxWidth;
+		var left = Math.min(rightLimit, Math.max(0, btn.getPosition().x - 100));
 		var top = btn.getPosition().y + 62;
 		oBox.setStyles({left:left, top:top, display:'block'});
 		oBox.pos = parseInt( btn.get('pos') );
@@ -350,16 +353,19 @@ function ListSearch(el, atts){
 	};
 	// Add search buttons to each title field and set them up
 	el.getElement('.listTitles').getElements('DIV').forEach(function(field, i){
-		if( !field.innerHTML ) return;	// Only for used title fields
+		 // Only for used title fields
+		if( !field.innerHTML ) return;
+		// Get code for this column and text to display in the box
 		var code = field.getAttribute('FOR');
+		var filter = (code == '*') ? 'todos' : field.innerHTML.toLowerCase();
 		// Create and insert one search image per title
 		var img = new Element('IMG', {
 			'pos': i,
 			'code': code,
 			'class': 'listSearchBtn',
 			'src': SNIPPET_IMAGES + '/buttons/search.png',
-			'alt': field.innerHTML.toLowerCase(),
-			'title': 'filtrar por campo ' + field.innerHTML.toLowerCase()
+			'alt': filter,
+			'title': filter
 		}).inject(field, 'bottom');
 		// Style and attach event handler to each title field
 		field.setStyle('cursor', 'pointer').addEvent('click', function(){
@@ -413,7 +419,7 @@ function SyncTitles(el, atts){
 		oRow && oTitles.forEach(function(oTtl, i){
 			oTtl.setStyles({
 				left: (posX[i] || (startX + availWidth)) - startX,
-				width: posX[i+1] ? posX[i+1]-posX[i] : 0
+				width: posX[i+1] ? posX[i+1]-posX[i] : ''
 			});
 			oTitles.setStyle('display', '');
 		});

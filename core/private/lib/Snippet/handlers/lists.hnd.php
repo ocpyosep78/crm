@@ -17,8 +17,6 @@
 				return '';
 			}
 		
-//			$this->filterToolsForThisElement( 'create' );
-		
 			return $this->fetch( 'lists/commonList' );
 			
 		}

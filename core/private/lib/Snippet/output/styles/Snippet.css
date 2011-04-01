@@ -31,6 +31,8 @@
 
 .embeddedView .infoData{ background:none; border:none; }
 .embeddedView .infoData > SPAN{ display:none; }
+.embeddedView .infoData > DIV{ margin:0px 10px; }
+.embeddedView .infoData > DIV > TABLE{ margin:10px 30px; }
 
 /**
  * LISTS: GENERAL

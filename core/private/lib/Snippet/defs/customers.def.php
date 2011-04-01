@@ -78,25 +78,41 @@
 			
 		}
 		
-		public function getListData( $filters=array() ){
-			$this->fixFilters(&$filters, array(
-				'phone'			=> '`c`.`phone`',
-				'address'		=> '`c`.`address`',
-				'sellerName'	=> "CONCAT(`u`.`name`,' ',`u`.`lastName`)",
-			));
-			return "SELECT	`c`.*,
-							CONCAT(`u`.`name`,' ',`u`.`lastName`) AS 'sellerName',
-							`lc`.*,
-							CONCAT(`c`.`customer`,
-								' (', `c`.`legal_name`, ') ',
-								'(Cliente ', `c`.`number`, ')') AS 'tipToolText'
-					FROM `customers` `c`
-					LEFT JOIN `_users` `u` ON (`u`.`user` = `c`.`seller`)
-					LEFT JOIN `_locations` `lc` USING (`id_location`)
-					WHERE {$this->array2filter($filters)}
-					AND {$this->getFilterFromModifier()}
-					ORDER BY `c`.`customer`";
-		}
+private function globalFilters( &$filters ){
+
+	$srch = $filters['*'];
+	$filters = array();
+	$fields = array_diff($this->getItemFields(), (array)'>');
+	
+	foreach( $fields as $field ) $filters["`{$field}`"] = $srch;
+	
+}
+		
+public function getListData( $filters=array(), $join='AND' ){
+	if( isset($filters['*']) ){
+		$this->globalFilters( $filters );
+		$join = 'OR';
+	}
+	$this->fixFilters(&$filters, array(
+		'phone'			=> '`c`.`phone`',
+		'address'		=> '`c`.`address`',
+		'email'			=> '`c`.`email`',
+		'sellerName'	=> "CONCAT(`u`.`name`,' ',`u`.`lastName`)",
+	));
+	$sql = "SELECT	`c`.*,
+					CONCAT(`u`.`name`,' ',`u`.`lastName`) AS 'sellerName',
+					`lc`.*,
+					CONCAT(`c`.`customer`,
+						' (', `c`.`legal_name`, ') ',
+						'(Cliente ', `c`.`number`, ')') AS 'tipToolText'
+			FROM `customers` `c`
+			LEFT JOIN `_users` `u` ON (`u`.`user` = `c`.`seller`)
+			LEFT JOIN `_locations` `lc` USING (`id_location`)
+			WHERE ({$this->array2filter($filters, $join)})
+			AND {$this->getFilterFromModifier()}
+			ORDER BY `c`.`customer`";
+	return $sql;
+}
 public function getItemData( $id ){
 	return $this->getListData( array('id_customer' => $id) );
 }
@@ -107,16 +123,16 @@ private function getFilterFromModifier(){
 	}
 	return '1';		# No filter for status (show all customers)
 }
-		public function getComboListData( $filters=array() ){
-			return "SELECT	`id_customer`,
-							`customer`
-					FROM `customers`
-					WHERE {$this->getFilterFromModifier()}
-					ORDER BY `customer`";
-		}
-		public function getTools(){
-			return array('view', 'create', 'edit', 'delete');
-		}
+public function getComboListData( $filters=array() ){
+	return "SELECT	`id_customer`,
+					`customer`
+			FROM `customers`
+			WHERE {$this->getFilterFromModifier()}
+			ORDER BY `customer`";
+}
+public function getTools(){
+	return array('view', 'create', 'edit', 'delete');
+}
 		
 /*		public function checkFilter( &$filters ){
 		}/**/
