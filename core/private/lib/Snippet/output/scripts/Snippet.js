@@ -49,18 +49,18 @@ var Snippet = {
 	// include a btns parameter, thus serving for initializations of the
 	// snippet's state.
 	resetBigTools: function(el, atts, btns, uID){
-			var BT = this.groups[atts.params.group_uID]['bigTools'];
-			if( !BT || !BT.el ) return;
-			BT.el.all('disable');
-			// Make it an array if it's a string
-			if(typeof(btns) != 'object' && btns) btns = [btns];
-			// If omitted, take the last recorded snapshot. Walk its members
-			(btns||BT.el.lastSS||[]).forEach(function(btn){
-				BT.el.enable(btn||null, uID||null);
-			});
-			// Save snapshot as initial state
-			if( btns ) BT.el.lastSS = btns;
-		},
+		var BT = this.groups[atts.params.group_uID]['bigTools'];
+		if( !BT || !BT.el ) return;
+		BT.el.all('disable');
+		// Make it an array if it's a string
+		if(typeof(btns) != 'object' && btns) btns = [btns];
+		// If omitted, take the last recorded snapshot. Walk its members
+		(btns||BT.el.lastSS||[]).forEach(function(btn){
+			BT.el.enable(btn||null, uID||null);
+		});
+		// Save snapshot as initial state
+		if( btns ) BT.el.lastSS = btns;
+	},
 	/**************************************************************************/
 	/********************************* COMMON *********************************/
 	initialize: function( snippet ){
@@ -83,6 +83,9 @@ try{
 			uID && ((that.groups[uID]=that.groups[uID]||{})[snippet] = entry);
 			// Call the handler method on each element
 			that[snippet].apply(that, Object.values(entry));
+			// See if it was embedded and given an initialize function
+			var dad = el.getParent('[id=embed_'+uID+']');
+			if( dad ) dad.fireEvent('embed');
 		});
 }catch(e){ test( e ) };
 	},
@@ -119,10 +122,10 @@ try{
 			btns[btn.axn] = btn;		// Register this btn
 		});
 		// Enable/disable buttons, by code and globally for all at once
-		el.enable = function(axn, uID){ btns[axn] && btns[axn].enable( uID ); };
+		el.enable = function(axn, uID){ btns[axn] && btns[axn].enable(uID); };
 		el.disable = function( axn ){ btns[axn] && btns[axn].disable(); };
 		el.all = function(onOff, uID){
-			Object.each(btns, function(btn){ btn[onOff] && btn[onOff]( uID ); });
+			Object.each(btns, function(btn){ btn[onOff] && btn[onOff](uID); });
 		};
 	},
 	commonList: function (el, atts){					   /*** COMMON LIST ***/
@@ -152,9 +155,9 @@ try{
 		// Add event handlers
 		el.getElements('.innerListRow').forEach(function(row){
 			var id = row.getAttribute('FOR');
+			var selClass = 'selectedListRow';
 			if( !id ) return;
 			// Link to info page for each item row
-			var selClass = 'selectedListRow';
 			row.addEvent('click', function(e){
 				el.getElements('.'+selClass).forEach(function(row){
 					row.removeClass( selClass );
@@ -162,6 +165,25 @@ try{
 				this.addClass(selClass);
 				// Enable all available bigTools
 				if( bigTools ) bigTools.el.all('enable', id);
+				if( !this.embeddedView ) hideEmbeddedView();
+			});
+			row.addEvent('dblclick', function(e){
+				// Remove previous embeddedViews if found
+				hideEmbeddedView();
+				this.embeddedView = !this.embeddedView;
+				if( !this.embeddedView ) return;
+				// Create new embeddedView
+				new Element('TD', {
+					'class': 'embeddedView',
+					'id': 'embed_'+atts.params.group_uID,
+					'colspan': row.cells.length,
+				})
+				.inject(new Element('TR').inject(row, 'after'))
+				.addEvent('embed', function(){ row.scrollIntoView(true); });
+				// Request the embeddedView content
+				var fixedParams = {filters:id, writeTo:'embed_'+atts.params.group_uID};
+				var params = Object.append(atts.params, fixedParams);
+				that.addSnippet('snp_viewItem', atts.code, params);
 			});
 			// Links for each row's btns
 			row.getElement('.innerListTools').addEvent('click', function(e){
@@ -169,6 +191,10 @@ try{
 				!btn || that.sendRequest(btn+'Item', atts, id);
 			});
 		});
+		function hideEmbeddedView(){
+			var prev = el.getElement('TD.embeddedView');
+			if( prev ) prev.getParent('TR').dispose();
+		}
 	},
 	createItem: function(el, atts){									  /*** INFO ***/
 		return;
@@ -297,13 +323,16 @@ function ListSearch(el, atts){
 	var oBoxLbl = oBox.getElement('SPAN');
 	var oInput = oBox.getElement('INPUT');
 	var oFields = [];
+	var boxWidth = null;
 	var innerSnippet = 'inner' + atts.snippet.capitalize();
 	// Public methods
 	this.show = function( btn ){
 		that.hide();
 		if( !btn ) return;
 		oBoxLbl.innerHTML = btn.alt;
-		var left = btn.getPosition().x - 100;
+		if( !boxWidth ) boxWidth = oBox.setStyle('display', 'block').getWidth();
+		var rightLimit = el.getPosition().x + el.getWidth() - boxWidth;
+		var left = Math.min(rightLimit, Math.max(0, btn.getPosition().x - 100));
 		var top = btn.getPosition().y + 62;
 		oBox.setStyles({left:left, top:top, display:'block'});
 		oBox.pos = parseInt( btn.get('pos') );
@@ -324,16 +353,19 @@ function ListSearch(el, atts){
 	};
 	// Add search buttons to each title field and set them up
 	el.getElement('.listTitles').getElements('DIV').forEach(function(field, i){
-		if( !field.innerHTML ) return;	// Only for used title fields
+		 // Only for used title fields
+		if( !field.innerHTML ) return;
+		// Get code for this column and text to display in the box
 		var code = field.getAttribute('FOR');
+		var filter = (code == '*') ? 'todos' : field.innerHTML.toLowerCase();
 		// Create and insert one search image per title
 		var img = new Element('IMG', {
 			'pos': i,
 			'code': code,
 			'class': 'listSearchBtn',
 			'src': SNIPPET_IMAGES + '/buttons/search.png',
-			'alt': field.innerHTML.toLowerCase(),
-			'title': 'filtrar por campo ' + field.innerHTML.toLowerCase()
+			'alt': filter,
+			'title': filter
 		}).inject(field, 'bottom');
 		// Style and attach event handler to each title field
 		field.setStyle('cursor', 'pointer').addEvent('click', function(){
@@ -387,7 +419,7 @@ function SyncTitles(el, atts){
 		oRow && oTitles.forEach(function(oTtl, i){
 			oTtl.setStyles({
 				left: (posX[i] || (startX + availWidth)) - startX,
-				width: posX[i+1] ? posX[i+1]-posX[i] : 0
+				width: posX[i+1] ? posX[i+1]-posX[i] : ''
 			});
 			oTitles.setStyle('display', '');
 		});

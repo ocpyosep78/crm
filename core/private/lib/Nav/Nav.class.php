@@ -17,6 +17,46 @@
 
 	class Nav{
 		
+		/**
+		 * TEMP : getPage for Snippet, while navigation updates to support Snippets
+		 */
+		public function getSnippet($snippet, $mod, $params, $msg='', $type=NULL){
+		
+			if( $msg ) $this->queueMsg($msg, $type);
+			
+			$atts = array('snippet' => $snippet, 'mod' => $mod, 'params' => $params);
+			
+			$detail = DEVELOPER_MODE ? " (snippet: {$snippet})" : '';
+			
+			switch( $snippet ){
+				case 'commonList':
+					$page = $code;
+				case 'createItem':
+					$page = 'create'.ucfirst($code);
+				case 'editItem':
+					$page = 'edit'.ucfirst($code);
+				case 'viewItem':
+					$page = "{$code}Info";
+				default:
+					return showStatus("La página solicitada no está disponible{$detail}.");
+			}
+		
+			if( !oPermits()->can($page) ){
+				return showStatus("Su cuenta no posee permisos para acceder a esta página{$detail}.");
+			}
+			
+			$this->code = time().microtime();
+			$this->cache('page', $page);
+			$this->cache('atts', $atts);
+			
+			return addScript("location.href = '?nav={$this->code}'");
+			
+		}
+		
+		public function loadSnippet(){
+			
+		}
+		
 		private $code;
 		private $atts;
 		
@@ -77,9 +117,15 @@
 				require_once(CORE_PRIVATE.'pageMgr.php');
 				return $this->loadContent();
 			}
-			elseif( $code === NULL ) return showStatus('La página solicitada no está disponible.');
-			elseif( !$code ) return showStatus('No es posible cargar la página solicitada.');
-			elseif( !$inFrame ) return addScript("location.href = '{$href}'");
+			elseif( $code === NULL ){
+				return showStatus("La página solicitada no está disponible.");
+			}
+			elseif( !$code ){
+				return showStatus("No es posible cargar la página solicitada.");
+			}
+			elseif( !$inFrame ){
+				return addScript("location.href = '{$href}'");
+			}
 			else return $href;	/* Just for self#showPage */
 			
 		}
@@ -253,16 +299,10 @@
 		
 		/**
 		 * Generates a uniqueID for a nav code (the code of a particular snapshot).
-		 * microtime() advances continously, so it'd be really weird to get two equal codes.
-		 * However, to stay on the safe side, it'll be handled when it happens.
-		 * (there is a theoretical risk of an infinite loop, but it's impossible in practice)
 		 */
 		public function genNavCode(){
-		
-			$sid = microtime();
-			$nav = $this->getCached('code') or $nav = array();
 			
-			return isset($nav[$sid]) ? getNavCode() : $sid;
+			return time().microtime();
 			
 		}
 		

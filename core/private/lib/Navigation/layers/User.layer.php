@@ -1,6 +1,7 @@
 <?php
 
-	class SnippetLayer_access{
+
+	class Navigation_Layer_User{
 	
 		public function can( $what ){
 		
@@ -13,7 +14,8 @@
 			return !$this->can( $what );
 		
 		}
-		
+	
 	}
+
 
 ?>

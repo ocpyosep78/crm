@@ -6,6 +6,6 @@
 	  {/if}
 	{/foreach}
 	
-	<div for='tools'></div>
+	<div for='*'>Búsqueda global</div>
 	
 </div>

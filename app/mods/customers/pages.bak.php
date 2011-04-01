@@ -6,15 +6,54 @@
  * Copyright (C) 2011 Diego Barreiro <diego.bindart@gmail.com>
  * Licence: GNU GENERAL PUBLIC LICENSE <http://www.gnu.org/licenses/gpl.txt>
  */
+	
 	function page_customers( $modifier='customers' ){	/* Status: 'customers', 'potential', 'all' */
-		return oSnippet()->addSnippet('commonList', 'customers', $modifier);
+	
+		return oLists()->printList('customers', $modifier);
+		
 	}
-	function page_potentialCustomers(){					/* Status: 'customers', 'potential', 'all' */
+	
+	function page_potentialCustomers(){	/* Status: 'customers', 'potential', 'all' */
+		
 		return page_customers( 'potential' );
+		
 	}
+	
 	function page_customersInfo( $id ){
-		oSnippet()->addSnippet('viewItem', 'customers', array('filters' => $id));
-		return oTabs()->start( false );
+		
+		$cust = oSQL()->getCustomer( $id );
+		if( empty($cust) ) return oNav()->getPage('customers', array(), 'Cliente no encontrado.');
+		
+		# Build seller's full name
+		$cust['seller'] = "{$cust['seller_name']} {$cust['seller_lastName']}";
+		
+		# Block Datos Básicos
+		oFormTable()->clear();
+		oFormTable()->emptyTxt = "(no ingresado)";
+		oFormTable()->addRow('Nº Cliente', $cust['number']);
+		oFormTable()->addRow('Nombre Comercial', $cust['customer']);
+		oFormTable()->addRow('Razón Social', $cust['legal_name']);
+		oFormTable()->addRow('R.U.T.', $cust['rut']);
+		oFormTable()->addRow('Ingresado', $cust['since']);
+		$blocks[] = oFormTable()->getTemplate();
+		
+		# Block Datos Básicos
+		oFormTable()->clear();
+		oFormTable()->emptyTxt = "(no ingresado)";
+		oFormTable()->addRow('Teléfono', $cust['phone']);
+		oFormTable()->addRow('Email', $cust['email']);
+		oFormTable()->addRow('Dirección', $cust['address']);
+		oFormTable()->addRow('Ciudad', $cust['location']);
+		oFormTable()->addRow('Vendedor', $cust['seller']);
+		$blocks[] = oFormTable()->getTemplate();
+		
+		oSmarty()->assign('custID', $id);
+		oSmarty()->assign('blocks', $blocks);
+		
+		oLists()->includeComboList('customers', $cust['since'] ? 'customers' : 'potential', $id);
+	
+		return oTabs()->start();
+		
 	}
 
 	function page_editCustomers( $id=NULL ){
@@ -90,9 +129,9 @@
 		
 	}
 	
-	function page_createCustomers( $id=NULL ){
+	function page_createCustomers(){
 	
-		return page_editCustomers( $id );		/* We just 'edit' an empty customer */
+		return page_editCustomers();		/* We just 'edit' an empty customer */
 		
 	}
 	
