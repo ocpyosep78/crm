@@ -360,7 +360,7 @@ EOF;
 				$fields[] = $field;
 				$values[] = ($value === 'NULL' || $value === 'null' || $value === NULL)
 					? 'NULL'
-					: "'".mysql_escape_string($value)."'";
+					: "'".mysql_real_escape_string($value)."'";
 			}
 			if( empty($fields) || count($fields) != count($values) ){
 				trigger_error('Connection error: attempted to run a query without enough parameters');
@@ -372,7 +372,7 @@ EOF;
 		
 		protected function array2updSQL( $data ){
 			foreach( $data as $k => $v ){
-				$val = ($v == 'NULL' || $v === NULL) ? 'NULL' : "'".mysql_escape_string($v)."'";
+				$val = ($v == 'NULL' || $v === NULL) ? 'NULL' : "'".mysql_real_escape_string($v)."'";
 				$assign[] = "`{$k}` = {$val}";
 			}
 			return join(',', $assign);

@@ -129,11 +129,11 @@
 				break;
 				case 'SQL':
 					$SQL = new SQL();
-					$SQL->setTimeZone(TIME_ZONE);
+//					$SQL->setTimeZone(TIME_ZONE);
 				break;
 				case 'Stats':
 					$Stats = new Stats();
-					$Stats->setTimeZone(TIME_ZONE);
+//					$Stats->setTimeZone(TIME_ZONE);
 				break;
 				case 'Tabs':
 					$Tabs = new Tabs;
