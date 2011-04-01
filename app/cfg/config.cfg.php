@@ -14,8 +14,8 @@
 	 */
 	
 	# Version
-	define('VERSION', '0.6rc1');
-	define('VERSION_STATUS', '', true);
+	define('VERSION', '0.7');
+	define('VERSION_STATUS', 'beta', true);
 	define('LAST_UPDATE', '2010-08-08');
 
 	# General
