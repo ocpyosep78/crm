@@ -341,12 +341,19 @@ EOF;
 ***************/
 
 /* TEMP : should be protected (used in Snippet temporarily) */
-		public function fixFilters($filters, $substitutions=array()){
+		public function fixFilters(&$filters, $substitutions=array()){
+		
 			foreach( $substitutions as $old => $new ){
-				if( isset($filters[$old]) ) $filters[$new] = $filters[$old];
-				unset( $filters[$old] );
+				$key = preg_replace('/^`|`$/', '', $old);
+				(isset($filters[$key])
+					|| (isset($filters[$old]) && $key = $old)
+					|| (isset($filters["`{$old}`"]) && $key = "`{$old}`")
+				) && $filters[$new] = $filters[$key];
+				unset( $filters[$key] );
 			}
+			
 			return $filters;
+			
 		}
 		
 		protected function array2insSQL($table, $data, $modifiers=array()){
