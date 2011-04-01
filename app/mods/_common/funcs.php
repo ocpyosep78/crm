@@ -9,16 +9,29 @@
  
 	
 	function canEditEvent($user, $creator){
+	
+		# 1. Edit own events, always granted
+		if( $user == $creator ) return true;
+	
+		# 2. Developer and admin permission always granted
+		if( getSes('id_profile') <= 2 ) return true;
 		
-		# Pairs of users, so that first one can edit second one's events in the Agenda
+		# 3. Groups of users who can edit eachother's events
+		$groups[] = array('mantunez', 'rdelossantos', 'gdelosheros');
+		foreach( $groups as $group ){
+			if( in_array($user, $group) && in_array($creator, $group) ){
+				return true;
+			}
+		}
+		
+		# 4. Pairs of users where first one can edit second one's events
 		$allowed = array(
-			array('mantunez', 'rdelossantos'),
-			array('rdelossantos', 'mantunez'),
+//			array('thisOneCanEdit', 'thisOnesEvents'),
 		);
+		if( in_array(array($user, $creator), $allowed) ) return true;
 		
-		# Keep in mind users still need editEvent permission granted in the first place
-		return getSes('id_profile') <= 2 || $creator == $user
-			|| in_array(array($user, $creator), $allowed);
+		# None of the above
+		return false;
 			
 	}
 
