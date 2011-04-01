@@ -22,10 +22,7 @@
 		return oTabs()->start( false );
 	}
 	function page_editCustomers( $id=NULL ){
-		return oSnippet()->addSnippet('edit', 'customers', array('filters' => $id));
-	}
-	function page_createCustomers(){
-		return page_editCustomers();
+		return oSnippet()->addSnippet('editItem', 'customers', array('filters' => $id));
 	}
 	
 	

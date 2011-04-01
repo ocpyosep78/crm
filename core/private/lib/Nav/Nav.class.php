@@ -65,8 +65,6 @@
 		 */
 		public function getPage($page, $atts=array(), $msg='', $type=0, $inFrame=false){
 		
-			if( $page == 'update' ) return updateCRM();
-		
 			if( $msg ) $this->queueMsg($msg, $type);
 			
 			$code = $this->regNav($page, $atts);

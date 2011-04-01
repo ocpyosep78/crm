@@ -92,7 +92,7 @@
 				case 'deleteItem':
 					return array('bigTools', 'comboList', $snippet);
 				case 'createItem':
-					return array('createSummary', $snippet);
+					return array('intro', $snippet);
 				default:
 					# Snippet's that don't merge with other snippets
 					return (array)$snippet;
@@ -113,6 +113,7 @@
 			switch( $snippet ){
 				case 'comboList':
 				case 'bigTools':
+				case 'intro':
 					return 'widgets';
 				case 'simpleList':
 				case 'commonList':
@@ -120,7 +121,7 @@
 					return 'lists';
 				case 'createItem':
 				case 'editItem':
-test( array('snippet' => $snippet, 'code' => $this->code) + $this->params );
+#test( array('snippet' => $snippet, 'code' => $this->code) + $this->params );
 				case 'viewItem':
 					return 'items';
 				case 'deleteItem':	/* TEMP : alias of delete for now, back in items later */

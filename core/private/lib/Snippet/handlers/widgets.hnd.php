@@ -40,7 +40,7 @@
 			
 			$this->assign('combo', array(
 				'list'		=> $data,
-				'selected'	=> $this->params['modifier'],
+				'selected'	=> $this->params['filters'],
 			));
 			
 			return $this->fetch( 'widgets/comboList' );

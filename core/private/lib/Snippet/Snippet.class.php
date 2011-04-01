@@ -73,7 +73,7 @@
 		 * @returns: an HTML string
 		 */
 		public function getSnippet($snippet, $code, $params=array()){
-			
+		
 			# Accept a string as params, taking it as $params['modifier']
 			is_array($params) || $params = array('modifier' => $params);
 			

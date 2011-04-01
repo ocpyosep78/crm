@@ -10,6 +10,13 @@
 		 */
 		protected function handle_commonList(){
 		
+			/* TEMP : untill this library handles navigation issues */
+			if( $_POST['xajax'] == 'addSnippet' ){
+				$_POST['xajax'] = 'getPage';
+				oNav()->getPage($this->code, (array)$this->params['modifier']);
+				return '';
+			}
+		
 //			$this->filterToolsForThisElement( 'create' );
 		
 			return $this->fetch( 'lists/commonList' );

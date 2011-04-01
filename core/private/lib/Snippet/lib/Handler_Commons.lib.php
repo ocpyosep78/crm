@@ -100,7 +100,9 @@
 			
 			# Pass control to the specific handler
 			# (child that inherited from this one)
-			return $this->{"handle_{$this->snippet}"}();
+			return is_callable(array($this, "handle_{$this->snippet}"))
+				? $this->{"handle_{$this->snippet}"}()
+				: Snippet_Tools::issueWarning("handle_{$this->snippet} not found");
 		
 		}
 
