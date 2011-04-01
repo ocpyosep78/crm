@@ -45,5 +45,10 @@
 	
 	# Global objects Builder (creates each global object on demand)
 	require_once( CORE_LIB.'Builder/Builder.class.php' );
+	
+return;
+	require_once( CORE_LIB.'Modules/Modules.class.php' );
+	$mod = new Modules( 'customers' );
+	$mod->readDefinition();
 
 ?>
