@@ -1,0 +1,64 @@
+This are some of the rules I try to follow when coding. I wouldn't dare present them as the big thing, but they work for me, and some of them might work for you. Some might just make sense for a project like App Template and no other.
+
+Disclaimer, just to avoid some well-deserved flaming if you happen to take a look at App Template's code: good practices are mostly a result of experience. Not all that's said here has been a part of my coding practices forever. Some parts of the framework are yelling at me to be updated, and I'm going to... one day, eventually. This is just the best way I had to organize my thoughts and ideas, so I could set clear guidelines for myself.
+
+
+
+
+Classes
+
+	- __construct should be used for basic initialization, without parameters if possible.
+	- each method should do one and only one thing. If this thing consists of smaller pieces, rely on other methods for each piece.
+	- methods should be private unless strictly needing to be called from outside the class.
+	- properties should ALWAYS be private. If need be, create accessors for them. No one needs to know how a class stores/handles its properties.
+	
+
+Libraries
+
+	- when a task is too large or too complex for a single class, do part the task in several classes, forming a library.
+	- same as individual classes, libraries should present a simple, concise, short and clear interface to the outside.
+	- libraries should consist of several classes that take each one a small but logically compact part of the problem.
+	- each library should have only one class visible to the outside (named as the library), with as few methods as possible.
+	- in particular, the main class of a library should have only public methods whenever possible (delegate complex processing to the inside).
+	- public methods in secondary classes of a library should be so only for internal communication, never for the outside.
+	- class inheritance should be used for one of two reasons:
+		~ extend classes that are actually (logically) siblings.
+		~ hide the most abstract part of a class' tasks in its parent, leaving an easy-to-follow flow in the main class (the child).
+
+
+Layers
+
+	- communication between libraries should never be done directly.
+	- any library that expects to be used by other libraries should present a layer.
+	- a layer is a small class that redirects method calls to the library it represents.
+	- when viewing a layer's code, all we want to know is:
+		~ which methods does it have?
+		~ what parameters does it expect?
+		~ what does it return?
+	- abstracting libraries inter-communication makes it fast, easy and safe to update/relocate/replace libraries.
+	- layers should be placed not in each library folder, but in a folder specially meant for layers.
+	- it has the advantage of keeping the core logic of the program in one place, as a quick reference of each library's API.
+
+
+Layout
+
+	- proper indentation. It should be obvious, but I've seen people indent just to keep blocks of code differenciated. Whatta... consider functions?
+	- case consistency: null or NULL? true or TRUE? choose one and stick to it.
+	- short lines: mark a maximum width (at 70-80 characters would be fine) and stick to it
+	- if you have something like:
+		~ $this->longNamedPropertyThatsActuallyAnObject->callSomeLongNamedMethod( passingALongMessageHereToBeCoherent );
+	- consider doing it like this instead:
+		~ $shortObjectName = $this->longNamedPropertyThatsActuallyAnObject;
+		~ $msg = 'passingALongMessageHereToBeCoherent';
+		~ $shortObjectName->callSomeLongNamedMethod( $msg );
+	- when you decide to cut an if...then, or a do...while, in two lines, do use blocks '{', '}' (don't just indent).
+	- an exception can be made for long texts, where something like this would be advisable:
+		~ $msg = 'This message is extremely long, so I should '.
+			'really cut it in pieces to make it more friendly '.
+			'and clear to people with small screens, small eyes '.
+			'(or both). Isn\'t it easier to read like this?';
+	- concatenating periods can go up or down, but make up your mind and stick with it.
+	- ternary operators are a cool thing for short and obvious choices. Do not use them in place of if...elseif...elseif...else...
+	- if it's really appropriate to use a ternary operator where one of the branches is really long, build it so the long branch goes last.
+	- don't pack code. Use abundant white space, both horizontally and vertically.
+	- comment everything that's not obvious. Appart from helping maintenance, well formatted comments are great for visually splitting atomic tasks.
