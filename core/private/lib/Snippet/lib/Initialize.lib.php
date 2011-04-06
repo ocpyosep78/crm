@@ -159,9 +159,13 @@ test( array('snippet' => $snippet, 'code' => $this->code) + $this->params );
 		 */
 		public function getSnippet( $snippet ){
 		
-			return preg_match('/snp_(.+)/', $snippet, $match)
-				? $this->getSingleSnippet( $match[1] )
-				: $this->getComposedSnippet( $snippet );
+			if( preg_match('/snp_(.+)/', $snippet, $match) ){
+				$this->params['group_uID'] = NULL;
+				$this->getSingleSnippet( $match[1] );
+			}
+			else{
+				$this->getComposedSnippet( $snippet );
+			}
 			
 		}
 	

@@ -263,13 +263,11 @@
 			}
 
 /* TEMP */
-$Access = $this->Access;
-$snippet = $this->snippet;
-$Access->can($snippet)						|| $tools['list']['disabled'] = true;
-$Access->can($snippet.'Info')				|| $tools['view']['disabled'] = true;
-$Access->can('create'.ucfirst($snippet))	|| $tools['create']['disabled'] = true;
-$Access->can('edit'.ucfirst($snippet))		|| $tools['edit']['disabled'] = true;
-$Access->can('delete'.ucfirst($snippet))	|| $tools['delete']['disabled'] = true;
+$this->Access->can($this->code)						|| $tools['list']['disabled'] = true;
+$this->Access->can($this->code.'Info')				|| $tools['view']['disabled'] = true;
+$this->Access->can('create'.ucfirst($this->code))	|| $tools['create']['disabled'] = true;
+$this->Access->can('edit'.ucfirst($this->code))		|| $tools['edit']['disabled'] = true;
+$this->Access->can('delete'.ucfirst($this->code))	|| $tools['delete']['disabled'] = true;
 			
 			$this->summary = array(
 				'mainTable' 	=> $mainTable,
