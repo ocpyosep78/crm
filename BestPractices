@@ -1,6 +1,6 @@
-This are some of the rules I try to follow when coding. They're not based in college studies and I wouldn't dare present them as the big thing, but they work for me, and some of them might work for you.
+These are some of the rules I try to follow when coding. I wouldn't dare present them as the big thing, but they work for me, and some of them might work for you. Some might just make sense for a project like App Template and no other.
 
-Disclaimer, just to avoid some well-deserved flaming if you happen to take a look at App Template's code: good practices are mostly a result of experience. Not all that's said here has been a part of my coding practices forever. Some parts of the framework are yelling at me to be updated, and I'm going to... one day, eventually.
+Disclaimer, just to avoid some well-deserved flaming if you happen to take a look at App Template's code: good practices are mostly a result of experience. Not all that's said here has been a part of my coding practices forever. Some parts of the framework are yelling at me to be updated, and I'm going to... one day, eventually. This is just the best way I had to organize my thoughts and ideas, so I could set clear guidelines for myself.
 
 
 

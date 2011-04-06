@@ -49,7 +49,7 @@ var Snippet = {
 	// include a btns parameter, thus serving for initializations of the
 	// snippet's state.
 	resetBigTools: function(el, atts, btns, uID){
-		var BT = this.groups[atts.params.group_uID]['bigTools'];
+		var BT = (this.groups[atts.params.group_uID]||{})['bigTools'];
 		if( !BT || !BT.el ) return;
 		BT.el.all('disable');
 		// Make it an array if it's a string
