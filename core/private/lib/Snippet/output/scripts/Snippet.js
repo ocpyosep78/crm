@@ -51,7 +51,7 @@ var Snippet = {
 	resetBigTools: function(el, atts, btns, uID){
 		var BT = (this.groups[atts.params.group_uID]||{})['bigTools'];
 		if( !BT || !BT.el ) return;
-		BT.el.all('disable');
+		BT.el.allBtns('disable');
 		// Make it an array if it's a string
 		if(typeof(btns) != 'object' && btns) btns = [btns];
 		// If omitted, take the last recorded snapshot. Walk its members
@@ -124,7 +124,7 @@ try{
 		// Enable/disable buttons, by code and globally for all at once
 		el.enable = function(axn, uID){ btns[axn] && btns[axn].enable(uID); };
 		el.disable = function( axn ){ btns[axn] && btns[axn].disable(); };
-		el.all = function(onOff, uID){
+		el.allBtns = function(onOff, uID){
 			Object.each(btns, function(btn){ btn[onOff] && btn[onOff](uID); });
 		};
 	},
@@ -164,7 +164,7 @@ try{
 				});
 				this.addClass(selClass);
 				// Enable all available bigTools
-				if( bigTools ) bigTools.el.all('enable', id);
+				if( bigTools ) bigTools.el.allBtns('enable', id);
 				if( !this.embeddedView ) hideEmbeddedView();
 			});
 			row.addEvent('dblclick', function(e){
@@ -176,7 +176,7 @@ try{
 				new Element('TD', {
 					'class': 'embeddedView',
 					'id': 'embed_'+atts.params.group_uID,
-					'colspan': row.cells.length,
+					'colspan': row.cells.length
 				})
 				.inject(new Element('TR').inject(row, 'after'))
 				.addEvent('embed', function(){ row.scrollIntoView(true); });
