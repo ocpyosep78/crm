@@ -45,7 +45,7 @@
 .innerList TD{ padding:4px 2px; font-size:12px; font-family:Arial, Helvetica, sans-serif; }
 .innerList TD > DIV{ min-width:70px; }
 .innerListRow{ border-top: solid 1px #ffffff; }
-.selectedListRow{ border-top: solid 1px #e0e0ff; padding-bottom:1px; background:-webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#7070a0)); background:-moz-linear-gradient(top, #e4e5eb, #7070a0); filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#e4e5eb', endColorstr='#7070a0'); }
+.selectedListRow{ border-top: solid 1px #e0e0ff; padding-bottom:1px; background:-webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#7070a0)); background:-moz-linear-gradient(top, #ffffff, #7070a0); filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#7070a0'); }
 
 /**
  * LISTS: TOOLS
