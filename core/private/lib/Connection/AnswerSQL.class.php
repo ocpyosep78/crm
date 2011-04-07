@@ -10,7 +10,8 @@
 
 
 	define('SQL_ERROR_DUPLICATE', 1062);
-	define('SQL_ERROR_CONSTRAINT', 1452);
+	define('SQL_ERROR_CONSTRAINT_PARENT', 1451);
+	define('SQL_ERROR_CONSTRAINT_CHILD', 1452);
 
 	class AnswerSQL{
 	
@@ -40,8 +41,11 @@
 			if( $Error->number == SQL_ERROR_DUPLICATE ){
 				$this->messages['stdError'] = $this->messages['duplicate'];
 			}
-			elseif( $Error->number == SQL_ERROR_CONSTRAINT ){
-				$this->messages['stdError'] = $this->messages['constraint'];
+			elseif( $Error->number == SQL_ERROR_CONSTRAINT_PARENT ){
+				$this->messages['stdError'] = $this->messages['constraint_parent'];
+			}
+			elseif( $Error->number == SQL_ERROR_CONSTRAINT_CHILD ){
+				$this->messages['stdError'] = $this->messages['constraint_child'];
 			}
 		
 			$this->msg = $Error->number ? $this->messages['stdError'] : $this->messages['success'];

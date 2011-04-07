@@ -17,6 +17,12 @@
 		return oTabs()->start( false );
 	}
 
+	function page_createCustomers(){
+	
+		return page_editCustomers();		/* We just 'edit' an empty customer */
+		
+	}
+	
 	function page_editCustomers( $id=NULL ){
 		
 		$cust = $id ? oSQL()->getCustomer( $id ) : array();
@@ -51,7 +57,7 @@
 		oFormTable()->addInput('Dirección', array('id' => 'address'));
 		oFormTable()->addCombo('Ciudad',
 			array('' => '') + oSQL()->getLocations(),
-			array('id' => 'id_location', 'selected' => $id ? $cust['id_location'] : 'Montevideo'));
+			array('id' => 'id_location', 'selected' => $id ? $cust['id_location'] : 29));	/* TEMP : use MAIN_LOCATOIN instead */
 		
 		# Disabled, an input telling PHP to save it as potential customer
 		# (sent only if that option is selected)
@@ -87,12 +93,6 @@
 		
 		# Add commands and actions to Xajax response object
 		addScript("\$('".($id ? 'editCust' : 'newCust')."_number').focus();");
-		
-	}
-	
-	function page_createCustomers( $id=NULL ){
-	
-		return page_editCustomers( $id );		/* We just 'edit' an empty customer */
 		
 	}
 	

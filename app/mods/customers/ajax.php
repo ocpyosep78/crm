@@ -14,7 +14,6 @@
 		'createCustomerContacts',
 		'createCustomerOwners',
 		'editCustomers',
-		'deleteCustomers',
 		'deleteCustomerContacts',
 		'deleteCustomerOwners',
 	);
@@ -99,17 +98,6 @@
 		}else{
 			return oNav()->getPage('customersInfo', array($atts['id_customer']), $ans->msg, $ans->successCode);
 		}
-		
-	}
-	
-	function deleteCustomers($id, $modifier=NULL){
-	
-		# Request query and catch answer, then return it to the user
-		oSQL()->setOkMsg("El cliente fue eliminado correctamente");
-		$ans = oSQL()->deleteCustomers( $id );
-		
-		if( $ans->error ) return showStatus( $ans->msg );
-		else return oNav()->getPage('customers', array($modifier), $ans->msg, 1);
 		
 	}
 	

@@ -124,12 +124,12 @@
 #test( array('snippet' => $snippet, 'code' => $this->code) + $this->params );
 				case 'viewItem':
 					return 'items';
-				case 'deleteItem':	/* TEMP : alias of delete for now, back in items later */
 				case 'edit':
 				case 'block':
 				case 'unblock':
-				case 'delete':
 test( array('snippet' => $snippet, 'code' => $this->code) + $this->params );
+				case 'delete':
+				case 'deleteItem':	/* TEMP : alias of delete for now, back in items later */
 					return 'actions';
 				default:
 					return NULL;

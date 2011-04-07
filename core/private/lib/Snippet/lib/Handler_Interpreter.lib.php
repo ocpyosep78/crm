@@ -259,15 +259,11 @@
 			
 			# Tools are enabled by default
 			foreach( $tools as $k => &$v ){
-				$v = array('name' => $v, 'disabled' => false);
+				$v = array(
+					'name'		=> $v,
+					'disabled'	=> $this->Access->cant($k, $this->code),
+				);
 			}
-
-/* TEMP */
-$this->Access->can($this->code)						|| $tools['list']['disabled'] = true;
-$this->Access->can($this->code.'Info')				|| $tools['view']['disabled'] = true;
-$this->Access->can('create'.ucfirst($this->code))	|| $tools['create']['disabled'] = true;
-$this->Access->can('edit'.ucfirst($this->code))		|| $tools['edit']['disabled'] = true;
-$this->Access->can('delete'.ucfirst($this->code))	|| $tools['delete']['disabled'] = true;
 			
 			$this->summary = array(
 				'mainTable' 	=> $mainTable,
@@ -283,6 +279,29 @@ $this->Access->can('delete'.ucfirst($this->code))	|| $tools['delete']['disabled'
 			
 			return $this;
 			
+		}
+		
+		
+/**************************************************/
+/****************** MODIFY ITEMS ******************/
+/**************************************************/
+
+		public function remove( $id ){
+		
+			$keys = $this->summary['keys'];
+			$table = array_shift($this->summary['mainTable']);
+			
+			if( count($keys) == 1 && count($id) == 1 ){
+				$filters = array_combine($keys, $id);
+			}
+			else{
+				die( 'not implemented' );		/* TEMP */
+			}
+			
+			if( empty($filters) ) die('not enough filters set for removal');
+			
+			return $this->sqlEngine->delete($table, $filters);
+		
 		}
 		
 		

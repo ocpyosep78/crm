@@ -2,6 +2,11 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 
+	<meta http-equiv="X-UA-Compatible" content="IE=8" />
+<!--[if IE 9]>
+	<meta http-equiv="X-UA-Compatible" content="IE=9" />
+<![endif]-->
+
 	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 	<meta http-equiv="Pragma" content="no-cache">
 	<meta http-equiv="Expires" content="-1">

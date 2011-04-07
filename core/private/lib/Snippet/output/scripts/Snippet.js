@@ -300,6 +300,7 @@ function listRowsHighlight(el, from, to){
 	el.getElements('.innerListRow').forEach(function(row){
 		row.removeEvent('mouseover', row.ref);
 		row.addEvent('mouseover', row.ref=function(){
+			if( this.hasClass('selectedListRow') ) return;
 			this.highlight(from||'#f0f0e6', to||'#e0e0e6');
 		});
 	});

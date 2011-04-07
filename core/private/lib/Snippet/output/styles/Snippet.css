@@ -18,7 +18,7 @@
 /**
  * INFO PAGE
  */
-.infoData{ margin:10px; padding:10px; border:double 3px #e0e0e5; border-radius:6px; -moz-border-radius:6px; -webkit-border-radius:6px; background:#ffffff; text-align:center; opacity:0.8; }
+.infoData{ margin:10px; padding:10px; text-align:center; opacity:0.8; }
 .infoData > SPAN{ display:block; position:relative; height:18px; padding:8px 10px; border-radius:12px; -moz-border-radius:12px; -webkit-border-radius:12px; box-shadow:#000000 2px 1px 5px; -moz-box-shadow:#000000 2px 1px 5px; -webkit-box-shadow:#000000 2px 1px 5px; white-space:nowrap; overflow:hidden; z-index:50; background:-webkit-gradient(linear, left top, left bottom, from(#203050), to(#e4e5e8)); background:-moz-linear-gradient(top, #203050, #e4e5e8); filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#203050', endColorstr='#e4e5e8'); font-size:16px; font-weight:bold; font-family:"Times New Roman", Times, serif; color:#ffffff; }
 .infoData > SPAN:hover{ color:#ffffe0; }
 .infoData > SPAN > STRONG{ color:#302050; }	/* Debugging */
@@ -45,7 +45,7 @@
 .innerList TD{ padding:4px 2px; font-size:12px; font-family:Arial, Helvetica, sans-serif; }
 .innerList TD > DIV{ min-width:70px; }
 .innerListRow{ border-top: solid 1px #ffffff; }
-.selectedListRow{ border-top: solid 1px #e0e0ff; padding-bottom:1px; background:-webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#7070a0)); background:-moz-linear-gradient(top, #ffffff, #7070a0); filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#7070a0'); }
+.selectedListRow{ border-top: solid 1px #ffffa0; border-bottom: solid 1px #ffffa0; padding-bottom:1px; background:#cfcfca; }
 
 /**
  * LISTS: TOOLS

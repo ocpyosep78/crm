@@ -34,7 +34,7 @@
 			/* TEMP : untill this library handles navigation issues */
 			if( $_POST['xajax'] == 'addSnippet' && !$this->params['writeTo'] ){
 				$_POST['xajax'] = 'getPage';
-				oNav()->getPage('create'.ucfirst($this->code), (array)$this->params['filters']);
+				oNav()->getPage('edit'.ucfirst($this->code), (array)$this->params['filters']);
 				return '';
 			}
 			

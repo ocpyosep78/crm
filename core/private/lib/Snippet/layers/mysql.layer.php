@@ -10,6 +10,12 @@
 		private $shown;
 		private $keys;
 		private $FKs;
+		
+		public function delete($table, $filters){
+		
+			return parent::delete($table, $filters);
+		
+		}
 	
 		public function feed( $summary ){
 			
