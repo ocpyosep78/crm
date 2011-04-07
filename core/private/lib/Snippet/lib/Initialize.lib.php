@@ -20,7 +20,7 @@
  
  
   	require_once(dirname(__FILE__).'/Handler_Defaults.lib.php');
-  	require_once(dirname(__FILE__).'/Handler_Interpreter.lib.php');
+  	require_once(dirname(__FILE__).'/Handler_Source.lib.php');
  	require_once(dirname(__FILE__).'/Handler_Commons.lib.php');
 	
 	
@@ -89,7 +89,7 @@
 				case 'simpleList':
 				case 'viewItem':
 				case 'editItem':
-				case 'deleteItem':
+//				case 'deleteItem':
 					return array('bigTools', 'comboList', $snippet);
 				case 'createItem':
 					return array('intro', $snippet);
@@ -128,6 +128,7 @@
 				case 'block':
 				case 'unblock':
 test( array('snippet' => $snippet, 'code' => $this->code) + $this->params );
+				case 'editField':
 				case 'delete':
 				case 'deleteItem':	/* TEMP : alias of delete for now, back in items later */
 					return 'actions';

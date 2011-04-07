@@ -1,6 +1,6 @@
 <?php
 	
-	class Snippets_Handler_Interpreter extends Snippets_Handler_Defaults{
+	class Snippets_Handler_Source extends Snippets_Handler_Defaults{
 	
 		private $sqlEngine;
 		
@@ -286,13 +286,15 @@
 /****************** MODIFY ITEMS ******************/
 /**************************************************/
 
-		public function remove( $id ){
+		public function delete( $vKeys ){
 		
-			$keys = $this->summary['keys'];
+			$vKeys = (array)$vKeys;
+		
+			$fKeys = $this->summary['keys'];
 			$table = array_shift($this->summary['mainTable']);
 			
-			if( count($keys) == 1 && count($id) == 1 ){
-				$filters = array_combine($keys, $id);
+			if( count($fKeys) == 1 && count($vKeys) == 1 ){
+				$filters = array_combine($fKeys, $vKeys);
 			}
 			else{
 				die( 'not implemented' );		/* TEMP */
@@ -301,6 +303,26 @@
 			if( empty($filters) ) die('not enough filters set for removal');
 			
 			return $this->sqlEngine->delete($table, $filters);
+		
+		}
+
+		public function update($vKeys, $data){
+		
+			$vKeys = (array)$vKeys;
+		
+			$fKeys = $this->summary['keys'];
+			$table = array_shift($this->summary['mainTable']);
+			
+			if( count($fKeys) == 1 && count($vKeys) == 1 ){
+				$filters = array_combine($fKeys, $vKeys);
+			}
+			else{
+				die( 'not implemented' );		/* TEMP */
+			}
+			
+			if( empty($filters) ) die('not enough filters set for removal');
+			
+			return $this->sqlEngine->update($data + $filters, $table, $fKeys);
 		
 		}
 		

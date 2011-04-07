@@ -194,8 +194,7 @@ EOF;
 		 * you intend to update all rows in a table; use your own methods if needed).
 		 */
 		public function update($data, $table, $arrKeys=array()){
-			if( is_string($arrKeys) ) $arrKeys = array( $arrKeys );
-			foreach( $arrKeys as $key ){
+			foreach( (array)$arrKeys as $key ){
 				if( !isset($data[$key]) ) continue;
 				$keys[] = "`{$key}` = '{$data[$key]}'";
 				unset( $data[$key] );

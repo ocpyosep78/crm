@@ -204,14 +204,60 @@ try{
 		return;
 	},
 	viewItem: function(el, atts){									  /*** INFO ***/
+		var that = this;
+		var id = atts.params.filters;
 		// Set initial state for bigTools snippet (and reset it to that state)
 		this.resetBigTools(el, atts, ['list', 'create', 'edit', 'delete'], atts.params.filters);
+		var resetFieldOnEdit = function(){};
+		el.getElements('.viewItemEditable').forEach(function(field){
+			field.addEvent('mouseover', function(){ this.highlight('#f0f0e6', '#e0e0e6'); });
+// Disable in-place edition for now (it's still half-way for some features)
+			if( false ) field.addEvent('click', function(){
+				var cancelEdit = function(){
+					el.getElements('.viewItemEditable')
+				};
+				// Store current value and reset field
+				var html = field.innerHTML;
+				field.setStyle('color', 'white');
+				var input = new Element('INPUT', {
+					events: {
+						click:function(e){ e.stop(); },
+						enter:function(){ requestEdit(this.value); },
+						focus:function(){ this.select(); }
+					},
+					type: 'text',
+					value: html
+				}).inject(field, 'top');
+				new Element('IMG', {		// Confirm edition
+					src: SNIPPET_IMAGES + '/buttons/edit.png',
+					events: {click:function(e){ e.stop(); requestEdit(input.value); }},
+					title: 'aceptar'
+				}).inject(field, 'top');
+				new Element('IMG', {		// Cancel edition
+					src: SNIPPET_IMAGES + '/buttons/delete.png',
+					events: {click:function(){ resetFieldOnEdit(); }},
+					title: 'cancelar'
+				}).inject(field, 'top');
+				var requestEdit = function( value ){
+					var filters = {id: id, field: field.get('FOR'), value: value};
+					that.sendRequest('editField', atts, filters);
+				};
+				input.focus();
+				resetFieldOnEdit();					// Reset previous edition (if any)...
+				resetFieldOnEdit = function(){		// ...and configure this field's edit reset
+					field.setStyle('color', '#000000');
+					field.set('html', html);
+					resetFieldOnEdit = function(){};	// It's a one-time call only
+				};
+			});
+		});
 	},
 	
 	
 	
 	
 	simpleList: function(el, atts){
+/*
 		var SimpleList = function( $list ){			// Simple List
 			var that = this;
 			var row4edit = $list.getElement('.addItemToSimpleList');
@@ -283,6 +329,7 @@ try{
 				});
 			});
 		});
+*/
 	}
 };
 

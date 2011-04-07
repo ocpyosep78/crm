@@ -8,7 +8,7 @@
  *            #display( string $msg , string $errType )
  *        layer error
  *            #Error( string $msg )
- *    class Snippet_Handler_Interpreter
+ *    class Snippet_Handler_Source
  *        #inject( string $snippet , string $code , array $params )
  *        #aquire()
  *        #validate()
@@ -24,13 +24,13 @@
  *            from this one) with the information provided by a definition file
  *            (created by users, following conventions).
  * 
- *            It gets assistance from its sibling Snippets_Handler_Interpreter
+ *            It gets assistance from its sibling Snippets_Handler_Source
  *            for parsing and interpretting the definitions, thus decompressing
  *            the logic it has to process for each snippet request. Commons
  *            stays at a higher level and receives digested data, not minding
  *            how or where it came from.
  * 
- *            Definition files extend Snippets_Handler_Interpreter, so we get
+ *            Definition files extend Snippets_Handler_Source, so we get
  *            all of its methods by loading the definition class script and
  *            instantiating it. Within the class, it is stored as @Source.
  * 
@@ -53,6 +53,7 @@
 		
 		protected $Layers;
 		protected $Source;
+		protected $Access;
 		
 		private $tplVars;
 		
@@ -65,6 +66,8 @@
 		public function __construct( $snippet ){
 		
 			$this->Layers = new Snippet_Layers;
+			
+			$this->Access = $this->Layers->get('access');
 			
 			$this->snippet = $snippet;
 			
@@ -121,10 +124,10 @@
 			if( class_exists($class) ){
 				$this->Source = new $class;
 			}
-			# If not found, use the naked Interpreter as $Source
+			# If not found, use the naked Source as $Source
 			else{
 				$this->registerWarning('definition class missing');
-				$this->Source = new Snippets_Handler_Interpreter;
+				$this->Source = new Snippets_Handler_Source;
 			}
 			
 		}

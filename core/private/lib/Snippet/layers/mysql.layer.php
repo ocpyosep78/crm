@@ -16,10 +16,16 @@
 			return parent::delete($table, $filters);
 		
 		}
+		
+		public function update($data, $table, $keys){
+		
+			return parent::update($data, $table, $keys);
+		
+		}
 	
 		public function feed( $summary ){
 			
-			# We assume Interpreter sends the right keys,
+			# We assume Source sends the right keys,
 			# for this is internal and wouldn't be abused
 			foreach( $summary as $k => $v ) $this->$k = $v;
 			

@@ -8,7 +8,7 @@
  */
 
 	
-	class Snippet_def_customers extends Snippets_Handler_Interpreter{
+	class Snippet_def_customers extends Snippets_Handler_Source{
 	
 		public function getBasicAttributes(){
 			
