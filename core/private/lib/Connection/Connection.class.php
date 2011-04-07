@@ -250,14 +250,25 @@ EOF;
 		}
 		
 		private function res2col($res, $atts){
-			$key = !is_array($atts) || empty($atts['key']) ? 0 : $atts['key'];
-			$val = !is_array($atts) || empty($atts['val']) ? 1 : $atts['val'];
+			
+			# First, let's see if we have any result at all
+			$data = mysql_fetch_array( $res );
+			$availKeys = array_keys( $data );
+			if( empty($data) ) return $this->formattedRes = array();
+			mysql_data_seek($res, 0);		# Reset internal pointer
+			
+			# Attempt to set keys as requested, try default behavior on failure
+			$fKey = (is_array($atts) && !empty($atts['key'])) ? $atts['key'] : 0;
+			$fVal = (is_array($atts) && !empty($atts['val'])) ? $atts['val'] : 1;
+			# If keys are not part of the result, try $0 => $1 or even $0 => $0
+			if( !in_array($fKey, $availKeys) ) $fKey = 0;
+			if( !in_array($fVal, $availKeys) ) $fVal = min(count($availKeys)/2 - 1, 1);
+			
+			# Now we're ready to read data
 			while( $data=mysql_fetch_array($res) ){
-				if(isset($data[1]) && isset($data[$key]) && isset($data[$val])){
-					$this->formattedRes[$data[$key]] = $data[$val];
-				}
-				else $this->formattedRes[] = $data[0];
+				$this->formattedRes[$data[$fKey]] = $data[$fVal];
 			}
+			
 		}
 		
 		private function res2named($res, $keys=array()){

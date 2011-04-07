@@ -88,6 +88,7 @@
 					"Verifique sus datos o inténtelo nuevamente.");
 			}
 		}
+		else $atts['number'] = NULL;
 		
 		# Request query and catch answer, then return it to the user
 		oSQL()->setOkMsg("El cliente {$atts['customer']} fue modificado con éxito");

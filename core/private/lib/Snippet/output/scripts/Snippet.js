@@ -95,6 +95,7 @@ try{
 		var that = this;
 		$$('.comboList').forEach(function(cl){
 			cl.evt = cl.addEvent('change', function(e){
+				if( !this.value ) return;
 				that.sendRequest('viewItem', atts, this.value);
 			});
 		});

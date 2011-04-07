@@ -103,8 +103,8 @@ public function getListData( $filters=array(), $join='AND' ){
 					CONCAT(`u`.`name`,' ',`u`.`lastName`) AS 'sellerName',
 					`lc`.*,
 					CONCAT(`c`.`customer`,
-						' (', `c`.`legal_name`, ') ',
-						'(Cliente ', `c`.`number`, ')') AS 'tipToolText'
+						IF(`c`.`legal_name` = '', '', CONCAT(' (', `c`.`legal_name`, ')')),
+						' (Cliente ', IFNULL(`c`.`number`, 'sin número'), ')') AS 'tipToolText'
 			FROM `customers` `c`
 			LEFT JOIN `_users` `u` ON (`u`.`user` = `c`.`seller`)
 			LEFT JOIN `_locations` `lc` USING (`id_location`)
