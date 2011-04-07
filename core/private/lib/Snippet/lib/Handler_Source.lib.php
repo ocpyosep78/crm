@@ -2,6 +2,29 @@
 	
 	class Snippets_Handler_Source extends Snippets_Handler_Defaults{
 	
+	
+/* TEMP : preliminary sketch of a function to automatically create select queries (lists, combo, info, etc.) */
+public function newSelect($type, $filters, $constraints){
+
+# => $type IN ('list' [=> ALL], 'hash' [=> COMBO], 'item' [=> INFO])
+# => $filters := array('field' => 'value', 'field' => 'value', 'field' => 'value')
+
+	$sql[] = "SELECT";
+# => `c`.`number`, `c`.`name`, `d`.`seller`
+	$sql[] = $this->getQueryFields( $type );
+	$sql[] = "FROM";
+# => `customers` `c` INNER JOIN `customers_contacts` `cc` USING (`id_customer`) LEFT JOIN `_users` `u` ON (`u`.`user` = `c`.`seller`)
+	$sql[] = $this->getQueryTables( $type );
+	$sql[] = "WHERE";
+# => `c`.`number` < 100 AND (`cc`.`name` LIKE '%jose%' OR ISNULL(`cc`.`name`)) AND `u`.`id_profile` <= 2
+	$sql[] = $this->getQueryFilters( $filters );
+# => GROUP BY `cc`.`number`, `u`.`name` ORDER BY `cc`.`name` LIMIT 18, 40
+	$sql[] = $this->getQueryConstraints( $constraints );
+	
+	return join(' ', $sql);
+	
+}
+	
 		private $sqlEngine;
 		
 		private $warnings;

@@ -78,6 +78,25 @@
 			
 		}
 		
+		public function getTools(){
+			return array('view', 'create', 'edit', 'delete');
+		}
+				
+		/*		public function checkFilter( &$filters ){
+				}/**/
+				
+		/*		public function checkData( &$data ){
+				}/**/
+				
+		/*		public function validationRuleSet(){
+				}/**/
+				
+		/*		public function strictValidation(){
+					return true;
+				}/**/
+
+/* TEMP : All these methods below should be automatically created based on the definition */
+		
 private function globalFilters( &$filters ){
 
 	$srch = $filters['*'];
@@ -130,22 +149,6 @@ public function getComboListData( $filters=array() ){
 			WHERE {$this->getFilterFromModifier()}
 			ORDER BY `customer`";
 }
-public function getTools(){
-	return array('view', 'create', 'edit', 'delete');
-}
-		
-/*		public function checkFilter( &$filters ){
-		}/**/
-		
-/*		public function checkData( &$data ){
-		}/**/
-		
-/*		public function validationRuleSet(){
-		}/**/
-		
-/*		public function strictValidation(){
-			return true;
-		}/**/
 		
 	}
 
