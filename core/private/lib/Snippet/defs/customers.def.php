@@ -10,7 +10,7 @@
 	
 	class Snippet_def_customers extends Snippets_Handler_Source{
 	
-		public function getBasicAttributes(){
+		protected function getBasicAttributes(){
 			
 			return array(
 				'name'		=> 'Cliente',
@@ -35,7 +35,7 @@
 		 *            By default, item pages will use all fields that are not hidden. To
 		 *            override this behavior, use getItemFields.
 		 */
-		public function getDatabaseDefinition(){
+		protected function getDatabaseDefinition(){
 		
 			return array(
 				'customers' => array(
@@ -49,12 +49,12 @@
 					'phone'			=> 'Teléfono',
 					'email'			=> 'Email',
 					'seller'		=> array('FK' => '_users.user', 'hidden' => true),
-					'since'			=> 'Fecha Ingreso',
+					'since'			=> array('name' => 'Fecha Ingreso', 'frozen' => true),
 					'subscribed'	=> array('name' => 'Subscripción', 'hidden' => true),
 				),
 				'_locations' => array(
 					'id_location'	=> array('FK' => 'customers.id_location', 'hidden' => true),
-					'location'		=> 'Ciudad/Localidad',
+					'location'		=> array('name' => 'Ciudad/Localidad', 'frozen' => true),
 				),
 				'_users' => array(
 					'user'		=> '',
@@ -65,35 +65,47 @@
 		}
 		
 		
-		public function getListFields(){
+		protected function getListFields(){
 		
 			return array('number', 'customer', 'legal_name', 'address', 'phone', 'sellerName');
 			
 		}
 		
-		public function getItemFields(){
+		protected function getItemFields(){
 		
 			return array('number', 'customer', 'legal_name', 'rut', 'since', '>',
 				'phone', 'email', 'address', 'location', 'sellerName');
 			
 		}
 		
-		public function getTools(){
+		protected function getTools(){
 			return array('view', 'create', 'edit', 'delete');
 		}
 				
-		/*		public function checkFilter( &$filters ){
-				}/**/
-				
-		/*		public function checkData( &$data ){
-				}/**/
-				
-		/*		public function validationRuleSet(){
-				}/**/
-				
-		/*		public function strictValidation(){
-					return true;
-				}/**/
+/*		protected function checkFilter( &$filters ){
+		}/**/
+		
+/*		protected function checkData( &$data ){
+		}/**/
+		
+		protected function getValidationRuleSet(){
+
+			return array(
+				'number'		=> array('text', NULL, 10),
+				'customer'		=> array('text', 2, 80),
+				'legal_name'	=> array('text', 2, 80),
+				'rut'			=> array('rut', NULL, 12),
+				'phone'			=> array('phone', 3, 20 ),
+				'email'			=> array('email', NULL, 50),
+				'address'		=> array('text', NULL, 50),
+				'id_location'	=> array('selection'),
+			);
+			
+		}/**/
+		
+/*		protected function strictValidation(){
+			return true;
+		}/**/
 
 /* TEMP : All these methods below should be automatically created based on the definition */
 		
@@ -107,7 +119,7 @@ private function globalFilters( &$filters ){
 	
 }
 		
-public function getListData( $filters=array(), $join='AND' ){
+protected function getListData( $filters=array(), $join='AND' ){
 	if( isset($filters['*']) ){
 		$this->globalFilters( $filters );
 		$join = 'OR';
@@ -119,6 +131,7 @@ public function getListData( $filters=array(), $join='AND' ){
 		'sellerName'	=> "CONCAT(`u`.`name`,' ',`u`.`lastName`)",
 	));
 	$sql = "SELECT	`c`.*,
+					DATE_FORMAT(`c`.`since`, '%d-%m-%Y') AS 'since',
 					CONCAT(`u`.`name`,' ',`u`.`lastName`) AS 'sellerName',
 					`lc`.*,
 					CONCAT(`c`.`customer`,
@@ -132,8 +145,8 @@ public function getListData( $filters=array(), $join='AND' ){
 			ORDER BY `c`.`customer`";
 	return $sql;
 }
-public function getItemData( $id ){
-	return $this->getListData( array('id_customer' => $id) );
+protected function getItemData( $id ){
+	return $this->getListData( array('id_customer' => array($id, '=')) );
 }
 private function getFilterFromModifier(){
 	switch( $this->params['modifier'] ){
@@ -142,7 +155,7 @@ private function getFilterFromModifier(){
 	}
 	return '1';		# No filter for status (show all customers)
 }
-public function getComboListData( $filters=array() ){
+protected function getComboListData( $filters=array() ){
 	return "SELECT	`id_customer`,
 					`customer`
 			FROM `customers`
