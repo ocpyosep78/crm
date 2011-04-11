@@ -1,13 +1,13 @@
 {if $event.closed}
   <div class='eventClosedMsg'>
 	{if $event.rescheduled}<p class='eventInfoRescheduled'>Reagendado o Cancelado</p>{/if}
-  	<p><strong>Cerrado</strong> por {$event.closedBy} ({$event.closedOn|date_format:'%d/%m/%Y, %H:%M'})</p>
+  	<p><strong>Cerrado</strong> por {$event.closedBy} ({$event.closedOn|date_locale:'d/m/Y, h:i'})</p>
 	<p><i>{$event.closed}</i></p>
   </div>
 {/if}
 
-<div id='eventInfoTitle'>{$event.ini|date_format:'%A, %d de %B de %Y'}</div>
-<div id='eventInfoSubTitle'>{$event.ini|date_format:'%H:%M'}{if $event.end} - {$event.end|date_format:'%H:%M'}{/if}</div>
+<div id='eventInfoTitle'>{$event.ini|date_locale:'l, d \d\e F \d\e Y'}</div>
+<div id='eventInfoSubTitle'>{$event.ini|date_locale:'h:i'}{if $event.end} - {$event.end|date_locale:'h:i'}{/if}</div>
 
 <img class='eventInfo_Creator' alt='' title='{$event.creator}' src='app/images/users/{$event.creator}.png' />
    
@@ -19,8 +19,8 @@
 	<tr>
 		<th>Agendado para</th>
 		<td style='color:#300000; font-weight:bold;'>
-			{$event.ini|date_format:'%d/%m/%Y, %H:%M'}
-			{if $event.end} - {$event.end|date_format:'%H:%M'}{/if}
+			{$event.ini|date_locale:'d/m/Y, h:i'}
+			{if $event.end} - {$event.end|date_locale:'h:i'}{/if}
 		</td>
 	<tr>
 		<th>Vinculado a Cliente</th>
@@ -44,7 +44,7 @@
 		<th>Creado por</th>
 		<td>
 			<span style='color:#000000; font-weight:bold;'>{$event.creator}</span>
-			({$event.created|date_format:'%d/%m/%Y, %H:%M'})
+			({$event.created|date_locale:'d/m/Y, h:i'})
 		</td>
 	</tr>
 	{if $editions}
@@ -53,7 +53,7 @@
 		<td>
 		  {foreach from=$editions item=edition}
 			<span style='color:#000000; font-weight:bold;'>{$edition.by}</span>
-			({$edition.on|date_format:'%d/%m/%Y, %H:%M'})<br />
+			({$edition.on|date_locale:'d/m/Y, h:i'})<br />
 		  {/foreach}
 		</td>
 	  </tr>
