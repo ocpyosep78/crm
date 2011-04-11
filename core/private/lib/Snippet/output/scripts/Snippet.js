@@ -29,6 +29,14 @@ var Snippet = {
 	showError: SnippetPort.showError,
 	addSnippet: SnippetPort.addSnippet,
 	getPage: SnippetPort.getPage,
+	showToolTip: function(uID, code, msg){
+		var elView = this.groups[uID]['viewItem'].el;
+		if( elView ) elView.TTT.show(code, msg);
+	},
+	hideToolTip: function(uID){
+		var elView = this.groups[uID]['viewItem'].el;
+		if( elView ) elView.TTT.hide();
+	},
 	/* sendRequest is used by different buttons (bigTools, listRowTools, etc.) */
 	sendRequest: function(snippet, atts, filters){
 		// Configure btns behavior: set which ones need confirmation
@@ -177,7 +185,8 @@ try{
 				new Element('TD', {
 					'class': 'embeddedView',
 					'id': 'embed_'+atts.params.group_uID,
-					'colspan': row.cells.length
+					'colspan': row.cells.length,
+					events: {embed:function(){ row.scrollIntoView(true); }}
 				})
 				.inject(new Element('TR').inject(row, 'after'))
 				.addEvent('embed', function(){ row.scrollIntoView(true); });
@@ -206,18 +215,18 @@ try{
 	viewItem: function(el, atts){									  /*** INFO ***/
 		var that = this;
 		var id = atts.params.filters;
+		// Enable tooltiptext in edittable fields
+		el.TTT = new SnippetToolTips( el.getElements('.viewItemEditable') );
 		// Set initial state for bigTools snippet (and reset it to that state)
 		this.resetBigTools(el, atts, ['list', 'create', 'edit', 'delete'], atts.params.filters);
 		var resetFieldOnEdit = function(){};
 		el.getElements('.viewItemEditable').forEach(function(field){
 			field.addEvent('mouseover', function(){ this.highlight('#f0f0e6', '#e0e0e6'); });
 // Disable in-place edition for now (it's still half-way for some features)
-			if( false ) field.addEvent('click', function(){
-				var cancelEdit = function(){
-					el.getElements('.viewItemEditable')
-				};
+			field.addEvent('click', function(){
 				// Store current value and reset field
 				var html = field.innerHTML;
+				var color = field.getStyle('color');
 				field.setStyle('color', 'white');
 				var input = new Element('INPUT', {
 					events: {
@@ -235,7 +244,7 @@ try{
 				}).inject(field, 'top');
 				new Element('IMG', {		// Cancel edition
 					src: SNIPPET_IMAGES + '/buttons/delete.png',
-					events: {click:function(){ resetFieldOnEdit(); }},
+					events: {click:function(e){ resetFieldOnEdit(); e.stop(); }},
 					title: 'cancelar'
 				}).inject(field, 'top');
 				var requestEdit = function( value ){
@@ -243,10 +252,11 @@ try{
 					that.sendRequest('editField', atts, filters);
 				};
 				input.focus();
-				resetFieldOnEdit();					// Reset previous edition (if any)...
-				resetFieldOnEdit = function(){		// ...and configure this field's edit reset
-					field.setStyle('color', '#000000');
+				resetFieldOnEdit();				// Reset previous edition (if any)...
+				resetFieldOnEdit = function(){	// ...and configure this field's edit reset
+					field.setStyle('color', color);
 					field.set('html', html);
+					el.TTT.hide();
 					resetFieldOnEdit = function(){};	// It's a one-time call only
 				};
 			});
@@ -355,6 +365,32 @@ function listRowsHighlight(el, from, to){
 	return el;
 };
 
+
+var SnippetToolTips = function( fields ){
+	var that = this;
+	// Register all enabled/valid fields in a private property
+	var oTgts = {};
+	fields.forEach(function(field){
+		if( field.get('FOR') ) oTgts[field.get('FOR')] = field;
+	});
+	// Create tooltiptext box and inject it
+	var ttb = new Element('DIV', {
+		class: 'snippetToolTip',
+		events: {click: function(){ that.hide(); }}
+	}).inject(document.body);
+	// Showing tooltips
+	this.show = function(code, msg){
+		that.hide();
+		if(!oTgts[code] || !msg) return that;
+		var coord = oTgts[code].getCoordinates();
+		ttb.setPosition({y:coord.top+coord.height+5, x:coord.left})
+		   .set('html', msg)
+		   .setStyle('display', 'block');
+	};
+	this.hide = function(){
+		ttb.setStyle('display', 'none');
+	};
+}
 
 
 /**

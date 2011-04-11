@@ -66,6 +66,12 @@ public function newSelect($type, $filters, $constraints){
 /**************************************************/
 /********************** GET ***********************/
 /**************************************************/
+
+		public function isFrozen( $field ){
+		
+			return in_array($field, $this->summary['frozen']);
+		
+		}
 		
 		public function getBasics(){
 		
@@ -121,6 +127,12 @@ public function newSelect($type, $filters, $constraints){
 			}
 			
 			return $this->sqlEngine->query($sql, $format, $params);
+			
+		}
+		
+		public function getRuleSet(){
+		
+			return $this->getValidationRuleSet();
 			
 		}
 		
@@ -209,6 +221,8 @@ public function newSelect($type, $filters, $constraints){
 					$atts['isKey'] = !empty($atts['isKey']);
 					# Hidden default is true for keys, false for all others
 					!isset($atts['hidden']) && $atts['hidden'] = !!$atts['isKey'];
+					# Unless explicitly frozen, all fields are assumed to be edittable
+					$atts['frozen'] = !empty($atts['frozen']);
 					# Set FK where not set
 					!isset($atts['FK']) && $atts['FK'] = NULL;
 				}
@@ -247,6 +261,7 @@ public function newSelect($type, $filters, $constraints){
 			$tables = array();
 			$fields = array();
 			$shown = array();
+			$frozen = array();
 			$keys = array();
 			$FKs = array();
 			$tools = $this->tools;
@@ -272,6 +287,8 @@ public function newSelect($type, $filters, $constraints){
 					if( $atts['isKey'] && isset($mainTable[$code])  ){
 						$keys[] = $field;
 					}
+					# List of frozen (uneditable) fields
+					!$atts['frozen'] || $frozen[] = $field;
 					# List of foreign keys, by field (always from mainTable)
 					!$atts['FK'] || $FKs[$field] = array(
 						'table'		=> $code,
@@ -294,6 +311,7 @@ public function newSelect($type, $filters, $constraints){
 				'fields'		=> $fields,
 				'fieldsAtts'	=> $fieldsAtts,
 				'shown'			=> $shown,
+				'frozen'		=> $frozen,
 				'keys'			=> $keys,
 				'keysString'	=> join('__|__', $keys),
 				'FKs'			=> $FKs,

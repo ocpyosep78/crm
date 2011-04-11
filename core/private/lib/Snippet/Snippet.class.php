@@ -44,10 +44,11 @@
 		|| define('SNIPPET_DEFINITION_PATH', dirname(__FILE__).'/defs');
 		
 
-	# Include
-	require_once( SNIPPET_LIB_PATH.'/Tools.lib.php' );
-	require_once( SNIPPET_LIB_PATH.'/Layers.lib.php' );
+	# Include common internal classes
 	require_once( SNIPPET_LIB_PATH.'/Initialize.lib.php' );
+	require_once( SNIPPET_LIB_PATH.'/Layers.lib.php' );
+	require_once( SNIPPET_LIB_PATH.'/Tools.lib.php' );
+	require_once( SNIPPET_LIB_PATH.'/Validation.lib.php' );
 	
 
 	class Snippet{

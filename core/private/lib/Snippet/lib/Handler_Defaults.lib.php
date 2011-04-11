@@ -2,15 +2,15 @@
 
 	class Snippets_Handler_Defaults{
 	
-		public function getBasicAttributes()		{ return array(); }
-		public function getDatabaseDefinition()		{ return array(); }
-		public function getListFields()				{ return array(); }
-		public function getItemFields()				{ return array(); }
-		public function getTools()					{ return array(); }
-		public function checkFilter()				{}
-		public function checkData()					{}
-		public function validationRuleSet()			{}
-		public function strictValidation()			{}
+		protected function getBasicAttributes()		{ return array(); }
+		protected function getDatabaseDefinition()	{ return array(); }
+		protected function getListFields()			{ return array(); }
+		protected function getItemFields()			{ return array(); }
+		protected function getTools()				{ return array(); }
+		protected function checkFilter()			{}
+		protected function checkData()				{}
+		protected function getValidationRuleSet()	{}
+		protected function strictValidation()		{}
 		
 	}
 

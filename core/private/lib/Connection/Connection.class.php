@@ -411,6 +411,7 @@ EOF;
 			foreach( $arr as $k => $v ){
 				if( $k[0] == '*' ) $cond[] = $v;
 				elseif( is_array($v) ){
+				# When filter values are arrays, second key's meant to override $compare
 					$cmp = isset($v[1])
 						? (isset($cmpStr[$v[1]]) ? $cmpStr[$v[1]] : $cmpStr['='])
 						: $compareTpl;

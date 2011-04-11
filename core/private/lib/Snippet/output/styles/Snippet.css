@@ -4,6 +4,22 @@
 .Wrapper_for_bigTools{ float:left; z-index:200; }
 .Wrapper_for_viewItem{ position:relative; clear:both; }
 
+.snippetFrozenField{ color:#909080; }
+
+/**
+ * ToolTips
+ */
+.snippetToolTip{
+	position:absolute;
+	padding:1px 5px;
+	border:solid 1px #000000;
+	border-radius:6px; -moz-border-radius:6px; -webkit-border-radius:6px;
+	background:#f0f0e6;
+	font-size:12px;
+	font-weight:bold;
+	color:#400000;
+}
+
 /**
  * BIGTOOLS
  */

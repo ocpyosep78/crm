@@ -108,6 +108,41 @@
 				: Snippet_Tools::issueWarning("handle_{$this->snippet} not found");
 		
 		}
+		
+		protected function toolTip($field, $msg){
+		
+			$Ajax = $this->Layers->get('ajax');
+			$uID = $this->params['group_uID'];
+			
+			$Ajax->addScript("Snippet.showToolTip('{$uID}', '{$field}', '{$msg}');");
+			
+		}
+		
+		protected function hideToolTip(){
+		
+			$Ajax = $this->Layers->get('ajax');
+			$uID = $this->params['group_uID'];
+		
+			$Ajax->addScript("Snippet.hideToolTip('{$uID}');");
+			
+		}
+		
+		protected function validateInput( $data ){
+		
+			$Valid = new Snippet_Validation;
+			
+			$res = $Valid->test($data, $this->Source->getRuleSet());
+			
+			# Show tool tips where enabled if validation failed
+			if( $res !== true ){
+				$this->Layers->get('ajax')->display('Falló la validación de los datos ingresados');
+				$this->toolTip($res['field'], $res['tip']);
+			}
+			else $this->hideToolTip();
+			
+			return $res === true;
+		
+		}
 
 
 ##################################

@@ -31,7 +31,7 @@
 		public function count($tbl, $filter){
 			$sql = "SELECT COUNT(*)
 					FROM `{$tbl}`
-					WHERE {$this->array2filter($filter, $joint='AND', '=')}";
+					WHERE {$this->array2filter($filter, 'AND', '=')}";
 			return $this->query($sql, 'field');
 		}
 		
@@ -39,7 +39,7 @@
 			$sql = "SELECT COUNT(*)
 					FROM `events` `e`
 					LEFT JOIN `events_customers` USING (`id_event`)
-					WHERE {$this->array2filter($filter, $joint='AND', '=')}";
+					WHERE {$this->array2filter($filter, 'AND', '=')}";
 			return $this->query($sql, 'field');
 		}
 		
@@ -47,7 +47,7 @@
 			$sql = "SELECT	`e`.*
 					FROM `events` `e`
 					LEFT JOIN `events_customers` USING (`id_event`)
-					WHERE {$this->array2filter($filter, $joint='AND', '=')}
+					WHERE {$this->array2filter($filter, 'AND', '=')}
 					ORDER BY `id_event` DESC
 					LIMIT 1";
 			return $this->query($sql, 'row');

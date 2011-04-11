@@ -8,9 +8,14 @@
 			$filters = $this->params['filters'];
 			$data = array($filters['field'] => $filters['value']);
 			
-			$ans = $this->Source->update($filters['id'], $data);
+			# Validate input or abort edition
+			if( !$this->validateInput($data) ) return '';
 			
-			if( $ans->error ) $this->Layers->get('ajax')->display($ans->msg);
+			# If validation succeeded, continue to save new data
+			$ans = $this->Source->update($filters['id'], $data);
+			if( $ans->error ){
+				$this->Layers->get('ajax')->display($ans->msg);
+			}
 			else{
 				$_POST['xajax'] = 'getPage';
 				oNav()->getPage("{$this->code}Info", (array)$this->params['filters']['id'],
