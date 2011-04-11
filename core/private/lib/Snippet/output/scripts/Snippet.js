@@ -375,7 +375,7 @@ var SnippetToolTips = function( fields ){
 	});
 	// Create tooltiptext box and inject it
 	var ttb = new Element('DIV', {
-		class: 'snippetToolTip',
+		'class': 'snippetToolTip',
 		events: {click: function(){ that.hide(); }}
 	}).inject(document.body);
 	// Showing tooltips
