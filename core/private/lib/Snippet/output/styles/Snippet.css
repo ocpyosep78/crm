@@ -53,6 +53,7 @@
 .viewItemEditable{
 	position:relative;
 	overflow:visible;
+	cursor:pointer;
 }
 .viewItemEditable > INPUT{
 	position:absolute;
