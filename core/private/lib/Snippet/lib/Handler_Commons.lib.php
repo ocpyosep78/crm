@@ -189,6 +189,7 @@
 			$this->basics = $this->Source->getBasics();
 			$this->assign('name', $this->basics['name']);
 			$this->assign('plural', $this->basics['plural']);
+			$this->assign('gender', $this->basics['gender']);
 			$this->assign('tipField', 'toolTipText');
 			
 			return $this;

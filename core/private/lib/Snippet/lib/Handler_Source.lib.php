@@ -159,7 +159,7 @@ public function newSelect($type, $filters, $constraints){
 		
 			# Basics (name, plural and tip)
 			$this->basics = (array)$this->getBasicAttributes()
-				+ array('name' => NULL, 'plural' => NULL, 'tip' => NULL);
+				+ array('name' => NULL, 'plural' => NULL, 'gender' => NULL, 'tip' => NULL);
 			
 			# 1. Get tables from database definition (@tables)
 			# 2. Fill unset attributes with defaults
