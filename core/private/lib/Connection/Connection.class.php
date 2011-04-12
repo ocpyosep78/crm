@@ -260,8 +260,8 @@ EOF;
 			$fKey = (is_array($atts) && !empty($atts['key'])) ? $atts['key'] : 0;
 			$fVal = (is_array($atts) && !empty($atts['val'])) ? $atts['val'] : 1;
 			# If keys are not part of the result, try $0 => $1 or even $0 => $0
-			if( !in_array($fKey, $availKeys) ) $fKey = 0;
-			if( !in_array($fVal, $availKeys) ) $fVal = min(count($availKeys)/2 - 1, 1);
+			if( !in_array($fKey, $availKeys, true) ) $fKey = 0;
+			if( !in_array($fVal, $availKeys, true) ) $fVal = min(count($availKeys)/2 - 1, 1);
 			
 			# Now we're ready to read data
 			while( $data=mysql_fetch_array($res) ){
