@@ -252,9 +252,11 @@ EOF;
 			
 			# First, let's see if we have any result at all
 			$data = mysql_fetch_array( $res );
-			$availKeys = array_keys( $data );
 			if( empty($data) ) return $this->formattedRes = array();
-			mysql_data_seek($res, 0);		# Reset internal pointer
+			
+			# Peek at the first row to see if we have requested keys, then reset pointer
+			$availKeys = array_keys( $data );
+			mysql_data_seek($res, 0);
 			
 			# Attempt to set keys as requested, try default behavior on failure
 			$fKey = (is_array($atts) && !empty($atts['key'])) ? $atts['key'] : 0;
