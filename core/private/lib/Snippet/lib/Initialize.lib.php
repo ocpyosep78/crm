@@ -92,7 +92,7 @@
 //				case 'deleteItem':
 					return array('bigTools', 'comboList', $snippet);
 				case 'createItem':
-					return array('intro', $snippet);
+					return array('bigTools', 'comboList', 'intro', $snippet);
 				default:
 					# Snippet's that don't merge with other snippets
 					return (array)$snippet;

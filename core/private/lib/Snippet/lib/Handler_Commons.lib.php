@@ -81,13 +81,7 @@
 			$this->params = $params;
 			
 			# Set @Source for the current $code (module's code name)
-			$this->defineSource();
-			
-			# Initiate required properties of the object
-			$this->Source->inject($this->snippet, $code, $params);
-			
-			# Have it aquire data and fill gaps in the definition file
-			$this->Source->aquire();
+			$this->buildSource();
 			
 			# Get a general idea of the integrity of the definitions
 			$integrity = $this->Source->validate();
@@ -149,21 +143,11 @@
 ########### GET SOURCE ###########
 ##################################
 		
-		private function defineSource(){
-			
-			$file = SNIPPET_DEFINITION_PATH."/{$this->code}.def.php";
-			$class = "Snippet_def_{$this->code}";
-			
-			# Attempt to load the definition file
-			if( is_file($file) ) require_once( $file );
-			if( class_exists($class) ){
-				$this->Source = new $class;
-			}
-			# If not found, use the naked Source as $Source
-			else{
-				$this->registerWarning('definition class missing');
-				$this->Source = new Snippets_Handler_Source;
-			}
+		private function buildSource(){
+		
+			$Modules = $this->Layers->get('modules');
+		
+			$this->Source = $Modules->getModule($this->code, $this->params);
 			
 		}
 

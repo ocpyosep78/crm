@@ -2,34 +2,10 @@
 	
 	class Snippets_Handler_Source extends Snippets_Handler_Defaults{
 	
-	
-/* TEMP : preliminary sketch of a function to automatically create select queries (lists, combo, info, etc.) */
-public function newSelect($type, $filters, $constraints){
-
-# => $type IN ('list' [=> ALL], 'hash' [=> COMBO], 'item' [=> INFO])
-# => $filters := array('field' => 'value', 'field' => 'value', 'field' => 'value')
-
-	$sql[] = "SELECT";
-# => `c`.`number`, `c`.`name`, `d`.`seller`
-	$sql[] = $this->getQueryFields( $type );
-	$sql[] = "FROM";
-# => `customers` `c` INNER JOIN `customers_contacts` `cc` USING (`id_customer`) LEFT JOIN `_users` `u` ON (`u`.`user` = `c`.`seller`)
-	$sql[] = $this->getQueryTables( $type );
-	$sql[] = "WHERE";
-# => `c`.`number` < 100 AND (`cc`.`name` LIKE '%jose%' OR ISNULL(`cc`.`name`)) AND `u`.`id_profile` <= 2
-	$sql[] = $this->getQueryFilters( $filters );
-# => GROUP BY `cc`.`number`, `u`.`name` ORDER BY `cc`.`name` LIMIT 18, 40
-	$sql[] = $this->getQueryConstraints( $constraints );
-	
-	return join(' ', $sql);
-	
-}
-	
 		private $sqlEngine;
 		
 		private $warnings;
 	
-		protected $snippet;
 		protected $code;
 		protected $params;
 		
@@ -85,6 +61,30 @@ public function newSelect($type, $filters, $constraints){
 			
 		}
 		
+		public function getListFor( $field ){
+		
+			$lists = $this->summary['fieldsByType']['list'];
+			
+			if( !isset($lists[$field]) ) return array();
+			
+			# If a source is set (another module), get data from it
+			if( !empty($lists[$field]['listSrc']) ){
+				$code = $lists[$field]['listSrc'];
+				$params = $this->params;
+				$Src = $this->Layers->get('modules')->getModule($code, $params);
+				return $Src->getData('hash');
+			}
+			
+			# Else, search for a method called listForField<fieldName>
+			elseif( method_exists($this, $method="listForField{$field}") ){
+				return $this->sqlEngine->query($this->$method(), 'col');
+			}
+			
+			# Else add a warning
+			else $this->issueWarning("list {$field} not implemented");
+		
+		}
+		
 		public function getFieldsWithAtts( $type='lists' ){
 		
 			# Take '>' as a valid field (it's for presentational purposes)
@@ -100,6 +100,12 @@ public function newSelect($type, $filters, $constraints){
 		
 			return $fields;
 		
+		}
+		
+		public function getFieldsByType(){
+			
+			return $this->summary['fieldsByType'];
+			
 		}
 		
 		# $type: list, item, hash
@@ -144,11 +150,12 @@ public function newSelect($type, $filters, $constraints){
 		/**
 		 * Initiate required properties of the object
 		 */
-		public function inject($snippet, $code, $params){
-			
-			$this->snippet = $snippet;
+		public function inject($code, $params){
+		
 			$this->code = $code;
 			$this->params = $params;
+			
+			return $this;
 			
 		}
 	
@@ -171,6 +178,8 @@ public function newSelect($type, $filters, $constraints){
 			
 			# Build the sql layer and feed it what we have aquired
 			$this->sqlEngine->feed( $this->summary );
+			
+			return $this;
 		
 		}
 		
@@ -266,6 +275,11 @@ public function newSelect($type, $filters, $constraints){
 			$FKs = array();
 			$tools = $this->tools;
 			
+			# Initialize $fieldsByType
+			$fieldTypes = array('text', 'area', 'list', 'image', 'date',
+				'time', 'datetime', 'option', 'options');
+			foreach( $fieldTypes as $type ) $fieldsByType[$type] = array();
+			
 			foreach( $db as $table => $content ){
 				# Store tables as `code => name` pairs
 				$code = $this->buildUniqueTableCode($table, $tables);
@@ -294,6 +308,9 @@ public function newSelect($type, $filters, $constraints){
 						'table'		=> $code,
 						'target'	=> $atts['FK'],
 					);
+					# Set text as default type and fill $fieldsByType array
+					!empty($atts['type']) || $atts['type'] = 'text';
+					$fieldsByType[$atts['type']][$field] = $atts;
 				}
 			}
 			
@@ -310,6 +327,7 @@ public function newSelect($type, $filters, $constraints){
 				'tables'		=> $tables,
 				'fields'		=> $fields,
 				'fieldsAtts'	=> $fieldsAtts,
+				'fieldsByType'	=> $fieldsByType,
 				'shown'			=> $shown,
 				'frozen'		=> $frozen,
 				'keys'			=> $keys,
@@ -416,6 +434,29 @@ public function newSelect($type, $filters, $constraints){
 			return true;
 		
 		}
+	
+	
+/* TEMP : preliminary sketch of a function to automatically create select queries (lists, combo, info, etc.) */
+public function newSelect($type, $filters, $constraints){
+
+# => $type IN ('list' [=> ALL], 'hash' [=> COMBO], 'item' [=> INFO])
+# => $filters := array('field' => 'value', 'field' => 'value', 'field' => 'value')
+
+	$sql[] = "SELECT";
+# => `c`.`number`, `c`.`name`, `d`.`seller`
+	$sql[] = $this->getQueryFields( $type );
+	$sql[] = "FROM";
+# => `customers` `c` INNER JOIN `customers_contacts` `cc` USING (`id_customer`) LEFT JOIN `_users` `u` ON (`u`.`user` = `c`.`seller`)
+	$sql[] = $this->getQueryTables( $type );
+	$sql[] = "WHERE";
+# => `c`.`number` < 100 AND (`cc`.`name` LIKE '%jose%' OR ISNULL(`cc`.`name`)) AND `u`.`id_profile` <= 2
+	$sql[] = $this->getQueryFilters( $filters );
+# => GROUP BY `cc`.`number`, `u`.`name` ORDER BY `cc`.`name` LIMIT 18, 40
+	$sql[] = $this->getQueryConstraints( $constraints );
+	
+	return join(' ', $sql);
+	
+}
 	
 	}
 

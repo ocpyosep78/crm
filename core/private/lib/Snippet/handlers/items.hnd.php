@@ -38,6 +38,16 @@
 				oNav()->getPage('create'.ucfirst($this->code), (array)$this->params['filters']);
 				return '';
 			}
+			
+			$fieldsByType = $this->Source->getFieldsByType();
+			foreach( $fieldsByType['list'] as $code => &$list ){
+				$list['data'] = $this->Source->getListFor($code);
+				isset($list['emptyField']) || $list['emptyField'] = true;
+			}
+			
+			$this->assign('lists', $fieldsByType['list']);
+		
+			return $this->fetch( 'items/create' );
 
 		}
 	

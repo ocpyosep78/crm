@@ -4,21 +4,10 @@
 .Wrapper_for_bigTools{ float:left; z-index:200; }
 .Wrapper_for_viewItem{ position:relative; clear:both; }
 
-.snippetFrozenField{ color:#909080; }
-
 /**
  * ToolTips
  */
-.snippetToolTip{
-	position:absolute;
-	padding:1px 5px;
-	border:solid 1px #000000;
-	border-radius:6px; -moz-border-radius:6px; -webkit-border-radius:6px;
-	background:#f0f0e6;
-	font-size:12px;
-	font-weight:bold;
-	color:#400000;
-}
+.snippetToolTip{ position:absolute; padding:1px 5px; border:solid 1px #000000; border-radius:6px; -moz-border-radius:6px; -webkit-border-radius:6px; background:#f0f0e6; font-size:12px; font-weight:bold; color:#400000; }
 
 /**
  * BIGTOOLS
@@ -32,43 +21,42 @@
 
 
 /**
+ * ITEMS: GENERAL
+ */
+
+.snippet_item{ clear:both; margin:10px; padding:10px; text-align:center; opacity:0.8; filter:alpha(opacity=80); }
+.snippet_item > SPAN{ display:block; position:relative; height:18px; padding:8px 10px; border-radius:12px; -moz-border-radius:12px; -webkit-border-radius:12px; box-shadow:#000000 2px 1px 5px; -moz-box-shadow:#000000 2px 1px 5px; -webkit-box-shadow:#000000 2px 1px 5px; white-space:nowrap; overflow:hidden; z-index:50; background:-webkit-gradient(linear, left top, left bottom, from(#203050), to(#e4e5e8)); background:-moz-linear-gradient(top, #203050, #e4e5e8); filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#203050', endColorstr='#e4e5e8'); font-size:16px; font-weight:bold; font-family:"Times New Roman", Times, serif; color:#ffffff; }
+.snippet_item > SPAN:hover{ color:#ffffe0; }
+.snippet_item > SPAN > STRONG{ color:#302050; }	/* Debugging */
+.snippet_item > DIV{ display:inline-block; vertical-align:middle; margin:10px; margin-top:20px; padding:10px; border-top:solid 1px #c0c0d0; border-left:solid 1px #c0c0d0; border-radius:6px; -moz-border-radius:6px; -webkit-border-radius:6px; box-shadow:#404045 4px 4px 6px; -moz-box-shadow:#404045 4px 4px 6px; -webkit-box-shadow:#404045 4px 4px 6px; text-align:left; background:#ffffff; }
+.snippet_item TABLE{ margin:20px 30px; }
+.snippet_item TH{ height:1.5em; padding-left:30px; padding-right:5px; white-space:nowrap; text-indent:0px !important; text-align:right !important; color:#606090 !important; }
+.snippet_item TD{ min-width:200px; text-indent:0px !important; color:#000060 !important; }
+.snippet_item .Tip{color:#800000 !important;font-size:11px;}
+.snippet_item .Tip DIV{padding:2px;}
+
+
+/**
+ * CREATE PAGE
+ */
+.createForm DIV{ display:block; }
+.createForm TEXTAREA{ height:100px; width:350px; }
+.createForm INPUT[type=text]{ width:200px; }
+.createForm INPUT.calendar{ width:80px; }
+.createForm INPUT.time_input{ width:60px; }
+.createForm SELECT{ width:205px; }
+
+/**
  * INFO PAGE
  */
-.infoData{ margin:10px; padding:10px; text-align:center; opacity:0.8; }
-.infoData > SPAN{ display:block; position:relative; height:18px; padding:8px 10px; border-radius:12px; -moz-border-radius:12px; -webkit-border-radius:12px; box-shadow:#000000 2px 1px 5px; -moz-box-shadow:#000000 2px 1px 5px; -webkit-box-shadow:#000000 2px 1px 5px; white-space:nowrap; overflow:hidden; z-index:50; background:-webkit-gradient(linear, left top, left bottom, from(#203050), to(#e4e5e8)); background:-moz-linear-gradient(top, #203050, #e4e5e8); filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#203050', endColorstr='#e4e5e8'); font-size:16px; font-weight:bold; font-family:"Times New Roman", Times, serif; color:#ffffff; }
-.infoData > SPAN:hover{ color:#ffffe0; }
-.infoData > SPAN > STRONG{ color:#302050; }	/* Debugging */
-.infoData > DIV{ display:inline-block; vertical-align:middle; margin:10px; margin-top:20px; padding:10px; border-top:solid 1px #c0c0d0; border-left:solid 1px #c0c0d0; border-radius:6px; -moz-border-radius:6px; -webkit-border-radius:6px; box-shadow:#404045 4px 4px 6px; -moz-box-shadow:#404045 4px 4px 6px; -webkit-box-shadow:#404045 4px 4px 6px; text-align:left; background:#ffffff; }
-.infoData TABLE{ margin:20px 30px; }
-.infoData TH{ height:1.5em; padding-left:30px; padding-right:5px; white-space:nowrap; text-indent:0px !important; text-align:right !important; color:#606090 !important; }
-.infoData TD{ min-width:200px; text-indent:0px !important; color:#000060 !important; }
-.infoData .Tip{color:#800000 !important;font-size:11px;}
-.infoData .Tip DIV{padding:2px;}
-
 .embeddedView .infoData{ background:none; border:none; }
 .embeddedView .infoData > SPAN{ display:none; }
 .embeddedView .infoData > DIV{ margin:0px 10px; }
 .embeddedView .infoData > DIV > TABLE{ margin:10px 30px; }
-
-.viewItemEditable{
-	position:relative;
-	overflow:visible;
-	cursor:pointer;
-}
-.viewItemEditable > INPUT{
-	position:absolute;
-	top:-2px;
-	left:-2px;
-	right:38px;
-	height:100%;
-}
-.viewItemEditable > IMG{
-	float:right;
-	height:16px;
-	width:16px;
-	margin-left:3px;
-	cursor:pointer;
-}
+.viewItemEditable{ position:relative; overflow:visible; cursor:pointer; }
+.viewItemEditable > INPUT{ position:absolute; top:-2px; left:-2px; right:38px; height:100%; }
+.viewItemEditable > IMG{ float:right; height:16px; width:16px; margin-left:3px; cursor:pointer; }
+.snippetFrozenField{ color:#909080; }		/* Non-edittable field */
 
 /**
  * LISTS: GENERAL
