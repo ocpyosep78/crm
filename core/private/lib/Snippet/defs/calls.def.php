@@ -33,8 +33,6 @@
 		 *            Field will be ignored for output when name is empty or hidden is true
 		 *            Fields flagged as keys (isKey => true) will be hidden by default. Set
 		 *            hidden => false explicitly to override.
-		 *            By default, item pages will use all fields that are not hidden. To
-		 *            override this behavior, use getItemFields.
 		 */
 		protected function getDatabaseDefinition(){
 		
@@ -68,7 +66,7 @@
 				case 'list':
 					return array('date', 'detail', 'caller', 'customer', 'assigned');
 				case 'view':
-					return array('date', 'detail', 'caller', 'customer', 'user');
+					return array('date', 'detail', 'caller', 'customer', 'assigned');
 				case 'create':
 				case 'edit':
 					return array('date', 'detail', 'caller', 'id_customer', 'user');
@@ -96,10 +94,6 @@
 			# If no customer is picked, set it to null
 			if( !$data['id_customer'] ) $data['id_customer'] = NULL;
 			
-			if( !empty($data['__objectID__']) ){
-				test($data);
-			}
-			
 		}
 		
 		protected function getValidationRuleSet(){
@@ -124,13 +118,23 @@ private function globalFilters( &$filters ){
 
 	$srch = $filters['*'];
 	$filters = array();
-	$fields = array_diff($this->getItemFields(), (array)'>');
+	
+	$fields = array_diff($this->getFieldsFor('view'), (array)'>');
 	
 	foreach( $fields as $field ) $filters["`{$field}`"] = $srch;
 	
 }
 		
-protected function getListData( $filters=array() ){
+protected function getListData($filters=array(), $join='AND'){
+	if( isset($filters['*']) ){
+		$this->globalFilters( $filters );
+		$join = 'OR';
+	}
+	$this->fixFilters(&$filters, array(
+		'assigned'	=> "CONCAT(`u`.`name`,' ', `u`.`lastName`)",
+//		'email'			=> '`c`.`email`',
+	));
+	
 	$sql = "SELECT	`c`.`customer`,
 					CONCAT(`u`.`name`,' ', `u`.`lastName`) AS 'assigned',
 					`ll`.*,
@@ -140,9 +144,11 @@ protected function getListData( $filters=array() ){
 			FROM `_calls` `ll`
 			LEFT JOIN `_users` `u` USING (`user`)
 			LEFT JOIN `customers` `c` USING (`id_customer`)
-			WHERE {$this->array2filter($filters)}
+			WHERE {$this->array2filter($filters, $join)}
 			ORDER BY `ll`.`date`";
+			
 	return $sql;
+	
 }
 protected function getItemData( $id ){
 	return $this->getListData( array('id_call' => array($id, '=')) );

@@ -32,8 +32,6 @@
 		 *            Field will be ignored for output when name is empty or hidden is true
 		 *            Fields flagged as keys (isKey => true) will be hidden by default. Set
 		 *            hidden => false explicitly to override.
-		 *            By default, item pages will use all fields that are not hidden. To
-		 *            override this behavior, use getItemFields.
 		 */
 		protected function getDatabaseDefinition(){
 		
@@ -117,13 +115,14 @@ private function globalFilters( &$filters ){
 
 	$srch = $filters['*'];
 	$filters = array();
-	$fields = array_diff($this->getItemFields(), (array)'>');
+	
+	$fields = array_diff($this->getFieldsFor('view'), (array)'>');
 	
 	foreach( $fields as $field ) $filters["`{$field}`"] = $srch;
 	
 }
 		
-protected function getListData( $filters=array(), $join='AND' ){
+protected function getListData($filters=array(), $join='AND'){
 	if( isset($filters['*']) ){
 		$this->globalFilters( $filters );
 		$join = 'OR';
