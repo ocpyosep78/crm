@@ -15,9 +15,9 @@
 		src='app/images/agendaEvents/{if $event.rescheduled}rescheduled/{/if}{$event.type}.png' />
 	
 	<span class='agenda_eventInfo'>
-		{if $showDays}{$event.ini|date_locale:'d/m/Y, h:i'}
-		{else}{$event.ini|date_locale:'h:i'}{/if}
-		{if $event.end}/ {$event.end|date_locale:'h:i'}{/if}
+		{if $showDays}{$event.ini|date_locale:'d/m/Y, H:i'}
+		{else}{$event.ini|date_locale:'H:i'}{/if}
+		{if $event.end}/ {$event.end|date_locale:'H:i'}{/if}
 	</span>
 	
 	{if $event.customer}<span class='agenda_customer'>[ {$event.customer} ]</span>{/if}

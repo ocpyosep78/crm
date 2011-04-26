@@ -66,7 +66,7 @@
 		}
 		
 		public function saveLog(){
-			$log = "\r\n".date('Y-m-d h:i:s')." [{$this->number}]: {$this->desc})\r\n";
+			$log = "\r\n".date('Y-m-d H:i:s')." [{$this->number}]: {$this->desc})\r\n";
 			$log .= "SQL: {$this->sql}\r\n";
 			if( $fp=fopen('logs/logSQL.txt', 'a') ){
 				fwrite($fp, $log);

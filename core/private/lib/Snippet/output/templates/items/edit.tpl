@@ -39,7 +39,7 @@
 			  <input type='text' name='{$field}' class='calendar'
 				value='{if $data}{$data[$field]|date_locale:'Y-m-d'}{else}{$NOW|date_locale:'Y-m-d'}{/if}' />
 			  <input type='text' name='{$field}' class='time_input'
-				value='{if $data}{$data[$field]|date_locale:'H:i'}{else}{$NOW|date_locale:'h:i'}{/if}' />
+				value='{if $data}{$data[$field]|date_locale:'H:i'}{else}{$NOW|date_locale:'H:i'}{/if}' />
 			{elseif $atts.type == 'area'}
 			  <textarea name='{$field}'>{if $data}{$data[$field]}{/if}</textarea>
 			{elseif $atts.type == 'list'}

@@ -62,9 +62,9 @@
 		oSmarty()->assign('cycleValues', '#eaeaf5,#e5e5e5,#e5e5e5');		/* TEMP till Modules & Snippet are ready */
 	
 		oSmarty()->assign('DATES', array(
-			'today'		=> date('Y-m-d h:i:s'),
-			'nextWeek'	=> date('Y-m-d h:i:s', strtotime('+ 7 days')),
-			'nextMonth'	=> date('Y-m-d h:i:s', strtotime('+ 1 month')),
+			'today'		=> date('Y-m-d H:i:s'),
+			'nextWeek'	=> date('Y-m-d H:i:s', strtotime('+ 7 days')),
+			'nextMonth'	=> date('Y-m-d H:i:s', strtotime('+ 1 month')),
 		) );
 		
 	}
