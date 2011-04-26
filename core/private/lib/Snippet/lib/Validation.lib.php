@@ -14,8 +14,8 @@
 ***************/
 
 		private $expressions = array(
-			/* open: anything */
-			'open'			=> '/^.*$/',
+			/* open: anything (for fields where only length matters) */
+			'open'			=> '/.*/',
 			/* text: most common symbols for regular latin1 texts, plus puntuation and quotes (double and single) */
 			'text'			=> '/^[\w\-\.\,\;\(\)\/áéíóúàèìòùäëïöüñÁÉÍÓÚÑÀÈÌÒÙÄËÏÖÜ\"\'\s:]*$/',
 			/* alpha: letters, numbers and underscore */
@@ -42,6 +42,8 @@
 			'time'			=> '/^$|^(2[0-3]|[01]\d):[0-5]\d$/',
 			/* date: well-formatted date stamp (i.e. 2009-12-05, 2008/02/28), 08-11-21 */
 			'date'			=> '/^$|^(\d{4}|\d{2})[-\/]\d{2}[-\/]\d{2}$/',
+			/* datetime: well-formatted timestamp (i.e. 2009-12-05 05:10 */
+			'datetime'		=> '/^$|^(\d{4}|\d{2})[-\/]\d{2}[-\/]\d{2} \d{2}:\d{2}$/',
 			/* selection: truth for any string (like 'open' but forcing length 1+) (for select combos) */
 			'selection'		=> '/^.+$/',
 		);
@@ -52,8 +54,8 @@
 ***************/
 		
 		public $fmtTips = array(
-			'open'			=> '',
-			'text'			=> 'El valor ingresado contiene caracteres inválidos.',
+			'open'			=> 'El texto ingresado contiene caracteres inválidos.',
+			'text'			=> 'El texto ingresado contiene caracteres inválidos.',
 			'alpha'			=> 'Este campo acepta solamente letras, números y guiones bajos.',
 			'alphaMixed'	=> 'Este campo acepta letras, números y guiones bajos, y debe tener al menos una letra y un número.',
 			'email'			=> 'Debe escribir una dirección de email válida.',
@@ -156,6 +158,7 @@
 		 * if $l == $u then both limits exist and are equal
 		 */
 		private function fmtFailed($field, $exprType){
+		
 			return array(
 				'tip'		=> $this->fmtTips[$exprType],
 				'field'		=> $field,

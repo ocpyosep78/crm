@@ -85,16 +85,14 @@
 		
 		}
 		
-		public function getFieldsWithAtts( $type='lists' ){
+		public function getFields( $dt ){
 		
 			# Take '>' as a valid field (it's for presentational purposes)
 			$fieldsAtts = $this->summary['fieldsAtts'] + array('>' => NULL);
 			
-			# Take the list of fields from either lists or items method
-			$setFields = ($type == 'items')
-				? $this->getItemFields()
-				: $this->getListFields();
-				
+			# Take the right list of fields from definition file (or defaults)
+			$setFields = $this->getFieldsFor( $dt );
+			
 			$fields = array_intersect_key(array_flip($setFields), $fieldsAtts);
 			foreach( $fields as $field => &$atts ) $atts = $fieldsAtts[$field];
 		
@@ -139,6 +137,23 @@
 		public function getRuleSet(){
 		
 			return $this->getValidationRuleSet();
+			
+		}
+		
+		public function prefetchInput( &$data ){
+			
+			# Passed by ref
+			$this->prefetchUserInput( $data );
+			
+			return $this;
+			
+		}
+		
+		public function validateInput( $data ){
+		
+			$Valid = new Snippet_Validation;
+			
+			return $Valid->test($data, $this->getRuleSet());
 			
 		}
 		
@@ -379,9 +394,17 @@
 				die( 'not implemented' );		/* TEMP */
 			}
 			
-			if( empty($filters) ) die('not enough filters set for removal');
+			if( empty($filters) ) die('not enough info to identify item to update');
 			
 			return $this->sqlEngine->update($data + $filters, $table, $fKeys);
+		
+		}
+
+		public function insert( $data ){
+		
+			$table = array_shift($this->summary['mainTable']);
+			
+			return $table ? $this->sqlEngine->insert($data, $table) : false;
 		
 		}
 		

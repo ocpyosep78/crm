@@ -38,10 +38,10 @@
 		 */
 		protected function getDatabaseDefinition(){
 		
-			return array(
+			$tables = array(
 				'_calls' => array(
 					'id_call'		=> array('name' => 'ID', 'isKey' => true),
-					'caller'		=> 'Quién llama',
+					'caller'		=> array('name' => 'Quién llama'),
 					'date'			=> array('name' => 'Fecha / Hora', 'type' => 'datetime'),
 					'detail'		=> array('name' => 'Motivo / Descripción', 'type' => 'area'),
 					'id_note'		=> array('name' => 'Nota asociada', 'FK' => '_notes.id_note'),
@@ -56,29 +56,30 @@
 				),
 			);
 			
-		}
-		
-		
-		protected function getListFields(){
-		
-			return array('date', 'detail', 'caller', 'customer', 'assigned');
+			foreach( $tables as &$table ) foreach( $table as &$atts ) $atts['frozen'] = true;
+			
+			return $tables;
 			
 		}
 		
-		protected function getCreateFields(){
+		protected function getFieldsFor( $type ){
 		
-			return array('date', 'detail', 'caller', 'id_customer', 'user');
-			
-		}
+			switch( $type ){
+				case 'list':
+					return array('date', 'detail', 'caller', 'customer', 'assigned');
+				case 'view':
+					return array('date', 'detail', 'caller', 'customer', 'user');
+				case 'create':
+				case 'edit':
+					return array('date', 'detail', 'caller', 'id_customer', 'user');
+			}
 		
-		protected function getItemFields(){
-		
-			return array('date', 'detail', 'caller', 'id_customer', 'user');
-			
 		}
 		
 		protected function getTools(){
+		
 			return array('view', 'create', 'edit', 'delete');
+			
 		}
 				
 /*		protected function checkFilter( &$filters ){
@@ -87,18 +88,29 @@
 /*		protected function checkData( &$data ){
 		}/**/
 		
+		protected function prefetchUserInput( &$data ){
+			
+			# Date comes as an array [date, time], we need a timestamp
+			$data['date'] = join(' ', $data['date']);
+			
+			# If no customer is picked, set it to null
+			if( !$data['id_customer'] ) $data['id_customer'] = NULL;
+			
+			if( !empty($data['__objectID__']) ){
+				test($data);
+			}
+			
+		}
+		
 		protected function getValidationRuleSet(){
 
-			return array();/*
-				'number'		=> array('text', NULL, 10),
-				'customer'		=> array('text', 2, 80),
-				'legal_name'	=> array('text', 2, 80),
-				'rut'			=> array('rut', NULL, 12),
-				'phone'			=> array('phone', 3, 20 ),
-				'email'			=> array('email', NULL, 50),
-				'address'		=> array('text', NULL, 50),
-				'id_location'	=> array('selection'),
-			);*/
+			return array(
+				'date'			=> array('datetime'),
+				'detail'		=> array('open', 2, 600),
+				'caller'		=> array('text', 2, 120),
+//				'id_customer'	=> array('selection'),
+				'user'			=> array('selection'),
+			);
 			
 		}/**/
 		
@@ -121,7 +133,10 @@ private function globalFilters( &$filters ){
 protected function getListData( $filters=array() ){
 	$sql = "SELECT	`c`.`customer`,
 					CONCAT(`u`.`name`,' ', `u`.`lastName`) AS 'assigned',
-					`ll`.*
+					`ll`.*,
+					CONCAT(`ll`.`date`, ' - ', `caller`,
+						IF(ISNULL(`ll`.`id_customer`), '',
+						CONCAT(' (', `c`.`customer`, ')'))) AS 'tipToolText'
 			FROM `_calls` `ll`
 			LEFT JOIN `_users` `u` USING (`user`)
 			LEFT JOIN `customers` `c` USING (`id_customer`)
@@ -130,7 +145,7 @@ protected function getListData( $filters=array() ){
 	return $sql;
 }
 protected function getItemData( $id ){
-	return $this->getListData( array('id_customer' => array($id, '=')) );
+	return $this->getListData( array('id_call' => array($id, '=')) );
 }
 private function getFilterFromModifier(){
 	switch( $this->params['modifier'] ){

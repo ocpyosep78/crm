@@ -7,7 +7,8 @@
 /**
  * ToolTips
  */
-.snippetToolTip{ position:absolute; padding:1px 5px; border:solid 1px #000000; border-radius:6px; -moz-border-radius:6px; -webkit-border-radius:6px; background:#f0f0e6; font-size:12px; font-weight:bold; color:#400000; }
+.emptyFieldMsg, .snippetToolTip{ position:absolute; padding:1px 5px; border:solid 1px #000000; border-radius:6px; -moz-border-radius:6px; -webkit-border-radius:6px; background:#f0f0e6; font-size:12px; font-weight:bold; color:#400000; }
+.emptyFieldMsg{ position:static; }
 
 /**
  * BIGTOOLS
@@ -45,6 +46,7 @@
 .createForm INPUT.calendar{ width:80px; }
 .createForm INPUT.time_input{ width:60px; }
 .createForm SELECT{ width:205px; }
+.snippet_submitRow{ padding-top:20px; }
 
 /**
  * INFO PAGE
@@ -56,7 +58,7 @@
 .viewItemEditable{ position:relative; overflow:visible; cursor:pointer; }
 .viewItemEditable > INPUT{ position:absolute; top:-2px; left:-2px; right:38px; height:100%; }
 .viewItemEditable > IMG{ float:right; height:16px; width:16px; margin-left:3px; cursor:pointer; }
-.snippetFrozenField{ color:#909080; }		/* Non-edittable field */
+.snippetFrozenField{ color:#606050; }		/* Non-edittable field */
 
 /**
  * LISTS: GENERAL

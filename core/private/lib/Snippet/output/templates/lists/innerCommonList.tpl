@@ -8,7 +8,7 @@
 		<tr bgcolor='{cycle values=$cycleValues}' class='innerListRow' for='{$id}'
 		  {if $tipField && isset($row.$tipField)}title='{$row.$tipField}'{/if}>
 		  {foreach from=$fields key=field item=atts}
-			<td><div>{$row.$field|wordwrap:30:"<br />\n"}</div></td>
+			<td><div>{$row.$field|wordwrap:30:"<br />\n"|truncate:120:"...":true}</div></td>
 		  {/foreach}
 		  <td class='innerListTools'>
 			<div>

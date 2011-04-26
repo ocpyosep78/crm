@@ -29,12 +29,12 @@ var Snippet = {
 	showError: SnippetPort.showError,
 	addSnippet: SnippetPort.addSnippet,
 	getPage: SnippetPort.getPage,
-	showToolTip: function(uID, code, msg){
-		var elView = this.groups[uID]['viewItem'].el;
+	showToolTip: function(uID, snippet, code, msg){
+		var elView = this.groups[uID][snippet].el;
 		if( elView ) elView.TTT.show(code, msg);
 	},
-	hideToolTip: function(uID){
-		var elView = this.groups[uID]['viewItem'].el;
+	hideToolTip: function(uID, snippet){
+		var elView = this.groups[uID][snippet].el;
 		if( elView ) elView.TTT.hide();
 	},
 	/* sendRequest is used by different buttons (bigTools, listRowTools, etc.) */
@@ -206,11 +206,40 @@ try{
 			if( prev ) prev.getParent('TR').dispose();
 		}
 	},
-	createItem: function(el, atts){									  /*** INFO ***/
-		return;
+	createItem: function(el, atts, editting){							  /*** INFO ***/
+		if( editting ){
+			this.resetBigTools(el, atts, ['list', 'create']);
+			var bigTools = this.groups[atts.params.group_uID]['bigTools'];
+			if( bigTools ) bigTools.el.enable('view', atts.params.filters);
+		}
+		else{
+			this.resetBigTools(el, atts, 'list');
+		};
+		var that = this;
+		var frm = el.getElement('.snippet_createForm');
+		var tbl = el.getElement('.snippet_createTable');
+		var fields = frm.getElements('INPUT[name],SELECT,TEXTAREA');
+		el.TTT = new SnippetToolTips( fields );
+		frm.getElement('INPUT[type=button]').addEvent('click', function(){
+			var filters = {};
+			fields.forEach(function(fld){
+				if( typeof(filters[fld.name]) !== 'undefined' ){
+					if( filters[fld.name].push ){
+						filters[fld.name].push( fld.value||'' );
+					}
+					else{
+						filters[fld.name] = [filters[fld.name], fld.value||''];
+					};
+				}
+				else{
+					filters[fld.name] = fld.value||'';
+				};
+			});
+			that.sendRequest(editting ? 'edit' : 'create', atts, filters);
+		});
 	},
 	editItem: function(el, atts){									  /*** INFO ***/
-		return;
+		this.createItem(el, atts, true);
 	},
 	viewItem: function(el, atts){									  /*** INFO ***/
 		var that = this;
@@ -372,6 +401,7 @@ var SnippetToolTips = function( fields ){
 	var oTgts = {};
 	fields.forEach(function(field){
 		if( field.get('FOR') ) oTgts[field.get('FOR')] = field;
+		else if( field.name ) oTgts[field.name] = field;
 	});
 	// Create tooltiptext box and inject it
 	var ttb = new Element('DIV', {
@@ -386,6 +416,7 @@ var SnippetToolTips = function( fields ){
 		ttb.setPosition({y:coord.top+coord.height+5, x:coord.left})
 		   .set('html', msg)
 		   .setStyle('display', 'block');
+		oTgts[code].focus();
 	};
 	this.hide = function(){
 		ttb.setStyle('display', 'none');

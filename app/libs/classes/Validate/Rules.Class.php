@@ -50,6 +50,8 @@
 			'time'			=> '/^$|^(2[0-3]|[01]\d):[0-5]\d$/',
 			/* date: well-formatted date stamp (i.e. 2009-12-05, 2008/02/28), 08-11-21 */
 			'date'			=> '/^$|^(\d{4}|\d{2})[-\/]\d{2}[-\/]\d{2}$/',
+			/* datetime: well-formatted timestamp (i.e. 2009-12-05 05:10 */
+			'datetime'		=> '/^$|^(\d{4}|\d{2})[-\/]\d{2}[-\/]\d{2} \d{2}:\d{2}$/',
 			/* selection: truth for any string (like 'open' but forcing length 1+) (for select combos) */
 			'selection'		=> '/^.+$/',
 		);

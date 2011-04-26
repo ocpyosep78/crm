@@ -64,22 +64,26 @@
 			
 		}
 		
+		protected function getFieldsFor( $type ){
 		
-		protected function getListFields(){
+			switch( $type ){
+				case 'list':
+					return array('number', 'customer', 'legal_name', 'address', 'phone', 'sellerName');
+				case 'view':
+					return array('number', 'customer', 'legal_name', 'rut', 'since', '>',
+						'phone', 'email', 'address', 'location', 'sellerName');
+				case 'create':
+				case 'edit':
+					return array('number', 'customer', 'legal_name', 'rut', 'since', '>',
+						'phone', 'email', 'address', 'location', 'sellerName');
+			}
 		
-			return array('number', 'customer', 'legal_name', 'address', 'phone', 'sellerName');
-			
-		}
-		
-		protected function getItemFields(){
-		
-			return array('number', 'customer', 'legal_name', 'rut', 'since', '>',
-				'phone', 'email', 'address', 'location', 'sellerName');
-			
 		}
 		
 		protected function getTools(){
+		
 			return array('view', 'create', 'edit', 'delete');
+			
 		}
 				
 /*		protected function checkFilter( &$filters ){

@@ -196,6 +196,12 @@
 	
 	}
 	
+	function page_callsInfo( $id ){
+	
+		return oSnippet()->addSnippet('viewItem', 'calls', array('filters' => $id));
+	
+	}
+	
 	function page_createCalls(){
 	
 		return oSnippet()->addSnippet('createItem', 'calls');
@@ -204,60 +210,9 @@
 		
 	}
 	
-	function page_editCalls( $id=NULL ){
+	function page_editCalls( $id ){
 	
-		return oSnippet()->addSnippet('editItem', 'calls');
-	
-		$data = $id ? oSQL()->getCall( $id ) : array();
-		if( $id && empty($data) ) return oNav()->getPage('calls', array(), 'Llamada no encontrada.');
-		
-		oFormTable()->clear();
-		oFormTable()->addFormAtt('id', 'createCallForm');
-		oFormTable()->setPrefix( $id ? 'editCall_' : 'newCall_' );
-		
-		if( $id ){
-			oFormTable()->hiddenRow();
-			oFormTable()->addInput('', array('id' => 'id_call'), 'hidden');
-		}
-		
-		# Block 'Datos Requeridos'
-		oFormTable()->addTitle( 'Datos Requeridos' );
-		oFormTable()->addInput('Fecha', array('id' => 'date', 'value' => date('d-m-Y')));
-		oFormTable()->addInput('Quién llama', array('id' => 'caller'));
-		oFormTable()->addArea('Motivo / Descripción', array(
-			'id' => 'detail',
-			'style'	=> 'height:50px; width:300px;',
-		));
-		test('so far, so good');
-
-		# Block 'Información'
-		oFormTable()->addTitle( 'Datos opcionales' );
-		oFormTable()->addCombo('Cliente',
-			array('' => '') + oSQL()->getCustomers(),
-			array('id' => 'id_customer', 'selected' => $id ? $data['id_customer'] : ''));
-		oFormTable()->addCombo('Usuario Asignado',
-			array('' => '(ninguno)') + oLists()->sellers(),
-			array('id' => 'user', 'selected' => $id ? $data['user'] : ''));
-		
-		# Submit line (depends on status and availability of options to change status)
-		$submit = $id
-			? "<input type='submit' class='button' value='Guardar Cambios' />"	/* New call */
-			: "<input type='submit' class='button' value='Guardar' />";			/* Edit call */
-		oFormTable()->addRowHTML("<td colspan='2'>{$submit}</td>");
-		
-		
-		# Fill Values
-		if( $id ) oFormTable()->fillValues( $data );
-		
-		# Submit line
-		oFormTable()->xajaxSubmit( $id ? 'editCalls' : 'createCalls');
-		
-		# Attach comboList and get the page
-		oLists()->includeComboList('calls', NULL, $id);
-		oSmarty()->assign('editCallTbl', oFormTable()->getTemplate());
-		
-		# Add commands and actions to Xajax response object
-		addScript("\$('".($id ? 'editCall' : 'newCall')."_caller').focus();");
+		return oSnippet()->addSnippet('editItem', 'calls', array('filters' => $id));
 		
 	}
 	

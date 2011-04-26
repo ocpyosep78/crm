@@ -7,10 +7,12 @@
 		protected function getListFields()			{ return array(); }
 		protected function getItemFields()			{ return array(); }
 		protected function getTools()				{ return array(); }
-		protected function checkFilter()			{}
-		protected function checkData()				{}
 		protected function getValidationRuleSet()	{}
 		protected function strictValidation()		{}
+		
+		protected function prefetchUserInput()		{}
+		protected function checkFilter()			{}
+		protected function checkData()				{}
 		
 	}
 

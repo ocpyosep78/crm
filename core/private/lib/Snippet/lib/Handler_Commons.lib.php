@@ -44,8 +44,6 @@
 
 	abstract class Snippets_Handlers_Commons{
 	
-		protected $dataType;		# list, item
-	
 		protected $snippet;
 		
 		protected $code;
@@ -91,7 +89,7 @@
 		}
 	
 		public function getSnippet(){
-		
+			
 			# Register common/config data (fields, keys, tools)
 			$this->registerCommonVars()->registerConfig();
 			
@@ -103,36 +101,43 @@
 		
 		}
 		
-		protected function toolTip($field, $msg){
-		
-			$Ajax = $this->Layers->get('ajax');
-			$uID = $this->params['group_uID'];
+		protected function showToolTip($field, $msg){
 			
-			$Ajax->addScript("Snippet.showToolTip('{$uID}', '{$field}', '{$msg}');");
+			$uID = $this->params['group_uID'];
+			$snippet = "{$this->snippet}Item";
+			
+			$cmd = "Snippet.showToolTip('{$uID}', '{$snippet}', '{$field}', '{$msg}');";
+			
+			$this->Layers->get('ajax')->addScript( $cmd );
+			
+			return $this;
 			
 		}
 		
 		protected function hideToolTip(){
 		
-			$Ajax = $this->Layers->get('ajax');
 			$uID = $this->params['group_uID'];
-		
-			$Ajax->addScript("Snippet.hideToolTip('{$uID}');");
+			$snippet = "{$this->snippet}Item";
+			
+			$cmd = "Snippet.hideToolTip('{$uID}', '{$snippet}');";
+			
+			$this->Layers->get('ajax')->addScript( $cmd );
+			
+			return $this;
 			
 		}
 		
 		protected function validateInput( $data ){
 		
-			$Valid = new Snippet_Validation;
+			$this->hideToolTip();
 			
-			$res = $Valid->test($data, $this->Source->getRuleSet());
+			$res = $this->Source->validateInput( $data );
 			
 			# Show tool tips where enabled if validation failed
 			if( $res !== true ){
 				$this->Layers->get('ajax')->display('Falló la validación de los datos ingresados');
-				$this->toolTip($res['field'], $res['tip']);
+				$this->showToolTip($res['field'], $res['tip']);
 			}
-			else $this->hideToolTip();
 			
 			return $res === true;
 		
@@ -183,27 +188,36 @@
 		private function registerConfig(){
 			
 			########## FIELDS ###########
-			
-			# If dataType (item, list) wasn't explicitly set, try to guess it
-			if( !$this->dataType ){
-				$found = preg_match('/Snippet_hnd_(.+)/', get_class($this), $class);
-				if( $found ) $this->dataType = $class[1];
-			}
-			
-			# Get fields for this dataType (with attributes)
-			$fields = $this->Source->getFieldsWithAtts( $this->dataType );
+			$dt = $this->getDataType();
+			$fields = $dt ? $this->Source->getFields($dt) : array();
 			$this->fields = $this->assign('fields', $fields);
 			
 			########## KEYS ###########
-			
 			$this->keys = $this->assign('keys', $this->Source->getSummary('keys'));
 			
 			########## TOOLS ###########
-			
 			$this->tools = $this->assign('tools', $this->Source->getSummary('tools'));
 			
 			return $this;
 		
+		}
+			
+		private function getDataType(){
+		
+			switch( $this->snippet ){
+				case 'commonList':
+				case 'innerCommonList':
+				case 'simpleList':
+				case 'comboList':
+					return 'list';
+				case 'viewItem':
+				case 'editItem':
+				case 'createItem':
+					return preg_replace('/Item$/', '', $this->snippet);
+				default:
+					return NULL;
+			}
+			
 		}
 		
 		/**

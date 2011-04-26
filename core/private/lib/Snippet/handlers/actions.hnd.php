@@ -16,21 +16,58 @@
 			if( $ans->error ){
 				$this->Layers->get('ajax')->display($ans->msg);
 			}
-			else{
+			else{			/* TEMP */
 				$_POST['xajax'] = 'getPage';
 				oNav()->getPage("{$this->code}Info", (array)$this->params['filters']['id'],
 					'El elemento fue modificado correctamente.', 1);
-				return '';
 			}
+			
+			return '';
 			
 			/* BUG : when reloading the page (on success) commonList is not loaded
 			   but other snippets are (bigTools, comboList) */
 
 		}
 	
-		protected function handle_edit(){
+		protected function handle_create( $keys=NULL ){
 		
-			return 'edit';
+			$data = $this->params['filters'];
+			
+			# If there's a method defined to prefetch input, call it
+			$this->Source->prefetchInput( $data );
+			
+			# Validate input if a ruleset was given, abort if it fails
+			if( !$this->validateInput($data) ) return '';
+			
+			# Attempt to insert / edit item
+			if( $keys ){		# Edit
+				$ans = $this->Source->update($keys, $data);
+			}
+			else{				# Create
+				$ans = $this->Source->insert( $data );
+			}
+			
+			# On success move to viewItem page, on failure return an error message
+			if( $ans->error ){
+				$this->Layers->get('ajax')->display( $ans->msg );
+			}
+			else{			/* TEMP */
+				if( !$keys ) $keys = $ans->ID;
+				$_POST['xajax'] = 'getPage';
+				oNav()->getPage("{$this->code}Info", (array)($keys ? $keys : $ans->ID),
+					'El elemento fue creado correctamente.', 1);
+			}
+			
+			return '';
+			
+		}
+	
+		protected function handle_edit(){
+			
+			$keys = $this->params['filters']['__objectID__'];
+			unset( $this->params['filters']['__objectID__'] );
+		
+			return $this->handle_create( $keys );
 		
 		}
 	

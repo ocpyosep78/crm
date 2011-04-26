@@ -30,7 +30,7 @@
 		
 		}
 	
-		protected function handle_createItem(){
+		protected function handle_createItem($objectID=NULL, $data=NULL){
 		
 			/* TEMP : untill this library handles navigation issues */
 			if( $_POST['xajax'] == 'addSnippet' && !$this->params['writeTo'] ){
@@ -46,8 +46,12 @@
 			}
 			
 			$this->assign('lists', $fieldsByType['list']);
+			
+			# Empty unless editting
+			$this->assign('objectID', $objectID);
+			$this->assign('data', $data);
 		
-			return $this->fetch( 'items/create' );
+			return $this->fetch( 'items/edit' );
 
 		}
 	
@@ -59,6 +63,10 @@
 				oNav()->getPage('edit'.ucfirst($this->code), (array)$this->params['filters']);
 				return '';
 			}
+			
+			$data = $this->Source->getData('item', $this->params['filters']);
+	
+			return $this->handle_createItem($this->params['filters'], $data);
 		
 		}
 	
