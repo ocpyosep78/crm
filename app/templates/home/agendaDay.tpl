@@ -1,4 +1,4 @@
-<div class='agenda_dayWrapper' for='{$day.date|date_locale:'%Y-%m-%d'}'>
+<div class='agenda_dayWrapper' for='{$day.date|date_locale:'Y-m-d'}'>
 	<div class='agenda_dayName{if $day.isToday} agenda_today{/if}'>
 		{$day.date|date_locale:"l":'':'date'}
 	</div>
