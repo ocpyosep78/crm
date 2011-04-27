@@ -15,6 +15,7 @@
 			'id_product',
 			'id_category',
 			'name',
+			'cost',
 			'price',
 			'description',
 			'id_product',
@@ -65,6 +66,7 @@
 		oSQL()->setOkMsg( sprintf($okMsg, $isNew ? 'registrado' : 'modificado') );
 		
 		oSQL()->BEGIN();
+		
 		$ans1 = oSQL()->{$isNew ? 'insert' : 'update'}($base, '_products', 'id_product');
 		if( $ans1->error ) return oSQL()->ROLLBACK( oPajax()->addResponse("showStatus('{$ans1->msg}');") );
 		

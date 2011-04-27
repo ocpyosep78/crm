@@ -11,9 +11,6 @@
 
 	return array(
 		'deleteProducts',
-		'newMaterial',
-		'editMaterial',
-		'delMaterial',
 	);
 	
 	function deleteProducts( $id ){

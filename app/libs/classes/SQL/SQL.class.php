@@ -602,13 +602,6 @@
 			return $this->modify( $sql );
 		}
 		
-		public function delMaterial( $id ){
-			$sql = "DELETE FROM `products_materials`
-					WHERE `id_material` = '{$id}'
-					LIMIT 1";
-			return $this->modify( $sql );
-		}
-		
 		public function deleteEstimates( $id ){
 			$this->BEGIN();
 			$sql = "DELETE FROM `estimates_detail`

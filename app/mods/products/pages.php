@@ -40,7 +40,12 @@
 		oFormTable()->addRow('Categoría', $prod['category']);
 		oFormTable()->addRow('Nombre', $prod['name']);
 		if( oPermits()->can('seeProductsPrice') ){
+			oFormTable()->addRow('Costo', "U\$S {$prod['cost']}");
 			oFormTable()->addRow('Precio', "U\$S {$prod['price']}");
+			$util = (float)$prod['cost']
+				? number_format(($prod['price']/$prod['cost'])*100-100, 2).'%'
+				: '--';
+			oFormTable()->addRow('Utilidad', $util);
 		}
 		oFormTable()->addRow('Descripción', "<div class='productDescription'>{$prod['description']}</div>");
 		if( $prod['type'] == 'products' ){
@@ -111,6 +116,7 @@
 		}
 		oFormTable()->addInput('Nombre', array('id' => 'name'));
 		if( oPermits()->can('seeProductsPrice') ){
+			oFormTable()->addInput('Costo', array('id' => 'cost'));
 			oFormTable()->addInput('Precio', array('id' => 'price'));
 		}
 		oFormTable()->addArea('Descripción', array(

@@ -23,8 +23,9 @@
 		<link rel="stylesheet" type="text/css" href="{$styleSheet}" />
 	{/foreach}
 	
-	{* Xajax *}
+	{* Ajax *}
 	{$Xajax->printJavascript()}
+	{$Pajax->printJavascript()}
 	
 	{* javaScript files *}
 	<script type='text/javascript'>window.IN_FRAME = {$IN_FRAME}</script>
