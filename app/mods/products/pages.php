@@ -35,8 +35,9 @@
 			oFormTable()->addRow('', "<div class='productInfoPreview'><img src='app/images/products/{$id}.jpg' /></div>");
 		}
 		
+		if( $prod['type'] == 'products' ) oFormTable()->addTitle( 'Básico' );
+		
 		# Block 'Cuenta'
-		oFormTable()->addTitle( 'Información' );
 		oFormTable()->addRow('Categoría', $prod['category']);
 		oFormTable()->addRow('Nombre', $prod['name']);
 		if( oPermits()->can('seeProductsPrice') ){
@@ -49,9 +50,11 @@
 		}
 		oFormTable()->addRow('Descripción', "<div class='productDescription'>{$prod['description']}</div>");
 		if( $prod['type'] == 'products' ){
+			oFormTable()->addTitle( 'Extendido' );
 			oFormTable()->addRow('Código', $prod['code']);
 			oFormTable()->addRow('Marca', $prod['trademark']);
 			oFormTable()->addRow('Modelo', $prod['model']);
+			oFormTable()->addRow('Proveedor', $prod['provider']);
 			oFormTable()->addRow('Garantía', ($prod['warranty'] == 12) ? "1 año" : "{$prod['warranty']} meses");
 			oFormTable()->addRow('Sistema', $prod['system']);
 		}
@@ -102,7 +105,8 @@
 			oFormTable()->addRow('', "<div class='productInfoPreview'><img src='app/images/products/{$id}.jpg' /></div>");
 		}
 		
-		oFormTable()->addTitle( '' );
+		if( $type == 'products' ) oFormTable()->addTitle( 'Básico' );
+		
 		if( count($categories=oLists()->product_categories($type)) == 1 ){
 			oFormTable()->hiddenRow();
 			$atts = array('id' => 'id_category', 'value' => array_shift(array_keys($categories)));
@@ -125,9 +129,11 @@
 		) );
 		
 		if( $type == 'products' ){
+			oFormTable()->addTitle( 'Extendido' );
 			oFormTable()->addInput('Código', array('id' => 'code'));
 			oFormTable()->addInput('Marca', array('id' => 'trademark'));
 			oFormTable()->addInput('Modelo', array('id' => 'model'));
+			oFormTable()->addInput('Proveedor', array('id' => 'provider'));
 			oFormTable()->addCombo('Garantía',
 				array(0 => 'Sin garantía', 3 => '3 meses', 6 => '6 meses', 12 => '1 año'),
 				array('id' => 'warranty', 'selected' => $id ? (int)$prod['warranty'] : 12 ));
