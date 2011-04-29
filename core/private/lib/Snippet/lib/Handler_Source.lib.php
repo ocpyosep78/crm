@@ -81,7 +81,7 @@
 			}
 			
 			# Else add a warning
-			else $this->issueWarning("list {$field} not implemented");
+			else Snippet_Tools::issueWarning("list {$field} not implemented");
 		
 		}
 		
@@ -182,7 +182,7 @@
 			# Basics (name, plural and tip)
 			$this->basics = (array)$this->getBasicAttributes()
 				+ array('name' => NULL, 'plural' => NULL, 'gender' => NULL, 'tip' => NULL);
-			
+				
 			# 1. Get tables from database definition (@tables)
 			# 2. Fill unset attributes with defaults
 			# 3. Get tools set in definition and mix it with @toolsBase
@@ -202,13 +202,14 @@
 		 * Read and validate input from definition file, for database
 		 */
 		private function aquireDB(){
-			
+		
 			# Read and validate db definition, on failure leave it empty
 			$db = $this->getDatabaseDefinition();
+			
 			if( !is_array($db) ){
 				# Keep defaults when definition fails
 				$db = array();
-				$this->issueWarning('db structure definition is invalid');
+				Snippet_Tools::issueWarning('db structure definition is invalid');
 			}
 			else{
 				$correct = true;
@@ -219,7 +220,7 @@
 				if( !$correct || empty($db) ){
 					# Keep defaults when definition fails
 					$db = array();
-					$this->issueWarning('db structure definition is empty or invalid');
+					Snippet_Tools::issueWarning('db structure definition is empty or invalid');
 				}
 			}
 			
@@ -284,6 +285,7 @@
 			$mainTable = NULL;
 			$tables = array();
 			$fields = array();
+			$fieldsAtts = array();
 			$shown = array();
 			$frozen = array();
 			$keys = array();
