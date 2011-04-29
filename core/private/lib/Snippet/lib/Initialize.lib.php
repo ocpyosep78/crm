@@ -118,6 +118,7 @@
 				case 'simpleList':
 				case 'commonList':
 				case 'innerCommonList':
+				case 'complexList':
 					return 'lists';
 				case 'createItem':
 				case 'editItem':

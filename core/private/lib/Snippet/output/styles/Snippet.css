@@ -64,8 +64,8 @@
  * LISTS: GENERAL
  */
 .listWrapper{ height:auto; width:auto; overflow:hidden; }
-.innerListPreLoad, .innerListEmpty{ padding:37px 5px; text-align:center; color:#a0b0d0; font-family:"Times New Roman", Times, serif; font-size:16px; font-weight:bold; }
-.innerListPreLoad > IMG{ height:30px; width:30px; margin:0px 10px; vertical-align:middle; }
+.listPreLoad{ padding:37px 5px; text-align:center; color:#a0b0d0; font-family:"Times New Roman", Times, serif; font-size:16px; font-weight:bold; }
+.listPreLoad IMG{ height:30px; width:30px; margin:0px 10px; vertical-align:middle; }
 .innerListEmpty{ color:#603020; }
 .innerList{ width:100%; padding:2px 2px 2px 2px; border-collapse:collapse; border-radius:8px; -moz-border-radius:8px; -webkit-border-radius:8px; }
 .innerList TD{ padding:4px 2px; font-size:12px; font-family:Arial, Helvetica, sans-serif; }

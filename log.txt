@@ -1,0 +1,119 @@
+diff --git a/app/libs/classes/SQL/SQL.class.php b/app/libs/classes/SQL/SQL.class.php
+index 78a880d..2fe4e34 100644
+--- a/app/libs/classes/SQL/SQL.class.php
++++ b/app/libs/classes/SQL/SQL.class.php
+@@ -602,13 +602,6 @@
+ 			return $this->modify( $sql );
+ 		}
+ 		
+-		public function delMaterial( $id ){
+-			$sql = "DELETE FROM `products_materials`
+-					WHERE `id_material` = '{$id}'
+-					LIMIT 1";
+-			return $this->modify( $sql );
+-		}
+-		
+ 		public function deleteEstimates( $id ){
+ 			$this->BEGIN();
+ 			$sql = "DELETE FROM `estimates_detail`
+diff --git a/app/libs/classes/Validate/ruleSets/products.rules.php b/app/libs/classes/Validate/ruleSets/products.rules.php
+index 909ce02..9676d84 100644
+--- a/app/libs/classes/Validate/ruleSets/products.rules.php
++++ b/app/libs/classes/Validate/ruleSets/products.rules.php
+@@ -3,6 +3,7 @@
+ 	return array(
+ 		'id_category'	=> array('selection'),
+ 		'name'			=> array('text', 2, 80),
++		'cost'			=> array('cost', 1, 10),
+ 		'price'			=> array('cost', 1, 10),
+ 		'description'	=> array('text', NULL, 240),
+ 	);
+diff --git a/app/mods/products/ajax.php b/app/mods/products/ajax.php
+index ea31706..e269dea 100644
+--- a/app/mods/products/ajax.php
++++ b/app/mods/products/ajax.php
+@@ -11,9 +11,6 @@
+ 
+ 	return array(
+ 		'deleteProducts',
+-		'newMaterial',
+-		'editMaterial',
+-		'delMaterial',
+ 	);
+ 	
+ 	function deleteProducts( $id ){
+diff --git a/app/mods/products/funcs.php b/app/mods/products/funcs.php
+index 0030177..a861185 100644
+--- a/app/mods/products/funcs.php
++++ b/app/mods/products/funcs.php
+@@ -15,6 +15,7 @@
+ 			'id_product',
+ 			'id_category',
+ 			'name',
++			'cost',
+ 			'price',
+ 			'description',
+ 			'id_product',
+@@ -65,6 +66,7 @@
+ 		oSQL()->setOkMsg( sprintf($okMsg, $isNew ? 'registrado' : 'modificado') );
+ 		
+ 		oSQL()->BEGIN();
++		
+ 		$ans1 = oSQL()->{$isNew ? 'insert' : 'update'}($base, '_products', 'id_product');
+ 		if( $ans1->error ) return oSQL()->ROLLBACK( oPajax()->addResponse("showStatus('{$ans1->msg}');") );
+ 		
+diff --git a/app/mods/products/pages.php b/app/mods/products/pages.php
+index 7666040..534ca23 100644
+--- a/app/mods/products/pages.php
++++ b/app/mods/products/pages.php
+@@ -40,7 +40,12 @@
+ 		oFormTable()->addRow('Categoría', $prod['category']);
+ 		oFormTable()->addRow('Nombre', $prod['name']);
+ 		if( oPermits()->can('seeProductsPrice') ){
++			oFormTable()->addRow('Costo', "U\$S {$prod['cost']}");
+ 			oFormTable()->addRow('Precio', "U\$S {$prod['price']}");
++			$util = (float)$prod['cost']
++				? number_format(($prod['price']/$prod['cost'])*100-100, 2).'%'
++				: '--';
++			oFormTable()->addRow('Utilidad', $util);
+ 		}
+ 		oFormTable()->addRow('Descripción', "<div class='productDescription'>{$prod['description']}</div>");
+ 		if( $prod['type'] == 'products' ){
+@@ -111,6 +116,7 @@
+ 		}
+ 		oFormTable()->addInput('Nombre', array('id' => 'name'));
+ 		if( oPermits()->can('seeProductsPrice') ){
++			oFormTable()->addInput('Costo', array('id' => 'cost'));
+ 			oFormTable()->addInput('Precio', array('id' => 'price'));
+ 		}
+ 		oFormTable()->addArea('Descripción', array(
+diff --git a/core/private/templates/frame.tpl b/core/private/templates/frame.tpl
+index bf4f507..a40de0e 100644
+--- a/core/private/templates/frame.tpl
++++ b/core/private/templates/frame.tpl
+@@ -20,8 +20,9 @@
+ 		<link rel="stylesheet" type="text/css" href="{$styleSheet}" />
+ 	{/foreach}
+ 	
+-	{* Xajax *}
++	{* Ajax *}
+ 	{$Xajax->printJavascript()}
++	{$Pajax->printJavascript()}
+ 	
+ 	{* javaScript files *}
+ 	<script type='text/javascript'>var IN_FRAME = {$IN_FRAME}</script>
+diff --git a/core/private/templates/main.tpl b/core/private/templates/main.tpl
+index 952fc50..7547b85 100644
+--- a/core/private/templates/main.tpl
++++ b/core/private/templates/main.tpl
+@@ -23,8 +23,9 @@
+ 		<link rel="stylesheet" type="text/css" href="{$styleSheet}" />
+ 	{/foreach}
+ 	
+-	{* Xajax *}
++	{* Ajax *}
+ 	{$Xajax->printJavascript()}
++	{$Pajax->printJavascript()}
+ 	
+ 	{* javaScript files *}
+ 	<script type='text/javascript'>window.IN_FRAME = {$IN_FRAME}</script>

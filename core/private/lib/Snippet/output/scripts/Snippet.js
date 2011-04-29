@@ -293,6 +293,36 @@ try{
 	},
 	
 	
+	complexList: function(el, atts){
+		$$('.complexList_group').forEach(function(grp){
+			var hdr = grp.getElement('.complexList_groupHeader');
+			var bdy = grp.getElement('.complexList_groupBody');
+			var prvw = grp.getElement('.complexList_preview');
+			var expd = grp.getElement('.complexList_expand').setStyle('display', 'block');
+			hdr.addEvent('click', function(e){
+				bdy.setStyle('display', 'block');
+				expd.setStyle('display', 'none');
+			});
+			expd.addEvent('click', function(e){
+				bdy.setStyle('display', 'block');
+				expd.setStyle('display', 'none');
+			});
+			grp.getElements('.complexList_property').forEach(function(prop){
+				var lnk = prop.getElement('A');
+				if( lnk ) lnk.addEvent('click', function(){
+					iniPreview(prvw, lnk.innerHTML);
+				});
+			});
+		});
+		function iniPreview(box, name){
+			var html = 'Cargando ' + name + '...' +
+				"<img class='listPreLoad' src='" + SNIPPET_IMAGES + "/timer.gif' />";
+			box.set('html', html);
+			box.setStyle('display', 'block');
+		};
+	},
+	
+	
 	
 	
 	simpleList: function(el, atts){

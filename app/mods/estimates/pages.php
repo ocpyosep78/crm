@@ -7,6 +7,12 @@
  * Licence: GNU GENERAL PUBLIC LICENSE <http://www.gnu.org/licenses/gpl.txt>
  */
 
+	function page_corpEstimates(){
+	
+		return oSnippet()->addSnippet('complexList', 'corpEstimates');
+		
+	}
+
 
 
 /* Serves to generate both estimates and quotes lists

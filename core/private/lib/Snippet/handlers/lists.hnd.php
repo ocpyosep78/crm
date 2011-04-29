@@ -48,6 +48,62 @@
 			
 		}
 		
+		/**
+		 * Complex lists are multidimensional lists, with a main branch and 0-n
+		 * secondary branches coming out, i.e. a list of lists. Currently, complexList
+		 * handles only 2-dimensional lists.
+		 * A complex list is presented as a vertical list of the main elements, with
+		 * the possibility to expand each element to see its properties and members
+		 * (the lists within).
+		 * The snippet includes filters to see more specific results.
+		 */
+		protected function handle_complexList(){
+		
+			$fields = TEMPgetFields();
+			$data = TEMPgetData();
+
+			$this->assign('membersName', 'Presupuestos');
+			$this->assign('fields', $fields);
+			$this->assign('data', $data);
+		
+			return $this->fetch( 'lists/complexList' );
+			
+		}
+		
 	}
+	
+
+	/* TEMP data provider - start - */
+	function TEMPgetFields(){
+	
+		return array('customer' => 'Cliente', 'seller' => 'Vendedor');
+	
+	}
+	
+	function TEMPgetData(){
+	
+		$max = 5;
+		$data = array();
+		for( $i=1 ; $i<=$max ; $i++ ){
+			$key = count($data);
+			$data[$key] = array(
+				'name'			=> 'Presupuesto corporativo '.$i,
+				'data'	=> array(
+					'customer'		=> array($i => 'Cliente de Prueba '.$i),
+					'seller'		=> array($i => 'Usuario '.$i),
+				),
+				'members' => array(),
+			);
+			$members = rand(0, 8);
+			for( $j=0 ; $j<$members ; $j++ ){
+				$rand = rand(1, 5);
+				$data[$key]['members'][$rand] = 'Presupuesto '.$rand;
+			}
+		}
+		
+		return $data;
+		
+	}
+	/* TEMP data provider - end - */
 
 ?>

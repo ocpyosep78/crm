@@ -8,9 +8,9 @@
   
   <div class='commonListInnerWrapper'>
 	<div class='listWrapper'>
-		<div class='innerListPreLoad'>
+		<div class='listPreLoad'>
 			cargando la lista, espere por favor...
-			<img class='listPreLoad' src='{$SNIPPET_IMAGES}/timer.gif' style=''>
+			<img src='{$SNIPPET_IMAGES}/timer.gif' />
 		</div>
 	</div>
   </div>
