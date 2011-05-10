@@ -101,6 +101,12 @@ SELECT.systemProductsSelect{
 .suggestDIV{
 	white-space:nowrap;
 }
+.suggestBox{
+	height:18px;
+}
+.suggestBox INPUT{
+	height:15px !important;
+}
 .suggestBox, .suggestBox INPUT.productName{
 	position:relative;
 	width:460px;
@@ -144,47 +150,43 @@ SELECT.systemProductsSelect{
 }
 #listBox{
 	display:none;
-	position:relative;
-	float:right;
+	position:absolute;
 	z-index:500;
 }
 #estimateListWrapper{
-	position:absolute;
-	top:-160px;
-	left:-310px;
 	height:300px;
-	width:282px;
 	overflow:auto;
 	text-align:right;
 }
 #suggestList{
-	width:260px;
+	width:458px;
 	padding:0px;
 	border:solid 2px #003333;
-	border-bottom:none;
-	background:#669999;
+	background: -webkit-gradient(linear, left top, left bottom, from(#e0e0e0), to(#8090a0));
+	background: -moz-linear-gradient(top,  #e0e0e0,  #8090a0);
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#e0e0e0', endColorstr='#8090a0');
 	color:#000000;
 	text-align:left;
 }
 #suggestList A{
 	display:block;
 	padding:1px 3px;
-	color:#004060;
+	color:#002040;
 	text-decoration:none;
 	white-space:nowrap;
 	overflow:hidden;
 	cursor:pointer;
 }
-#suggestList A DIV{
-	width:272px;
-	overflow:hidden;
-}
 #suggestList A:hover{
-	background:#66bbff;
+	background: -webkit-gradient(linear, left top, left bottom, from(#e0e0e0), to(#8090a0));
+	background: -moz-linear-gradient(top,  #e0e0e0,  #8090a0);
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#e0e0e0', endColorstr='#8090a0');
 	color:#900000;
 }
 #suggestList A.selected{
-	background:#3399FF;
+	background: -webkit-gradient(linear, left top, left bottom, from(#f8f8fa), to(#90a0b0));
+	background: -moz-linear-gradient(top,  #f8f8fa,  #90a0b0);
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f8f8fa', endColorstr='#90a0b0');
 	color:#300000;
 }
 #quotesButtons{
@@ -237,6 +239,9 @@ SELECT.systemProductsSelect{
 #estimateInfoTbl INPUT[type=text]{
 	margin:0px;
 	padding:0px;
+}
+#estimateInfoTbl SELECT{
+	width:170px;
 }
 
 

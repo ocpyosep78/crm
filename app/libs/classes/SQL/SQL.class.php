@@ -127,8 +127,9 @@
 					FROM `_products` `p`
 					LEFT JOIN `_product_extension` `pe` USING (`id_product`)
 					LEFT JOIN `_product_categories` `pc` USING (`id_category`)
-					WHERE `name` LIKE '%{$text}%'
-					ORDER BY `type`, `name`";
+					WHERE CONCAT(`pe`.`code`,' - ', `p`.`name`, ' ', `pe`.`model`) LIKE '%{$text}%'
+					ORDER BY `type`, `name`
+					LIMIT 0, 12";
 			return $this->query($sql, 'array');
 		}
 

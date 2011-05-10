@@ -195,6 +195,7 @@ Object Rows: array with custom methods
 			if( data.amount ) row.map.amount.value = data.amount;
 			else row.data.amount = parseInt(row.map.amount.value) || 1;
 			this.fixRowVals( row );
+			return this;
 		},
 		acceptInput: function( pos ){
 			Rows.newLines();	/* Adds new rows as needed */
@@ -258,18 +259,18 @@ Object Rows: array with custom methods
 			};
 		},
 		showList: function(){
-			var that = this;
-			for( var i=0, line ; line=this.req.list[i] ; i++ ){
+			var pos = this.req.pos;
+			this.req.list.forEach(function(line, i){
 				var A = document.createElement('A');
-				A.innerHTML = '<div>' + this.req.list[i].name + '</div>';
+				A.innerHTML = '<div>' + line.name + '</div>';
 				$('suggestList').appendChild( A );
 				A.href = 'javascript:void(0);';		/* To style it in IE */
 				A.onclick = (function(i){ return function(){
-					Table.showSuggest(that.req.list[i], that.req.pos);
-					Table.acceptInput( that.req.pos );
+					Table.showSuggest(line, pos).acceptInput(pos);
 				}})(i);
-			};
-			$('listBox').setStyle('display', 'block');
+			}, this);
+			var coords = Rows[pos].map.name.getPosition();
+			$('listBox').setStyles({top:coords.y+20, left:coords.x, display:'block'});
 		},
 		pickOneResult: function(){	/* Keeps current result if it's in the list */
 			var req = this.req;

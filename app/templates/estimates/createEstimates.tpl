@@ -1,8 +1,7 @@
 <div style='float:right;'>{$comboList}</div>
+<div id='listBox'><div id='estimateListWrapper'><div id="suggestList"></div></div></div>
 
 {include file='estimates/_common/header.tpl' miniHeader=false}
-
-<div id='listBox'><div id='estimateListWrapper'><div id="suggestList"></div></div></div>
 
 <div id='quotesTableWrapper'>
   <table class='quotesTable' cellpadding='0' cellspacing='0' border='0'>
