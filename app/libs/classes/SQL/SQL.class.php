@@ -122,14 +122,17 @@
 		public function getProductSuggest( $text ){
 			$sql = "SELECT	`id_product` AS 'id',
 							`pc`.`type`,
-							CONCAT(`pe`.`code`,' - ', `p`.`name`, ' ', `pe`.`model`) AS 'name',
+							IF(ISNULL(`pe`.`code`), `p`.`name`,
+								CONCAT(`pe`.`code`,' - ', `p`.`name`, ' ', `pe`.`model`)) AS 'name',
 							`p`.`price`
 					FROM `_products` `p`
 					LEFT JOIN `_product_extension` `pe` USING (`id_product`)
 					LEFT JOIN `_product_categories` `pc` USING (`id_category`)
-					WHERE CONCAT(`pe`.`code`,' - ', `p`.`name`, ' ', `pe`.`model`) LIKE '%{$text}%'
+					WHERE(IF(ISNULL(`pe`.`code`),
+						`p`.`name`,
+						CONCAT(`pe`.`code`,' - ', `p`.`name`, ' ', `pe`.`model`)) LIKE '%{$text}%')
 					ORDER BY `type`, `name`
-					LIMIT 0, 12";
+					LIMIT 0, 15";
 			return $this->query($sql, 'array');
 		}
 
@@ -162,7 +165,8 @@
 							`d`.`price`,
 							`d`.`amount`,
 							`pe`.`id_system`,
-							`p`.`name`
+							IF(ISNULL(`pe`.`code`), `p`.`name`,
+								CONCAT(`pe`.`code`,' - ', `p`.`name`, ' ', `pe`.`model`)) AS 'name'
 					FROM `estimates_detail` `d`
 					LEFT JOIN `_products` `p` USING (`id_product`)
 					LEFT JOIN `_product_extension` `pe` USING (`id_product`)

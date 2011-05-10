@@ -104,9 +104,6 @@ SELECT.systemProductsSelect{
 .suggestBox{
 	height:18px;
 }
-.suggestBox INPUT{
-	height:15px !important;
-}
 .suggestBox, .suggestBox INPUT.productName{
 	position:relative;
 	width:460px;
@@ -142,9 +139,8 @@ SELECT.systemProductsSelect{
 	font-weight:normal;
 }
 .suggestBox INPUT.productName{
-	height:20px;
 	width:458px;
-	padding-top:4px;
+	padding-top:0px;
 	background-color:transparent;
 	color:#000000;
 }
@@ -159,12 +155,10 @@ SELECT.systemProductsSelect{
 	text-align:right;
 }
 #suggestList{
-	width:458px;
+	width:460px;
 	padding:0px;
-	border:solid 2px #003333;
-	background: -webkit-gradient(linear, left top, left bottom, from(#e0e0e0), to(#8090a0));
-	background: -moz-linear-gradient(top,  #e0e0e0,  #8090a0);
-	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#e0e0e0', endColorstr='#8090a0');
+	border:solid 1px #003333;
+	background: #ffffff;
 	color:#000000;
 	text-align:left;
 }

@@ -1,4 +1,5 @@
 <div style='float:right;'>{$comboList}</div>
+
 <div id='listBox'><div id='estimateListWrapper'><div id="suggestList"></div></div></div>
 
 {include file='estimates/_common/header.tpl' miniHeader=false}

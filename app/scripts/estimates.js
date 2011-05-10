@@ -151,13 +151,17 @@ Object Rows: array with custom methods
 			};
 			function keyUpOnName( e ){		// Non-special chars
 				if( in_array(e.code, [91, 92, 93]) || (e.code > 111 && e.code < 187) ) return;
-				if( !in_array(e.code, [8, 32, 46]) && e.code < 48 ) return;
+				if( !in_array(e.code, [8, 32, 46, 27]) && e.code < 48 ) return;
 				if( e.code > 191 && !in_array(e.code, [219, 220, 221]) ) return;
-				if( !in_array(e.key, ['space', 'backspace', 'delete']) && e.key.length != 1 ) return;
-				if( this.value.trim() ) requestSuggest( this.value.trim() );
+				if( !in_array(e.key, ['space', 'backspace', 'delete', 'esc']) && e.key.length != 1 ) return;
+				if(this.value.trim() && e.code != 27) requestSuggest( this.value.trim() );
 				else{
 					Suggest.destroyList();
 					map.suggest.innerHTML = '';
+					if( e.key == 'esc' ){
+						requestSuggest('');
+						this.value = '';
+					};
 				};
 			};
 			function keyUpOnAmount( e ){
@@ -270,7 +274,7 @@ Object Rows: array with custom methods
 				}})(i);
 			}, this);
 			var coords = Rows[pos].map.name.getPosition();
-			$('listBox').setStyles({top:coords.y+20, left:coords.x, display:'block'});
+			$('listBox').setStyles({top:coords.y+22, left:coords.x-1, display:'block'});
 		},
 		pickOneResult: function(){	/* Keeps current result if it's in the list */
 			var req = this.req;
