@@ -27,6 +27,9 @@ SELECT.systemProductsSelect{
 	margin-right:10px;
 }
 
+.printableEstimate .comboListBox{
+	display:none;
+}
 
 /* quotes (first define styles for printable popup, then for main page) */
 .quoteBasicLine{

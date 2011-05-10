@@ -378,7 +378,7 @@ function printQuote(){
 	var ref = window.open('', 'printQuotePopup', 'height=500px, width=800px,left=10px,top=10px');
 	ref.document.open();
 	ref.document.write( "<link rel='stylesheet' type='text/css' href='app/styles/estimates.css'>" );
-	ref.document.write( content );
+	ref.document.write( "<div class='printableEstimate'>" + content + '</div>' );
 	ref.document.write( "<script type='text/javascript'>self.print();</script>" );
 	ref.document.close();
 	ref.blur();
