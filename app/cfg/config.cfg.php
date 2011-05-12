@@ -37,7 +37,7 @@
 	define('DEFAULT_PAGE', 'home');
 	define('DEFAULT_PAGE_ATTS', serialize(array()));
 	define('PAGE_CONTENT_BOX', 'main_box');
-//	define('SKIN', NULL, true);
+	define('SKIN', NULL, true);
 	
 	# Chat
 	define('CHAT_ADDRESS', 'http://www.ingetec.com.uy/chat', true);
