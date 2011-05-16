@@ -61,6 +61,13 @@
 					'user'		=> '',
 					'seller'	=> array('name' =>'Vendedor', 'aliasOf' => '$name $lastName'),
 				),
+				'dynamic' => array(
+					'products'	=> 'Productos (distintos)',
+					'unities'	=> 'Productos (unidades)',
+					'cost'		=> 'Costo Total',
+					'price'		=> 'Presupuestado',
+					'utility'	=> 'Utilidad',
+				),
 			);
 			foreach( $data as $k => &$v ) foreach( $v as $field => &$atts ){
 				if( !is_array($atts) ) $atts = array('name' => $atts);
@@ -77,8 +84,8 @@
 				case 'list':
 					return array('created', 'name', 'customer', 'sellerName', 'estimates');
 				case 'view':
-					return array('created', 'name', 'customer', 'sellerName', 'estimates', '>',
-						'number', 'customer', 'legal_name', 'rut', 'phone', 'email', 'address');
+					return array('name', 'sellerName', 'created', 'estimates', 'products', 'unities', 'cost', 'price', 'utility', '>',
+						'customer', 'number', 'customer', 'legal_name', 'rut', 'phone', 'email', 'address');
 				case 'create':
 				case 'edit':
 					return array('number', 'customer', 'legal_name', 'rut', 'since', '>',
@@ -118,6 +125,24 @@
 				$arr[] = "<a href='javascript:void(0);' onclick=\"getPage('estimatesInfo', ['{$k}'])\">{$v}</a>";
 			}
 			$data['estimates'] = isset($arr) ? join('<br />', $arr) : '(ninguno)';
+			
+			# Add statistics as fields
+			$sql = "SELECT	COUNT(DISTINCT(`ed`.`id_product`)) AS 'products',
+							SUM(`ed`.`amount`) AS 'unities',
+							SUM(`p`.`cost` * `ed`.`amount`) AS 'cost',
+							SUM(`ed`.`price`) AS 'price'
+					FROM `estimates` `e`
+					LEFT JOIN `estimates_detail` `ed` USING (`id_estimate`)
+					LEFT JOIN `_products` `p` USING (`id_product`)
+					WHERE `e`.`pack` = '{$id}'";
+			$stats = $this->sqlEngine->query($sql, 'row');
+			$data['products'] = $stats['products'];
+			$data['unities'] = $stats['unities'];
+			$data['cost'] = '$'.$stats['cost'];
+			$data['price'] = '$'.$stats['price'];
+			$data['utility'] = (float)$stats['cost']
+				? number_format(($stats['price']/$stats['cost'])*100-100, 2).'%'
+				: '--';
 			
 			return $data;
 			

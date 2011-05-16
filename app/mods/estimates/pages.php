@@ -18,16 +18,16 @@
 	}
 
 	function page_estimates_packInfo( $id ){
-	
+		
 		return oSnippet()->addSnippet('viewItem', 'estimates_pack', array('filters' => $id));
 	
 	}
 
 
 
-/* Serves to generate both estimates and quotes lists
- * depending on $onlyQuotes parameter
-**/
+/** Serves to generate both estimates and quotes lists
+ * depending on $modifier
+ */
 	function page_estimates( $modifier='estimates' ){
 	
 		return oLists()->printList('estimates', $modifier);
