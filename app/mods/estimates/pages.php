@@ -7,10 +7,20 @@
  * Licence: GNU GENERAL PUBLIC LICENSE <http://www.gnu.org/licenses/gpl.txt>
  */
 
-	function page_corpEstimates(){
+	function page_estimates_pack( $modifier=NULL ){
 	
-		return oSnippet()->addSnippet('complexList', 'corpEstimates');
+		return oSnippet()->addSnippet('commonList', 'estimates_pack', $modifier);
+	
+//		return oSnippet()->addSnippet('complexList', 'corpEstimates');
 		
+		
+		
+	}
+
+	function page_estimates_packInfo( $id ){
+	
+		return oSnippet()->addSnippet('viewItem', 'estimates_pack', array('filters' => $id));
+	
 	}
 
 
