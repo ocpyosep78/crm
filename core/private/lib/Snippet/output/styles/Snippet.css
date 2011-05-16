@@ -54,7 +54,8 @@
 .embeddedView .infoData{ background:none; border:none; }
 .embeddedView .infoData > SPAN{ display:none; }
 .embeddedView .infoData > DIV{ margin:0px 10px; }
-.embeddedView .infoData > DIV > TABLE{ margin:10px 30px; }
+.embeddedView .infoData > DIV > TABLE{ margin:10px 20px; }
+.embeddedView .infoData > DIV > TABLE TD{ max-width:180px; }
 .viewItemEditable{ position:relative; overflow:visible; cursor:pointer; }
 .viewItemEditable > INPUT{ position:absolute; top:-2px; left:-2px; right:38px; height:100%; }
 .viewItemEditable > IMG{ float:right; height:16px; width:16px; margin-left:3px; cursor:pointer; }
