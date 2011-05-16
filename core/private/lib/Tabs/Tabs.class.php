@@ -162,7 +162,8 @@
 			if( !is_file($path=MODS_PATH.$this->module.'/tabs.php') ) return false;
 			else $tabs = require_once( $path );
 			
-			return $tabs;
+			# $tabs === 1 means file was included but returned nothing
+			return is_array($tabs) ? $tabs : false;
 			
 		}
 		
