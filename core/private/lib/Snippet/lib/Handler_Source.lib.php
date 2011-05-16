@@ -2,7 +2,7 @@
 	
 	class Snippets_Handler_Source extends Snippets_Handler_Defaults{
 	
-		private $sqlEngine;
+		protected $sqlEngine;
 		
 		private $warnings;
 	
@@ -130,7 +130,9 @@
 					break;
 			}
 			
-			return $this->sqlEngine->query($sql, $format, $params);
+			return is_string($sql)
+				? $this->sqlEngine->query($sql, $format, $params)
+				: (is_array($sql) ? $sql : false);
 			
 		}
 		
