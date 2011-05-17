@@ -423,3 +423,24 @@ function ini_estimatePDF( id ){
 		};
 	});
 };
+
+function ini_createEstimates_pack(){
+	$('createEstimatesPack').addEvent('click', function(){
+		var name = $('createEstimatesPack_name').value;
+		var cust = $('createEstimatesPack_id_customer').value;
+		if( name == '' || !cust ) return alert('Debe llenar todos los campos para continuar.');
+		xajax_createEstimates_pack({name: name, id_customer: cust});
+	});
+};
+
+function ini_editEstimates_pack(){ ini_estimates_packInfo(); };
+function ini_estimates_packInfo(){
+	$('addEstimate').addEvent('click', function(){
+		var pack = $('estimates_pack_tools_add').getAttribute('FOR');
+		var estimate = $('estimates_pack_tools_add').value;
+		if( estimate ) xajax_addEstimate2Pack( {pack: pack, id_estimate: estimate} );
+	});
+	$('createEstimate').addEvent('click', function(){
+		getPage('createEstimates');
+	});
+};

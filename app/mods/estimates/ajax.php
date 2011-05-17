@@ -16,6 +16,8 @@
 		'printQuote',
 		'addEntryToPlan',
 		'removeEntryFromPlan',
+		'createEstimates_pack',
+		'addEstimate2Pack',
 	);
 
 	function saveEstimate($data, $products, $id=NULL){
@@ -129,6 +131,28 @@
 		if( !$ans->error ) return oNav()->reloadPage();
 		else return oXajaxResp();
 		
+	}
+	
+	function createEstimates_pack( $data ){
+	
+		$data['created'] = date('Y-m-d H:i:s');
+	
+		$ans = oSQL()->insert($data, 'estimates_pack');
+		
+		return $ans->error
+			? showStatus('Ocurrió un error al intentar crear este elemento.')
+			: oNav()->getPage('estimates_packInfo', (array)$ans->ID);
+	
+	}
+	
+	function addEstimate2Pack( $data ){
+	
+		$ans = oSQL()->update($data, 'estimates', array('id_estimate'));
+		
+		return $ans->error
+			? showStatus('Ocurrió un error al intentar agregar el presupuesto.')
+			: oNav()->reloadPage();
+	
 	}
 
 ?>

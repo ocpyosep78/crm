@@ -7,6 +7,12 @@
  * Licence: GNU GENERAL PUBLIC LICENSE <http://www.gnu.org/licenses/gpl.txt>
  */
 
+	function page_createEstimates_pack( $modifier=NULL ){
+	
+		oSmarty()->assign('customers', oLists()->customers());
+		
+	}
+
 	function page_estimates_pack( $modifier=NULL ){
 	
 		return oSnippet()->addSnippet('commonList', 'estimates_pack', $modifier);
@@ -17,7 +23,17 @@
 		
 	}
 
+	function page_editEstimates_pack( $id ){
+	
+		page_estimates_packInfo( $id );
+		
+		return oNav()->updateContent('estimates/estimates_packInfo.tpl');
+		
+	}
+
 	function page_estimates_packInfo( $id ){
+	
+		oSmarty()->assign('id', $id);
 		
 		$info = oSnippet()->getSnippet('viewItem', 'estimates_pack', array('filters' => $id));
 		oSmarty()->assign('info', $info);
@@ -29,6 +45,9 @@
 				: '--';
 		}
 		oSmarty()->assign('data', $data);
+		
+		$left = oSQL()->estimatesLeft( $id );
+		oSmarty()->assign('left', $left);
 	
 	}
 

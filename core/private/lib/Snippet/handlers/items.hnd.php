@@ -25,7 +25,7 @@
 			$this->assign('blocks', $blocks);
 			$this->assign('objectID', $this->params['filters']);
 			$this->assign('editable', $this->Access->can('edit', $this->code));
-		
+			
 			return $this->fetch( 'items/view' );
 		
 		}

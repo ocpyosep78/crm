@@ -84,8 +84,8 @@
 				case 'list':
 					return array('created', 'name', 'customer', 'sellerName', 'estimates');
 				case 'view':
-					return array('name', 'sellerName', 'created', 'estimates', 'products', 'unities', 'cost', 'price', 'utility', '>',
-						'customer', 'number', 'customer', 'legal_name', 'rut', 'phone', 'email', 'address');
+					return array('name', 'created', 'estimates', 'products', 'unities', 'cost', 'price', 'utility', '>',
+						'customer', 'number', 'sellerName', 'customer', 'legal_name', 'rut', 'phone', 'email', 'address');
 				case 'create':
 				case 'edit':
 					return array('number', 'customer', 'legal_name', 'rut', 'since', '>',
@@ -114,6 +114,8 @@
 					ORDER BY `ep`.`created`";
 			$data = $this->sqlEngine->query($sql, 'row');
 			
+			if( empty($data) ) return array();
+			
 			# Attach links to each member
 			$sql = "SELECT	`e`.`id_estimate`,
 							`e`.`estimate`
@@ -138,8 +140,8 @@
 			$stats = $this->sqlEngine->query($sql, 'row');
 			$data['products'] = $stats['products'];
 			$data['unities'] = $stats['unities'];
-			$data['cost'] = '$'.$stats['cost'];
-			$data['price'] = '$'.$stats['price'];
+			$data['cost'] = $stats['cost'] ? '$'.$stats['cost'] : '';
+			$data['price'] = $stats['price'] ? '$'.$stats['price'] : '';
 			$data['utility'] = (float)$stats['cost']
 				? number_format(($stats['price']/$stats['cost'])*100-100, 2).'%'
 				: '--';

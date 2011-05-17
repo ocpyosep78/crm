@@ -237,6 +237,19 @@
 					WHERE `id_plan` = '{$id}'";
 			return $this->modify( $sql );
 		}
+		
+		/**
+		 * Estimates available to be added to a given pack
+		 */
+		public function estimatesLeft( $pack ){
+			$sql = "SELECT	`e`.`id_estimate`,
+							`e`.`estimate`
+					FROM `estimates_pack` `ep`
+					LEFT JOIN `estimates` `e` USING (`id_customer`)
+					WHERE ISNULL(`e`.`pack`)
+					AND `ep`.`id_estimates_pack` = '{$pack}'";
+			return $this->query($sql, 'col');
+		}
 
 		/****************************************
 		***** T E C H N I C A L
