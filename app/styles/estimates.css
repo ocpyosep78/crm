@@ -304,3 +304,39 @@ SELECT.systemProductsSelect{
 #estimatePDF_print{
 	visibility:hidden;
 }
+
+
+/**
+ * Estimates Pack
+ */
+.estimates_pack_detail{
+	margin-bottom:30px;
+	border:solid 1px #000000;
+	background:#ffffff;
+	overflow:auto;
+}
+.estimates_pack_detail > TABLE{
+	width:100%;
+}
+.estimates_pack_detail > TABLE TH, .estimates_pack_detail > TABLE TD{
+	border:solid 1px #f0f0ff;
+}
+.estimates_pack_detail TH.fields{
+	width:20px;
+	padding:0px 5px;
+	text-align:right;
+}
+.estimates_pack_detail TH > SPAN{
+	border-bottom:solid 1px #c0c0c0;
+	color:#0000e0;
+	font-weight:normal;
+	cursor:pointer;
+}
+.estimates_pack_detail TD{
+	padding:3px;
+	border-left:solid 1px #c0c0c0 !important;
+}
+.redNumbers{
+	color:#e00000;
+	font-weight:bold;
+}

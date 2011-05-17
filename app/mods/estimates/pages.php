@@ -19,7 +19,16 @@
 
 	function page_estimates_packInfo( $id ){
 		
-		return oSnippet()->addSnippet('viewItem', 'estimates_pack', array('filters' => $id));
+		$info = oSnippet()->getSnippet('viewItem', 'estimates_pack', array('filters' => $id));
+		oSmarty()->assign('info', $info);
+		
+		$data = oSQL()->getEstimatesDetail( array('pack' => array($id, '=')) );
+		foreach( $data as &$v ){
+			$v['utility'] = (float)$v['cost']
+				? number_format(($v['price']/$v['cost'])*100-100, 2)
+				: '--';
+		}
+		oSmarty()->assign('data', $data);
 	
 	}
 

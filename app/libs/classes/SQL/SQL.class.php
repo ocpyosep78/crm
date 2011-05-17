@@ -159,6 +159,20 @@
 			return $this->query($sql, 'row');
 		}
 		
+		public function getEstimatesDetail( $filters=array() ){
+			$sql = "SELECT	`e`.`id_estimate`,
+							`e`.`estimate` AS 'name',
+							SUM(`p`.`cost`*`ed`.`amount`) AS 'cost',
+							SUM(`ed`.`price`) AS 'price'
+					FROM `estimates` `e`
+					LEFT JOIN `estimates_detail` `ed` USING (`id_estimate`)
+					LEFT JOIN `_products` `p` USING (`id_product`)
+					WHERE {$this->array2filter($filters)}
+					GROUP BY `e`.`id_estimate`
+					ORDER BY `e`.`estimate`";
+			return $this->query($sql, 'named', 'id_estimate');
+		}
+		
 		public function getEstimateDetail( $id ){
 			$sql = "SELECT	`d`.`id_product` AS 'id',
 							`pc`.`type`,
