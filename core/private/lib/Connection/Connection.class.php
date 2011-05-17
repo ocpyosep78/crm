@@ -411,7 +411,12 @@ EOF;
 			$compareTpl = isset($cmpStr[$compare]) ? $cmpStr[$compare] : $cmpStr['='];
 			# Process filters to build the SQL filter string, and return it
 			foreach( $arr as $k => $v ){
-				if( $k[0] == '*' ) $cond[] = $v;
+				if($v === NULL || (is_string($v) && strtolower($v) === 'null')){
+					$cond[] = "ISNULL(`{$k}`)";
+				}
+				elseif( $k[0] == '*' ){
+					$cond[] = $v;
+				}
 				elseif( is_array($v) ){
 				# When filter values are arrays, second key's meant to override $compare
 					$cmp = isset($v[1])
