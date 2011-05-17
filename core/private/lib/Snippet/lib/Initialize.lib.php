@@ -164,10 +164,10 @@ test( array('snippet' => $snippet, 'code' => $this->code) + $this->params );
 		
 			if( preg_match('/snp_(.+)/', $snippet, $match) ){
 				$this->params['group_uID'] = NULL;
-				$this->getSingleSnippet( $match[1] );
+				return $this->getSingleSnippet( $match[1] );
 			}
 			else{
-				$this->getComposedSnippet( $snippet );
+				return $this->getComposedSnippet( $snippet );
 			}
 			
 		}
