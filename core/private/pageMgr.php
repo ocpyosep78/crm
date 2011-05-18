@@ -104,9 +104,6 @@
 	# Add logout button to navigation bar
 	oPageCfg()->add_navButtons('logout', false, 'Cerrar sesión');
 	
-	# Add menu items common to all modules
-	oPageCfg()->add_menuItems('CRM', 'Cerrar sesión', 'logout', false);
-	
 	# Display menu (it's hidden when no session -not the case, since we're here)
 	showMenu();
 
