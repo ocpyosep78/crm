@@ -360,7 +360,7 @@
 				? "	WHERE `e`.`id_event` = '{$id}'"
 				: "	WHERE `e`.`ini` BETWEEN '{$range['ini']}' AND DATE_ADD('{$range['end']}', INTERVAL 1 DAY)";
 			$sql .= "
-					AND {$this->array2filter($filters, 'AND', 'equals')}
+					AND {$this->array2filter($filters, 'AND', '=')}
 					AND {$usersFilter}
 					ORDER BY `e`.`ini`";
 			return $this->query($sql, $id === NULL ? 'array' : 'row');
