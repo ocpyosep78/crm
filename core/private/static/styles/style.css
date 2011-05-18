@@ -623,6 +623,7 @@ IMG.agenda_eventType{ float:right; height:30px; width:30px; margin:3px; }
 #eventInfoSubTitle{ padding:0px 10px 20px 10px; margin-left:20px; font-size:28px; font-weight:bold; color:#000; }
 #eventInfoTbl{ margin:10px; empty-cells:show; }
 #eventInfoTbl TH{ text-align:right; width:120px; border-bottom:dotted 1px #e0e0e0; }
+.eventCustomer{ color:#603000; font-weight:bold; cursor:pointer; }
 .eventInfo_Creator{ float:left; }
 .agenda_customer{ color:#600000; font-size:13px; text-transform:lowercase; font-variant:small-caps; }
 .agenda_targetUser{ font-size:11px; color:#000000; }

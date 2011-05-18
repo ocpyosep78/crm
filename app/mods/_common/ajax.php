@@ -49,7 +49,8 @@
 		
 		$event = oSQL()->getEventsInfo( $id );
 		$event['type'] = $types[$event['type']];
-		$event['target'] = $event['target'] ? $users[$event['target']] : '';
+		$event['user'] = $event['target'];
+		$event['target'] = $event['user'] ? $users[$event['user']] : '';
 		$event['event'] = nl2br( $event['event'] );
 		
 		oSmarty()->assign('event', $event );

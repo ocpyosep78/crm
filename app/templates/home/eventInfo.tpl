@@ -24,14 +24,14 @@
 		</td>
 	<tr>
 		<th>Vinculado a Cliente</th>
-		{if $event.customer}
-		  <td style='color:#603000; font-weight:bold;'>{$event.customer}</td>
+		{if $event.id_customer}
+		  <td class='link2model' onclick="getPage('customersInfo', ['{$event.id_customer}']);">{$event.customer}</td>
 		{else}<td class='agenda_noInfo'>(ninguno)</td>{/if}
 	</tr>
 	<tr>
 		<th>Asignado a Usuario</th>
 		{if $event.target}
-		  <td style='color:#603000; font-weight:bold;'>{$event.target}</td>
+		  <td class='link2model' onclick="getPage('usersInfo', ['{$event.user}']);">{$event.target}</td>
 		{else}<td class='agenda_noInfo'>(ninguno)</td>{/if}
 	</tr>
 	<tr>
