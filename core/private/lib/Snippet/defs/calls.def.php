@@ -39,6 +39,7 @@
 			$tables = array(
 				'_calls' => array(
 					'id_call'		=> array('name' => 'ID', 'isKey' => true),
+					'type'			=> array('name' => 'Tipo', 'type' => 'list', 'listSrc' => 'activity_types'),
 					'caller'		=> array('name' => 'Quién llama'),
 					'date'			=> array('name' => 'Fecha / Hora', 'type' => 'datetime'),
 					'detail'		=> array('name' => 'Motivo / Descripción', 'type' => 'area'),
@@ -52,6 +53,9 @@
 					'user'		=> array('name' =>'Usuario asignado', 'type' => 'list'),
 					'assigned'	=> array('name' =>'Usuario asignado', 'aliasOf' => '$name $lastName'),
 				),
+				'types' => array(
+					'typeLabel' => array('name' => 'Tipo', 'frozen' => true),
+				),
 			);
 			
 			foreach( $tables as &$table ) foreach( $table as &$atts ) $atts['frozen'] = true;
@@ -64,12 +68,12 @@
 		
 			switch( $type ){
 				case 'list':
-					return array('date', 'detail', 'caller', 'customer', 'assigned');
+					return array('date', 'detail', 'caller', 'customer', 'assigned', 'type');
 				case 'view':
-					return array('date', 'detail', 'caller', 'customer', 'assigned');
+					return array('date', 'detail', 'caller', 'customer', 'assigned', 'typeLabel');
 				case 'create':
 				case 'edit':
-					return array('date', 'detail', 'caller', 'id_customer', 'user');
+					return array('date', 'detail', 'caller', 'id_customer', 'user', 'type');
 			}
 		
 		}
@@ -114,64 +118,74 @@
 
 /* TEMP : All these methods below should be automatically created based on the definition */
 		
-private function globalFilters( &$filters ){
-
-	$srch = $filters['*'];
-	$filters = array();
-	
-	$fields = array_diff($this->getFieldsFor('view'), (array)'>');
-	
-	foreach( $fields as $field ) $filters["`{$field}`"] = $srch;
-	
-}
+		private function globalFilters( &$filters ){
 		
-protected function getListData($filters=array(), $join='AND'){
-	if( isset($filters['*']) ){
-		$this->globalFilters( $filters );
-		$join = 'OR';
-	}
-	$this->fixFilters(&$filters, array(
-		'assigned'	=> "CONCAT(`u`.`name`,' ', `u`.`lastName`)",
-//		'email'			=> '`c`.`email`',
-	));
-	
-	$sql = "SELECT	`c`.`customer`,
-					CONCAT(`u`.`name`,' ', `u`.`lastName`) AS 'assigned',
-					`ll`.*,
-					CONCAT(`ll`.`date`, ' - ', `caller`,
-						IF(ISNULL(`ll`.`id_customer`), '',
-						CONCAT(' (', `c`.`customer`, ')'))) AS 'tipToolText'
-			FROM `_calls` `ll`
-			LEFT JOIN `_users` `u` USING (`user`)
-			LEFT JOIN `customers` `c` USING (`id_customer`)
-			WHERE {$this->array2filter($filters, $join)}
-			ORDER BY `ll`.`date`";
+			$srch = $filters['*'];
+			$filters = array();
 			
-	return $sql;
-	
-}
-protected function getItemData( $id ){
-	return $this->getListData( array('id_call' => array($id, '=')) );
-}
-private function getFilterFromModifier(){
-	switch( $this->params['modifier'] ){
-		case 'customers': return 'NOT ISNULL(`since`)';
-		case 'potential': return 'ISNULL(`since`)';
-	}
-	return '1';		# No filter for status (show all customers)
-}
-protected function getComboListData( $filters=array() ){
-	return "SELECT	`id_customer`,
-					`customer`
-			FROM `customers`
-			WHERE {$this->getFilterFromModifier()}
-			ORDER BY `customer`";
-}
+			$fields = array_diff($this->getFieldsFor('view'), (array)'>');
+			
+			foreach( $fields as $field ) $filters["`{$field}`"] = $srch;
+			
+		}
+				
+		protected function getListData($filters=array(), $join='AND'){
+			if( isset($filters['*']) ){
+				$this->globalFilters( $filters );
+				$join = 'OR';
+			}
+			$this->fixFilters(&$filters, array(
+				'assigned'	=> "CONCAT(`u`.`name`,' ', `u`.`lastName`)",
+		//		'email'			=> '`c`.`email`',
+			));
+			
+			$sql = "SELECT	`c`.`customer`,
+							CONCAT(`u`.`name`,' ', `u`.`lastName`) AS 'assigned',
+							`ll`.*,
+							CONCAT(`ll`.`date`, ' - ', `caller`,
+								IF(ISNULL(`ll`.`id_customer`), '',
+								CONCAT(' (', `c`.`customer`, ')'))) AS 'tipToolText',
+							IF(`ll`.`type` = 'technical', 'Técnica', 'Ventas') AS 'typeLabel'
+					FROM `_calls` `ll`
+					LEFT JOIN `_users` `u` USING (`user`)
+					LEFT JOIN `customers` `c` USING (`id_customer`)
+					WHERE {$this->array2filter($filters, $join)}
+					ORDER BY `ll`.`date`";
+					
+			return $sql;
+			
+		}
+		protected function getItemData( $id ){
+			return $this->getListData( array('id_call' => array($id, '=')) );
+		}
+		private function getFilterFromModifier(){
+			switch( $this->params['modifier'] ){
+				case 'customers': return 'NOT ISNULL(`since`)';
+				case 'potential': return 'ISNULL(`since`)';
+			}
+			return '1';		# No filter for status (show all customers)
+		}
 
 		protected function listForFieldUser(){
 			return "SELECT	`user`,
 							CONCAT(`name`, ' ', `lastName`)
 					FROM `_users`";
+		}
+		
+		public function onSuccess($input, $id){
+
+			$data = $input;
+			unset($data['caller'], $data['detail'], $data['id_call']);
+			
+			$data['by'] = getSes('user');
+			$data['note'] = "(Llamada de {$input['caller']}) {$input['detail']}";
+			$ans = $this->sqlEngine->insert($data, '_notes');
+			
+			if( !$input['type'] || !$ans->ID ) return;
+			
+			$data = array('model' => 'notes', 'uid' => $ans->ID);
+			$this->sqlEngine->insert($data, 'activity');
+			
 		}
 		
 	}
