@@ -6,3 +6,23 @@
 	-moz-box-shadow:#a0a0a0 6px 6px 6px;
 	-webkit-box-shadow:#a0a0a0 6px 6px 6px;
 }
+
+.activity_item{
+	margin:10px;
+	padding:2px 4px;
+	opacity:0.8;
+	filter:alpha(opacity=80);
+}
+.activity_item:hover{
+	background:#cccce5;
+	opacity:1;
+	filter:alpha(opacity=100);
+}
+.activity_item > DIV{
+	margin:3px 0px;
+}
+.closeActivityEntry{
+	float:right;
+	color:#000090;
+	cursor:pointer;
+}

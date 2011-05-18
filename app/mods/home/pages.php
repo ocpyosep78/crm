@@ -175,7 +175,7 @@
 	}
 
 	function page_agendaDay( $date=NULL ){
-	
+		
 		if( !$date ) return oNav()->abortFrame('Faltan datos requeridos para cargar la página.');
 	
 		# Basic structure of data to be passed
@@ -205,14 +205,34 @@
 	function page_createCalls(){
 	
 		return oSnippet()->addSnippet('createItem', 'calls');
-	
-		return page_editCalls();		/* We just 'edit' an empty call */
 		
 	}
 	
 	function page_editCalls( $id ){
 	
 		return oSnippet()->addSnippet('editItem', 'calls', array('filters' => $id));
+		
+	}
+	
+	function page_activity_technical(){
+	
+		getActivity( 'technical' );
+		
+	}
+	
+	function page_activity_sales(){
+	
+		getActivity( 'sales' );
+		
+	}
+	
+	function getActivity( $type ){
+	
+		require_once(CLASSES_PATH.'/Activity/Activity.class.php');
+		$activity = new Activity;
+		
+		oSmarty()->assign('events', $activity->events($type));
+		oSmarty()->assign('notes', $activity->notes($type));
 		
 	}
 	

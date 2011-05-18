@@ -12,6 +12,7 @@
 	return array(
 		'editAcc',
 		'createEvent',
+		'closeActivityEntry',
 	);
 	
 	function editAcc( $atts ){
@@ -111,11 +112,26 @@
 		
 		if( $ans->error ) return showStatus( $ans->msg );
 		else{
+			$key = $id ? $id : $ans->ID;
 			$event = $id ? 'agendaEventEdited' : 'agendaEventCreated';
 			$cutMsg = substr($data['event'], 0, 40).((strlen($data['event']) > 30) ? '...' : '');
-			saveLog($event, ($id ? $id : $ans->ID), $cutMsg);
+			saveLog($event, $key, $cutMsg);
+			# Save activity record for technical and sales
+			$technical = array('install', 'laststeps', 'remote', 'service', 'technical');
+			$sales = array('incomes', 'delivery', 'invoice', 'travel', 'estimate', 'sales');
+			if(in_array($data['type'], $technical) || in_array($data['type'], $sales)){
+				oSQL()->insert(array('model' => 'events', 'uid' => $key), 'activity');
+			}
 			return oNav()->getPage('agenda', array($data['ini']), $ans->msg, 1);
 		}
+		
+	}
+	
+	function closeActivityEntry( $id ){
+		
+		oSQL()->delete('activity', array('id' => $id));
+		
+		return oNav()->reloadPage();
 		
 	}
 

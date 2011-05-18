@@ -70,3 +70,14 @@ function ini_agendaDay(){
 		evt.addEvent('click', function(){ xajax_eventInfo( $(this).getElement('INPUT').value ); });
 	});
 };
+
+function ini_activity_technical(){ ini_activity(); };
+function ini_activity_sales(){ ini_activity(); };
+function ini_activity(){
+	$$('.closeActivityEntry').forEach(function(btn){
+		var id = btn.getAttribute('FOR');
+		if( id ) btn.addEvent('click', function(){
+			xajax_closeActivityEntry( id );
+		});
+	});
+};
