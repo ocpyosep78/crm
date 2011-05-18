@@ -7,7 +7,7 @@
 	  <div class='closeActivityEntry' for='{$event.activity_entry}'>[ marcar como resuelto ]</div>
 	</div>
 	{if $event.id_customer}
-	  <div><strong>Cliente</strong>: <span class='link2model' for='customers|{$event.id_customer}'>{$event.customer}</span></div>
+	  <div><strong>Cliente</strong>: <span class='link2model' for='customersInfo|{$event.id_customer}'>{$event.customer}</span></div>
 	{/if}
 	<strong>Mensaje</strong>: {$event.event}
 	<div class='linkLike' onclick="xajax_eventInfo('{$event.uid}');">Ver evento</div>
@@ -27,7 +27,7 @@
 	  <div class='closeActivityEntry' for='{$note.activity_entry}'>[ marcar como resuelto ]</div>
 	</div>
 	{if $note.id_customer}
-	  <div><strong>Cliente</strong>: <span class='link2model' for='customers|{$note.id_customer}'>{$note.customer}</span></div>
+	  <div><strong>Cliente</strong>: <span class='link2model' for='customersInfo|{$note.id_customer}'>{$note.customer}</span></div>
 	{/if}
 	<strong>Mensaje</strong>: {$note.note}
   </div>
