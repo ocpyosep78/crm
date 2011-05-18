@@ -14,6 +14,8 @@
 		protected function checkFilter()			{}
 		protected function checkData()				{}
 		
+		public function onSuccess()					{}
+		
 	}
 
 ?>

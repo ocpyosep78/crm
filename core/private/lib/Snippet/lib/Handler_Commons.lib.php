@@ -18,7 +18,7 @@
  */
 
 /**
- * abstract class Snippets_Handlers_Commons
+ * abstract class Snippets_Handler_Commons
  * 
  * @overview: This class ties together a particular Handler class (descending
  *            from this one) with the information provided by a definition file
@@ -42,7 +42,7 @@
  */
 	
 
-	abstract class Snippets_Handlers_Commons{
+	abstract class Snippets_Handler_Commons{
 	
 		protected $snippet;
 		

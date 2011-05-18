@@ -1,6 +1,6 @@
 <?php
 
-	class Snippet_hnd_items extends Snippets_Handlers_Commons{
+	class Snippet_hnd_items extends Snippets_Handler_Commons{
 	
 		protected function handle_viewItem(){
 		

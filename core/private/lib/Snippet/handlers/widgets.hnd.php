@@ -1,6 +1,6 @@
 <?php
 
-	class Snippet_hnd_widgets extends Snippets_Handlers_Commons{
+	class Snippet_hnd_widgets extends Snippets_Handler_Commons{
 	
 		protected function handle_bigTools(){
 		

@@ -1,6 +1,6 @@
 <?php
 
-	class Snippet_hnd_lists extends Snippets_Handlers_Commons{
+	class Snippet_hnd_lists extends Snippets_Handler_Commons{
 		
 		/**
 		 * @overview: commonList at first just prints the frame in which the

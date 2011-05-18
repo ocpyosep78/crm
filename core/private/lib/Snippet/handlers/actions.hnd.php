@@ -1,6 +1,6 @@
 <?php
 
-	class Snippet_hnd_actions extends Snippets_Handlers_Commons{
+	class Snippet_hnd_actions extends Snippets_Handler_Commons{
 	
 		protected function handle_editField(){
 		
@@ -56,6 +56,7 @@
 				$_POST['xajax'] = 'getPage';
 				oNav()->getPage("{$this->code}Info", (array)($keys ? $keys : $ans->ID),
 					'El elemento fue creado correctamente.', 1);
+				$this->Source->onSuccess($data, $keys);
 			}
 			
 			return '';
