@@ -158,13 +158,6 @@ private function getFilterFromModifier(){
 	}
 	return '1';		# No filter for status (show all customers)
 }
-protected function getComboListData( $filters=array() ){
-	return "SELECT	`id_customer`,
-					`customer`
-			FROM `customers`
-			WHERE {$this->getFilterFromModifier()}
-			ORDER BY `customer`";
-}
 		
 	}
 
