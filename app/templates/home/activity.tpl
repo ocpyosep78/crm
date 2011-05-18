@@ -4,7 +4,7 @@
   <div class='activity_item'>
 	<div>
 	  <strong>Fecha</strong>: <span class='link2model' for='agendaDay|{$event.ini|date_locale:'Y/m/d'}'>{$event.ini|date_locale:'Y-m-d'}</span> | <strong>Hora</strong>: {$event.ini|date_locale:'H:i'} (ingresado por <span class='link2model' for='usersInfo|{$event.creator}'>{$event.creator}</span>{if $event.target} para <span class='link2model' for='usersInfo|{$event.target}'>{$event.target}</span>{/if})
-	  <div class='closeActivityEntry' for='{$event.activity_entry}'>[ resuelto ]</div>
+	  <div class='closeActivityEntry' for='{$event.activity_entry}'>[ marcar como resuelto ]</div>
 	</div>
 	{if $event.id_customer}
 	  <div><strong>Cliente</strong>: <span class='link2model' for='customers|{$event.id_customer}'>{$event.customer}</span></div>
@@ -24,7 +24,7 @@
   <div for='{$note.uid}' class='activity_item'>
 	<div>
 	  <strong>Fecha</strong>: {$note.date|date_locale:'Y-m-d'} | <strong>Hora</strong>: {$note.date|date_locale:'H:i'} (ingresado por <span class='link2model' for='usersInfo|{$note.by}'>{$note.by}</span>{if $note.user} para <span class='link2model' for='usersInfo|{$note.user}'>{$note.user}</span>{/if})
-	  <div class='closeActivityEntry' for='{$note.activity_entry}'>[ resuelto ]</div>
+	  <div class='closeActivityEntry' for='{$note.activity_entry}'>[ marcar como resuelto ]</div>
 	</div>
 	{if $note.id_customer}
 	  <div><strong>Cliente</strong>: <span class='link2model' for='customers|{$note.id_customer}'>{$note.customer}</span></div>
