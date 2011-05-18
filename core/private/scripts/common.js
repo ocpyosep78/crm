@@ -78,6 +78,7 @@ function iniPage( name ){
 	try{
 		if(window['ini_'+name]) window['ini_'+name].apply(window['ini_'+name], IniParams.get());
 		enableComboList();
+		enableLinks2Models();
 	}catch(e){
 		if( DEVELOPER_MODE ) test( e );
 		return false;
@@ -85,6 +86,14 @@ function iniPage( name ){
 	/* Autofix browse buttons and calendar inputs */
 	fixBrowseButton( document.documentElement , 'Examinar...' , 'browse' );
 	globalApplyCalendar();
+};
+function enableLinks2Models(){
+	CONTENT.getElements('.link2model').forEach(function(lnk){
+		var atts = (lnk.getAttribute('FOR')||'|').split('|');
+		if( atts[0] ) lnk.addEvent('click', function(e){
+			getPage(e, atts[0], [atts[1]]);
+		});
+	});
 };
 
 function flagMenuItem( code ){

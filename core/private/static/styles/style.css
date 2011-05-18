@@ -411,6 +411,23 @@ HR.sep{
 	opacity:0.5;
 	filter:alpha(opacity=50);
 }
+.link2model{
+	color:#0000e0;
+	cursor:pointer;
+}
+#main_box H2{
+	margin-top:30px;
+	padding:5px;
+	color:#330000;
+	background:#cccce5;
+	opacity:0.5;
+	filter:alpha(opacity=50);
+}
+#main_box H2:hover{
+	color:#000000;
+	opacity:0.4;
+	filter:alpha(opacity=40);
+}
 
 
 /***************
@@ -585,7 +602,8 @@ table.calendar{z-index:999999999;font-family:Helvetica,Arial,sans-serif;font-siz
 .agenda_dayDate{ padding:0px 5px; font-size:11px; cursor:pointer; }
 .agenda_dayWrapper{ position:relative; height:100%; }
 .agendaHalfDays .agenda_dayWrapper{ height:45%; }
-.agenda_dayContent{ position:absolute; top:45px; bottom:2px; left:0px; right:0px; overflow:auto; }
+.agenda_dayContent{ top:45px; bottom:2px; left:0px; right:0px; }
+#agendaTbl .agenda_dayContent{ position:absolute; overflow:auto; }
 .eventUnit{ clear:both; min-height:40px; margin:1px 3px 5px 1px; padding:1px 2px; cursor:pointer; background:-webkit-gradient(linear, left top, left bottom, from(#e0f0ff), to(#d0d0ef)); background:-moz-linear-gradient(top, #e0f0ff, #d0d0ef); filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#e0f0ff', endColorstr='#d0d0ef'); -webkit-box-shadow:#606065 2px 2px 3px; -moz-box-shadow:#606065 2px 2px 3px; box-shadow:#606065 2px 2px 3px; }
 .eventUnit:hover{ background:#e0e0e0; color:#600000; }
 .agenda_eventInfo{ color:#003300; font-weight:bold !important; }
