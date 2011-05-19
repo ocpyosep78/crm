@@ -66,6 +66,7 @@
 		oLists()->hasCombo( false );
 		oLists()->setSource("notesByUser");
 		oLists()->addComboOptions('id_customer', array('' => '') + oLists()->customers());
+		oLists()->addComboOptions('type', array('' => '', 'technical' => 'Técnica', 'sales' => 'Ventas'));
 
 		oTabs()->useThisHTML( oLists()->simpleListHTML('notes', $id) );
 		
