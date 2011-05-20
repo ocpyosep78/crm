@@ -450,7 +450,7 @@
 			$this->BEGIN();		/* Start transaction, estimates require a detail to be correctly saved too */
 			$ans1 = $this->modify( $this->array2insSQL('estimates', $data) );
 			if( $ans1->error ) return $this->ROLLBACK( $ans1 );		/* Cancel transaction and return */
-			foreach( $products as $product ) $product['id_estimate'] = $ans1->ID;
+			foreach( $products as &$product ) $product['id_estimate'] = $ans1->ID;
 			$ans2 = $this->multipleInsert($products, 'estimates_detail');
 			if( $ans2->error ) return $this->ROLLBACK( $ans2 );		/* Cancel transaction and return */
 			return $this->COMMIT( $ans1 );							/* Return newly created estimate's ID */
