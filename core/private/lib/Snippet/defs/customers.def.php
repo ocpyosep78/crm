@@ -117,8 +117,10 @@ private function globalFilters( &$filters ){
 	$filters = array();
 	
 	$fields = array_diff($this->getFieldsFor('view'), (array)'>');
-	
 	foreach( $fields as $field ) $filters["`{$field}`"] = $srch;
+	
+	$filters["`cc`.`name`"] = $srch;
+	$filters["`co`.`name`"] = $srch;
 	
 }
 		
@@ -143,6 +145,8 @@ protected function getListData($filters=array(), $join='AND'){
 			FROM `customers` `c`
 			LEFT JOIN `_users` `u` ON (`u`.`user` = `c`.`seller`)
 			LEFT JOIN `_locations` `lc` USING (`id_location`)
+			JOIN `customers_contacts` `cc` USING (`id_customer`)
+			JOIN `customers_owners` `co` USING (`id_customer`)
 			WHERE ({$this->array2filter($filters, $join)})
 			AND {$this->getFilterFromModifier()}
 			ORDER BY `c`.`customer`";
