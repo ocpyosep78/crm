@@ -265,7 +265,7 @@
 			
 			# Pre-process filters if function name was defined (in static object's data)
 			if( $static['preProcess'] && function_exists($static['preProcess']) ){
-//				call_user_func_array($static['preProcess'], array(&$filter));
+				call_user_func_array($static['preProcess'], array(&$filter));
 			}
 			
 			# Get Data

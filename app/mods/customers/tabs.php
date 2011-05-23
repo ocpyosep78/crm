@@ -44,6 +44,7 @@
 		oLists()->hasCombo( false );
 		oLists()->setSource("notesByCustomer");
 		oLists()->addComboOptions('id_customer', array('' => '') + oLists()->customers());
+		oLists()->addComboOptions('type', array('' => '', 'technical' => 'Técnica', 'sales' => 'Ventas'));
 		oLists()->addComboOptions('visibility', array(getSes('user') => 'Privado', '' => 'Público'));
 		
 		# For users with permit usersNotes, we show all notes. For others, just their own.
