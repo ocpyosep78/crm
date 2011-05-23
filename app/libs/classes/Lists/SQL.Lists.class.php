@@ -366,6 +366,8 @@
 		
 		public function notesSL( $filters=array() ){
 			$sql = "SELECT	`n`.`id_note`,
+							`n`.`type`,
+							IF(`type` = 'technical', 'Técnica', 'Ventas') AS 'typeName',
 							`n`.`note`,
 							`n`.`user`,
 							`n`.`by`,
