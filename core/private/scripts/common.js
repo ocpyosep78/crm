@@ -286,9 +286,11 @@ function remOption(oCombo, sVal, sBy){		// sBy: 'index' (default), 'selected', '
 	};
 };
 function selectOption(oCombo, sVal, sBy){	// sBy: 'index' (default), 'value' or 'text'
-	for( var i=0, opt ; opt=oCombo.options[i] ; i++ ) opt.removeAttribute('selected');
+	if( !oCombo.get('multiple') ){
+		for( var i=0, opt ; opt=oCombo.options[i] ; i++ ) opt.removeAttribute('selected');
+	};
 	if( sBy && sBy != 'index' ) selectOption(oCombo, getOption(oCombo, sVal, sBy));
-	else if( sVal >= 0 && sVal < oCombo.options.length ) oCombo.selectedIndex = sVal;
+	else if( sVal >= 0 && sVal < oCombo.options.length ) oCombo.options[sVal].selected = true;
 };
 function getSelected( oCombo , sBy ){
 	if( oCombo && oCombo.options && oCombo.selectedIndex >= 0 ){

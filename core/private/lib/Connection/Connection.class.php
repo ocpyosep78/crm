@@ -162,6 +162,17 @@ EOF;
 		}
 		
 		/**
+		 * 
+		 */
+		public function select($table, $fields, $filters=array(), $type='array'){
+			$fieldsSQL = '`'.join('`, `', (array)$fields).'`';
+			$sql = "SELECT {$fieldsSQL}
+					FROM `{$table}`
+					WHERE {$this->array2filter($filters, 'AND', '=')}";
+			return $this->query($sql, $type);
+		}
+		
+		/**
 		 * Performs a call to self::modify method, for simple inserts
 		 * For more complex inserts (insert ignore, on duplicate key update, etc.)
 		 * you should write your own method (see self::array2insSQL method

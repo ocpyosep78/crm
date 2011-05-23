@@ -17,12 +17,9 @@ function ini_createEvent( id_event ){		/* Agenda */
 		};
 		xajax_createEvent(xajax.getFormValues('frmEditEvent'), id_event || 0);
 	});
-	return;		/* Desarrollar debajo para múltiples clientes asociados */
-	var addCustomer = document.createElement('INPUT');
-	addCustomer.type = 'button';
-	addCustomer.id = 'addCustomer';
-	addCustomer.value = '+';
-	$('evt_id_customer').parentNode.appendChild( addCustomer );
+	$('evt_target').addEvent('change', function(){
+		selectOption($('remind'), this.value, 'value');
+	});
 };
 
 function ini_editEvent(){		/* Agenda */

@@ -86,6 +86,10 @@
 				case 'agendaEventCreated':
 					$event = "<span class='linkLike' onclick='xajax_eventInfo({$objID})'>evento</span>";
 					$msg = "{$user} ha creado un nuevo {$event} en la Agenda: '{$extra}'";
+					$event = oSQL()->getEventsInfo($objID);
+					if($event['target'] == getSes('user') && time() - strtotime($event['created']) < 30){
+						addScript("xajax_eventInfo('{$objID}');");
+					}
 				break;
 				case 'agendaEventEdited':
 					$event = "<span class='linkLike' onclick='xajax_eventInfo({$objID})'>evento</span>";

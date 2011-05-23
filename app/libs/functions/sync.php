@@ -17,6 +17,9 @@
 		/* Check alerts */
 		seekAlerts( $params );
 		
+		/* Check reminders */
+		seekReminders( $params );
+		
 		return oXajaxResp();
 	
 	}
@@ -41,6 +44,37 @@
 		$alerts = oAlerts()->getAlerts();
 		
 		addScript('sync.process('.toJson($alerts).');');
+	
+	}
+	
+	function seekReminders( $params=array() ){
+	
+		$reminders = oSQL()->seekReminders();
+		
+		# See which reminders are still active
+		$keep = array();
+		foreach( $reminders as $reminder ){
+			# List reminders
+			if( !isset($keep[$reminder['id_reminder']]) ) $keep[$reminder['id_reminder']] = false;
+			# Inactive reminders (event already happened) are ignored and removed
+			$active = strtotime($reminder['ini']) > time();
+			# Add reminder (open event for current user)
+			if( $active && $reminder['user'] == getSes('user') ){
+				addScript("xajax_eventInfo('{$reminder['id_event']}');");
+				$filter = array('id_reminder_user' => $reminder['id_reminder_user']);
+				oSQL()->delete('reminders_users', $filter);
+			}
+			# Do not delete reminders that have other users left to remind
+			elseif( $active ) $keep[$reminder['id_reminder']] = true;
+		}
+		
+		# Remove reminders that do not have more users to remind
+		foreach( $keep as $id => $keepReminder ){
+			if( !$keepReminder ) oSQL()->delete('reminders', array('id_reminder' => $id));
+		}
+		
+		
+		
 	
 	}
 

@@ -347,7 +347,9 @@
 							`c`.`id_customer`,
 							`c`.`customer`,
 							IF(`er`.`id_event`, `er`.`comment`, '') AS 'closed',
-							IF(`er`.`id_event`, `er`.`rescheduled`, '') AS 'rescheduled'";
+							IF(`er`.`id_event`, `er`.`rescheduled`, '') AS 'rescheduled',
+							`r`.`id_reminder`,
+							`r`.`time` AS 'reminder'";
 			if( $id ) $sql .= ",
 							`er`.`user` AS 'closedBy',
 							`er`.`date` AS 'closedOn'";
@@ -355,7 +357,8 @@
 					FROM `events` `e`
 					LEFT JOIN `events_customers` `rec` USING (`id_event`)
 					LEFT JOIN `customers` `c` ON (`c`.`id_customer` = `rec`.`id_customer`)
-					LEFT JOIN `events_results` `er` ON (`er`.`id_event` = `e`.`id_event`)";
+					LEFT JOIN `events_results` `er` ON (`er`.`id_event` = `e`.`id_event`)
+					LEFT JOIN `reminders` `r` ON (`r`.`model` = 'events' AND `r`.`object` = `e`.`id_event`)";
 			$sql .= $id
 				? "	WHERE `e`.`id_event` = '{$id}'"
 				: "	WHERE `e`.`ini` BETWEEN '{$range['ini']}' AND DATE_ADD('{$range['end']}', INTERVAL 1 DAY)";
@@ -400,6 +403,19 @@
 					FROM `events_edition`
 					WHERE `id_event` = '{$id}'";
 			return $this->query($sql, 'array');
+		}
+		
+		public function seekReminders(){
+			$sql = "SELECT	`ru`.*,
+							`e`.`id_event`,
+							`e`.`ini`
+					FROM `reminders_users` `ru`
+					LEFT JOIN `reminders` `r` USING (`id_reminder`)
+					LEFT JOIN `events` `e` ON (`e`.`id_event` = `r`.`object`)
+					WHERE `r`.`model` = 'events'
+					AND DATE_ADD(NOW(), INTERVAL `r`.`time` MINUTE) > `e`.`ini`
+					ORDER BY `e`.`id_event`";
+			return $this->query($sql, 'named', 'id_reminders_users');
 		}
 		
 

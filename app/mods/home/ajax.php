@@ -67,6 +67,14 @@
 	
 		if( $id && !oPermits()->can('editEvent') ) return oPermits()->noAccessMsg();
 		
+		if( !empty($data['remind']) && !empty($data['reminder']) ){
+			$reminder = array(
+				'config' => array('model' => 'events', 'time' => $data['reminder']),
+				'users' => $data['remind']
+			);
+		}
+		unset($data['remind'], $data['reminder']);
+		
 		oValidate()->preProcessInput($data, 'evt_');
 		
 		# Check that the user has required permissions
@@ -121,6 +129,19 @@
 			$sales = array('incomes', 'delivery', 'invoice', 'travel', 'estimate', 'sales');
 			if(in_array($data['type'], $technical) || in_array($data['type'], $sales)){
 				oSQL()->insert(array('model' => 'events', 'uid' => $key), 'activity');
+			}
+			# Remove previous reminders for this event (if any)
+			oSQL()->delete('reminders', array('model' => 'events', 'object' => $key));
+			# Save reminder
+			if( !empty($reminder) ){
+				$reminder['config']['object'] = $key;
+				$ans = oSQL()->insert($reminder['config'], 'reminders');
+				if(!$ans->error && $ans->ID){
+					foreach( $reminder['users'] as $user ){
+						$row = array('id_reminder' => $ans->ID, 'user' => $user);
+						oSQL()->insert($row, 'reminders_users');
+					}
+				}
 			}
 			return oNav()->getPage('agenda', array($data['ini']), $ans->msg, 1);
 		}
