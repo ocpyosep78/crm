@@ -75,11 +75,28 @@
 			unset($event['ini'], $event['end']);
 		}
 		
+		$users = oLists()->users();
+		oSmarty()->assign('users', $users);
+		
+		# Reminders
+		$remindees = array();
+		if( $id && $event['id_reminder'] ){
+			$filter = array('id_reminder' => $event['id_reminder']);
+			$remindees = oSQL()->select('reminders_users', 'user', $filter, 'col');
+		}
+		else $event['reminder'] = $id ? 0 : 30;
+		oSmarty()->assign('reminder', $event['reminder']);
+		oSmarty()->assign('remindees', $remindees);
+		
 		# Block Datos Requeridos
 		oFormTable()->clear();
 		oFormTable()->setPrefix('evt_');
 		oFormTable()->addTitle('Parámetros del Evento');
-		oFormTable()->addInput('Fecha', array('id' => 'iniDate', 'class' => 'input calendar', 'value' => date('Y-m-d')));
+		oFormTable()->addInput('Fecha', array(
+			'id' => 'iniDate',
+			'class' => 'input calendar',
+			'value' => date('Y-m-d'))
+		);
 		oFormTable()->addInput('Hora Inicio', array('id' => 'iniTime'));
 		oFormTable()->addInput('Hora Fin', array('id' => 'endTime'));
 		oFormTable()->addCombo('Tipo',
@@ -97,7 +114,7 @@
 		oFormTable()->setPrefix('evt_');
 		oFormTable()->addTitle('Parámetros Opcionales');
 		oFormTable()->addCombo('Usuario Asignado',
-			array('(sin especificar)') + oLists()->users(),
+			array('(sin especificar)') + $users,
 			array('id' => 'target'));
 		oFormTable()->addCombo('Cliente relacionado',
 			array('(sin especificar)') + oLists()->customers(),
