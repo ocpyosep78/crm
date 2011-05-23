@@ -80,11 +80,11 @@
 		
 		# Reminders
 		$remindees = array();
-		if( $event['id_reminder'] ){
+		if( $id && $event['id_reminder'] ){
 			$filter = array('id_reminder' => $event['id_reminder']);
 			$remindees = oSQL()->select('reminders_users', 'user', $filter, 'col');
 		}
-		else $event['id_reminder'] = $id ? 0 : 30;
+		else $event['reminder'] = $id ? 0 : 30;
 		oSmarty()->assign('reminder', $event['reminder']);
 		oSmarty()->assign('remindees', $remindees);
 		
