@@ -6,12 +6,12 @@
   </div>
 {/if}
 
-<div id='eventInfoTitle'>{$event.ini|date_locale:'l, d \d\e F \d\e Y'}</div>
-<div id='eventInfoSubTitle'>{$event.ini|date_locale:'H:i'}{if $event.end} - {$event.end|date_locale:'H:i'}{/if}</div>
+<div class='eventInfoTitle'>{$event.ini|date_locale:'l, d \d\e F \d\e Y'}</div>
+<div class='eventInfoSubTitle'>{$event.ini|date_locale:'H:i'}{if $event.end} - {$event.end|date_locale:'H:i'}{/if}</div>
 
 <img class='eventInfo_Creator' alt='' title='{$event.creator}' src='app/images/users/{$event.creator}.png' />
    
-<table id='eventInfoTbl' cellpadding="3" cellspacing="0">
+<table class='eventInfoTbl' cellpadding="3" cellspacing="0">
 	<tr>
 		<th>Descripción</th>
 		<td style='font-style:italic; color:#000000'>{$event.event}</td>
@@ -61,7 +61,7 @@
 </table>
 
 {if $Permits->can('editEvent') && $canEditEvent}
-  <div id='editEventFromEventInfo'>
+  <div class='editEventFromEventInfo'>
    {if not $event.closed}
 	<input type='button' class='button' value='Editar Evento'
 		onclick="getPage(event, 'editEvent', ['{$event.id_event}']);" />
