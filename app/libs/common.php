@@ -202,7 +202,7 @@
 	 *	# Now $a1 is:
 	 *		array('two' => 'dos', 'one' => 'uno', 'four' => 'cuatro', 'three' => 'tres')
 	 */
-	function array_sort_keys($a1, $a2){
+	function array_sort_keys(&$a1, $a2){
 	
 		foreach( array_intersect_key($a2, $a1) as $k => $v ) $new[$k] = isset($a1[$k]) ? $a1[$k] : NULL;
 		foreach( array_diff_key($a1, $a2) as $k => $v ) $new[$k] = $v;

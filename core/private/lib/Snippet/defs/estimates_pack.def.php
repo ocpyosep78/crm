@@ -199,7 +199,7 @@ protected function getListData($filters=array(), $join='AND'){
 		$this->globalFilters( $filters );
 		$join = 'OR';
 	}
-	$this->fixFilters(&$filters, array(
+	$this->fixFilters($filters, array(
 		'sellerName'	=> "CONCAT(`u`.`name`,' ',`u`.`lastName`)",
 	));
 	$sql = "SELECT	`ep`.*,
