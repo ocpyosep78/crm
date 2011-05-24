@@ -31,6 +31,13 @@
 				return showStatus('Este usuario se encuentra actualmente bloqueado. '.
 					'Por más información consulte a un administrador.');
 			};
+			if( substr($_SERVER['REMOTE_ADDR'], 0, 3) != '192' ){
+				if( $fp=fopen('logs/remoteAccess.txt', 'a') ){
+					$log = date('d/m/Y H:i:s')." Usuario {$user} loguea desde {$_SERVER['REMOTE_ADDR']}\n\n";
+					fwrite($fp, $log);
+					fclose( $fp );
+				}
+			}
 			oSQL()->saveLastAccessDate( $user );
 			foreach( $info as $key=> $val ) regSes($key, $val);
 			doActionsAtLogin();
