@@ -442,7 +442,7 @@
 		}
 		
 		protected function fixFilters(&$filters, $fix){
-			return $this->sqlEngine->fixFilters(&$filters, $fix);
+			return $this->sqlEngine->fixFilters($filters, $fix);
 		}
 		protected function array2filter($arr, $joint='AND', $compare='LIKE'){
 			return $this->sqlEngine->array2filter($arr, $joint, $compare);

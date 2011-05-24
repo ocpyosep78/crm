@@ -134,7 +134,7 @@
 				$this->globalFilters( $filters );
 				$join = 'OR';
 			}
-			$this->fixFilters(&$filters, array(
+			$this->fixFilters($filters, array(
 				'assigned'	=> "CONCAT(`u`.`name`,' ', `u`.`lastName`)",
 		//		'email'			=> '`c`.`email`',
 			));

@@ -202,7 +202,7 @@
 			elseif( $show == 'potential' ) $statusFilter = 'AND ISNULL(`since`)';
 			else $statusFilter = '';
 			# Handle possible name conflicts and composed fields
-			$this->fixFilters(&$filters, array(
+			$this->fixFilters($filters, array(
 				'address' => '`c`.`address`',
 				'phone' => '`c`.`phone`',
 				'sellerName' => "CONCAT(`u`.`name`,' ',`u`.`lastName`)"
@@ -242,7 +242,7 @@
 
 		public function installsList( $filters=array() ){
 			# Handle possible name conflicts and composed fields
-			$this->fixFilters(&$filters, array(
+			$this->fixFilters($filters, array(
 				'date'		=> "DATE_FORMAT(`l`.`date`, '%d/%m/%Y')",
 			));
 			$sql = "SELECT	`l`.*,
@@ -266,7 +266,7 @@
 			# Modifier specifics ($type)
 			$typeCond = is_null($type) ? '1' : "`pc`.`type` = '{$type}'";
 			# Handle possible name conflicts and composed fields
-			$this->fixFilters(&$filters, array(
+			$this->fixFilters($filters, array(
 				'code' => 'pe.code',
 			));
 			$sql = "SELECT	`p`.`id_product` AS 'id',
@@ -287,7 +287,7 @@
 		public function salesList($filters=array(), $modifier=NULL){
 			$cond = isset($modifier) ? "`type` = '{$modifier}'" : '1';
 			# Handle possible name conflicts and composed fields
-			$this->fixFilters(&$filters, array(
+			$this->fixFilters($filters, array(
 				'date'		=> "DATE_FORMAT(`l`.`date`, '%d/%m/%Y')",
 			));
 			$sql = "SELECT	`l`.*,
@@ -303,7 +303,7 @@
 
 		public function techVisitsList( $filters=array() ){
 			# Handle possible name conflicts and composed fields
-			$this->fixFilters(&$filters, array(
+			$this->fixFilters($filters, array(
 				'number'	=> 'ss.number',
 				'date'		=> "DATE_FORMAT(`l`.`date`, '%d/%m/%Y')",
 			));
@@ -328,7 +328,7 @@
 		}
 		
 		public function usersList( $filters=array() ){
-			$this->fixFilters(&$filters, array(
+			$this->fixFilters($filters, array(
 				'fullName' => "CONCAT(`u`.`name`, ' ', `u`.`lastName`)",
 			));
 			$sql = "SELECT	`u`.*,
