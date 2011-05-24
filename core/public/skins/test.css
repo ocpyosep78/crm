@@ -338,7 +338,7 @@ HR.sep{
 	z-index:1300;
 }
 .modalWin{
-	display:block !important;
+	display:block;
 	position:fixed;
 	top:50%;
 	left:50%;
@@ -599,12 +599,12 @@ IMG.agenda_eventType{ float:right; height:30px; width:30px; margin:3px; }
 #agenda_move IMG:hover, #epochTrigger:hover{ opacity:0.7; filter:alpha(opacity=80); }
 #agenda_eventInfo{ display:none; padding:5px; border:solid 2px #000000; }
 #agenda_eventInfo{ top:100px; left:200px; right:200px; height:auto; margin:0px; font-size:12px; }
-#agenda_eventInfoInner{ position:relative; width:99%; height:99%; margin:0.5%; }
-#agenda_eventInfo_close{ position:absolute !important; top:5px; right:5px; height:16px; width:16px; background:url(../images/cancel.gif) no-repeat; cursor:pointer; }
-#eventInfoTitle{ padding:10px; padding-bottom:3px; margin-left:20px; font-size:14px; font-weight:bold; color:#300; }
-#eventInfoSubTitle{ padding:0px 10px 20px 10px; margin-left:20px; font-size:28px; font-weight:bold; color:#000; }
-#eventInfoTbl{ margin:10px; empty-cells:show; }
-#eventInfoTbl TH{ text-align:right; width:120px; border-bottom:dotted 1px #e0e0e0; }
+.agenda_eventInfoInner{ position:relative; width:99%; height:99%; margin:0.5%; }
+.agenda_eventInfo_close{ position:absolute !important; top:5px; right:5px; height:16px; width:16px; background:url(../images/cancel.gif) no-repeat; cursor:pointer; }
+.eventInfoTitle{ padding:10px; padding-bottom:3px; margin-left:20px; font-size:14px; font-weight:bold; color:#300; }
+.eventInfoSubTitle{ padding:0px 10px 20px 10px; margin-left:20px; font-size:28px; font-weight:bold; color:#000; }
+.eventInfoTbl{ margin:10px; empty-cells:show; }
+.eventInfoTbl TH{ text-align:right; width:120px; border-bottom:dotted 1px #e0e0e0; }
 .eventInfo_Creator{ float:left; }
 .agenda_customer{ color:#600000; font-size:13px; text-transform:lowercase; font-variant:small-caps; }
 .agenda_targetUser{ font-size:11px; color:#000000; }
@@ -614,7 +614,7 @@ IMG.agenda_eventType{ float:right; height:30px; width:30px; margin:3px; }
 #epochTrigger{ position:relative; top:-7px; height:24px; width:24px; margin:0px; padding:0px; border:none; background:url(../images/calendar.gif) no-repeat; text-indent:25px /* Hide text */ ;cursor:pointer; }
 #agendaFilters{ float:left; margin:-5px 0px 5px 7px; padding:3px 5px; border:solid 1px #000090; border-radius:4px; -moz-border-radius:4px; -webkit-border-radius:4px; background:-webkit-gradient(linear, left top, left bottom, from(#e0f0ff), to(#b0a8b8)); background:-moz-linear-gradient(top, #e0f0ff #b0a8b8); filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#e0f0ff', endColorstr='#b0a8b8'); box-shadow:#808080 3px 3px 5px; -moz-box-shadow:#808080 3px 3px 5px; -webkit-box-shadow:#808080 3px 3px 5px; }
 .eventUnit.eventinstall .agenda_eventText{ color:#c00000; }
-#editEventFromEventInfo{ clear:both; }
+.editEventFromEventInfo{ clear:both; }
 .eventClosedMsg{ text-align:center; color:#000000; margin:30px 0px 20px 0px; }
 .eventRescheduled{ background:#f0ccc0; }
 .eventInfoRescheduled{ color:#993300; font-size:18px; font-weight:bold; font-family:Arial, Helvetica, sans-serif; text-transform:uppercase; }

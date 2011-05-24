@@ -564,14 +564,15 @@ Modal = {
 	curtain: 'curtain',
 	open: function( obj ){
 		if( !$(obj) ) return;
-		for( var i=0, win ; win=this.wins[i] ; i++ ) win.removeClass('modalWin');
-		this.wins.push( $(obj).addClass('modalWin') );
+		var newObj = $(obj).clone().addClass('modalWin').set('id', '');
+		this.wins.forEach(function(win){ win.setStyle('display', 'none'); });
+		this.wins.push( newObj.inject(document.body) );
 		if( !window.IN_FRAME ) $(this.curtain).setStyle('display', 'block');
 	},
 	close: function(){
-		if( this.wins.length ) this.wins.pop().removeClass('modalWin');
+		if( this.wins.length ) this.wins.pop().destroy();
 		if( !this.wins.length ) $(this.curtain).setStyle('display', 'none');
-		else this.wins[this.wins.length - 1].addClass('modalWin');
+		else this.wins[this.wins.length - 1].setStyle('display', 'block');
 	}
 };
 
