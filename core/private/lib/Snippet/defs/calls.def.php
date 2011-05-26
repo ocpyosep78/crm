@@ -136,6 +136,7 @@
 			}
 			$this->fixFilters($filters, array(
 				'assigned'	=> "CONCAT(`u`.`name`,' ', `u`.`lastName`)",
+				'typeLabel'	=> "IF(`ll`.`type` = 'technical', 'Técnica', 'Ventas')",
 		//		'email'			=> '`c`.`email`',
 			));
 			
