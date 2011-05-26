@@ -243,13 +243,14 @@
 		
 	}
 	
-	function getActivity( $type ){
+	function page_logs(){
 	
-		require_once(CLASSES_PATH.'/Activity/Activity.class.php');
-		$activity = new Activity;
-		
-		oSmarty()->assign('events', $activity->events($type));
-		oSmarty()->assign('notes', $activity->notes($type));
+		$data = array(
+			'Acceso Remoto'				=> openLogs('remoteAccess'),
+			'Errores en Consultas SQL'	=> openLogs('logSQL'),
+			'Errores de Logueo'			=> openLogs('loggingErrors'),
+		);
+		oSmarty()->assign('data', $data);
 		
 	}
 	

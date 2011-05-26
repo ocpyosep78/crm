@@ -26,3 +26,26 @@
 	color:#000090;
 	cursor:pointer;
 }
+
+.logs > DIV{
+	margin:15px;
+	padding:10px;
+	border:solid 2px #000030;
+	border-radius:6px;
+	-moz-border-radius:6px;
+	-webkit-border-radius:6px;
+	box-shadow:#a0a0a0 6px 6px 6px;
+	-moz-box-shadow:#a0a0a0 6px 6px 6px;
+	-webkit-box-shadow:#a0a0ff 2px 1px 2px;
+	background:#e8e8ec;
+	opacity:0.7;
+	filter:alpha(opacity=70);
+}
+
+.logs > DIV H3{
+	padding:8px 10px;
+	background:#e0e0e0;
+	color:#000050;
+	opacity:0.7;
+	filter:alpha(opacity=70);
+}
