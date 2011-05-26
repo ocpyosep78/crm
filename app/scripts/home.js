@@ -71,10 +71,12 @@ function ini_agendaDay(){
 function ini_activity_technical(){ ini_activity(); };
 function ini_activity_sales(){ ini_activity(); };
 function ini_activity(){
+	var msg = "¿Está seguro que desea descartar esta entrada?\n" + 
+		"Si continúa, el elemento no volverá a aparecer en esta lista.";
 	$$('.closeActivityEntry').forEach(function(btn){
 		var id = btn.getAttribute('FOR');
 		if( id ) btn.addEvent('click', function(){
-			xajax_closeActivityEntry( id );
+			if( confirm(msg) ) xajax_closeActivityEntry( id );
 		});
 	});
 };
