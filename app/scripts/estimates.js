@@ -436,8 +436,8 @@ function ini_createEstimates_pack(){
 
 function ini_editEstimates_pack( id ){ ini_estimates_packInfo(id); };
 function ini_estimates_packInfo( id ){
-	$('addEstimate').addEvent('click', function(){
-		var pack = $('estimates_pack_tools_add').getAttribute('FOR');
+	var pack = $('estimates_pack_tools_add').getAttribute('FOR');
+	$('estimates_pack_tools_add').addEvent('change', function(){
 		var estimate = $('estimates_pack_tools_add').value;
 		if( estimate ) xajax_addEstimate2Pack( {pack: pack, id_estimate: estimate} );
 	});
