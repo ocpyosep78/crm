@@ -165,7 +165,8 @@ EOF;
 		 * 
 		 */
 		public function select($table, $fields, $filters=array(), $type='array'){
-			$fieldsSQL = '`'.join('`, `', (array)$fields).'`';
+			if( $fields === '*' || $fields === NULL ) $fieldsSQL = '*';
+			else $fieldsSQL = '`'.join('`, `', (array)$fields).'`';
 			$sql = "SELECT {$fieldsSQL}
 					FROM `{$table}`
 					WHERE {$this->array2filter($filters, 'AND', '=')}";
