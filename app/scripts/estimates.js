@@ -331,7 +331,8 @@ Object Rows: array with custom methods
 			'estimate': $('param_estimate').value,
 			'orderNumber': $('param_orderNumber').value || '',
 			'id_customer': $('param_id_customer').value || '',
-			'id_system': $('param_id_system').value || ''
+			'id_system': $('param_id_system').value || '',
+			'pack': $('hdn_pack').value || '',
 		};
 		// Ask for confirmation if table is empty
 		if( !Data.length && !confirm('La lista está vacía. ¿Desea guardarla de todos modos?') ) return;
@@ -433,14 +434,14 @@ function ini_createEstimates_pack(){
 	});
 };
 
-function ini_editEstimates_pack(){ ini_estimates_packInfo(); };
-function ini_estimates_packInfo(){
+function ini_editEstimates_pack( id ){ ini_estimates_packInfo(id); };
+function ini_estimates_packInfo( id ){
 	$('addEstimate').addEvent('click', function(){
 		var pack = $('estimates_pack_tools_add').getAttribute('FOR');
 		var estimate = $('estimates_pack_tools_add').value;
 		if( estimate ) xajax_addEstimate2Pack( {pack: pack, id_estimate: estimate} );
 	});
 	$('createEstimate').addEvent('click', function(){
-		getPage('createEstimates');
+		getPage('createEstimates', ['', id]);
 	});
 };

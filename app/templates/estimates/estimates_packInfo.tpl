@@ -4,9 +4,7 @@
 	Agregar Presupuesto a la Lista
 	<select id='estimates_pack_tools_add' for='{$id}'>
 	  <option value=''>(seleccionar)</option>
-	  {foreach from=$left key=k item=v}
-		<option value='{$k}'>{$v}</option>
-	  {/foreach}
+	  {foreach from=$left key=k item=v}<option value='{$k}'>{$v}</option>{/foreach}
 	</select>
 </div>
 

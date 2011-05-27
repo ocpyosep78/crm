@@ -18,10 +18,10 @@
 	<th>Cliente</th>
 	{if $edit}
 	  <td>
-		<select id='param_id_customer'>
+		<select id='param_id_customer'{if $pack.id_customer} disabled='disabled'{/if}>
 		  <option value=''>(seleccionar)</option>
 		  {foreach from=$data.customersList key=k item=v}<option value='{$k}'
-			{if $k == $estimate.id_customer} selected='selected'{/if}>{$v}</option>{/foreach}
+			{if $k == $estimate.id_customer || $k == $pack.id_customer} selected='selected'{/if}>{$v}</option>{/foreach}
 		</select>
 	  </td>
 	{else}
@@ -51,6 +51,7 @@
   <tr>
 	<td colspan="2">
 	  <input type='hidden' id='hdn_id_estimate' value='{$estimate.id_estimate}' />
+	  <input type='hidden' id='hdn_pack' value='{$estimate.pack}' />
 	  {if $edit}<input type='button' value='Guardar' id='btn_save' />
 	  {else}
 		{if $Permits->can('editEstimates')}
@@ -65,6 +66,9 @@
 		{if $Permits->can('estimatePDF')}
 		  <input type='button' value='Exportar (PDF)' id='btn_exportPDF' />
 		{/if}
+	  {/if}
+	  {if $estimate.pack}
+		(presupuesto miembro de: <span class='link2model' for='estimates_packInfo|{$estimate.pack}'>{$pack.name}</span>)
 	  {/if}
 	</td>
   </tr>

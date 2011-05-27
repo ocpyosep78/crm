@@ -35,6 +35,8 @@
 	
 		oSmarty()->assign('id', $id);
 		
+		oNav()->setJSParams( $id );
+		
 		$info = oSnippet()->getSnippet('viewItem', 'estimates_pack', array('filters' => $id));
 		oSmarty()->assign('info', $info);
 		
@@ -72,7 +74,9 @@
  * Reused for createEstimates and editEstimates pages depending on $id parameter
  */
 
-	function page_createEstimates( $estimate=NULL ){
+	function page_createEstimates($estimate=NULL, $packID=NULL){
+	
+		if( empty($estimate) ) $estimate = NULL;
 		
 		$id = empty($estimate['id_estimate']) ? NULL : $estimate['id_estimate'];
 		$isNew = !$id;
@@ -95,6 +99,11 @@
 		}
 		oSmarty()->assign('system', $estimate['id_system'] ? $estimate['id_system'] : $system);
 		
+		# Get pack info if estimate belongs to a pack
+		if( empty($packID) && $estimate['pack'] ) $packID = $estimate['pack'];
+		$pack = $packID ? oSQL()->select('estimates_pack', '*', array('id_estimates_pack' => $packID), 'row') : NULL;
+		oSmarty()->assign('pack', $pack);
+		
 		# Initialize estimate keys in case it comes empty
 		if( empty($estimate) ) $estimate = array(
 			'orderNumber'	=> '',
@@ -104,6 +113,7 @@
 			'customer'		=> '',
 			'id_system'		=> '',
 			'system'		=> '',
+			'pack'			=> $packID ? $packID : '',
 		);
 		oSmarty()->assign('estimate', $estimate);
 		
@@ -121,6 +131,11 @@
 		
 		/* Estimate could come prefetched (in the case of on-the-fly estimatesInfo) */
 		if( !$estimate ) $estimate = getEstimate( $id );
+		
+		# Get pack info if estimate belongs to a pack
+		$packID = $estimate['pack'];
+		$pack = $packID ? oSQL()->select('estimates_pack', '*', array('id_estimates_pack' => $packID), 'row') : NULL;
+		oSmarty()->assign('pack', $pack);
 		
 		$isQuote = isQuote( $estimate );
 		$modifier = $isQuote ? 'quotes' : 'estimates';
