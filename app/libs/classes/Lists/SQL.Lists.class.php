@@ -187,6 +187,7 @@
 			$sql = "SELECT	`user`,
 							CONCAT(`name`, ' ', `lastName`) AS 'longName'
 					FROM `_users`
+					WHERE NOT `blocked`
 					ORDER BY `longName`";
 			return $this->asHash( $sql );
 		}
