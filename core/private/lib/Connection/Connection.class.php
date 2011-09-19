@@ -67,11 +67,11 @@
 			<div style='position:absolute; top:30%; width:100%; text-align:center;'>
 				<h1 style='color:300;'>No se puede abrir la base de datos</h1>
 				
-				<p>Pulse <strong>Crear Base de Datos</strong> para generar la base de datos de la aplicación</p>
+				<p>Pulse <strong>Crear Base de Datos</strong> para generar la base de datos de la aplicaciï¿½n</p>
 				
-				<p>	Si cree que puede haber un error en la configuración, revise los archivos<br />
-					app/cfg/config.cfg.php y app/cfg/local.cfg.php, asegúrese que el valor de<br />
-					la constante CRM_DB sea el correcto y recargue la página.</p>
+				<p>	Si cree que puede haber un error en la configuraciï¿½n, revise los archivos<br />
+					app/cfg/config.cfg.php y app/cfg/local.cfg.php, asegï¿½rese que el valor de<br />
+					la constante CRM_DB sea el correcto y recargue la pï¿½gina.</p>
 				
 				<input type='button' value='Crear Base de Datos' onclick="location.href = 'createDB.php';">
 				
@@ -331,12 +331,12 @@ EOF;
 		private function clearMessages(){
 		
 			$this->messages = array(
-				'success'			=> 'Su consulta finalizó correctamente.',
-				'stdError'			=> 'Ocurrió un error desconocido al procesar su consulta. Se ha guardado un registro del error.',
-				'duplicate'			=> 'Ocurrió un error (clave duplicada). Se ha guardado un registro del error.',
-				'constraint_parent'	=> 'La base de datos ha bloqueado la modificación de este elemento (FK constraint).<br />'.
-					'Otros elementos de la base de datos dependen o derivan de él.',
-				'constraint_child'	=> 'La base de datos ha bloqueado la modificación de este elemento (FK constraint).<br />'.
+				'success'			=> 'Su consulta finalizï¿½ correctamente.',
+				'stdError'			=> 'Ocurriï¿½ un error desconocido al procesar su consulta. Se ha guardado un registro del error.',
+				'duplicate'			=> 'Ocurriï¿½ un error (clave duplicada). Se ha guardado un registro del error.',
+				'constraint_parent'	=> 'La base de datos ha bloqueado la modificaciï¿½n de este elemento (FK constraint).<br />'.
+					'Otros elementos de la base de datos dependen o derivan de ï¿½l.',
+				'constraint_child'	=> 'La base de datos ha bloqueado la modificaciï¿½n de este elemento (FK constraint).<br />'.
 					'Este elemento depende o deriva de otros elementos en la base de datos.',
 			);
 		

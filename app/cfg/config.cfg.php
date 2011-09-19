@@ -51,7 +51,7 @@
 	# Database access
 	define('CRM_HOST', 'localhost', true);
 	define('CRM_USER', 'root', true);
-	define('CRM_PASS', 'it707', true);
+	define('CRM_PASS', 'ng707', true);
 	define('CRM_DB', 'crm_ingetec', true);
 	
 	# fPDF

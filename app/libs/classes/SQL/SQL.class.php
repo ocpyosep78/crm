@@ -630,6 +630,7 @@
 ***************/
 		
 		public function deleteUsers( $user ){
+			return $this->blockUsers($user);
 			$sql = "DELETE FROM `_users`
 					WHERE `user` = '{$user}'
 					LIMIT 1";
