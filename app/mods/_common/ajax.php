@@ -55,7 +55,7 @@
 		
 		oSmarty()->assign('event', $event );
 		oSmarty()->assign('editions', oSQL()->getEventEditions($id) );
-		oSmarty()->assign('canEditEvent', canEditEvent(getSes('user'), $event['creator']));
+		oSmarty()->assign('canEditEvent', canEditEvent(getSes('user'), $event['creator'], $event['user']));
 		
 		addAssign('agenda_eventInfo', 'innerHTML', oSmarty()->fetch('home/eventInfoModal.tpl'));
 		

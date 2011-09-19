@@ -15,7 +15,7 @@
 	class Validate{
 	
 		private $Rules;				/* Object of Class Rules, to hold definition sets */
-		private $expressions;	/* List of understood regular expressions by codename */
+		private $expressions;                   /* List of understood regular expressions by codename */
 		
 		private $Tips;				/* Object holding tips for the user, for test failure */
 		private $fmtTips;			/* Keeps a list of tips for validations that fail on format */

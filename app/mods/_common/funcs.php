@@ -8,16 +8,13 @@
  */
  
 	
-	function canEditEvent($user, $creator){
+	function canEditEvent($user, $creator, $target=NULL){
 	
 		# 1. Edit own events, always granted
-		if( $user == $creator ) return true;
-	
-		# 2. Developer and admin permission always granted
-		if( getSes('id_profile') <= 2 ) return true;
+		if( $user == $creator || $user == $target ) return true;
 		
 		# 3. Groups of users who can edit eachother's events
-		$groups[] = array('mantunez', 'rdelossantos', 'gdelosheros');
+		$groups[] = array('mantunez', 'rdelossantos', 'gperdomo');
 		foreach( $groups as $group ){
 			if( in_array($user, $group) && in_array($creator, $group) ){
 				return true;
