@@ -343,6 +343,7 @@
 					JOIN `_departments` `d` USING (`id_department`)
 					WHERE {$this->array2filter($filters)}
 					AND {$this->array2filter($filters)}
+					AND NOT `blocked`
 					ORDER BY `u`.`user`";
 			return $this->asList($sql, 'user');
 		}

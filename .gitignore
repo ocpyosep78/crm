@@ -3,6 +3,7 @@
 (docs)/
 /app/images/temp/
 /batch/
+/forum/
 
 # ignore folder content
 /app/images/users/*
