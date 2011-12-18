@@ -29,3 +29,4 @@ Thumbs.db
 !/sql/crm_minimal.sql
 !.gitignore
 !README
+/log
