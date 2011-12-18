@@ -13,7 +13,16 @@
 		'tchFormSuggest',
 		'tchFormAcceptSale',
 		'createTechVisit',
+        'saveAdminTechNotes',
 	);
+
+    function saveAdminTechNotes($id, $note){
+        if(oPermits()->can('adminTechNotes')){
+            $note = addslashes($note);
+            $res = oSQL()->saveAdminTechNote($id, $note)->successCode;
+        } else $res = NULL;
+        return showStatus($res ? 'Nota guardada con éxito' : 'Ocurrió un error al guardar la nota', !!$res);
+    }
 	
 	function tchFormSuggest($key, $val){
 	
@@ -152,5 +161,3 @@
 		return oNav()->getPage('techVisitsInfo', array($data['id_sale']), $msg, 1);
 
 	}
-
-?>

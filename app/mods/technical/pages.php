@@ -72,9 +72,11 @@
 	function page_techVisitsInfo( $id ){
 	
 		oSmarty()->assign('id', $id);
+
+        if(oPermits()->can('adminTechNotes')){
+            oSmarty()->assign('adminNote', oSql()->getAdminTechNote($id));
+        }
 		
 		oNav()->setJSParams( $id );
 		
 	}
-
-?>

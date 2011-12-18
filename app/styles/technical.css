@@ -85,7 +85,10 @@
 /**
  * TECHVISITSINFO (technical visits/services)
  */
-#techVisitsInfo{ height:545px; width:620px; padding:2px; border:solid 2px #000060; background:#ffffff; text-align:center; overflow:hidden; }
+#techVisitsInfo{ float:left; height:545px; width:620px; padding:2px; border:solid 2px #000060; background:#ffffff; text-align:center; overflow:hidden; }
 #techVisitsInfo > .button{ margin:8px; }
 #techVisitsPDF{ height:580px; width:100%; border:none; }
 #techVisitsPrintPDF{ height:0px; width:0px; }
+#adminTechNotes{ float:left; padding-left:30px; }
+#adminTechNotes > h3{ text-align:right; }
+#adminTechNotes TEXTAREA{ height:200px; width:300px; padding:5px 10px; }

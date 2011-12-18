@@ -1,5 +1,4 @@
 function ini_createTechVisits( data ){
-	
 	/* Show form as soon as picture is fully loaded */
 	function showForm(){
 		clearTimeout( to );
@@ -166,4 +165,11 @@ function ini_techVisitsInfo( id ){
 	$('btn_techVisitsPrint').addEvent('click', function(){
 		window.frames.fra_techVisitsPrintPDF.print();
 	});
+    // AdminTechNotes
+    if ($('saveAdminTechNotes')){
+        $('saveAdminTechNotes').addEvent('click', function(){
+            var note = $('adminTechNotes').getElement('textarea').value;
+            xajax_saveAdminTechNotes(id, note||'');
+        })
+    }
 };

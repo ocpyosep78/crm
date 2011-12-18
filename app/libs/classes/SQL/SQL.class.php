@@ -417,6 +417,13 @@
 					ORDER BY `e`.`id_event`";
 			return $this->query($sql, 'named', 'id_reminders_users');
 		}
+
+        public function getAdminTechNote($id){
+            $sql = "SELECT `note`
+                    FROM `techvisit_notes`
+                    WHERE `id_sale` = '{$id}'";
+            return $this->query($sql, 'field');
+        }
 		
 
 /***************
@@ -519,6 +526,11 @@
 			return $this->modify( $this->array2insSQL('events_results', $data) );
 		}
 
+        public function saveAdminTechNote($id, $note){
+            $sql = "REPLACE INTO `techvisit_notes` (`id_sale`, `note`)
+                    VALUES ('{$id}', '{$note}')";
+            return $this->modify($sql);
+        }
 
 
 /****************************************
@@ -698,5 +710,3 @@
 		}
 		
 	}
-
-?>
