@@ -51,6 +51,4 @@ class Smarty_Internal_Write_File {
         umask($old_umask);
         return true;
     } 
-} 
-
-?>
+}

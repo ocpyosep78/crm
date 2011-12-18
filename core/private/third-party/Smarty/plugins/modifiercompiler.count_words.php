@@ -26,6 +26,4 @@ function smarty_modifiercompiler_count_words($params, $compiler)
     } else {
         return 'str_word_count(' . $params[0] . ')';
     } 
-} 
-
-?>
+}

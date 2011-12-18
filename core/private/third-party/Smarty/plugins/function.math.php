@@ -79,5 +79,3 @@ function smarty_function_math($params, $template)
         }
     }
 }
-
-?>

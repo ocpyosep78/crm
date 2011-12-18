@@ -50,5 +50,3 @@ return;
 	require_once( CORE_LIB.'Modules/Modules.class.php' );
 	$mod = new Modules( 'customers' );
 	$mod->readDefinition();
-
-?>

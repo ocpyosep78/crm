@@ -318,5 +318,3 @@ test( array('snippet' => $snippet, 'code' => $this->code) + $this->params );
 		}
 		
 	}
-
-?>

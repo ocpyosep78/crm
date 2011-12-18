@@ -10,5 +10,3 @@
 		'technician'	=> array('selection'),
 		'description'	=> array('text', NULL, 120),
 	);
-
-?>

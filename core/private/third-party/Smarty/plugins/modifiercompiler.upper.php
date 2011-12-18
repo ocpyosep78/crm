@@ -25,6 +25,4 @@ function smarty_modifiercompiler_upper($params, $compiler)
     } else {
         return 'strtoupper(' . $params[0] . ')';
     } 
-} 
-
-?>
+}

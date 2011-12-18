@@ -8,5 +8,3 @@
 		'warranty'		=> array('selection'),
 		'id_system'		=> array('selection'),
 	);
-
-?>

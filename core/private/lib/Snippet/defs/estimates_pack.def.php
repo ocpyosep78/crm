@@ -218,5 +218,3 @@ protected function getListData($filters=array(), $join='AND'){
 }
 		
 	}
-
-?>

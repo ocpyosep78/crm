@@ -486,5 +486,3 @@ public function newSelect($type, $filters, $constraints){
 }
 	
 	}
-
-?>

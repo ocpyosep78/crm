@@ -53,6 +53,4 @@ class Smarty_Internal_Compile_Private_Function_Plugin extends Smarty_Internal_Co
         $output = "<?php echo {$function}({$_params},\$_smarty_tpl);?>\n";
         return $output;
     } 
-} 
-
-?>
+}

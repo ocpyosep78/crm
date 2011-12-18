@@ -27,5 +27,3 @@
 	if( $modifier == 'products' ){
 //		$fields['code'] = 'Código',
 	}
-
-?>

@@ -231,6 +231,4 @@ class _smarty_linebreak extends _smarty_parsetree {
     {
         return $this->data;
     } 
-} 
-
-?>
+}

@@ -106,5 +106,3 @@
 	
 	# Display menu (it's hidden when no session -not the case, since we're here)
 	showMenu();
-
-?>

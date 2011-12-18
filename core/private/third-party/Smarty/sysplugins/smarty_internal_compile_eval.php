@@ -46,6 +46,4 @@ class Smarty_Internal_Compile_Eval extends Smarty_Internal_CompileBase {
         } 
         return "<?php $_output ?>";
     } 
-} 
-
-?>
+}

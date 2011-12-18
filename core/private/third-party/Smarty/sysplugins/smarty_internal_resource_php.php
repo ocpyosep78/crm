@@ -122,6 +122,4 @@ class Smarty_Internal_Resource_PHP {
         include($this->getTemplateFilepath($_smarty_template));
         return;
     } 
-} 
-
-?>
+}

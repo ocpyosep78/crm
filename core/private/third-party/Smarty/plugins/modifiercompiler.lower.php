@@ -26,6 +26,4 @@ function smarty_modifiercompiler_lower($params, $compiler)
     } else {
         return 'strtolower(' . $params[0] . ')';
     } 
-} 
-
-?>
+}

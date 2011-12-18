@@ -272,5 +272,3 @@ return;	/* Disabled for now */
 		}
 		
 	}
-
-?>

@@ -5,5 +5,3 @@
 		'phone'		=> array('phone', NULL, 40 ),
 		'email'		=> array('email', NULL, 60),
 	);
-
-?>

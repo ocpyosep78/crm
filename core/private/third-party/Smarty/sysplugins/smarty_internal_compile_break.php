@@ -60,6 +60,4 @@ class Smarty_Internal_Compile_Break extends Smarty_Internal_CompileBase {
         $this->compiler->has_code = true;
         return "<?php break {$_levels}?>";
     } 
-} 
-
-?>
+}

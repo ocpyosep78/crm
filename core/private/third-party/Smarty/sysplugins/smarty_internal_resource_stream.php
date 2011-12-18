@@ -94,6 +94,4 @@ class Smarty_Internal_Resource_Stream {
         // no filepath for strings
         return false;
     } 
-} 
-
-?>
+}

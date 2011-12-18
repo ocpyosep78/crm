@@ -67,6 +67,4 @@ class Smarty_Internal_SmartyTemplateCompiler extends Smarty_Internal_TemplateCom
         // return str_replace(array("? >\n<?php","? ><?php"), array('',''), $this->parser->retvalue);
         return $this->parser->retvalue;
     } 
-} 
-
-?>
+}

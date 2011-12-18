@@ -474,6 +474,4 @@ class Undefined_Smarty_Variable {
             return null;
         } 
     } 
-} 
-
-?>
+}

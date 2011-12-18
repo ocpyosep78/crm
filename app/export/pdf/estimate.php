@@ -36,5 +36,3 @@
 	$PDF->display();
 
 	require_once(EXPORT_PDF_PATH.'estimate.php');
-
-?>

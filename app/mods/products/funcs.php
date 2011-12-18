@@ -90,5 +90,3 @@
 		return oPajax()->addResponse("getPage('productsInfo', ['{$id}'], '{$ans1->msg}', 1);");
 		
 	}
-
-?>

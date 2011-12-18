@@ -28,6 +28,4 @@ function smarty_modifiercompiler_default ($params, $compiler)
         $output = '(($tmp = @' . $output . ')===null||$tmp===\'\' ? ' . $params[$i] . ' : $tmp)';
     } 
     return $output;
-} 
-
-?>
+}

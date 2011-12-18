@@ -103,6 +103,4 @@ class Smarty_Internal_Compile_Call extends Smarty_Internal_CompileBase {
         } 
         return $_output;
     } 
-} 
-
-?>
+}

@@ -297,4 +297,3 @@ class Smarty_Internal_Utility {
         return true;
     } 
 }
-?>

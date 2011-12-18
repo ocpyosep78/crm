@@ -101,6 +101,4 @@ class Smarty_Internal_Config_File_Compiler {
         } 
         throw new SmartyCompilerException($error_text);
     } 
-} 
-
-?>
+}

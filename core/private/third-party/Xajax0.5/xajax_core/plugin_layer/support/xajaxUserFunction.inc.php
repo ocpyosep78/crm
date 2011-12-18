@@ -230,4 +230,3 @@ class xajaxUserFunction
 		$objResponseManager->append(call_user_func_array($mFunction, $aArgs));
 	}
 }
-?>

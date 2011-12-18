@@ -128,4 +128,3 @@ class Smarty_Internal_Wrapper {
         trigger_error("Smarty error: $error_msg", $error_type);
     }
 }
-?>

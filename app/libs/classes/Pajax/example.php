@@ -40,8 +40,7 @@
 
 	<title>Pajax example</title>
 	
-	<?php $Pajax->printJavascript(); ?>
-	
+	<?php $Pajax->printJavascript();
 </head>
 <body>
 

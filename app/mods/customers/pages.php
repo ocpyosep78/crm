@@ -111,5 +111,3 @@
 		oSmarty()->assign('tmpDate', isset($_GET['f']) ? "{$_GET['f']}-01" : date('Y-m-d'));
 		
 	}
-
-?>

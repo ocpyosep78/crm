@@ -438,5 +438,3 @@ class ExtendedFPDF extends FPDF{
 	}
 	
 }
-
-?>

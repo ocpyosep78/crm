@@ -155,5 +155,3 @@
 		return oNav()->reloadPage();
 		
 	}
-
-?>

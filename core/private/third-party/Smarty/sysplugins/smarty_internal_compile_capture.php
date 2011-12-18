@@ -76,6 +76,4 @@ class Smarty_Internal_Compile_CaptureClose extends Smarty_Internal_CompileBase {
         $_output .= " Smarty::\$_smarty_vars['capture'][$buffer]=ob_get_clean();?>";
         return $_output;
     } 
-} 
-
-?>
+}

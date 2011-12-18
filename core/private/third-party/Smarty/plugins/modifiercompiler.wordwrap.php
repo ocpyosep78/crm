@@ -30,6 +30,4 @@ function smarty_modifiercompiler_wordwrap($params, $compiler)
         $params[3] = 'false';
     } 
     return 'wordwrap(' . $params[0] . ',' . $params[1] . ',' . $params[2] . ',' . $params[3] . ')';
-} 
-
-?>
+}

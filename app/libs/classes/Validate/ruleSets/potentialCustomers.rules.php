@@ -10,5 +10,3 @@
 		'address'		=> array('text', NULL, 50),
 		'id_location'	=> array('selection'),
 	);
-
-?>

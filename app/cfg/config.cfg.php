@@ -62,5 +62,3 @@
 	
 	# Local
 	define('MAIN_LOCATION', 'Montevideo');
-
-?>

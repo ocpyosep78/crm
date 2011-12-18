@@ -207,5 +207,3 @@
 	
 	header("Content-Type: text/html; charset=iso-8859-1");
 	oSmarty()->display( oNav()->inFrame ? FRAME_TPL_PATH : getSkinTpl() );
-
-?>

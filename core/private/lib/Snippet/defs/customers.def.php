@@ -164,5 +164,3 @@ private function getFilterFromModifier(){
 }
 		
 	}
-
-?>

@@ -97,6 +97,4 @@ function smarty_block_textformat($params, $content, $template, &$repeat)
     $_output = implode($wrap_char . $wrap_char, $_paragraphs);
     
     return $assign ? $template->assign($assign, $_output) : $_output;
-} 
-
-?>
+}

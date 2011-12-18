@@ -132,6 +132,4 @@ function smarty_function_html_image($params, $template)
     } 
 
     return $prefix . '<img src="' . $path_prefix . $file . '" alt="' . $alt . '" width="' . $width . '" height="' . $height . '"' . $extra . ' />' . $suffix;
-} 
-
-?>
+}

@@ -24,5 +24,3 @@
 	
 	$preProcess = 'fixSalesFilter';
 	$postProcess = 'fixSalesList';
-	
-?>

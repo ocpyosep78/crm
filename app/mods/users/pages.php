@@ -145,5 +145,3 @@
 		return page_editUsers();		/* Just editting a non-existant user, aren't we */
 		
 	}
-
-?>

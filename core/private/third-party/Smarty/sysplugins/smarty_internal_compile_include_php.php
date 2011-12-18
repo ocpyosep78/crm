@@ -85,6 +85,4 @@ class Smarty_Internal_Compile_Include_Php extends Smarty_Internal_CompileBase {
             return "<?php include{$_once} ('{$_filepath}');?>\n";
         } 
     } 
-} 
-
-?>
+}

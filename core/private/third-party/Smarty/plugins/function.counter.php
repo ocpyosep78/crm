@@ -74,5 +74,3 @@ function smarty_function_counter($params, $template)
     return $retval;
     
 }
-
-?>

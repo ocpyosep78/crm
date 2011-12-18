@@ -21,5 +21,3 @@
 		'usedProducts'		=> array('text', 0, 120),
 		'pendingEstimate'	=> array('bool'),
 	);
-	
-?>

@@ -39,5 +39,3 @@ function smarty_make_timestamp($string)
         return $time;
     }
 }
-
-?>

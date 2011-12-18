@@ -54,5 +54,3 @@
 		oNav()->queueMsg($msg, $type);
 		return addScript("location.href = 'index.php';");
 	}
-	
-?>

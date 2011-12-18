@@ -32,6 +32,4 @@ function smarty_modifier_spacify($string, $spacify_char = ' ')
     } else {
         return implode($spacify_char, preg_split('//', $string, -1));
     } 
-} 
-
-?>
+}

@@ -7,5 +7,3 @@
 		'price'			=> array('cost', 1, 10),
 		'description'	=> array('text', NULL, 240),
 	);
-
-?>

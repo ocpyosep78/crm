@@ -145,6 +145,4 @@ class Smarty_Internal_CompileBase {
         $this->compiler->trigger_template_error("unexpected closing tag", $this->compiler->lex->taglineno);
         return;
     } 
-} 
-
-?>
+}

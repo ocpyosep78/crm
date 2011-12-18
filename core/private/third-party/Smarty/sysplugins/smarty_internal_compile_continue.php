@@ -59,6 +59,4 @@ class Smarty_Internal_Compile_Continue extends Smarty_Internal_CompileBase {
         $this->compiler->has_code = true;
         return "<?php continue {$_levels}?>";
     } 
-} 
-
-?>
+}

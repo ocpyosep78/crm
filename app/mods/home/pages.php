@@ -253,5 +253,3 @@
 		oSmarty()->assign('data', $data);
 		
 	}
-	
-?>

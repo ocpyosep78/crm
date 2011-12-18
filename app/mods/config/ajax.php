@@ -73,5 +73,3 @@
 		return updatePermitsBy($type, $id, '%');
 		
 	}
-
-?>

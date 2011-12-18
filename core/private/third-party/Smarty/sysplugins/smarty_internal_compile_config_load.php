@@ -59,6 +59,4 @@ class Smarty_Internal_Compile_Config_Load extends Smarty_Internal_CompileBase {
         $_output .= "\$_config->loadConfigVars($section, '$scope'); ?>";
         return $_output;
     } 
-} 
-
-?>
+}

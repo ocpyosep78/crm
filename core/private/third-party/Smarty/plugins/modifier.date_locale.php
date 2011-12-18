@@ -28,6 +28,4 @@ function smarty_modifier_date_locale($string, $format = SMARTY_RESOURCE_DATE_FOR
 	
 	return $date;
 	
-} 
-
-?>
+}

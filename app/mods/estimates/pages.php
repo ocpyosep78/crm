@@ -213,5 +213,3 @@
 		oSmarty()->assign('path', EXPORT_PDF_PATH."estimate.php?id={$id}");
 		
 	}
-	
-?>

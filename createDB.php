@@ -42,5 +42,3 @@
 		
 	
 	header( 'location:index.php' );
-
-?>

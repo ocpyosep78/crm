@@ -189,6 +189,4 @@ function smarty_function_html_select_time($params, $template)
     } 
 
     return $html_result;
-} 
-
-?>
+}

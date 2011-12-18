@@ -300,5 +300,3 @@ UPLOAD_ERR_EXTENSION	Value: 8; A PHP extension stopped the file upload. PHP does
 		}
 		
 	}
-
-?>

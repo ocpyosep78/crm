@@ -138,6 +138,4 @@ class Smarty_Internal_Resource_Registered {
         } 
         return $_compile_dir . $_filepath . '.' . $_template->resource_type . '.' . basename($_template->resource_name) . $_cache . '.php';
     } 
-} 
-
-?>
+}

@@ -110,5 +110,3 @@
 	function tab_customersInfo_history( $id ){
 		
 	}
-
-?>

@@ -45,6 +45,4 @@ class Smarty_Internal_Compile_Append extends Smarty_Internal_Compile_Assign {
         // call compile assign
         return parent::compile($_new_attr, $compiler, $_params);
     } 
-} 
-
-?>
+}

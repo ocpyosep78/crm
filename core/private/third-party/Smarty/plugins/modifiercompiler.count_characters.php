@@ -35,5 +35,3 @@ function smarty_modifiercompiler_count_characters($params, $compiler)
         return 'preg_match_all(\'/[^\s]/\',' . $params[0] . ', $tmp)';
     } 
 }
-
-?>

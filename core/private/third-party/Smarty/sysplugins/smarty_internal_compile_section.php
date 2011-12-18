@@ -168,6 +168,4 @@ class Smarty_Internal_Compile_Sectionclose extends Smarty_Internal_CompileBase {
         else
             return "<?php endfor; endif; ?>";
     } 
-} 
-
-?>
+}

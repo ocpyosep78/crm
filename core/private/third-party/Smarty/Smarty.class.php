@@ -812,5 +812,3 @@ Class SmartyException extends Exception {
  */
 Class SmartyCompilerException extends SmartyException  {
 }
-
-?>

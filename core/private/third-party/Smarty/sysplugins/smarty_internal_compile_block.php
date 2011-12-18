@@ -183,5 +183,4 @@ class Smarty_Internal_Compile_Blockclose extends Smarty_Internal_CompileBase {
         $compiler->suppressNocacheProcessing = true;
         return $_output;
     } 
-} 
-?>
+}

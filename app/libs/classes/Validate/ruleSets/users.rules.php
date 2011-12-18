@@ -13,5 +13,3 @@
 		'position'		=> array('text', 0, 40 ),
 		'employeeNum'	=> array('alpha', 0, 20 ),
 	);
-	
-?>

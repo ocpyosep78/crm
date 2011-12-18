@@ -579,4 +579,3 @@ class xajaxResponse
 	}
 	
 }// end class xajaxResponse
-?>

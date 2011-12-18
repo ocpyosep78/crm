@@ -15,5 +15,3 @@
 		'system'		=> 'Sistema',
 		'estimateDate'	=> 'Fecha',
 	);
-
-?>

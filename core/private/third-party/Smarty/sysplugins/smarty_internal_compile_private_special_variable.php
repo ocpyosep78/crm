@@ -94,6 +94,4 @@ class Smarty_Internal_Compile_Private_Special_Variable extends Smarty_Internal_C
         } 
         return $compiled_ref;
     } 
-} 
-
-?>
+}

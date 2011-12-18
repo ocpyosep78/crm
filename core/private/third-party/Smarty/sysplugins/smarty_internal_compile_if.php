@@ -174,6 +174,4 @@ class Smarty_Internal_Compile_Ifclose extends Smarty_Internal_CompileBase {
         for ($i = 0; $i < $nesting ; $i++) $tmp .= '}';
         return "<?php {$tmp}?>";
     } 
-} 
-
-?>
+}

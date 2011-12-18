@@ -326,5 +326,3 @@ function smarty_function_html_select_date($params, $template)
 
     return $html_result;
 }
-
-?>

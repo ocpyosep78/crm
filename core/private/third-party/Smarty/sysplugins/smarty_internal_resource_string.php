@@ -128,6 +128,4 @@ class Smarty_Internal_Resource_String {
         } 
         return $_compile_dir . $_filepath . '.' . $_template->resource_type . $_cache . '.php';
     } 
-} 
-
-?>
+}

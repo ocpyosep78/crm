@@ -430,6 +430,4 @@ class Smarty_Internal_TemplateCompilerBase {
         } 
         throw new SmartyCompilerException($error_text);
     } 
-} 
-
-?>
+}

@@ -224,6 +224,4 @@ class Smarty_Security {
         throw new SmartyException ("directory '{$_rp}' not allowed by security setting");
         return false;
     } 
-} 
-
-?>
+}

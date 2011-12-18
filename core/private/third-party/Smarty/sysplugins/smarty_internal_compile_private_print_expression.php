@@ -72,6 +72,4 @@ class Smarty_Internal_Compile_Private_Print_Expression extends Smarty_Internal_C
         } 
         return $output;
     } 
-} 
-
-?>
+}

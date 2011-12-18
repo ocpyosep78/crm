@@ -8,5 +8,3 @@
 		'email'			=> array('email', NULL, NULL),
 		'address'		=> array('text', NULL, 40),
 	);
-
-?>

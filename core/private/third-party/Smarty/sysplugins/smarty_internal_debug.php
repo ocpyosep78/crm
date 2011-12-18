@@ -166,5 +166,3 @@ class Smarty_Internal_Debug extends Smarty_Internal_Data {
 		}
 	}
 }
-
-?>

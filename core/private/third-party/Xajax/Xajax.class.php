@@ -1247,5 +1247,3 @@ function xajaxErrorHandler($errno, $errstr, $errfile, $errline)
 	}
 	$GLOBALS['xajaxErrorHandlerText'] .= "\n----\n[$errTypeStr] $errstr\nerror in line $errline of file $errfile";
 }
-
-?>

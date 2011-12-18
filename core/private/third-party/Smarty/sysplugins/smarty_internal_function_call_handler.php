@@ -35,6 +35,4 @@ class Smarty_Internal_Function_Call_Handler extends Smarty_Internal_Template {
         } 
         $_function($_template, $_params);
     } 
-} 
-
-?>
+}

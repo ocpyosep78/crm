@@ -73,5 +73,3 @@
 		return "initializeSimpleList('notes', '{$id}');";
 		
 	}
-
-?>

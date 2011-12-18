@@ -31,5 +31,3 @@
 	
 	# Build and Print pages
 	$PDF->Display();
-
-?>

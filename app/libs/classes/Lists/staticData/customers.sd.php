@@ -19,5 +19,3 @@
 		'sellerName'	=> 'Vendedor',
 //		'since'			=> 'Fecha Ingreso',
 	);
-			
-?>

@@ -210,5 +210,3 @@
 		return ($a1 = isset($new) ? $new : $a1);
 		
 	}
-
-?>

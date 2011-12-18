@@ -85,5 +85,4 @@ class Smarty_Internal_Resource_Eval {
         // no filepath for strings
         return false;
     } 
-} 
-?>
+}

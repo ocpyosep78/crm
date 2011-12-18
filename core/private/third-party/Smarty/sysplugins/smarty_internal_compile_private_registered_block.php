@@ -90,6 +90,4 @@ class Smarty_Internal_Compile_Private_Registered_Block extends Smarty_Internal_C
         } 
         return $output."\n";
     } 
-} 
-
-?>
+}

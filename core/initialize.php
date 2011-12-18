@@ -11,6 +11,3 @@
 	# Load core constants + app-specific defaults where unset
 	
 	# Initialize Builder object and shortcuts to core libraries
-
-
-?>

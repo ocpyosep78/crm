@@ -169,5 +169,3 @@
 		return addScript("\$('np_id_category').focus();");
 		
 	}
-
-?>

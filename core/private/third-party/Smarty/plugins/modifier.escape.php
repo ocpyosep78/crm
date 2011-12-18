@@ -86,6 +86,4 @@ function smarty_modifier_escape($string, $esc_type = 'html', $char_set = SMARTY_
         default:
             return $string;
     } 
-} 
-
-?>
+}

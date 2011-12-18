@@ -128,6 +128,4 @@ function smarty_function_html_options_optgroup($key, $values, $selected, $id, $c
     } 
     $optgroup_html .= "</optgroup>\n";
     return $optgroup_html;
-} 
-
-?>
+}

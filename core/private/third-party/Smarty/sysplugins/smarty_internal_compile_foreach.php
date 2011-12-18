@@ -214,6 +214,4 @@ class Smarty_Internal_Compile_Foreachclose extends Smarty_Internal_CompileBase {
         else
             return "<?php }} ?>";
     } 
-} 
-
-?>
+}

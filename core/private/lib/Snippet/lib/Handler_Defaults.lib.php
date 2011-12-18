@@ -17,5 +17,3 @@
 		public function onSuccess()					{}
 		
 	}
-
-?>

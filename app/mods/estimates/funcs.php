@@ -62,5 +62,3 @@
 		return empty($x['orderNumber']) || empty($x['id_customer']) || empty($x['id_system']);
 		
 	}
-
-?>

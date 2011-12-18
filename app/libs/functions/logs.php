@@ -34,5 +34,3 @@
 	function isAlertActive( $id ){
 		return oSQL()->isAlertActive( $id );
 	}
-
-?>

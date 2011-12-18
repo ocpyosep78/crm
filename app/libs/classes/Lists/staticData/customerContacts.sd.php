@@ -14,5 +14,3 @@
 		'phone'		=> 'Teléfono',
 		'email'		=> 'Email',
 	);
-			
-?>

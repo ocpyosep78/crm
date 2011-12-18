@@ -16,5 +16,3 @@
 		'email'		=> 'Email',
 		'docNum'	=> 'Documento',
 	);
-			
-?>

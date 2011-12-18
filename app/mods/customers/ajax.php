@@ -209,5 +209,3 @@
 		else return showStatus('Ocurrió un error. El elemento no pudo ser eliminado.');
 		
 	}
-
-?>

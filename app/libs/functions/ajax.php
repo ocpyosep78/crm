@@ -63,5 +63,3 @@
 		call_user_func_array(array(oXajaxResp(), 'addScriptCall'), $arr);
 		return oXajaxResp();
 	}
-	
-?>

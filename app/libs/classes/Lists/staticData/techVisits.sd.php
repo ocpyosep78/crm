@@ -23,5 +23,3 @@
 	);
 	
 	$postProcess = 'fixTechVisitsList';
-
-?>

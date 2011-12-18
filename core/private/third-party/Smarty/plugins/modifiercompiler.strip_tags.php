@@ -29,6 +29,4 @@ function smarty_modifiercompiler_strip_tags($params, $compiler)
     } else {
         return 'strip_tags(' . $params[0] . ')';
     } 
-} 
-
-?>
+}

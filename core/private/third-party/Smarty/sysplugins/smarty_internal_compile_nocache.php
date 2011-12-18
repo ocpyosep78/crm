@@ -58,6 +58,4 @@ class Smarty_Internal_Compile_Nocacheclose extends Smarty_Internal_CompileBase {
         $this->compiler->has_code = false;
         return true;
     } 
-} 
-
-?>
+}

@@ -62,6 +62,4 @@ function smarty_modifier_truncate($string, $length = 80, $etc = '...',
     } else {
         return $string;
     } 
-} 
-
-?>
+}

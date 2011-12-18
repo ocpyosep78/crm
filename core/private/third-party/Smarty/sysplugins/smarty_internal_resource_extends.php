@@ -171,6 +171,4 @@ class Smarty_Internal_Resource_Extends {
         } 
         return $_compile_dir . $_filepath . '.' . $_template->resource_type . '.' . basename($_files[count($_files)-1]) . $_cache . '.php';
     } 
-} 
-
-?>
+}

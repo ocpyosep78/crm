@@ -53,5 +53,3 @@
 		return 'Ocurrió un error desconocido al intentar subir el archivo.';
 		
 	}
-
-?>

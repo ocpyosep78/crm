@@ -129,6 +129,4 @@ class Smarty_Internal_Compile_Functionclose extends Smarty_Internal_CompileBase 
         $compiler->template->required_plugins = $saved_data[3];
         return $output;
     } 
-} 
-
-?>
+}

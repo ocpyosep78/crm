@@ -43,5 +43,3 @@
 		addScript("TAB = '{$code}';");
 		
 	}
-	
-?>

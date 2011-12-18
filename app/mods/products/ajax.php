@@ -36,5 +36,3 @@
 		else return showStatus( $ans->msg );
 	
 	}
-
-?>

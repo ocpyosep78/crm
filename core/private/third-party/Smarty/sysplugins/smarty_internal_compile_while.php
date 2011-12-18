@@ -77,6 +77,4 @@ class Smarty_Internal_Compile_Whileclose extends Smarty_Internal_CompileBase {
         $this->compiler->nocache = $this->_close_tag(array('while'));
         return "<?php }?>";
     } 
-} 
-
-?>
+}

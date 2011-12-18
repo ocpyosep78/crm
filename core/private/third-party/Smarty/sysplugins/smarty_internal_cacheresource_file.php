@@ -200,6 +200,4 @@ class Smarty_Internal_CacheResource_File {
         } 
         return $_count;
     } 
-} 
-
-?>
+}

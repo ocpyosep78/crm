@@ -151,6 +151,4 @@ function smarty_function_mailto($params, $template)
         // no encoding
         return '<a href="mailto:' . $address . '" ' . $extra . '>' . $text . '</a>';
     } 
-} 
-
-?>
+}

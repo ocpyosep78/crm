@@ -33,5 +33,3 @@ class Smarty_Internal_Compile_Rdelim extends Smarty_Internal_CompileBase {
         return $this->compiler->smarty->right_delimiter;
     } 
 }
-
-?>

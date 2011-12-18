@@ -59,6 +59,4 @@ class Smarty_Internal_Compile_Assign extends Smarty_Internal_CompileBase {
             return "<?php \$_smarty_tpl->tpl_vars[$_attr[var]] = new Smarty_variable($_attr[value], $_nocache, $_scope);?>";
         } 
     } 
-} 
-
-?>
+}
