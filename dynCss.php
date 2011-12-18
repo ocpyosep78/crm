@@ -78,9 +78,9 @@
  * fix rules and exit
  */
 if (!empty($_GET['path'])) {
-    // Find out where this file is, relative to the base url
-    $htc = 'dynCss.php';    // TODO
-
+    // Find out where this file is, relative to the document root
+    $htc = preg_replace('/^\/*/', '', $_SERVER['SCRIPT_NAME']);
+    
     // Read the actual CSS file
     $css = file_get_contents(dirname(__FILE__) . "/{$_GET['path']}");
 
@@ -98,8 +98,12 @@ if (!empty($_GET['path'])) {
         '/opacity\:([^;]+)?;/e' => '"filter:alpha(opacity=" . intval($1*100) . ");$0"',
         // Add rules for border-radius and box-shadow for non-css3-compliant browsers
         '/([^-])((border-radius|box-shadow)[^;]+);/' => '$1-moz-$2;-webkit-$2;-o-$2;$2;',
-        // Background linear gradient
-        '/(background(?:-image)?\:)([^;-]*)linear-gradient\(([^,]+),([^)]+)\)([^;]*);/' => '$1$2-webkit-gradient(linear,0 0,0 100%,from($3),to($4))$5;$1$2-webkit-linear-gradient($3,$4)$5;$1$2-moz-linear-gradient($3,$4)$5;$1-pie-background:linear-gradient($3,$4)$5;$0',
+        // Background linear gradient (both for background and background-image)
+        '/(background(?:-image)?\:)([^;-]*)linear-gradient\(([^,]+),([^)]+)\)([^;]*);/' => '$1$2-webkit-gradient(linear,0 0,0 100%,from($3),to($4))$5;' .
+                                                                                           '$1$2-webkit-linear-gradient($3,$4)$5;' .
+                                                                                           '$1$2-moz-linear-gradient($3,$4)$5;' .
+                                                                                           '$0' .
+                                                                                           '-pie-background:$2linear-gradient($3,$4)$5;',
         // Add behavior rule (IE) where needed
         '/({[^}]+(border-radius|box-shadow|gradient|shadow)+[^}]+)\}/' => "$1behavior:url({$htc});}",
     );
