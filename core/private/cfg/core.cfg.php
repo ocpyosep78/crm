@@ -22,7 +22,7 @@
 	
 	# Core shortcut to library paths
 	define('CONNECTION_PATH', CORE_LIB.'Connection/Connection.class.php');
-	define('SNIPPET_PATH', CORE_LIB.'SNIPPET');
+	define('SNIPPET_PATH', CORE_LIB.'Snippet');
 	
 	# Agenda
 	define('AGENDA_DAYS_TO_SHOW', 7);
@@ -49,5 +49,3 @@
 	# Xajax
 	define('XAJAX_JS_DIR', CORE_THIRD_PARTY.'Xajax/xajax_js');
 	define('XAJAX_VERBOSE', false, true);
-
-?>
