@@ -1,6 +1,82 @@
 <?php
 
-// File is being used to dynamically load css: fix rules and exit
+/**
+ * This library relies on css3pie' htc (referred to as PIE from now on).
+ *
+ *
+ * REQUIREMENTS: Apache with Rewrite mod enabled + PHP
+ *
+ * INSTALL: Place this file and the .htaccess that comes with it in any folder
+ * containing stylesheets you want transformed (or any of their parent folders).
+ *
+ * KNOWN-ISSUES: support for linear-gradient is still incomplete
+ *
+ * We can certainly agree that IE has the most pressing issues in regards to
+ * standards and CSS3 support (or even previous CSS specs, for old versions).
+ * However, the problem is much bigger than that: FF, Chrome, Opera, Safari,
+ * they all suffer the same compatibility problems to different extents. Any
+ * designer needs to write 3-5 rules for a single CSS property in order to make
+ * it work in old versions of these browsers. True, they mostly have support,
+ * but that support is achieved through non-standard means.
+ *
+ * Can't this be solved too, while we're on it for IE?
+ *
+ * That's the goal of this script: let designers write proper css3, with the
+ * latest standards in mind, and let this script handle cross-browser issues.
+ *
+ * Any client-side solution to this problem is, at the least, not optimal. There
+ * are efficiency problems, accessibility issues (what if the user does not have
+ * JS enabled?) and limitations (will a script see what the actual stylesheet
+ * looked like before the browser put its hands on it?).
+ * 
+ * As in many other fields, the simple answer is usually the right answer. Why
+ * not handle these problems BEFORE the client is even aware of them? Any time
+ * you want a linear-gradient, you'll have to write one rule for old Opera, one
+ * for old FF, one for new webkits, one for old IEs, and finally the right CSS3
+ * rule! Why not automate this? Since the fix is on the server side, the sheet
+ * will simply be cached as any regular css file, without needing to perform the
+ * required actions more than once. So, efficiency will not noticeably suffer.
+ * 
+ * In an attempt to achive this goal, dynCss adds the missing rules every time
+ * the CSS3 rule is found, and finally adds the PIE behavior file to handle IE
+ * issues.
+ *
+ * The following rules are recognized and 'fixed' by dynCss:
+ * 
+ * opacity:xx;          Adds filter:alpha(opacity=xx*100)
+ *
+ * border-radius:xx;    Adds -moz-border-radius, -webkit-border-radius,
+ *                      -o-border-radius, with same parameters
+ *
+ * box-shadow:xx;       Adds -moz-box-shadow, -webkit-box-shadow, -o-box-shadow
+ *
+ * linear-gradient      Applied to either background or background-image prop,
+ *                      it adds -webkit-gradient, -webkit-linear-gradient,
+ *                      -moz-linear-gradient, -o-linear-gradient, all with the
+ *                      right parameters, and an extra prop -pie-background to
+ *                      let PIE handle IE
+ *
+ * The PIE htc behavior is added to any rule that includes one of these props,
+ * and also the ones containing any kind of shadow (as preparation for future
+ * versions of css3pie, that promises support for text-shadow and others).
+ *
+ * Since we're already doing these changes, why not fix/improve other elements?
+ * dynCss adds missing semicolons (usually neglected in final props of a rule),
+ * strips comments and eliminates all extra white space, to make the stylesheet
+ * as light as possible. Serving your content gzipped is of course recommended.
+ * 
+ * For debugging purposes, pass a parameter 'preview' in the URL and the sheet
+ * will add proper linefeeds to make it humanly readable, after applying all
+ * replacements and additions. This way you can see exactly what the stylesheet
+ * looks like to the browser, with all added props.
+ */
+ 
+
+
+/**
+ * If path is given, the script is being used to dynamically load css:
+ * fix rules and exit
+ */
 if (!empty($_GET['path'])) {
     // Find out where this file is, relative to the base url
     $htc = 'dynCss.php';    // TODO
@@ -23,7 +99,7 @@ if (!empty($_GET['path'])) {
         // Add rules for border-radius and box-shadow for non-css3-compliant browsers
         '/([^-])((border-radius|box-shadow)[^;]+);/' => '$1-moz-$2;-webkit-$2;-o-$2;$2;',
         // Background linear gradient
-        '/(background-image\:)([^;-]*)linear-gradient\(([^,]+),([^)]+)\)([^;]*);/' => '$1$2-webkit-gradient(linear,0 0,0 100%,from($3),to($4))$5;$1$2-webkit-linear-gradient($3,$4)$5;$1$2-moz-linear-gradient($3,$4)$5;$0',
+        '/(background(?:-image)?\:)([^;-]*)linear-gradient\(([^,]+),([^)]+)\)([^;]*);/' => '$1$2-webkit-gradient(linear,0 0,0 100%,from($3),to($4))$5;$1$2-webkit-linear-gradient($3,$4)$5;$1$2-moz-linear-gradient($3,$4)$5;$1-pie-background:linear-gradient($3,$4)$5;$0',
         // Add behavior rule (IE) where needed
         '/({[^}]+(border-radius|box-shadow|gradient|shadow)+[^}]+)\}/' => "$1behavior:url({$htc});}",
     );
@@ -48,7 +124,11 @@ if (!empty($_GET['path'])) {
     exit(0);
 }
 
-// No 'path' parameter, thus this file is being used as htc
+
+
+/**
+ * No 'path' parameter, thus the script is being used as css3pie's htc
+ */
 header('Content-type: text/x-component') ?><!--
 PIE: CSS3 rendering for IE
 Version 1.0beta5
