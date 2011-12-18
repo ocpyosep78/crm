@@ -23,8 +23,9 @@ HTML, BODY{
 BODY{
 	position:relative;
 	padding-top:90px;
-	background-image:-webkit-gradient(linear, right bottom, left bottom, #d0d3e3, #ffffff);
-	background-image:-moz-linear-gradient(left, #d0d3e3, #ffffff);
+	background-image:-webkit-gradient(linear, right bottom, left bottom, from(#d0d3e3), to(#ffffff));
+	background-image:-webkit-linear-gradient(right, #d0d3e3, #ffffff);
+	background-image:-moz-linear-gradient(right, #d0d3e3, #ffffff);
 }
 
 
