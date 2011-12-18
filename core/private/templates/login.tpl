@@ -1,4 +1,43 @@
 {literal}
+<style type="text/css">
+	.loginWrapper{
+		position:absolute;
+		top:50%;
+		left:50%;
+		height:150px;
+		width:350px;
+		margin-top:-110px;
+		margin-left:-175px;
+		text-align:center;
+	}
+	#loginBg{
+		padding:0px;
+		opacity:0.85;
+		filter:alpha(opacity=85);
+	}
+	#loginTbl{
+		margin:auto;
+		margin-top:27px;
+	}
+	#loginTbl TH{
+		font-weight:normal;
+		font-family:Georgia, "Times New Roman", Times, serif;
+		font:"Times New Roman", Times, serif;
+		text-align:right;
+	}
+	.specialButton{
+		height:25px;
+		width:120px;
+		margin-top:15px;
+		padding:2px 20px;
+		background:#000030;
+		color:#ffffff;
+		cursor:pointer;
+		opacity:0.8;
+		filter:alpha(opacity=80);
+	}
+</style>
+
 <script type="text/javascript">
 	window.addEvent('domready', function(){
 		var oForm=$(document.forms.formLogin), oUser=$(oForm.user), oPass=$(oForm.pass);
@@ -25,48 +64,6 @@
 		};
 	} );
 </script>
-
-<style type="text/css">
-	.loginWrapper{
-		position:absolute;
-		top:50%;
-		left:50%;
-		height:150px;
-		width:350px;
-		margin-top:-110px;
-		margin-left:-175px;
-		text-align:center;
-/*		color:#ffffff;
-		background:url(app/images/background/loginFrame.png) no-repeat;	*/
-	}
-	#loginBg{
-		padding:0px;
-/*		background:url(app/images/background/loginTexture.png) no-repeat; */
-		opacity:0.85;
-		filter:alpha(opacity=85);
-	}
-	#loginTbl{
-		margin:auto;
-		margin-top:27px;
-	}
-	#loginTbl TH{
-		font-weight:normal;
-		font-family:Georgia, "Times New Roman", Times, serif;
-		font:"Times New Roman", Times, serif;
-		text-align:right;
-	}
-	.specialButton{
-		height:25px;
-		width:120px;
-		margin-top:15px;
-		padding:2px 20px;
-		background:#000030;
-		color:#ffffff;
-		cursor:pointer;
-		opacity:0.8;
-		filter:alpha(opacity=80);
-	}
-</style>
 {/literal}
 
 

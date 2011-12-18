@@ -1,6 +1,5 @@
 {literal}
 <style type="text/css">
-
 	#statusMsgs{
 		position:fixed;
 		top:30px;
@@ -57,11 +56,9 @@
 	#statusMsgs.warningStatus > IMG.warningStatus{
 		display:block;
 	}
-	
 </style>
 
 <script type='text/javascript'>
-	
 	function showStatus(txt, type){ msgBox.hide(-1).setType(type).show(txt); };
 	function hideStatus( delay ){ return; msgBox.hide( delay ); };
 	
@@ -90,7 +87,6 @@
 			return this;
 		}
 	};
-	
 </script>
 {/literal}
 

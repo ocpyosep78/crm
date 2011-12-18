@@ -21,7 +21,7 @@ if (!empty($_GET['path'])) {
         // Opacity for IE
         '/opacity\:([^;]+)?;/e' => '"filter:alpha(opacity=" . intval($1*100) . ");$0"',
         // Background linear gradient
-        '/(background-image)?\:([^;-]*)linear-gradient\(([^,]+),([^)]+)\)([^;]*);/' => '$1:$2-webkit-gradient(linear,0 0,0 100%,from($3),to($4))$5;$1:$2-moz-linear-gradient(top,$3,$4)$5;$0;',
+        '/(background-image)?\:([^;-]*)linear-gradient\(([^,]+),([^)]+)\)([^;]*);/' => '$1:$2-webkit-gradient(linear,0 0,0 100%,from($3),to($4))$5;$1:$2-moz-linear-gradient($3,$4)$5;$0;',
         // Add rules for border-radius and box-shadow for non-css3-compliant browsers
         '/([^-])((border-radius|box-shadow)[^;]+);/' => '$1-moz-$2;-webkit-$2;-o-$2;$2;',
         // Add behavior rule (IE) where needed
