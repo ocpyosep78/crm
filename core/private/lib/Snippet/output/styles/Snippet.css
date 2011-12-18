@@ -7,16 +7,16 @@
 /**
  * ToolTips
  */
-.emptyFieldMsg, .snippetToolTip{ position:absolute; padding:1px 5px; border:solid 1px #000000; border-radius:6px; -moz-border-radius:6px; -webkit-border-radius:6px; background:#f0f0e6; font-size:12px; font-weight:bold; color:#400000; }
+.emptyFieldMsg, .snippetToolTip{ position:absolute; padding:1px 5px; border:solid 1px #000000; border-radius:6px;   background:#f0f0e6; font-size:12px; font-weight:bold; color:#400000; }
 .emptyFieldMsg{ position:static; }
 
 /**
  * BIGTOOLS
  */
 .bigTools{ position:relative; left:5px; text-align:center; }
-.bigTools > DIV{ display:inline-block; zoom:1 /* IE */; *display: inline /* IE */; margin:0px 3px; padding:2px; border:solid 1px #808080; border-bottom-width:2px; border-right-width:2px; border-radius:6px; -moz-border-radius:6px; -webkit-border-radius:6px; background:-webkit-gradient(linear, left top, left bottom, from(#e0e0ff), to(#7090af)); background:-moz-linear-gradient(top, #c0d0df, #7090af); filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#c0d0df', endColorstr='#7090af') alpha(opacity=30); box-shadow:#000000 2px 2px 6px; -moz-box-shadow:#000000 2px 2px 6px; -webkit-box-shadow:#000000 2px 2px 6px; opacity:0.3; }
-.bigTools > DIV.bigToolEnabled{ opacity:1; filter:alpha(opacity=100); cursor:pointer; }
-.bigTools > DIV.bigToolEnabled:hover{ margin:1px 4px; padding-bottom:3px; background:#7090af; border-width:1px; border-color:#303030; box-shadow:#000000 1px 1px 4px; -moz-box-shadow:#000000 1px 1px 4px; -webkit-box-shadow:#000000 1px 1px 4px; }
+.bigTools > DIV{ display:inline-block; zoom:1 /* IE */; *display: inline /* IE */; margin:0px 3px; padding:2px; border:solid 1px #808080; border-bottom-width:2px; border-right-width:2px; border-radius:6px; background-image:linear-gradient(#c0d0df, #7090af); box-shadow:#000000 2px 2px 6px; opacity:0.3; }
+.bigTools > DIV.bigToolEnabled{ opacity:1; cursor:pointer; }
+.bigTools > DIV.bigToolEnabled:hover{ margin:1px 4px; padding-bottom:3px; background:#7090af; border-width:1px; border-color:#303030; box-shadow:#000000 1px 1px 4px;   }
 .bigTools > DIV.bigToolEnabled:hover > IMG{ height:35px; width:35px; }
 .bigTools IMG{ height:36px; width:36px; margin:0px 5px; }
 
@@ -25,11 +25,11 @@
  * ITEMS: GENERAL
  */
 
-.snippet_item{ clear:both; margin:10px; padding:10px; text-align:center; opacity:0.8; filter:alpha(opacity=80); }
-.snippet_item > SPAN{ display:block; position:relative; height:18px; padding:8px 10px; border-radius:12px; -moz-border-radius:12px; -webkit-border-radius:12px; box-shadow:#000000 2px 1px 5px; -moz-box-shadow:#000000 2px 1px 5px; -webkit-box-shadow:#000000 2px 1px 5px; white-space:nowrap; overflow:hidden; z-index:50; background:-webkit-gradient(linear, left top, left bottom, from(#203050), to(#e4e5e8)); background:-moz-linear-gradient(top, #203050, #e4e5e8); filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#203050', endColorstr='#e4e5e8'); font-size:16px; font-weight:bold; font-family:"Times New Roman", Times, serif; color:#ffffff; }
+.snippet_item{ clear:both; margin:10px; padding:10px; text-align:center; opacity:0.8; }
+.snippet_item > SPAN{ display:block; position:relative; height:18px; padding:8px 10px; border-radius:12px;   box-shadow:#000000 2px 1px 5px;   white-space:nowrap; overflow:hidden; z-index:50; background-image:linear-gradient(#203050, #e4e5e8); font-size:16px; font-weight:bold; font-family:"Times New Roman", Times, serif; color:#ffffff; }
 .snippet_item > SPAN:hover{ color:#ffffe0; }
 .snippet_item > SPAN > STRONG{ color:#302050; }	/* Debugging */
-.snippet_item > DIV{ display:inline-block; vertical-align:middle; margin:10px; margin-top:20px; padding:10px; border-top:solid 1px #c0c0d0; border-left:solid 1px #c0c0d0; border-radius:6px; -moz-border-radius:6px; -webkit-border-radius:6px; box-shadow:#404045 4px 4px 6px; -moz-box-shadow:#404045 4px 4px 6px; -webkit-box-shadow:#404045 4px 4px 6px; text-align:left; background:#ffffff; }
+.snippet_item > DIV{ display:inline-block; vertical-align:middle; margin:10px; margin-top:20px; padding:10px; border-top:solid 1px #c0c0d0; border-left:solid 1px #c0c0d0; border-radius:6px;   box-shadow:#404045 4px 4px 6px;   text-align:left; background:#ffffff; }
 .snippet_item TABLE{ margin:20px 30px; }
 .snippet_item TH{ height:1.5em; padding-left:30px; padding-right:5px; white-space:nowrap; text-indent:0px !important; text-align:right !important; color:#606090 !important; }
 .snippet_item TD{ min-width:200px; text-indent:0px !important; color:#000060 !important; }
@@ -68,7 +68,7 @@
 .listPreLoad{ padding:37px 5px; text-align:center; color:#a0b0d0; font-family:"Times New Roman", Times, serif; font-size:16px; font-weight:bold; }
 .listPreLoad IMG{ height:30px; width:30px; margin:0px 10px; vertical-align:middle; }
 .innerListEmpty{ color:#603020; }
-.innerList{ width:100%; padding:2px 2px 2px 2px; border-collapse:collapse; border-radius:8px; -moz-border-radius:8px; -webkit-border-radius:8px; }
+.innerList{ width:100%; padding:2px 2px 2px 2px; border-collapse:collapse; border-radius:8px;   }
 .innerList TD{ padding:4px 2px; font-size:12px; font-family:Arial, Helvetica, sans-serif; }
 .innerList TD > DIV{ min-width:70px; }
 .innerListRow{ border-top: solid 1px #ffffff; }
@@ -79,29 +79,29 @@
  */
 .innerListTools > DIV{ padding:0px 3px; text-align:right; white-space:nowrap; }
 .innerListTools > DIV > IMG{ height:18px; width:18px; padding:0px; margin:2px 2px 0px 0px; cursor:pointer; }
-.innerListTools > DIV > IMG:hover{ position:relative; left:-2px; height:26px; width:26px; margin:-2px -4px -4px -2px; opacity:0.6; filter:alpha(opacity=60); }
+.innerListTools > DIV > IMG:hover{ position:relative; left:-2px; height:26px; width:26px; margin:-2px -4px -4px -2px; opacity:0.6; }
 
 /**
  * LISTS: TITLES
  */
-.listTitles{ height:18px; position:relative; width:auto; margin:0px -6px 5px -6px; padding:8px 0px 9px 5px; text-align:left; font-size:14px; font-weight:bold; font-family:"Times New Roman", Times, serif; border-radius:12px; -moz-border-radius:12px; -webkit-border-radius:12px; box-shadow:#000000 2px 1px 5px; -moz-box-shadow:#000000 2px 1px 5px; -webkit-box-shadow:#000000 2px 1px 5px; white-space:nowrap; overflow:hidden; z-index:50; background:-webkit-gradient(linear, left top, left bottom, from(#203050), to(#e4e5e8)); background:-moz-linear-gradient(top, #203050, #e4e5e8); filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#203050', endColorstr='#e4e5e8'); }
+.listTitles{ height:18px; position:relative; width:auto; margin:0px -6px 5px -6px; padding:8px 0px 9px 5px; text-align:left; font-size:14px; font-weight:bold; font-family:"Times New Roman", Times, serif; border-radius:12px;   box-shadow:#000000 2px 1px 5px;   white-space:nowrap; overflow:hidden; z-index:50; background-image:linear-gradient(#203050, #e4e5e8); }
 .listTitles > DIV{ position:absolute; margin:0px 5px; padding:0px; text-indent:6px; color:#ffffff; overflow:hidden; }
 .listTitles > DIV:hover{ color:#ffffe0; }
 
 /**
  * LIST SEARCH
  */
-.listSearch{ display:none; position:fixed; height:50px; width:203px; margin-top:-90px; padding:5px 10px; background:#003060; border:ridge 1px #003000; border-radius:6px; -moz-border-radius:6px; -webkit-border-radius:6px; box-shadow:#a0a0a0 2px 2px 4px; -moz-box-shadow:#a0a0a0 2px 2px 4px; -webkit-box-shadow:#a0a0a0 2px 2px 4px; background:-webkit-gradient(linear, left top, left bottom, from(#003366), to(#d0d0d0)); background:-moz-linear-gradient(top, #003366, #d0d0d0); filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#204060', endColorstr='#d0d0d0'); z-index:205; }
+.listSearch{ display:none; position:fixed; height:50px; width:203px; margin-top:-90px; padding:5px 10px; background:#003060; border:ridge 1px #003000; border-radius:6px;   box-shadow:#a0a0a0 2px 2px 4px;   background-image:linear-gradient(#003366, #d0d0d0); z-index:205; }
 .listSearch > DIV{ font-family:Arial, Helvetica, sans-serif; font-size:11px; font-weight:bold; color:#c0c0c0; }
 .listSearch > DIV > SPAN{ position:relative; left:3px; font-size:13px; color:#ccddaa; text-shadow:none; filter:shadow(color=#ffa0a0, direction=120, strength=0); }
 .listSearch > INPUT{ height:1.5em; width:200px; margin:5px 0px; background:#ccddaa; border:2px solid #000000; }
-.listSearchBtn{ position:relative; top:-1px; left:-10px; height:22px; width:22px; vertical-align:middle; opacity:0.5; filter:alpha(opacity=50); }
-.listTitles > DIV:hover .listSearchBtn{ opacity:0.8; filter:alpha(opacity=80); }
+.listSearchBtn{ position:relative; top:-1px; left:-10px; height:22px; width:22px; vertical-align:middle; opacity:0.5; }
+.listTitles > DIV:hover .listSearchBtn{ opacity:0.8; }
 
 /**
  * COMBO LIST
  */
-.comboListBox{ display:inline-block; zoom:1 /* IE */; *display: inline /* IE */; margin-left:10px; margin-bottom:15px; padding:6px 8px; border:solid 1px #909095; border-radius:4px; -moz-border-radius:4px; -webkit-border-radius:4px; background:-webkit-gradient(linear, left top, left bottom, from(#e0f0ff), to(#b0a8b8)); background:-moz-linear-gradient(top, #e0f0ff #b0a8b8); filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#e0f0ff', endColorstr='#b0a8b8'); box-shadow:#808080 3px 3px 5px; -moz-box-shadow:#808080 3px 3px 5px; -webkit-box-shadow:#808080 3px 3px 5px; max-width:99%; }
+.comboListBox{ display:inline-block; zoom:1 /* IE */; *display: inline /* IE */; margin-left:10px; margin-bottom:15px; padding:6px 8px; border:solid 1px #909095; border-radius:4px;   background-image:linear-gradient(#e0f0ff, #b0a8b8); box-shadow:#808080 3px 3px 5px; max-width:99%; }
 .comboList{ max-width:99%; }
 .infoPageTools{ float:right; display:block; padding:8px 12px; }
 .infoPageTools:hover{ background:#cccce0; }
@@ -111,4 +111,4 @@
  * COMMON LIST
  */
 .commonListWrapper{ clear:both; padding:5px; margin:0px 5px 15px 5px; z-index:190; }
-.commonListInnerWrapper{ overflow:auto; width:auto; min-height:100px; max-height:410px; padding:2px; margin:0px; border:solid 1px #503030; background:#eaeaf5; border-radius:8px; -moz-border-radius:8px; -webkit-border-radius:8px; box-shadow:#000000 2px 2px 5px; -moz-box-shadow:#000000 2px 2px 5px; -webkit-box-shadow:#000000 2px 2px 5px; }
+.commonListInnerWrapper{ overflow:auto; width:auto; min-height:100px; max-height:410px; padding:2px; margin:0px; border:solid 1px #503030; background:#eaeaf5; border-radius:8px;   box-shadow:#000000 2px 2px 5px;   }

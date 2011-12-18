@@ -21,13 +21,13 @@ if (!empty($_GET['path'])) {
         // Opacity for IE
         '/opacity\:([^;]+)?;/e' => '"filter:alpha(opacity=" . intval($1*100) . ");$0"',
         // Background linear gradient
-        '/(background-image)?\:([^;]*)linear-gradient\(([^ ]+) ([^,]+),([^ ]+) ([^,]+),([^,]+),([^)]+)\)([^;]*);/' => '$1:$2-webkit-gradient(linear,$3 $4,$5 $6,from($7),to($8))$9;$1:$2-moz-linear-gradient($4,$7,$8)$9;$0;',
+        '/(background-image)?\:([^;-]*)linear-gradient\(([^,]+),([^)]+)\)([^;]*);/' => '$1:$2-webkit-gradient(linear,0 0,0 100%,from($3),to($4))$5;$1:$2-moz-linear-gradient(top,$3,$4)$5;$0;',
         // Add rules for border-radius and box-shadow for non-css3-compliant browsers
         '/([^-])((border-radius|box-shadow)[^;]+);/' => '$1-moz-$2;-webkit-$2;-o-$2;$2;',
         // Add behavior rule (IE) where needed
         '/({[^}]+(border-radius|box-shadow|gradient|shadow)+[^}]+)\}/' => "$1behavior:url({$htc});}",
     );
-$_GET['preview'] = true;
+    
     // For debugging, format stylesheet to be readable
     if (isset($_GET['preview'])) {
         $replacements['/([;{])([^}])/'] = "$1\n    $2";
@@ -48,7 +48,7 @@ $_GET['preview'] = true;
     exit(0);
 }
 
-// File's being used as htc source
+// No 'path' parameter, thus this file is being used as htc
 header('Content-type: text/x-component') ?><!--
 PIE: CSS3 rendering for IE
 Version 1.0beta5

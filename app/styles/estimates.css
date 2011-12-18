@@ -10,8 +10,8 @@ SELECT.systemProductsSelect{
 	text-align:left;
 	border:solid 2px #036;
 	border-radius:6px;
-	-moz-border-radius:6px;
-	-webkit-border-radius:6px;
+	
+	
 }
 #estimateInfoTbl A{
 	text-decoration:none;
@@ -175,15 +175,11 @@ SELECT.systemProductsSelect{
 	cursor:pointer;
 }
 #suggestList A:hover{
-	background: -webkit-gradient(linear, left top, left bottom, from(#e0e0e0), to(#8090a0));
-	background: -moz-linear-gradient(top,  #e0e0e0,  #8090a0);
-	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#e0e0e0', endColorstr='#8090a0');
+	background-image:linear-gradient(#e0e0e0,  #8090a0);
 	color:#900000;
 }
 #suggestList A.selected{
-	background: -webkit-gradient(linear, left top, left bottom, from(#f8f8fa), to(#90a0b0));
-	background: -moz-linear-gradient(top,  #f8f8fa,  #90a0b0);
-	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f8f8fa', endColorstr='#90a0b0');
+	background-image:linear-gradient(#f8f8fa,  #90a0b0);
 	color:#300000;
 }
 #quotesButtons{
