@@ -1,6 +1,5 @@
 {literal}
 <style type="text/css">
-
 	#loadingGif{
 		display:none;
 		position:fixed;
@@ -32,11 +31,9 @@
 		height:8px;
 		width:150px;
 	}
-	
 </style>
 
 <script type="text/javascript">
-
 	function showLoading( h ){
 		$('loadingGif').setStyle('display', h === false ? 'none' : 'block');
 	};
@@ -53,7 +50,6 @@
 	} );
 	
 	window.addEvent('beforeunload', showLoading);
-	
 </script>
 {/literal}
 

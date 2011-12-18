@@ -1,8 +1,5 @@
 {literal}
 <style type="text/css">
-
-/* <div id='alertsBox'><div id='alertsList'></div></div> */
-
 	#alertsBox{
 		display:none;
 		position:fixed;
@@ -63,7 +60,6 @@
 		font-weight:bold;
 		background:#e0e0e5;
 	}
-	
 </style>
 
 <script type="text/javascript">

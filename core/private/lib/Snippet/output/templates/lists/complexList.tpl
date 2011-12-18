@@ -1,35 +1,3 @@
-<h1 class='complexList_title'>Presupuestos Corporativos</h1>
-
-{foreach from=$data key=code item=group}
-  <div class='complexList_group' for='{$code}'>
-	<H4 class='complexList_groupHeader'>{$group.name}</H4>
-	<div class='complexList_groupBody'>
-	  <div>
-		{$membersName}:
-		{foreach from=$group.members key=id item=name}
-		  <a href='javascript:void();' class='complexList_members' for='{$id}'>{$name}</a> |
-		{/foreach}
-		<a href='javascript:void();' class='complexList_members' for='{$id}'>(agregar)</a>
-	  </div>
-	  {foreach from=$fields key=k item=v}
-		{foreach $group.data[$k] key=id item=name}
-		  <div class='complexList_property'>
-			{$v}:
-			{if $id}
-			  <a href='javascript:void();' class='complexList_{$k}' for='{$id}'>{$name}</a>
-			{else}
-			  <span>{$name}</span>
-			{/if}
-		  </div>
-		{/foreach}
-	  {/foreach}
-	</div>
-	<div class='complexList_preview listPreLoad'></div>
-	<div class='complexList_expand'>&dArr;</div>
-  </div>
-{/foreach}
-
-
 <style type="text/css">
 	.complexList_title{
 		margin-bottom:40px;
@@ -88,3 +56,35 @@
 		cursor:pointer;
 	}
 </style>
+
+
+<h1 class='complexList_title'>Presupuestos Corporativos</h1>
+
+{foreach from=$data key=code item=group}
+  <div class='complexList_group' for='{$code}'>
+	<H4 class='complexList_groupHeader'>{$group.name}</H4>
+	<div class='complexList_groupBody'>
+	  <div>
+		{$membersName}:
+		{foreach from=$group.members key=id item=name}
+		  <a href='javascript:void();' class='complexList_members' for='{$id}'>{$name}</a> |
+		{/foreach}
+		<a href='javascript:void();' class='complexList_members' for='{$id}'>(agregar)</a>
+	  </div>
+	  {foreach from=$fields key=k item=v}
+		{foreach $group.data[$k] key=id item=name}
+		  <div class='complexList_property'>
+			{$v}:
+			{if $id}
+			  <a href='javascript:void();' class='complexList_{$k}' for='{$id}'>{$name}</a>
+			{else}
+			  <span>{$name}</span>
+			{/if}
+		  </div>
+		{/foreach}
+	  {/foreach}
+	</div>
+	<div class='complexList_preview listPreLoad'></div>
+	<div class='complexList_expand'>&dArr;</div>
+  </div>
+{/foreach}
