@@ -590,10 +590,19 @@ function setAgendaHandlers(){
 	});
 };
 
-function closeAgendaEvent( id ){
-	var res = prompt('Escriba un comentario para el cierre de este evento:');
-	if( !res && res !== null ) return showStatus('Se debe incluir un comentario al cerrar un evento de la Agenda.');
-	if( res ) xajax_closeAgendaEvent(id, res||'', $('rescheduled').checked ? 1 : 0);
+function closeAgendaEvent(id, msg){
+	var res = prompt('Escriba un comentario para el cierre de este evento:', msg||'');
+	if( res === '' ){
+        return showStatus('Se debe incluir un comentario al cerrar un evento de la Agenda.');
+    }else if( res ){
+        var cfm = "Se dispone a cerrar el evento con el siguiente mensaje:\n\n" + res +
+                  "\n\nPulse Cancelar para editar el mensaje.";
+        if (confirm(cfm)){
+            xajax_closeAgendaEvent(id, res, $('rescheduled').checked ? 1 : 0);
+        } else {
+            closeAgendaEvent(id, res);
+        }
+    }
 };
 
 
