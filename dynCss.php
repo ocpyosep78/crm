@@ -78,11 +78,101 @@
  * fix rules and exit
  */
 if (!empty($_GET['path'])) {
+
+ 
+    function linearGradients($matches) {
+        $keymap = array('css3',         // Proper CSS3 rule, complete, as it was written
+                        'property',     // Name of property: background or background-image
+                        'before',       // Other elements of the property, besides gradient
+                        'direction',    // Direction of the gradient: 'to xx[ xx]' or 'xxdeg'
+                        'strStops',     // List of color-stops
+                        'after');       // Other elements after gradient within same rule
+
+        foreach ($keymap as $pos => $key) {
+            $$key = $matches[$pos];
+        }
+        
+        // Make sure to have a default value for $direction, for legacy syntax
+        $direction || ($direction = 'to bottom');
+        $directionLegacy = $direction;
+        
+        // For old syntax, we need the source rather than the target of the gradient
+        $dirsOld = array('to '    => '',
+                         'top'    => 'bottom',
+                         'right'  => 'left',
+                         'bottom' => 'top',
+                         'left'   => 'right');
+        $directionOld = str_ireplace(array_keys($dirsOld), array_values($dirsOld), $direction);
+        
+        // Gecko, Opera, Webkit, start counting from the right instead of the top,
+        // and counter-clockwise instead of clockwise, contrary to current spec. See:
+        // (https://developer.mozilla.org/en/CSS/linear-gradient#AutoCompatibilityTable)
+        if (strstr($direction, 'deg')) {
+            $directionLegacy = (90 - intval($direction)) . 'deg';
+        } else {
+            $directionLegacy = $directionOld;
+        }
+        
+        preg_match_all('/([^,]+?(?:\([^)]+\))?)+/', $strStops, $colorMatches);
+        $colorStops = $colorStopsOld = $colorMatches[0];
+        
+        // Get old versions of each colorstop definition where needed
+        foreach ($colorStops as $i => &$cs) {
+            $opacity = preg_match('/(\d+)%\)/', $cs, $match);
+            if ($opacity) {
+                $cs = str_replace("{$match[1]}%)", ($match[1] / 100) . ')', $cs);
+            }
+            if (strstr($cs, 'gba')) {        // rgba is not supported in old implementations
+                $colorStopsOld[$i] = preg_replace(array('/rgba/', '/,[\d\.]+%?\)/'), array('rgb', ')'), $cs);
+            }
+        }
+        $strColorStops = join(',', $colorStops);
+        $strColorStopsOld = join(',', $colorStopsOld);
+        
+        $plainColor = preg_replace('/ .+$/', '', $colorStopsOld[0]);
+        $firstColor = $colorStopsOld[0];
+        $lastColor = end($colorStopsOld);
+        
+        // Old webkit syntax requires direction to be defined by from and to sides/corners
+        $dirWkFrom = strstr($directionOld, 'deg') ? '0 0' : $directionOld;
+        $dirWkTo = strstr($direction, 'deg') ? '0 100%' : str_replace('to ', '', $direction);
+        
+        $tpl = "{$property}:{$before}%slinear-gradient(%s,$strColorStopsOld){$after};";
+        $rules = array(
+            // Fallback if no gradients
+            'Legacy'                => "background:{$plainColor}" . ($property == 'background' ?  "{$before}{$after}" : '') . ";",
+            // Old webkit syntax
+            'Safari, Chrome < 10'   => "{$property}:{$before}-webkit-gradient(linear,{$dirWkFrom},{$dirWkTo},from($firstColor),to($lastColor));",
+            // New webkit syntax
+            'New webkit'            => "{$property}:{$before}-webkit-linear-gradient({$directionOld},{$strColorStops}){$after};",
+            // Old versions' syntax still supported, direction in degs as in spec
+            'FF >= 3.6'             => "{$property}:{$before}   -moz-linear-gradient({$directionOld},{$strColorStops}){$after};",
+            // IE6 & IE7
+            'IE < 8'                => "filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#000000', endColorstr='#ffffff');",
+            // IE8+
+            'IE >= 8'               => "-ms-filter:\"progid:DXImageTransform.Microsoft.gradient(startColorstr='{$firstColor}', endColorstr='{$lastColor}')\";",
+            // ?
+            'IE10'                  => "{$property}:{$before}    -ms-linear-gradient({$directionOld},{$strColorStops}){$after};",
+            // Supports rgba, old direction, deg clockwise starting to right
+            'Opera'                 => "{$property}:{$before}     -o-linear-gradient({$directionLegacy},{$strColorStops}){$after};",
+            // Proper CSS3 syntax
+            'CSS3'                  => $css3,
+            // Pie-only syntax (for old IEs)
+            'PIE'                   => "-pie-background:linear-gradient({$directionOld},{$strColorStops});",
+        );
+
+        return join('', $rules);
+    }
+    
     // Find out where this file is, relative to the document root
     $htc = preg_replace('/^\/*/', '', $_SERVER['SCRIPT_NAME']);
     
     // Read the actual CSS file
     $css = file_get_contents(dirname(__FILE__) . "/{$_GET['path']}");
+
+    // Linear Gradients deserve special treatment due to its complexity
+    $lgPattern = "/(background(?:-image)?)\:([^;-]*)linear-gradient\((?:(to [a-zA-Z]+(?: [a-zA-Z]+)?|-?\d+deg),)?(?:([^;]+)\))([^;]*);/s";
+    $css = preg_replace_callback($lgPattern, 'linearGradients', $css);
 
     // Define replacements, in order
     $replacements = array(
@@ -96,14 +186,20 @@ if (!empty($_GET['path'])) {
         '/\s+/s' => ' ',
         // Opacity for IE
         '/opacity\:([^;]+)?;/e' => '"filter:alpha(opacity=" . intval($1*100) . ");$0"',
-        // Add rules for border-radius and box-shadow for non-css3-compliant browsers
-        '/([^-])((border-radius|box-shadow)[^;]+);/' => '$1-moz-$2;-webkit-$2;-o-$2;$2;',
-        // Background linear gradient (both for background and background-image)
-        '/(background(?:-image)?\:)([^;-]*)linear-gradient\(([^,]+),([^)]+)\)([^;]*);/' => '$1$2-webkit-gradient(linear,0 0,0 100%,from($3),to($4))$5;' .
-                                                                                           '$1$2-webkit-linear-gradient($3,$4)$5;' .
-                                                                                           '$1$2-moz-linear-gradient($3,$4)$5;' .
-                                                                                           '$0' .
-                                                                                           '-pie-background:$2linear-gradient($3,$4)$5;',
+        // Add rules for border-radius
+        '/(?:[^-])(border-radius[^;]+);/' => '-webkit-$1;'.       /* Saf3-4, iOS 1-3.2, Android <e;1.6 */
+                                             '-moz-$1;'.          /* FF1-3.6 */
+                                             '-o-$1;'.            /* Opera 10.5, IE9, Saf5, Chrome, FF4, iOS 4, Android 2.1+ */
+                                             '$1;'.               /* CSS3 */
+        // Next lines fix an ugly bug where bg color escapes the rounded border
+                                             '-webkit-background-clip:padding-box;'.
+                                             '-moz-background-clip:padding;'.
+                                             'background-clip:padding-box;',
+        // Add rules for box-shadow
+        '/(?:[^-])(box-shadow[^;]+);/' => '-webkit-$1;'.          /* Saf3-4, iOS 4.0.2 - 4.2, Android 2.3+ */
+                                          '-moz-$1;'.             /* FF3.5 - 3.6 */
+                                          '-o-$1;'.               /* Opera 10.5, IE9, FF4+, Chrome 6+, iOS 5 */
+                                          '$1;',                  /* CSS3 */
         // Add behavior rule (IE) where needed
         '/({[^}]+(border-radius|box-shadow|gradient|shadow)+[^}]+)\}/' => "$1behavior:url({$htc});}",
     );
