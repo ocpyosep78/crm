@@ -14,27 +14,43 @@
 		'blockUsers',
 		'deleteUsers',
 	);
-	
+
 	function createUsers( $atts ){
-		
 		# Get rid of prefixes in $atts keys (remaining keys match field names in DB)
 		oValidate()->preProcessInput($atts, 'createUsers_');
-		
 		if( ($valid=oValidate()->test($atts, 'users')) === true ){
+            $img = $atts['img'];
+            unset($atts['img']);
+
+            # Check image type and other attributes, if a new image was submitted
+            if( $img['size'] ){
+                if( ($imgAtts=getimagesize($img['tmp_name'])) === false || $imgAtts[2] != IMAGETYPE_PNG ){
+                    $msg = "El archivo subido debe ser una imagen con formato/extensión \'png\'.";
+                    return oPajax()->addResponse("showStatus('{$msg}');");
+                }
+            }
+            
 			# Set messages to return to the user after processing the request
 			oSQL()->setErrMsg("El usuario {$atts['user']} fue creado con éxito");
 			oSQL()->setErrMsg("Ocurrió un error al intentar crear el usuario {$atts['user']}");
 			oSQL()->setDuplMsg("El usuario {$atts['user']} ya existe. Debe elegir otro nombre de usuario");
 			# Request query and catch answer, then return it to the user
 			$ans = oSQL()->createUsers( $atts );
+            
 			if( $ans->error ){
-				return showStatus( $ans->msg );
+				return oPajax()->addResponse("showStatus('{$ans->msg}');");
 			}else{
-				return oNav()->getPage('usersInfo', array($atts['user']), $ans->msg, $ans->successCode);
+                # Save picture if one was chosen and data was stored
+                if( $img['size'] ){
+                    if( !move_uploaded_file($img['tmp_name'], "app/images/users/{$atts['user']}.png") ){
+                        $msg = "No se pudo guardar la imagen. Inténtelo nuevamente.";
+                        return oPajax()->addResponse("showStatus('{$msg}');");
+                    }
+                }
+				return oPajax()->addResponse("getPage('usersInfo', ['{$atts['user']}'], '{$ans->msg}', 1);");
 			}
 		}
-		else return addScript("FTshowTip('createUsers_{$valid['field']}', '{$valid['tip']}');");
-		
+		else return oPajax()->addResponse("FTshowTip('createUsers_{$valid['field']}', '{$valid['tip']}');");
 	}
 	
 	function blockUsers($user, $unblock=false){

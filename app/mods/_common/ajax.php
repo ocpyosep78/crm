@@ -25,8 +25,20 @@
 		
 		# Get rid of prefixes in $atts keys (remaining keys match field names in DB)
 		oValidate()->preProcessInput($data, 'editUsers_');
-		
+
+        $img = $data['img'];
+        unset($data['img']);
+
 		if( ($valid=oValidate()->test($data, 'users')) === true ){
+
+            # Check image type and other attributes, if a new image was submitted
+            if( $img['size'] ){
+                if( ($imgAtts=getimagesize($img['tmp_name'])) === false || $imgAtts[2] != IMAGETYPE_PNG ){
+                    $msg = "El archivo subido debe ser una imagen con formato/extensión \'png\'.";
+                    return oPajax()->addResponse("showStatus('{$msg}');");
+                }
+            }
+            
 			# Set messages to return to the user after processing the request
 			oSQL()->setOkMsg("La información fue correctamente actualizada.");
 			oSQL()->setErrMsg("Ocurrió un error. Los cambios no fueron guardados.");
@@ -34,11 +46,25 @@
 			$ans = oSQL()->editUsers( $data );
 			$isHome = oNav()->getCurrentModule() == 'home';
 			$page = $isHome ? 'home' : 'usersInfo';
-			$atts = $isHome ? array() : array($data['user']);
-			if( $isHome ) foreach( oSQL()->getUser(getSes('user')) as $k => $v ) regSes($k, $v);
-			return oNav()->getPage($page, $atts, $ans->msg, $ans->successCode);
+
+            # Save picture if one was chosen and data was stored
+            if( $img['size'] ){
+                if( !move_uploaded_file($img['tmp_name'], "app/images/users/{$data['user']}.png") ){
+                    $msg = "No se pudo guardar la imagen. Inténtelo nuevamente.";
+                    return oPajax()->addResponse("showStatus('{$msg}');");
+                }
+            }
+
+			if( $isHome ){
+                foreach( oSQL()->getUser(getSes('user')) as $k => $v ){
+                    regSes($k, $v);
+                }
+            }
+            
+			$atts = $isHome ? '[]' : "['{$data['user']}']";
+			return oPajax()->addResponse("getPage('{$page}', {$atts}, '{$ans->msg}', '{$ans->successCode}');");
 		}
-		else return addScript("FTshowTip('editUsers_{$valid['field']}', '{$valid['tip']}');");
+		else return oPajax()->addResponse("FTshowTip('editUsers_{$valid['field']}', '{$valid['tip']}');");
 		
 	}
 	

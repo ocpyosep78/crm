@@ -52,6 +52,7 @@
 		oSmarty()->assign('isSelf', $self);
 		oSmarty()->assign('userID', $id);
 		oSmarty()->assign('hasPic', is_file("app/images/users/{$id}.png"));
+		oSmarty()->assign('sid', time());
 		
 		oSmarty()->assign('userData', oFormTable()->getTemplate());
 		
@@ -105,6 +106,10 @@
 		oFormTable()->addInput('Teléfono', array('id' => 'phone'));
 		oFormTable()->addInput('Dirección', array('id' => 'address'));
 		oFormTable()->addInput('Email', array('id' => 'email'));
+
+        oFormTable()->addTitle( '' );
+        oFormTable()->addFile('Imagen', array('id' => 'img'), '');
+        oFormTable()->addTitle( '' );
 		
 		# Block 'Interno'
 		oFormTable()->addTitle( 'Interno' );
@@ -131,7 +136,7 @@
 		oFormTable()->addSubmit( $edit ? 'Guardar Cambios' : 'Guardar' );
 		
 		# Set onsubmit action (submitting through xajax)
-		oFormTable()->xajaxSubmit( $edit ? 'editUsers' : 'createUsers' );
+		oFormTable()->pajaxSubmit( $edit ? 'editUsers' : 'createUsers' );
 		
 		# Add commands and actions to Xajax response object
 		oNav()->updateContent(oFormTable()->getTemplate(), true);
