@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This library relies on css3pie' htc (referred to as PIE from now on).
+ * This library relies on css3pie htc (referred to as PIE from now on).
  *
  *
  * REQUIREMENTS: Apache with Rewrite mod enabled + PHP
