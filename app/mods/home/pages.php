@@ -158,7 +158,7 @@
 				'events'	=> array(),
 			);
 		}
-		
+        
 		# Fill days with events
 		foreach( $events as $event ){
 			$event['event'] = nl2br( $event['event'] );	/* Textarea linefeeds to <br> */
@@ -191,19 +191,33 @@
 	
 	}
 
-	function page_agendaDay( $date=NULL ){
-		
+	function page_agendaDay($date=NULL, $currFilters=array(), $showRescheduled=1){
 		if( !$date ) return oNav()->abortFrame('Faltan datos requeridos para cargar la página.');
 	
 		# Basic structure of data to be passed
 		$day['date'] = $date;
 		$day['isToday'] = true;
 		$day['events'] = oSQL()->getEventsInfo(NULL, $date);
+
+		# Filters
+		$filters = array();
+		$filters['type'] = array(
+			'name'		=> 'Tipo',
+			'options'	=> array(''=>'(todos)') + oLists()->agendaEventTypes(),
+		);
+		$filters['user'] = array(
+			'name'		=> 'Usuario',
+			'options'	=> array(''=>'(todos)') + oLists()->users(),
+		);
 	
 		# Fill day with events
 		foreach( $day['events'] as &$evt ) $evt['event'] = nl2br( $evt['event'] );
 		oSmarty()->assign('day', $day);
 		oSmarty()->assign('types', oLists()->agendaEventTypes());
+		oSmarty()->assign('data', array(array('date' => $date)));
+		oSmarty()->assign('filters', $filters);
+		oSmarty()->assign('currFilters', $currFilters + array_fill_keys(array_keys($filters), ''));
+		oSmarty()->assign('showRescheduled', $showRescheduled);
 		
 	}
 	

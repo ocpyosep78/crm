@@ -11,3 +11,9 @@
 	  {/foreach}
 	</div>
 </div>
+
+{if $inFrame}
+    <div style='position:absolute; right:0px; top:30px;'>
+        {include file='widgets/agenda_filters.tpl'}
+    </div>
+{/if}

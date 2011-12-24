@@ -66,6 +66,23 @@ function ini_agendaDay(){
 	$$('.eventUnit').forEach(function(evt){
 		evt.addEvent('click', function(){ xajax_eventInfo( $(this).getElement('INPUT').value ); });
 	});
+
+	function getFilters(){
+		var filters = {};
+		$$('.sel_agendaFilters').forEach(function(sel){ filters[sel.getAttribute('filter')] = sel.value; });
+		return filters;
+	};
+	function filterAgenda(e){
+		showPage(e, 'agendaDay', [$('thisDate').value, getFilters(), $('showRescheduled').checked ? 1 : 0]);
+	};
+	$$('.sel_agendaFilters').forEach(function(sel){ sel.onchange = filterAgenda; });
+	$('showRescheduled').onclick = function(){
+		var that = this;
+		$$('.eventRescheduled').forEach(function(p){
+			$(p).setStyle('display', that.checked ? 'block' : 'none');
+		});
+	};
+	$('showRescheduled').onclick();
 };
 
 function ini_activity_technical(){ ini_activity(); };

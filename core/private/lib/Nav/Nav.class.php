@@ -104,7 +104,6 @@
 		 * different atts), we just deliver content at this first call.
 		 */
 		public function getPage($page, $atts=array(), $msg='', $type=0, $inFrame=false){
-		
 			if( $msg ) $this->queueMsg($msg, $type);
 			
 			$code = $this->regNav($page, $atts);
@@ -134,7 +133,6 @@
 		 * Loads a page within an iframe (FRAME_TPL_PATH)
 		 */
 		public function showPage($page, $atts=array(), $msg='', $type=0){
-		
 			$href = $this->getPage($page, $atts, $msg, $type, true);
 			
 			# Object returned by #getPage could be an code(correct) or a showStatus() call (error)
@@ -143,8 +141,6 @@
 				$this->inFrame = false;
 				return $href;	/* Not a real href but a xajax addscript call to showStatus */
 			}
-			
-			
 		}
 		
 		public function setJSParams(){
@@ -203,6 +199,7 @@
 		 * page builder function (page_{$page}) and handle returned results.
 		 */
 		public function loadContent($code=NULL, $atts=NULL){
+            oSmarty()->assign('inFrame', $this->inFrame);
 		
 			if( is_null($code) ) $code = $this->code;
 		
