@@ -57,16 +57,13 @@
 		
 	}
 
-	function page_createEvent(){
-	
-		return page_editEvent();
-		
+	function page_createEvent($id=NULL, $customerid=NULL){
+		return page_editEvent($id, $customerid);
 	}
 
-	function page_editEvent( $id=NULL ){		/* When $id is not given, it's a new event */
-		
+	function page_editEvent($id=NULL, $customerid=NULL){		/* When $id is not given, it's a new event */
 		$event = $id ? oSQL()->getEventsInfo($id) : array();
-		if( $id && empty($event) ) return oNav()->getPage('agenda', array(), 'Evento no encontrado.');
+		if($id && empty($event)) return oNav()->getPage('agenda', array(), 'Evento no encontrado.');
 		
 		if( !empty($event) ){		# Fix data to fit fields organization upon editting
 			$event['iniDate'] = substr($event['ini'], 0, 10);
@@ -74,7 +71,10 @@
 			$event['endTime'] = $event['end'] ? substr($event['end'], 11, 5) : '';
 			unset($event['ini'], $event['end']);
 		}
-		
+        elseif (!empty($customerid)){
+            $event['id_customer'] = $customerid;
+        }
+        
 		$users = oLists()->users();
 		oSmarty()->assign('users', $users);
 		
@@ -120,7 +120,9 @@
 			array('(sin especificar)') + oLists()->customers(),
 			array('id' => 'id_customer'));
 		
-		if( $id ) oFormTable()->fillValues( $event );		# Fill table with values (editting)
+		if( $event ) oFormTable()->fillValues( $event );		# Fill table with values (editting)
+
+
 		oSmarty()->assign('optional', oFormTable()->getTemplate());
 		
 		oSmarty()->assign('id_event', $id ? $id : '');

@@ -135,6 +135,25 @@ test( array('snippet' => $snippet, 'code' => $this->code) + $this->params );
 				case 'deleteItem':	/* TEMP : alias of delete for now, back in items later */
 					return 'actions';
 				default:
+                    // TODO : move this to somewhere more appropriate
+                    if ($snippet == 'newCustomerTechItem') {
+                        oNav()->getPage('createTechVisits', array(NULL, $this->params['filters']));
+                        return NULL;
+                    }elseif ($snippet == 'newAgendaEventItem') {
+                        oNav()->getPage('createEvent', array(NULL, $this->params['filters']));
+                        return NULL;
+                    }
+/* test( array('snippet' => $snippet, 'code' => $this->code) + $this->params );
+Array(
+    [snippet] => newCustomerTechItem
+    [code] => customers
+    [modifier] => customers
+    [writeTo] =>
+    [filters] => 129
+    [group_uID] => 0.09624400 1324947334
+    [initialize] =>
+    [main] => newCustomerTechItem
+) */
 					return NULL;
 			}
 			

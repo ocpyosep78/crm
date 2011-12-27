@@ -14,6 +14,7 @@ var SnippetPort = {
 	// By default, that is xajax_addSnippet
 	addSnippet: function(){ xajax_addSnippet.apply(window, arguments); },
 	getPage: function(e, code, snippet, params){
+        return alert(code + snippet.capitalize());
 		getPage(e, code + snippet.capitalize(), params);
 	}
 };

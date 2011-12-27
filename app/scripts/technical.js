@@ -36,7 +36,11 @@ function ini_createTechVisits( data ){
 				that.$form[by].addEvent('enter', function(e){ that.search.call(that, by); });
 				that.$form[by].addEvent('keydown', function(e){ if( e.key == 'enter' ) e.stop(); });
 			});
-			if( data ) this.fillForm(data, !data.id_sale);
+            if(data.id_customer && !data.id_sale){
+                xajax_tchFormAcceptSale('', data.id_customer);
+            }else if( data ){
+                this.fillForm(data, !data.id_sale);
+            }
 		},
 		/* data is sent as parameter if provided, otherwise the whole form is sent */
 		search: function( by ){
@@ -79,7 +83,7 @@ function ini_createTechVisits( data ){
 				});
 			});
 		},
-		fillForm: function(data, auto){	/* auto means a script called, not the user */
+		fillForm: function(data, auto){	/* 'auto' means a script called, not the user */
 			if( typeof(data) != 'object' ) return;
 			var els = this.$form;
 			var textTypes = {text:1, hidden:1, password:1};
@@ -150,8 +154,7 @@ function ini_createTechVisits( data ){
 	$(document.forms.frm_newTechVisit).addEvent('submit', function(e){ TechnicalForm.submit(e); return false; });
 	$('tch_save').addEvent('click', function(e){ TechnicalForm.submit(e); });
 	$('tch_print').addEvent('click', function(){
-		return !!alert('En construcción');
-		TechnicalForm.submit();
+        /* TODO */
 	});
 	
 };

@@ -80,9 +80,15 @@
 		}
 		
 		protected function getTools(){
+            SnippetLayer_access::addCustomPermit('newCustomerTech');
+            SnippetLayer_access::addCustomPermit('newAgendaEvent');
 		
-			return array('view', 'create', 'edit', 'delete');
-			
+			return array('view',
+                         array('newCustomerTech' => 'Nueva ficha técnica para el'),
+                         array('newAgendaEvent'  => 'Nuevo evento para el'),
+                         'create',
+                         'edit',
+                         'delete');
 		}
 				
 /*		protected function checkFilter( &$filters ){

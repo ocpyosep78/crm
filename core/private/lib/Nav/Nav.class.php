@@ -105,12 +105,12 @@
 		 */
 		public function getPage($page, $atts=array(), $msg='', $type=0, $inFrame=false){
 			if( $msg ) $this->queueMsg($msg, $type);
-			
+            
 			$code = $this->regNav($page, $atts);
 			$href = "?nav={$code}"
 				.(getSkinName() ? "&skin=".getSkinName() : '')
 				.($inFrame || $this->inFrame ? '&iframe' : '');
-			
+            
 			if( $code === true ){
 				loadMainSmartyVars();
 				require_once(CORE_PRIVATE.'pageMgr.php');

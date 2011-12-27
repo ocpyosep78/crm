@@ -27,10 +27,9 @@
 		
 	}
 	
-	function page_createTechVisits( $id=NULL ){
-		
+	function page_createTechVisits($id=NULL, $customerid=NULL){
 		# If an id was provided, we pass the visit's data, to pre-fill the form (edit/info mode)
-		if( !$id ){
+		if(!$id && !$customerid){
 			$date = explode('-', date('Y-m-d'));
 			oNav()->setJSParams( array(
 				'day'	=> $date[2],
@@ -38,6 +37,38 @@
 				'year'	=> $date[0],
 			) );
 		}
+        elseif( !empty($customerid) ){
+            $data['id_customer'] = $customerid;
+			oNav()->setJSParams( $data );
+        }
+/* Array(
+    [id_sale] => 62
+    [type] => service
+    [id_customer] => 51
+    [id_system] =>
+    [invoice] => 21389
+    [date] => 2009-07-27
+    [currency] =>
+    [cost] =>
+    [warranty] =>
+    [contact] =>
+    [notes] =>
+    [number] =>
+    [customer] => Balmoral Plaza Hotel
+    [legal_name] => Puertosur s.a
+    [rut] => 211283900014
+    [address] => Plaza Cagancha 1126 (Montevideo)
+    [billingaddress] => Plaza Cagancha 1126
+    [id_location] => 29
+    [phone] => 29022393
+    [email] => info@balmoral.com.uy
+    [seller] => pcorts
+    [since] => 2010-09-24 11:48:52
+    [subscribed] => 0
+    [custNumber] => 1007
+    [onSale] =>
+    [technician] => rdelossantos
+    [starts] => */
 		/* If we're editting, get data and fix special fields */
 		elseif( $data=oSQL()->getTechVisit($id) ){
 			list($data['year'], $data['month'], $data['day']) = explode('-', $data['date']);

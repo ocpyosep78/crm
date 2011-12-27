@@ -266,12 +266,14 @@
 			
 			# Always include list button in bigTools
 			$btns = array_merge((array)'list', (array)$this->getTools());
-			
-			# Extend $base with other attributes to build final tools
-			$this->tools = array();
-			foreach( $base as $id => &$axn ){
-				!in_array($id, $btns) || $this->tools[$id] = $axn;
-			}
+
+            foreach( $btns as $btn ){
+                if (is_array($btn)) {
+                    $this->tools[end(array_keys($btn))] = array_shift($btn);
+                } elseif (isset($this->toolsBase[$btn])) {
+                    $this->tools[$btn] = $this->toolsBase[$btn];
+                }
+            }
 			
 			return $this;
 			
@@ -332,7 +334,7 @@
 					$fieldsByType[$atts['type']][$field] = $atts;
 				}
 			}
-			
+            
 			# Tools are enabled by default
 			foreach( $tools as $k => &$v ){
 				$v = array(
@@ -340,7 +342,7 @@
 					'disabled'	=> $this->Access->cant($k, $this->code),
 				);
 			}
-			
+
 			$this->summary = array(
 				'mainTable' 	=> $mainTable,
 				'tables'		=> $tables,
