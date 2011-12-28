@@ -133,6 +133,7 @@
 		 * Loads a page within an iframe (FRAME_TPL_PATH)
 		 */
 		public function showPage($page, $atts=array(), $msg='', $type=0){
+//            test($page);
 			$href = $this->getPage($page, $atts, $msg, $type, true);
 			
 			# Object returned by #getPage could be an code(correct) or a showStatus() call (error)

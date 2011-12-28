@@ -30,7 +30,7 @@ function ini_agenda(){
 	setAgendaHandlers();
 	// Tie events to each day
 	$$('.agenda_dayWrapper').forEach(function(block){
-		var preview = function(){ showPage('agendaDay', [block.getAttribute('FOR')]); };
+		var preview = function(){ showPage('agendaDay', [block.getAttribute('FOR'), getFilters()]); };
 		block.getElement('.agenda_dayDate').addEvent('click', preview);
 		block.getElement('.agenda_dayName').addEvent('click', preview);
 	});
@@ -73,7 +73,7 @@ function ini_agendaDay(){
 		return filters;
 	};
 	function filterAgenda(e){
-		showPage(e, 'agendaDay', [$('thisDate').value, getFilters(), $('showRescheduled').checked ? 1 : 0]);
+		getPage(e, 'agendaDay', [$('thisDate').value, getFilters(), $('showRescheduled').checked ? 1 : 0]);
 	};
 	$$('.sel_agendaFilters').forEach(function(sel){ sel.onchange = filterAgenda; });
 	$('showRescheduled').onclick = function(){

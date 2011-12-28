@@ -199,7 +199,7 @@
 		# Basic structure of data to be passed
 		$day['date'] = $date;
 		$day['isToday'] = true;
-		$day['events'] = oSQL()->getEventsInfo(NULL, $date);
+		$day['events'] = oSQL()->getEventsInfo(NULL, $date, $currFilters);
 
 		# Filters
 		$filters = array();
@@ -211,7 +211,7 @@
 			'name'		=> 'Usuario',
 			'options'	=> array(''=>'(todos)') + oLists()->users(),
 		);
-	
+
 		# Fill day with events
 		foreach( $day['events'] as &$evt ) $evt['event'] = nl2br( $evt['event'] );
 		oSmarty()->assign('day', $day);
