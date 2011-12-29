@@ -70,6 +70,6 @@
 
 		oTabs()->useThisHTML( oLists()->simpleListHTML('notes', $id) );
 		
-		return "initializeSimpleList('notes', '{$id}');";
+		return "initializeSimpleList();";
 		
 	}

@@ -24,7 +24,7 @@
 {/literal}
 
 
-<table {if $simpleListID}id='{$simpleListID}' {/if}class='data simpleList'>
+<table {if $simpleListID}id='{$simpleListID}' {/if}class='data simpleList' for='{$code}|{$modifier}'>
 
   {foreach from=$fields key=field item=name}											{* TITLES *}
 	<th>{if is_array($name)}{$name[0]}{else}{$name}{/if}</th>
@@ -81,7 +81,7 @@
 		<div class='tblTools' axn='create' id='SLcreateItem'>
 		  <img src='app/images/buttons/add.png' alt='agregar' title='agregar' />
 		</div>
-		<span id='createItemText'>Agregar</span>
+		<span class='createItemText'>Agregar</span>
 	  </td>
 	</tr>
   {/if}

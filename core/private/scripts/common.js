@@ -664,8 +664,8 @@ function initializeList(code, modifier, src){
 	TableSearch.enableSearch(code, modifier, src||'');		/* Prepare search tools */
 };
 
-function initializeSimpleList(code, modifier){
-	var SimpleList = function( $list ){			// Simple List
+function initializeSimpleList(){
+	var SimpleList = function($list, code, modifier){			// Simple List
 		var that = this;
 		var row4edit = $list.getElement('.addItemToSimpleList');
 		this.inputs = row4edit.getElements('INPUT, SELECT');
@@ -678,7 +678,7 @@ function initializeSimpleList(code, modifier){
 		};
 		this.enableEditItem = function( id ){
 			var tgt = that.selectRow( id );
-			$('createItemText').innerHTML = 'Modificar';
+			$list.getElement('.createItemText').innerHTML = 'Modificar';
 			editting = {id: id, row: tgt};
 		};
 		this.selectRow = function( id ){
@@ -699,12 +699,14 @@ function initializeSimpleList(code, modifier){
 		this.disableEditItem = function(){
 			if( editting.tgt ) editting.tgt.removeClass('selectedRow');
 			that.inputs.forEach(function(inp){ inp.value = ''; });
-			$('createItemText').innerHTML = 'Agregar';
+			$list.getElement('.createItemText').innerHTML = 'Agregar';
 			editting = {};
 		};
 	};
 	$$('.simpleList').forEach(function($list){
-		var SL = new SimpleList( $list );
+        var params = $list.getAttribute('FOR').split('|');
+        var code = params[0], modifier = params[1];
+		var SL = new SimpleList($list, code, modifier);
 		SL.inputs.forEach(function(input){
 			input.addEvent('enter', function(){ $('SLcreateItem').fireEvent('click'); });
 		});
@@ -712,7 +714,7 @@ function initializeSimpleList(code, modifier){
 			row.addEvent('mouseover', function(){ highLight(this); });
 			row.addEvent('click', function(){ SL.enableEditItem( this.getAttribute('FOR') ); });
 		});
-		$('createItemText').onclick = SL.createItem;
+		$list.getElement('.createItemText').onclick = SL.createItem;
 		$list.getElements('.tblTools').forEach(function(tool){
 			var id = tool.getAttribute('FOR');
 			var axn = tool.getAttribute('AXN');

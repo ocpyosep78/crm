@@ -341,7 +341,7 @@ try{
 			};
 			this.enableEditItem = function( id ){
 				var tgt = that.selectRow( id );
-				$('createItemText').innerHTML = 'Modificar';
+				$list.getElement('.createItemText').innerHTML = 'Modificar';
 				editting = {id: id, row: tgt};
 			};
 			this.selectRow = function( id ){
@@ -362,7 +362,7 @@ try{
 			this.disableEditItem = function(){
 				if( editting.tgt ) editting.tgt.removeClass('selectedRow');
 				that.inputs.forEach(function(inp){ inp.value = ''; });
-				$('createItemText').innerHTML = 'Agregar';
+				$list.getElement('.createItemText').innerHTML = 'Agregar';
 				editting = {};
 			};
 		};
@@ -375,7 +375,7 @@ try{
 				row.addEvent('mouseover', function(){ highLight(this); });
 				row.addEvent('click', function(){ SL.enableEditItem( this.getAttribute('FOR') ); });
 			});
-			$('createItemText').onclick = SL.createItem;
+			$list.getElement('.createItemText').onclick = SL.createItem;
 			$list.getElements('.tblTools').forEach(function(btn){
 				var id = btn.getAttribute('FOR');
 				var axn = btn.getAttribute('AXN');

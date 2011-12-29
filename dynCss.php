@@ -187,19 +187,19 @@ if (!empty($_GET['path'])) {
         // Opacity for IE
         '/opacity\:([^;]+)?;/e' => '"filter:alpha(opacity=" . intval($1*100) . ");$0"',
         // Add rules for border-radius
-        '/(?:[^-])(border-radius[^;]+);/' => '-webkit-$1;'.       /* Saf3-4, iOS 1-3.2, Android <e;1.6 */
-                                             '-moz-$1;'.          /* FF1-3.6 */
-                                             '-o-$1;'.            /* Opera 10.5, IE9, Saf5, Chrome, FF4, iOS 4, Android 2.1+ */
-                                             '$1;'.               /* CSS3 */
+        '/([^-])(border-radius[^;]+);/' => '$1-webkit-$2;'.       /* Saf3-4, iOS 1-3.2, Android <e;1.6 */
+                                           '-moz-$2;'.            /* FF1-3.6 */
+                                           '-o-$2;'.              /* Opera 10.5, IE9, Saf5, Chrome, FF4, iOS 4, Android 2.1+ */
+                                           '$2;'.                 /* CSS3 */
         // Next lines fix an ugly bug where bg color escapes the rounded border
                                              '-webkit-background-clip:padding-box;'.
                                              '-moz-background-clip:padding;'.
                                              'background-clip:padding-box;',
         // Add rules for box-shadow
-        '/(?:[^-])(box-shadow[^;]+);/' => '-webkit-$1;'.          /* Saf3-4, iOS 4.0.2 - 4.2, Android 2.3+ */
-                                          '-moz-$1;'.             /* FF3.5 - 3.6 */
-                                          '-o-$1;'.               /* Opera 10.5, IE9, FF4+, Chrome 6+, iOS 5 */
-                                          '$1;',                  /* CSS3 */
+        '/([^-])(box-shadow[^;]+?);/' => '$1-webkit-$2;'.          /* Saf3-4, iOS 4.0.2 - 4.2, Android 2.3+ */
+                                         '-moz-$2;'.               /* FF3.5 - 3.6 */
+                                         '-o-$2;'.                 /* Opera 10.5, IE9, FF4+, Chrome 6+, iOS 5 */
+                                         '$2;',                    /* CSS3 */
         // Add behavior rule (IE) where needed
         '/({[^}]+(border-radius|box-shadow|gradient|shadow)+[^}]+)\}/' => "$1behavior:url({$htc});}",
     );

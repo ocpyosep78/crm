@@ -11,7 +11,7 @@
 	$cnt = array(
 		'notes'			=> oStats()->count('_notes', $notesFilter),
 		'agenda'		=> oStats()->countAgendaEvents( $filter ),
-		'contacts'		=> oStats()->count('customers_contacts', $filter),
+//		'contacts'		=> oStats()->count('customers_contacts', $filter),
 		'owners'		=> oStats()->count('customers_owners', $filter),
 		'estimates'		=> oStats()->count('estimates', $filter),
 		'sales'			=> oStats()->count('sales', $filter + array('type' => 'sale')),
@@ -22,7 +22,7 @@
 	return array(
 		'notes'			=> "Notas ({$cnt['notes']})",
 		'agenda'		=> array('name' => "Agenda ({$cnt['agenda']})", 'permit' => 'agenda'),
-		'contacts'		=> "Contactos ({$cnt['contacts']})",
+//		'contacts'		=> "Contactos ({$cnt['contacts']})",
 		'owners'		=> "Titulares ({$cnt['owners']})" ,
 		'estimates'		=> array('name' => "Presupuestos ({$cnt['estimates']})", 'permit' => 'estimates'),
 		'sales'			=> array('name' => "Ventas ({$cnt['sales']})", 'permit' => 'sales'),
@@ -51,7 +51,7 @@
 		$ids = oPermits()->can('usersNotes') ? $id : "{$id}__|__".getSes('user');
 		oTabs()->useThisHTML( oLists()->simpleListHTML('notes', $ids) );
 		
-		return "initializeSimpleList('notes', '{$id}');";
+		return "initializeSimpleList();";
 		
 	}
 

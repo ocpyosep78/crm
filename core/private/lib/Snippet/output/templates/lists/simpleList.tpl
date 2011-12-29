@@ -63,7 +63,7 @@
 		<div class='tblTools' axn='create' id='SLcreateItem'>
 		  <img src='{$SNIPPET_IMAGES}/buttons/add.png' alt='agregar' title='agregar' />
 		</div>
-		<span id='createItemText'>Agregar</span>
+		<span class='createItemText'>Agregar</span>
 	  </td>
 	</tr>
   {/if}

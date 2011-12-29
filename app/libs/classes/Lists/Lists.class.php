@@ -251,7 +251,7 @@
 		}
 		
 		public function initializeSimpleList(){
-			return addScript( "initializeSimpleList('{$this->code}', '{$this->modifier}');" );
+			return addScript( "initializeSimpleList();" );
 		}
 
 		public function simpleListHTML($code=NULL, $modifier=NULL, $filters=array()){

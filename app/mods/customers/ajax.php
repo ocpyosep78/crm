@@ -164,7 +164,7 @@
 		
 		if( ($valid=oValidate()->test($data, 'customerContacts')) === true ){
 			$ans = oSQL()->{$id ? 'update' : 'insert'}($data, 'customers_contacts', array('id_contact'));
-			if( !$ans->error ) return oTabs()->switchTab('contacts');
+			if( !$ans->error ) return oNav()->reloadPage();
 			else return showStatus('No se pudo procesar su consulta. '.
 				'Compruebe los datos ingresados y vuelva a intentarlo.');
 		}
@@ -175,7 +175,7 @@
 	function deleteCustomerContacts( $id ){
 		
 		$ans = oSQL()->delete('customers_contacts', array('id_contact' => $id));
-		if( !$ans->error ) return oTabs()->switchTab('contacts');
+		if( !$ans->error ) return oNav()->reloadPage();
 		else return showStatus('Ocurrió un error. El elemento no pudo ser eliminado.');
 		
 	}

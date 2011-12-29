@@ -19,3 +19,22 @@
 	padding:3px;
 	border:solid 1px #600000;
 }
+
+#customerContacts{
+    margin:10px 0px -30px 0px;
+    border:none;
+    background:none;
+    box-shadow:0 0 0;
+    border-radius:0px;
+    text-align:center;
+}
+#customerContacts H3{
+    margin:0px 0px 5px 30px;
+    text-align:left;
+}
+#customerContacts .data.simpleList{
+    display:inline-block;
+    width:95%;
+    margin:0px !important;
+    overflow:hidden;
+}

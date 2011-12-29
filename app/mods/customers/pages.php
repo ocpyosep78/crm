@@ -13,7 +13,16 @@
 		return page_customers( 'potential' );
 	}
 	function page_customersInfo( $id ){
+		$permits = array('createCustomerContacts', 'editCustomerContacts', 'deleteCustomerContacts');
+		oPermits()->setAlias('editCustomers', $permits);
+		$contactsList = oLists()->simpleListHTML('customerContacts', $id);
+
+        $contactsHtml = "<div id='customerContacts'><h3>Contacto(s)</h3>{$contactsList}</div>";
+        oSmarty()->assign('snippet_extraHTML', $contactsHtml);
+        addScript("initializeSimpleList();");
+
 		oSnippet()->addSnippet('viewItem', 'customers', array('filters' => $id));
+
 		return oTabs()->start( false );
 	}
 
