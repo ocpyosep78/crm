@@ -78,7 +78,7 @@
 		</td>
 	  {/foreach}
 	  <td class='simpleListCreate'>
-		<div class='tblTools' axn='create' id='SLcreateItem'>
+		<div class='tblTools SLcreateItem' axn='create'>
 		  <img src='app/images/buttons/add.png' alt='agregar' title='agregar' />
 		</div>
 		<span class='createItemText'>Agregar</span>

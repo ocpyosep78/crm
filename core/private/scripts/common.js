@@ -704,11 +704,15 @@ function initializeSimpleList(){
 		};
 	};
 	$$('.simpleList').forEach(function($list){
+        // Nothing to do if this list has no tools (no editting allowed)
+        if (!$list.getElement('.addItemToSimpleList')) return false;
         var params = $list.getAttribute('FOR').split('|');
         var code = params[0], modifier = params[1];
 		var SL = new SimpleList($list, code, modifier);
 		SL.inputs.forEach(function(input){
-			input.addEvent('enter', function(){ $('SLcreateItem').fireEvent('click'); });
+			input.addEvent('enter', function(){
+				$list.getElement('.SLcreateItem').fireEvent('click');
+			});
 		});
 		$list.getElements('.listRows').forEach(function(row){
 			row.addEvent('mouseover', function(){ highLight(this); });
