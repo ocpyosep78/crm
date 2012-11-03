@@ -77,6 +77,12 @@
 ** 
 **********************************************************************************/
 
+function db($var, $die=true)
+{
+	headers_sent() || header('Content-Type: application/json');
+	$var ? print_r($var) : var_dump($var);
+	$die && die();
+}
 
 /***************
 ** I N I T I A L   C O N F I G U R A T I O N
