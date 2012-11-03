@@ -6,8 +6,7 @@
 	- target
 	- event *}
 
-<p class='eventUnit event{$event.type}{if $event.closed} eventClosed{/if}{if $event.rescheduled} eventRescheduled{/if}' onmouseover="highLight(this, '#f0f0f0');" {if $event.closed}title='{$event.closed}'{else}title='click para ver información detallada del evento'{/if}>
-
+<p class='eventUnit event{$event.type}{if $event.closed} eventClosed{/if}{if $event.rescheduled} eventRescheduled{/if}' {if $event.closed}title='Cerrado/Cancelado: {$event.closed}'{else}title='ver detalle'{/if}>
 	<input type='hidden' name='id_event' value='{$event.id_event}' />
 	
 	<img class='agenda_eventUser' alt='' title='{$event.creator}' src='app/images/users/{$event.creator}.png' />
@@ -24,5 +23,12 @@
 	{if $event.target} <span class='agenda_targetUser'>&gt; {$event.target}</span>{/if}
 	
 	<span class='agenda_eventText'>- {$event.event}</span>
-	
+
+	<span class='eventTools'>
+	  {if $Permits->can('editEvent') && $event.canEdit && !$event.closed}
+		<img for='edit'   src='app/images/agendaTools/edit.png' title='editar' />
+		<img for='cancel' src='app/images/agendaTools/cancel.png' title='cancelar/posponer' />
+		<img for='close'  src='app/images/agendaTools/close.png' title='cerrar' />
+	  {/if}
+	</span>
 </p>

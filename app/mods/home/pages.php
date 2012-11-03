@@ -164,6 +164,7 @@
 		# Fill days with events
 		foreach( $events as $event ){
 			$event['event'] = nl2br( $event['event'] );	/* Textarea linefeeds to <br> */
+			$event['canEdit'] = canEditEvent(getSes('user'), $event['creator'], $event['target']);
 			$data[substr($event['ini'], 0, 10)]['events'][] = $event;
 		}
 		foreach( $data as $day ) $days[] = $day;
@@ -213,7 +214,12 @@
 		);
 
 		# Fill day with events
-		foreach( $day['events'] as &$evt ) $evt['event'] = nl2br( $evt['event'] );
+		foreach( $day['events'] as &$event )
+		{
+			$event['event'] = nl2br($event['event']);
+			$event['canEdit'] = canEditEvent(getSes('user'), $event['creator'], $event['target']);
+		}
+
 		oSmarty()->assign('day', $day);
 		oSmarty()->assign('types', oLists()->agendaEventTypes());
 		oSmarty()->assign('data', array(array('date' => $date)));

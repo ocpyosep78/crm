@@ -54,13 +54,48 @@ function ini_agenda(){
 		getPage(e, 'agenda', [$('thisDate').value, getFilters(), $('showRescheduled').checked ? 1 : 0]);
 	};
 	$$('.sel_agendaFilters').forEach(function(sel){ sel.onchange = filterAgenda; });
+
 	$('showRescheduled').onclick = function(){
 		var that = this;
 		$$('.eventRescheduled').forEach(function(p){
 			$(p).setStyle('display', that.checked ? 'block' : 'none');
+
+	// Animate Event Tools
+	J('.eventUnit:not(.eventClosed)').hover(function(){
+		J(this).find('.eventTools img').animate({
+			'right': 0
+		}, {'duration': 100, 'queue': false});
+		J(this).children(':not(.eventTools)').animate({
+			'opacity': 0.6
 		});
+	}, function(){
+		J(this).find('.eventTools img').animate({
+			'right': -200
+		}, {'duration': 500, 'queue': false});
+		J(this).children(':not(.eventTools)').animate({
+			'opacity': 1
+		});
+	});
+	
 	};
 	$('showRescheduled').onclick();
+	// Activate Event Tools
+	J('.eventTools img').click(function(e){
+		var eventID = J(this).parents('.eventUnit:first').find('[name="id_event"]').val();
+
+		switch (J(this).attr('for'))
+		{
+			case 'edit': getPage(e, 'editEvent', [eventID])
+				break;
+			case 'cancel': closeAgendaEvent(eventID, '', true);
+				break;
+			case 'close': closeAgendaEvent(eventID);
+				break;
+			default:
+				return;
+		}
+		return false;
+	});
 };
 function ini_agendaDay(){
 	$$('.eventUnit').forEach(function(evt){

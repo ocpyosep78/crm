@@ -78,10 +78,10 @@
 		$event['user'] = $event['target'];
 		$event['target'] = $event['user'] ? $users[$event['user']] : '';
 		$event['event'] = nl2br( $event['event'] );
+		$event['canEdit'] = canEditEvent(getSes('user'), $event['creator'], $event['user']);
 		
 		oSmarty()->assign('event', $event );
 		oSmarty()->assign('editions', oSQL()->getEventEditions($id) );
-		oSmarty()->assign('canEditEvent', canEditEvent(getSes('user'), $event['creator'], $event['user']));
 		
 		addAssign('agenda_eventInfo', 'innerHTML', oSmarty()->fetch('home/eventInfoModal.tpl'));
 		
