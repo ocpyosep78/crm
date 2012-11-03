@@ -585,10 +585,8 @@ Modal = {
 /***********************************************************************************/
 
 function setAgendaHandlers(){
-	if( $$('.eventUnit') ) $$('.eventUnit').forEach(function(evt){
-		evt.addEvent('click', function eventInfo(){
-			xajax_eventInfo( $(this).getElement('INPUT').value );	/* eventID in hidden input */
-		});
+	J('.eventUnit').click(function(){
+		xajax_eventInfo(J(this).find('input[type="hidden"]').val());
 	});
 };
 

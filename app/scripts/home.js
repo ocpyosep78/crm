@@ -55,10 +55,10 @@ function ini_agenda(){
 	};
 	$$('.sel_agendaFilters').forEach(function(sel){ sel.onchange = filterAgenda; });
 
-	$('showRescheduled').onclick = function(){
-		var that = this;
-		$$('.eventRescheduled').forEach(function(p){
-			$(p).setStyle('display', that.checked ? 'block' : 'none');
+	J('.eventRescheduled')[J('#showRescheduled').attr('checked') ? 'show' : 'hide']();
+	J('#showRescheduled').click(function(){
+		J('.eventRescheduled').toggle();
+	});
 
 	// Animate Event Tools
 	J('.eventUnit:not(.eventClosed)').hover(function(){
@@ -77,8 +77,6 @@ function ini_agenda(){
 		});
 	});
 	
-	};
-	$('showRescheduled').onclick();
 	// Activate Event Tools
 	J('.eventTools img').click(function(e){
 		var eventID = J(this).parents('.eventUnit:first').find('[name="id_event"]').val();
@@ -98,8 +96,8 @@ function ini_agenda(){
 	});
 };
 function ini_agendaDay(){
-	$$('.eventUnit').forEach(function(evt){
-		evt.addEvent('click', function(){ xajax_eventInfo( $(this).getElement('INPUT').value ); });
+	J('.eventUnit').click(function(){
+		xajax_eventInfo(J(this).find('input[type="hidden"]').val());
 	});
 
 	function getFilters(){
@@ -111,13 +109,11 @@ function ini_agendaDay(){
 		getPage(e, 'agendaDay', [$('thisDate').value, getFilters(), $('showRescheduled').checked ? 1 : 0]);
 	};
 	$$('.sel_agendaFilters').forEach(function(sel){ sel.onchange = filterAgenda; });
-	$('showRescheduled').onclick = function(){
-		var that = this;
-		$$('.eventRescheduled').forEach(function(p){
-			$(p).setStyle('display', that.checked ? 'block' : 'none');
-		});
-	};
-	$('showRescheduled').onclick();
+
+	J('.eventRescheduled')[J('#showRescheduled').attr('checked') ? 'show' : 'hide']();
+	J('#showRescheduled').click(function(){
+		J('.eventRescheduled').toggle();
+	});
 };
 
 function ini_activity_technical(){ ini_activity(); };

@@ -595,7 +595,7 @@ table.calcells td.hover{background-color:#999999;}
 .eventUnit{ position:relative; clear:both; min-height:40px; margin:1px 3px 5px 1px; padding:1px 2px; cursor:pointer; background-image:linear-gradient(#e0f0ff, #d0d0ef); box-shadow:#606065 2px 2px 3px; }
 .eventUnit:hover{ background:#e0e0e0; color:#600000; }
 .agenda_eventInfo{ color:#003300; font-weight:bold !important; }
-.eventClosed{ background:#f0ffc0; background-image:linear-gradient(#f0ffe8, #f0ffa0); }
+.eventClosed{ display:none; background:#f0ffc0; background-image:linear-gradient(#f0ffe8, #f0ffa0); }
 .eventClosed .agenda_eventText{ color:#000000; }
 IMG.agenda_eventUser{ float:left; height:40px; width:30px; margin-bottom:2px; margin-right:3px; }
 IMG.agenda_eventType{ float:right; height:30px; width:30px; margin:3px; }
