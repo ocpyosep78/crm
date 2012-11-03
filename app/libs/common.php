@@ -109,17 +109,27 @@
 		
 	}
 	
-	function toJson( $arr=array() ){
-			
-		if( !is_array($arr) || !count($arr) ) return '{}';
+	function toJson( $arr=array() )
+	{
+		if( !is_array($arr) || !count($arr) ) return '[]';
+		
+		$onlyNumeric = true;
+		foreach ($arr as $k => $v)
+		{
+			$onlyNumeric = $onlyNumeric && is_numeric($k);
+		}
+
 		foreach( $arr as $k => $v ){
-			$json[] = '"'.$k.'":'.(is_array($v)
+			$key = $onlyNumeric ? '' : '"'.$k.'":';
+			$val = is_array($v)
 				? toJson($v)
-				: (is_numeric($v) ? $v : '"'.addslashes($v).'"')
-			);
+				: (is_numeric($v) ? $v : '"'.addslashes($v).'"');
+			$json[] = "{$key}{$val}";
 		}
 		
-		return '{'.join(",", $json).'}';
+		$content = join(",", $json);
+		
+		return $onlyNumeric ? "[{$content}]" : "{{$content}}";
 	}
 	
 	function getSkinName(){
