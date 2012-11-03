@@ -261,15 +261,16 @@
 				'address'	=> "CONCAT(c.address, ' (', lc.location, ')')",
 				'contact'	=> 'cc.name',
 			));
-			$sql = "SELECT	`c`.*,
-							`cc`.`name` AS 'contact',
-							CONCAT(c.address, ' (', lc.location, ')') AS 'address'
-					FROM `customers` `c`
-					LEFT JOIN `_locations` `lc` USING(`id_location`)
-					LEFT JOIN (	SELECT `id_customer`, `name`
-								FROM `customers_contacts` `cc`
-								GROUP BY `id_customer`) `cc` USING (`id_customer`)
-					WHERE {$this->array2filter($filters)}";
+			$sql = "SELECT `c`.*,
+			               `cc`.`name` AS 'contact',
+			               CONCAT(c.address, ' (', lc.location, ')') AS 'address'
+			        FROM `customers` `c`
+			        LEFT JOIN `_locations` `lc` USING(`id_location`)
+			        LEFT JOIN (	SELECT `id_customer`, `name`
+			                    FROM `customers_contacts` `cc`
+			                    GROUP BY `id_customer`) `cc` USING (`id_customer`)
+			        WHERE {$this->array2filter($filters)}
+			        LIMIT 31";
 			return $this->query($sql, 'array');
 		}
 		

@@ -25,11 +25,13 @@
     }
 	
 	function tchFormSuggest($key, $val){
-	
 		/* Validate input */
 		if( $key == 'custNumber' ){
 			$key = 'number';
-			if( !empty($val) && !is_numeric($val) ) return showStatus('Número de cliente inválido.');
+			if (!empty($val) && !is_numeric($val))
+			{
+				return showStatus('Número de cliente inválido.');
+			}
 		}
 		
 		$customers = oSQL()->getCustomersForService( array($key => $val) );
@@ -44,8 +46,8 @@
 				'rows'			=> $rows,
 			);
 		}
-		
-		return addScript("\$('technicalForm').handler.suggest(".toJson($data).');');
+
+		return addScript("J('#technicalForm').get(0).handler.suggest(".toJson($data).');');
 		
 	}
 	
@@ -78,7 +80,7 @@
 			'custNumber', 'warranty', 'subscribed', 'id_system', 'system', 'installDay', 'installMonth', 'installYear');
 		foreach( $data as $k => $v ) if( !in_array($k, $toKeep) ) unset( $data[$k] );
 		
-		return addScript("\$('technicalForm').handler.fillForm(".toJson($data).');');
+		return addScript("J('#technicalForm').get(0).handler.fillForm(".toJson($data).');');
 		
 	}
 	

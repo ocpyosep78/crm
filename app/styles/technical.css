@@ -81,6 +81,7 @@
 .tch_s_row EM{ color:#606060; font-style:italic; white-space:normal; line-height:1.5em; }
 .tch_s_row STRONG{ color:#900000; font-weight:bold; }
 .tch_s_empty{ margin-top:200px; color:#600000; font-size:14px; font-weight:bold; text-align:center; }
+.tch_s_notice{ margin:20px 0px; color:#664; font-size:14px; font-weight:bold; text-align:center; }
 
 /**
  * TECHVISITSINFO (technical visits/services)
