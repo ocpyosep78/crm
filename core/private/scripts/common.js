@@ -1,15 +1,13 @@
 J = jQuery.noConflict();
 
-// Calendar (DatePicker)
-J.datepicker.regional['es'] = {
+// Localize DatePicker
+jQuery.datepicker.setDefaults(jQuery.datepicker.regional['es'] = {
 	closeText: 'Cerrar',
 	prevText: '&#x3c;Ant',
 	nextText: 'Sig&#x3e;',
 	currentText: 'Hoy',
-	monthNames: ['Enero','Febrero','Marzo','Abril','Mayo','Junio',
-				 'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'],
-	monthNamesShort: ['Ene','Feb','Mar','Abr','May','Jun',
-					  'Jul','Ago','Sep','Oct','Nov','Dic'],
+	monthNames: ['Enero','Febrero','Marzo','Abril','Mayo','Junio', 'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'],
+	monthNamesShort: ['Ene','Feb','Mar','Abr','May','Jun', 'Jul','Ago','Sep','Oct','Nov','Dic'],
 	dayNames: ['Domingo','Lunes','Martes','Mi&eacute;rcoles','Jueves','Viernes','S&aacute;bado'],
 	dayNamesShort: ['Dom','Lun','Mar','Mi&eacute;','Juv','Vie','S&aacute;b'],
 	dayNamesMin: ['Do','Lu','Ma','Mi','Ju','Vi','S&aacute;'],
@@ -19,8 +17,61 @@ J.datepicker.regional['es'] = {
 	isRTL: false,
 	showMonthAfterYear: false,
 	yearSuffix: ''
+});
+
+// Make $().each to provide extended arguments and scope, when args === true
+jQuery.fn.each = function(cb, args) {
+	if (!jQuery.isArray(args) && args) {
+		var jSet = this;
+		args = null; // We don't want to pass a truthy args to jQuery.each()
+		jQuery.each(this, function(i, k){ jSet[i] = jQuery(k); });
+	}
+
+	return jQuery.each(this, cb, args);
 };
-J.datepicker.setDefaults(J.datepicker.regional['es']);
+
+// Implement custom onEnter and onEscape jQuery events
+jQuery.fn.enter = function(cb){
+	return cb ? this.on('enter', cb) : this.trigger('enter');
+}
+jQuery.fn.escape = function(cb){
+	return cb ? this.on('escape', cb) : this.trigger('escape');
+}
+jQuery(function($){
+	$('body').on('keyup', '*', function(e){
+		return (e.which != 13) || $(this).enter();
+	});
+	$('body').on('keyup', ':input', function(e){
+		return (e.which != 27) || $(this).escape();
+	});
+});
+
+// Extend forms, add entries for its elements, and add names when requested
+jQuery.forms = function(form, addNames) {
+	var frm = jQuery('form#' + form + ', form[name="' + form + '"]').first();
+
+	// Add the names, based on the ids (with an optional prefix)
+	if (addNames) {
+		var prefix = (typeof addNames === 'string') ? addNames : '';
+		frm.find(':input:not([name])[id^="' + prefix + '"]').each(function(){
+			var name =  jQuery(this).attr('id').substr(prefix.length);
+			jQuery(this).attr('name', name);
+		});
+	}
+
+	frm.elements = frm.find(':input[name]').each(function(i){
+		var name = jQuery(this).attr('name');
+		frm[name] = frm.find(':input[name="' + name + '"]');
+	});
+
+	// Add reset method (which doesn't exist in jQuery for some reason)
+	frm.reset = function() {
+		frm.get(0).reset();
+		return this;
+	}
+
+	return frm;
+};
 
 $_ = {style:{}};
 $E = {
