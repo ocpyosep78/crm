@@ -51,7 +51,7 @@
 		
 		oSmarty()->assign('isSelf', $self);
 		oSmarty()->assign('userID', $id);
-		oSmarty()->assign('hasPic', is_file("app/images/users/{$id}.png"));
+		oSmarty()->assign('userImg', oSQL()->getUserImg($id));
 		oSmarty()->assign('sid', time());
 		
 		oSmarty()->assign('userData', oFormTable()->getTemplate());

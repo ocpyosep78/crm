@@ -12,7 +12,5 @@
   
 <div class='infoBlocks'>
 	{foreach from=$blocks item=block}<div>{$block}</div>{/foreach}
-	{if $hasPic}
-		<img class='userPic' alt='{$userID}' title='{$userID}' src='app/images/users/{$userID}.png?{$sid}' />
-	{/if}
+	<img class='userPic' alt='{$userID}' title='{$userID}' src='{$userImg}' />
 </div>

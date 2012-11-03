@@ -9,7 +9,7 @@
 <div class='eventInfoTitle'>{$event.ini|date_locale:'l, d \d\e F \d\e Y'}</div>
 <div class='eventInfoSubTitle'>{$event.ini|date_locale:'H:i'}{if $event.end} - {$event.end|date_locale:'H:i'}{/if}</div>
 
-<img class='eventInfo_Creator' alt='' title='{$event.creator}' src='app/images/users/{$event.creator}.png' />
+<img class='eventInfo_Creator' alt='' title='{$event.creator}' src='{$event.creatorimg}' />
    
 <table class='eventInfoTbl' cellpadding="3" cellspacing="0">
 	<tr>

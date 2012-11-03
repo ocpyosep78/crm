@@ -9,7 +9,7 @@
 <p class='eventUnit event{$event.type}{if $event.closed} eventClosed{/if}{if $event.rescheduled} eventRescheduled{/if}' {if $event.closed}title='Cerrado/Cancelado: {$event.closed}'{else}title='ver detalle'{/if}>
 	<input type='hidden' name='id_event' value='{$event.id_event}' />
 	
-	<img class='agenda_eventUser' alt='' title='{$event.creator}' src='app/images/users/{$event.creator}.png' />
+	<img class='agenda_eventUser' alt='' title='{$event.creator}' src='{$event.creatorimg}' />
 	<img class='agenda_eventType' alt='' title='{$types[$event.type]}'
 		src='app/images/agendaEvents/{if $event.rescheduled}rescheduled/{/if}{$event.type}.png' />
 	

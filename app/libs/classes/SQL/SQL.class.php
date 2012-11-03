@@ -366,7 +366,22 @@
 					AND {$this->array2filter($filters, 'AND', '=')}
 					AND {$usersFilter}
 					ORDER BY `e`.`ini`";
-			return $this->query($sql, $id === NULL ? 'array' : 'row');
+			
+			$events = $this->query($sql, 'array');
+			
+			foreach ($events as &$event)
+			{
+				$event['creatorimg'] = $this->getUserImg($event['creator']);
+			}
+			
+			
+			return (!is_null($id) ? array_shift($events) : $events);
+		}
+		
+		public function getUserImg($userid)
+		{
+			$path = "app/images/users/{$userid}.png";
+			return is_file($path) ? $path : 'app/images/noavatar.png';
 		}
 		
 		public function getUserEvents($id, $type=NULL){
