@@ -15,7 +15,9 @@ function ini_createEvent(id_event){		/* Agenda */
 		if(readTextArea('evt_event').trim() === ''){
 			return FTshowTip('evt_event', 'Debe proporcionar una descripción del evento.');
 		};
-		xajax_createEvent(xajax.getFormValues('frmEditEvent'), id_event || 0);
+		
+		var data = xajax.getFormValues(J('form[name="frmEditEvent"]').get(0));
+		xajax_createEvent(data, id_event || 0);
 	});
 
 	J('#evt_target').change(function(){
@@ -88,7 +90,7 @@ function ini_agenda(){
 		J(sel).change(filterAgenda);
 	});
 
-	J('.eventRescheduled')[J('#showRescheduled').attr('checked') ? 'show' : 'hide']();
+	J('.eventRescheduled').toggle(J('#showRescheduled').attr('checked'));
 
 	J('#showRescheduled').click(function(){
 		J('.eventRescheduled').toggle();
@@ -152,7 +154,7 @@ function ini_agendaDay(){
 		J(sel).change(filterAgenda);
 	});
 
-	J('.eventRescheduled')[J('#showRescheduled').attr('checked') ? 'show' : 'hide']();
+	J('.eventRescheduled').toggle(J('#showRescheduled').attr('checked'));
 
 	J('#showRescheduled').click(function(){
 		J('.eventRescheduled').toggle();

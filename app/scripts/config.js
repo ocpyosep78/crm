@@ -1,16 +1,15 @@
 function ini_config(){
-	
 	/* Object to handle item selection */
 	window.List = {
 		ID: null,
 		IDs: [],
 		filter: '%',
 		sel: function( id ){
-			if( !this.IDs[id] ) return;
-			if( this.IDs[this.ID] ) this.IDs[this.ID].removeClass('selectedItem');
+			if (!this.IDs[id]) return;
+			this.IDs[this.ID] && this.IDs[this.ID].removeClass('selectedItem');
 			xajax_updatePermitsBy(TAB, id, this.filter);
 			this.IDs[this.ID=id].addClass('selectedItem');
-			$('insertNameHere').innerHTML = this.IDs[id].getElement('A').innerHTML;
+			J('#insertNameHere').html(this.IDs[id].find('a').html());
 		},
 		edt: function( id ){
 		},
@@ -19,61 +18,49 @@ function ini_config(){
 		attachListEventHandlers: function(){
 			var that = this;
 			/* Filters handlers */
-			$$('.permitsFilter').forEach(function(tools){
-				tools.getElements('SPAN').forEach(function(ftr){
-					ftr.addEvent('click', function(){
-						xajax_updatePermitsBy(TAB, List.ID, that.filter=ftr.getAttribute('FOR'));
-					});
-				});
+			J('.permitsFilter span').click(function(){
+				that.filter = J(this).attr('for');
+				xajax_updatePermitsBy(TAB, List.ID, that.filter);
 			});
 			/* Double click on a permission row */
-			$$('.permitsList').forEach(function(list){
-				var stat = list.getElement('.permitStat').value;
-				list.getElements('.permitRow').forEach(function(row){
-					row.addEvent('dblclick', function(e){
-						e.stop();
-						xajax_movePermit(TAB, stat, List.ID, row.getAttribute('FOR'));
-					});
+			J('.permitsList').each(function(i, list){
+				var stat = J(list).find('.permitStat').val();
+				J(list).find('.permitRow').dblclick(function(){
+					xajax_movePermit(TAB, stat, List.ID, J(this).attr('for'));
 				});
 			});
 		}
 	};
 	
 	/* Attach an event handler to each tab */
-	$$('.tab').forEach(function(tab){
-		tab.addEvent('click', function(e){
-			getPage(e, 'config', [this.getAttribute('FOR')]);
-		});
+	J('.tab').click(function(e){
+		getPage(e, 'config', [J(this).attr('for')]);
 	});
 	
 	/* Attach event handlers to elements of the list (profiles, users) */
-	$$('.listRow').forEach(function(pf){
-		var ID = pf.getAttribute('FOR');
-		List.IDs[ID] = pf;	/* Allows me to search by key, and link to the DOM element */
-		pf.getElement('A').addEvent('click', function(e){
-			List.sel( ID );
-			e.stop();
+	J('.listRow').each(function(i, pf){
+		var ID = J(pf).attr('for');
+		List.IDs[ID] = J(pf);	/* Allows me to search by key, and link to the DOM element */
+		J(pf).find('a').click(function(){
+			return List.sel(ID) & false;
 		});
-		pf.getElement('.editItem').addEvent('click', function(e){
-			List.sel( ID );
-			List.edt( ID );
-			e.stop();
+		J(pf).find('.editItem').click(function(){
+			return List.sel(ID) & List.edt(ID) & false;
 		});
-		pf.getElement('.delItem').addEvent('click', function(e){
-			List.sel( ID );
-			List.del( ID );
-			e.stop();
+		J(pf).find('.delItem').click(function(){
+			return List.sel(ID) & List.del(ID) & false;
 		});
 	});
 	
-	switch( TAB ){
+	switch (TAB) {
 		case 'Profiles':
-			$('btn_newProfile').addEvent('click', function(){
-				xajax_addProfile( $('newProfile').value );
+			J('#btn_newProfile').click(function(){
+				xajax_addProfile(J('#newProfile').val());
 			});
-			$('newProfile').addEvent('enter', function(){ $('btn_newProfile').click(); });
-			List.sel( 2 );
+			J('newProfile').enter(function(){
+				J('#btn_newProfile').click();
+			});
+			List.sel(2);
 		break;
 	};
-	
 };
