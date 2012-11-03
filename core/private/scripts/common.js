@@ -1,5 +1,27 @@
 J = jQuery.noConflict();
 
+// Calendar (DatePicker)
+J.datepicker.regional['es'] = {
+	closeText: 'Cerrar',
+	prevText: '&#x3c;Ant',
+	nextText: 'Sig&#x3e;',
+	currentText: 'Hoy',
+	monthNames: ['Enero','Febrero','Marzo','Abril','Mayo','Junio',
+				 'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'],
+	monthNamesShort: ['Ene','Feb','Mar','Abr','May','Jun',
+					  'Jul','Ago','Sep','Oct','Nov','Dic'],
+	dayNames: ['Domingo','Lunes','Martes','Mi&eacute;rcoles','Jueves','Viernes','S&aacute;bado'],
+	dayNamesShort: ['Dom','Lun','Mar','Mi&eacute;','Juv','Vie','S&aacute;b'],
+	dayNamesMin: ['Do','Lu','Ma','Mi','Ju','Vi','S&aacute;'],
+	weekHeader: 'Sm',
+	dateFormat: 'dd/mm/yy',
+	firstDay: 1,
+	isRTL: false,
+	showMonthAfterYear: false,
+	yearSuffix: ''
+};
+J.datepicker.setDefaults(J.datepicker.regional['es']);
+
 $_ = {style:{}};
 $E = {
 	addEvent: function(){ return $E; },
@@ -87,7 +109,6 @@ function iniPage( name ){
 	};
 	/* Autofix browse buttons and calendar inputs */
 	fixBrowseButton( document.documentElement , 'Examinar...' , 'browse' );
-	globalApplyCalendar();
 };
 function enableLinks2Models(){
 	CONTENT.getElements('.link2model').forEach(function(lnk){
@@ -470,43 +491,6 @@ function highLightBox( obj ){
 	obj.onfocus();
 };
 
-function applyCalendar(ini, end, noClear){
-	var eIni = ((ini=$(ini)) && !ini.hasEpoch) ? new Epoch('ini', 'popup', ini) : null;
-	var eEnd = ((end=$(end)) && !end.hasEpoch) ? new Epoch('end', 'popup', end) : null;
-	(ini||{}).readOnly = (end||{}).readOnly = true;			// Disable direct editting
-	(ini||{}).hasEpoch = (end||{}).hasEpoch = true;			// Flag this element
-	if( eEnd ){
-		eEnd.checkDate = function(){
-			if( this.selectedDates[0].dateFormat() < ini.value ){
-				return !!alert( 'La fecha final no puede preceder a la inicial.' );
-			};
-			return true;
-		};
-		end.onmousedown = function(){
-			if( ini.value ) eEnd.goToMonth(ini.value.split('-')[0], ini.value.split('-')[1] - 1);
-		};
-	};
-	var imgClear=$('calendarImgClear'), imgClearDis=$('calendarImgClearDisabled');
-	if( noClear || !imgClear || !imgClearDis ) return;
-	function clear(){ this.nextSibling.value = ''; };
-	function addImg( el ){
-		var isClearable = db_isClass(el, 'clearable');
-		var oImgDiv = (isClearable ? imgClear : imgClearDis).cloneNode( true );
-		if( isClearable ) oImgDiv.onclick = clear;
-		oImgDiv.style.display = 'block';
-		oImgDiv.id = '';
-		el.parentNode.insertBefore(oImgDiv, el);
-	};
-	if( eIni ) addImg( ini );
-	if( eEnd ) addImg( end );
-};
-
-function globalApplyCalendar(){
-	$$('.calendar').forEach(function(cal){
-		applyCalendar(cal, cal.getAttribute('calpair')||null );
-	});
-};
-
 function validEmail( email ){
    return !!/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$/.test(email);
 };
@@ -591,7 +575,7 @@ function setAgendaHandlers(){
 };
 
 function closeAgendaEvent(id, msg, resched){
-	(typeof resched == 'undefined') && (resched = J('#rescheduled').attr('checked')); 
+	(typeof resched === 'undefined') && (resched = J('#showRescheduled').attr('checked'));
 
 	var action = resched ? 'cancelar' : 'cerrar';
 	var res = prompt('Escriba un comentario para ' + action + ' el evento:', msg||'');

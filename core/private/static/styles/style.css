@@ -556,30 +556,6 @@ TABLE.simpleList .simpleListCreate{ white-space:nowrap; }
 .Tip DIV{padding:2px;}
 
 /**
- * EPOCH
- */
-INPUT.calendar{ width:80px; }
-INPUT.time_input{ width:60px; }
-table.calendar{z-index:999999999;font-family:Helvetica,Arial,sans-serif;font-size:0.8em;border-collapse:collapse;background-color:white;border:solid #999999 1px;background-color:white;background-image:linear-gradient(#e0f0ff, #d0d0ef);box-shadow:#606065 3px 3px 6px; width:190px;text-align:center;}
-table.calendar input,table.calendar select{font-size:10px;}
-table.calendar td{border:0;font-size:10px;text-align:center;}
-div.mainheading{margin:2px;}
-table.caldayheading{border-collapse:collapse;cursor:pointer;empty-cells:show;margin:0 6px 0 6px;}
-table.caldayheading td{border:solid #CCCCCC 1px;text-align:left;color:#666666;font-weight:bold;width:22px;}
-table.caldayheading td.wkhead{border-right:double #CCCCCC 3px;}
-table.calcells{border-collapse:collapse;cursor:pointer;margin:0 6px 0 6px;}
-table.calcells td{border:solid #CCCCCC 1px;vertical-align:top;text-align:left;font-weight:bold;width:22px;height:20px;}
-table.calcells td div{padding:1px;margin:0;}
-table.calcells td.wkhead{background-color:white;text-align:center;border-right:double #CCCCCC 3px;color:#0054E3;}
-table.calcells td.wkday{background-color:#dddde8;}
-table.calcells td.wkend{background-color:#DDDDDD;}
-table.calcells td.curdate{}
-table.calcells td.cell_selected{background-color:#99CCFF;color:black;}
-table.calcells td.notmnth{background-color:#FFFFFF;color:#CCCCCC;}
-table.calcells td.notallowed{background-color:white;color:#EEEEEE;font-style:italic;}
-table.calcells td.hover{background-color:#999999;}
-
-/**
  * AGENDA
  */
 #agendaTbl{ width:100%; empty-cells:show; }
@@ -595,14 +571,14 @@ table.calcells td.hover{background-color:#999999;}
 .eventUnit{ position:relative; clear:both; min-height:40px; margin:1px 3px 5px 1px; padding:1px 2px; cursor:pointer; background-image:linear-gradient(#e0f0ff, #d0d0ef); box-shadow:#606065 2px 2px 3px; }
 .eventUnit:hover{ background:#e0e0e0; color:#600000; }
 .agenda_eventInfo{ color:#003300; font-weight:bold !important; }
-.eventClosed{ display:none; background:#f0ffc0; background-image:linear-gradient(#f0ffe8, #f0ffa0); }
+.eventClosed{ background:#f0ffc0; background-image:linear-gradient(#f0ffe8, #f0ffa0); }
 .eventClosed .agenda_eventText{ color:#000000; }
 IMG.agenda_eventUser{ float:left; height:40px; width:30px; margin-bottom:2px; margin-right:3px; }
 IMG.agenda_eventType{ float:right; height:30px; width:30px; margin:3px; }
 #agenda_move{ position:relative; text-align:center; margin:0px 300px; }
 #btn_createEvent{ float:right; margin-right:5px; }
 #agenda_move IMG{ height:24px; width:24px; margin:0px 2px; cursor:pointer; }
-#agenda_move IMG:hover, #epochTrigger:hover{ opacity:0.7; }
+#agenda_move IMG:hover{ opacity:0.9; }
 #agenda_eventInfo{ display:none; }
 .modalEventInfo{ padding:5px; border:solid 2px #000000; top:100px; left:200px; right:200px; height:auto; margin:0px; font-size:12px; }
 .agenda_eventInfoInner{ position:relative; width:99%; height:99%; margin:0.5%; }
@@ -618,12 +594,11 @@ IMG.agenda_eventType{ float:right; height:30px; width:30px; margin:3px; }
 .agenda_eventText{ font-size:12px; color:#606080; }
 .agenda_noInfo{ color:#a0a0a0; }
 .tabEventsBox{ max-height:400px; margin-top:5px; padding:5px; border:solid 1px #c0c0c0; border-radius:8px;   background:#fffcfc; overflow:auto; }
-#epochTrigger{ position:relative; top:-7px; height:24px; width:24px; margin:0px; padding:0px; border:none; background:url(../images/calendar.gif) no-repeat; text-indent:25px /* Hide text */ ;cursor:pointer; }
 #agendaFilters{ float:left; margin:-5px 0px 5px 7px; padding:3px 5px; border:solid 1px #000090; border-radius:4px;   background-image:linear-gradient(#e0f0ff, #b0a8b8); box-shadow:#808080 3px 3px 5px; }
 .eventUnit.eventinstall .agenda_eventText{ color:#c00000; }
 .editEventFromEventInfo{ clear:both; }
 .eventClosedMsg{ text-align:center; color:#000000; margin:30px 0px 20px 0px; }
-.eventRescheduled{ background:#f0ccc0; }
+.eventRescheduled{ display:none; background:#f0ccc0; }
 .eventInfoRescheduled{ color:#993300; font-size:18px; font-weight:bold; font-family:Arial, Helvetica, sans-serif; text-transform:uppercase; }
 .eventTools{
 	position:absolute;
@@ -637,6 +612,10 @@ IMG.agenda_eventType{ float:right; height:30px; width:30px; margin:3px; }
 	height:24px;
 	width:24px;
 	margin:0px 2px;
+}
+#ui-datepicker-div{
+	margin-top:30px;
+	margin-left:-87px;
 }
 
 /**
