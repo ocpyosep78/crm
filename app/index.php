@@ -153,9 +153,9 @@
 	oPageCfg()->add_styleSheets( getSkinCss() );
 	oPageCfg()->add_jScripts(array(
 		CORE_SCRIPTS.'mootools 1.3.js',
+		CORE_SCRIPTS.'jquery-1.8.2.min.js',
 		CORE_SCRIPTS.'libs.js',
-		CORE_SCRIPTS.'common.js')
-	);
+		CORE_SCRIPTS.'common.js'));
 	oPageCfg()->add_jsCode("window.loggedIn = '".loggedIn()."'");
 	
 	if( oNav()->inFrame ) oPageCfg()->add_styleSheets( FRAME_CSS_PATH );
