@@ -1,3 +1,5 @@
+J = jQuery.noConflict();
+
 $_ = {style:{}};
 $E = {
 	addEvent: function(){ return $E; },

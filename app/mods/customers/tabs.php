@@ -9,26 +9,26 @@
 		: $filter + array('user' => getSes('user'));
 	
 	$cnt = array(
-		'notes'			=> oStats()->count('_notes', $notesFilter),
-		'agenda'		=> oStats()->countAgendaEvents( $filter ),
-//		'contacts'		=> oStats()->count('customers_contacts', $filter),
-		'owners'		=> oStats()->count('customers_owners', $filter),
-		'estimates'		=> oStats()->count('estimates', $filter),
-		'sales'			=> oStats()->count('sales', $filter + array('type' => 'sale')),
-		'installs'		=> oStats()->count('sales', $filter + array('type' => 'install')),
-		'techVisits'	=> oStats()->count('sales', $filter + array('type' => 'service')),
+		'notes'         => oStats()->count('_notes', $notesFilter),
+		'agenda'        => oStats()->countAgendaEvents( $filter ),
+//		'contacts'      => oStats()->count('customers_contacts', $filter),
+		'owners'        => oStats()->count('customers_owners', $filter),
+		'estimates'     => oStats()->count('estimates', $filter),
+		'sales'         => oStats()->count('sales', $filter + array('type' => 'sale')),
+		'installs'      => oStats()->count('sales', $filter + array('type' => 'install')),
+		'techVisits'    => oStats()->count('sales', $filter + array('type' => 'service')),
 	);
 	
 	return array(
-		'notes'			=> "Notas ({$cnt['notes']})",
-		'agenda'		=> array('name' => "Agenda ({$cnt['agenda']})", 'permit' => 'agenda'),
-//		'contacts'		=> "Contactos ({$cnt['contacts']})",
-		'owners'		=> "Titulares ({$cnt['owners']})" ,
-		'estimates'		=> array('name' => "Presupuestos ({$cnt['estimates']})", 'permit' => 'estimates'),
-		'sales'			=> array('name' => "Ventas ({$cnt['sales']})", 'permit' => 'sales'),
-		'installs'		=> array('name' => "Instalaciones ({$cnt['installs']})", 'permit' => 'installs'),
-		'techVisits'	=> array('name' => "Técnica ({$cnt['techVisits']})", 'permit' => 'techVisits'),
-//		'history'		=> 'Historial',
+		'notes'         => "Notas ({$cnt['notes']})",
+		'agenda'        => array('name' => "Agenda ({$cnt['agenda']})", 'permit' => 'agenda'),
+//		'contacts'      => "Contactos ({$cnt['contacts']})",
+		'owners'        => "Titulares ({$cnt['owners']})" ,
+		'estimates'     => array('name' => "Presupuestos ({$cnt['estimates']})", 'permit' => 'estimates'),
+		'sales'         => array('name' => "Ventas ({$cnt['sales']})", 'permit' => 'sales'),
+		'installs'      => "Instalaciones ({$cnt['installs']})",
+		'techVisits'    => array('name' => "Técnica ({$cnt['techVisits']})", 'permit' => 'techVisits'),
+//		'history'       => 'Historial',
 	);
 	
 	
