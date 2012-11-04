@@ -1,3 +1,7 @@
+/******************************************************************************/
+/******************************** J Q U E R Y *********************************/
+/******************************************************************************/
+
 J = jQuery.noConflict();
 
 // Localize DatePicker
@@ -74,8 +78,10 @@ jQuery.forms = function(form, addNames) {
 };
 
 // Add the most relevant attributes as direct jQuery objects methods
-jQuery.each(['id', 'name', 'class', 'src', 'type', 'for', 'rel'], function(attr){
-	jQuery.fn['_'+attr] = function(val){ return this.attr(attr, val); };
+jQuery.map(['id', 'name', 'class', 'src', 'type', 'for', 'rel'], function(attr){
+	jQuery.fn['_'+attr] = function(val){
+		return this.attr.apply(this, jQuery.merge([attr], arguments));
+	};
 });
 
 // Add method print to jQuery objects
@@ -85,17 +91,9 @@ jQuery.fn.print = function() {
 }
 
 
-
-$_ = {style:{}};
-$E = {
-	addEvent: function(){ return $E; },
-	setStyle: function(){ return $E; },
-	getElement: function(){ return null; },
-	getElements: function(){ return []; }
-};
-
-/* Just make sure these exist from the start (no need to throw errors if they don't) */
-var showLoading = function(){};
+/******************************************************************************/
+/***************************** D E B U G G I N G ******************************/
+/******************************************************************************/
 
 function raise( msg ){
 	var caller = (arguments.callee.caller && arguments.callee.caller.name)
@@ -104,7 +102,170 @@ function raise( msg ){
 	return DEVELOPER_MODE ? !!alert( caller + 'error: ' + (msg||'') ) : false;
 };
 
-if( IN_FRAME ) window.addEvent('domready', function(){ Frames.initialize(); });
+
+/******************************************************************************/
+/******************************* D O M R E A D Y ******************************/
+/******************************************************************************/
+
+J(function(){
+	window.BODY = J('body');
+	window.CONTENT = J('#main_box');
+
+	/* Main container's transition */
+	window.IN_FRAME || J(window).resize(function(){
+		fixTableHeader();
+	}).resize();
+
+	// Menu animation
+	J('#hideMenu').click(hideMenu);
+	J('#showMenu').click(showMenu);
+	J(window).on('menutoggled', fixTableHeader);
+	
+	// Hide status messages when clicking on them
+	J('#statusMsgs').click(function(){ hideStatus(); });
+	
+	// Highlighting table rows and other elements
+	J('body').on('mouseenter', '.highlight', function(){
+		J(this).effect('highlight', {color: '#f0f0e6'}, 300);
+	});
+
+	// Activate highlighting of input fields
+	var input_selector = '[type="text"].input, [type="password"].input';
+	J('body').on('focus', input_selector, function(){
+		J(this).removeClass('input').addClass('inputFocused');
+		J(this).select && J(this).select();
+	});
+	J('body').on('blur', input_selector, function(){
+		J(this).removeClass('inputFocused').addClass('input');
+	});
+
+	// Tabs functionality
+	J('body').on('click', '#tabButtons div', function(){
+		return xajax_switchTab(J(this)._for()) & false;
+	});
+});
+
+
+/******************************************************************************/
+/**************************** N A V I G A T I O N *****************************/
+/******************************************************************************/
+
+function getPage() {
+	var args = Array.from( arguments );
+	var ctrl = (typeof(args[0]) == 'object') ? (args[0].ctrlKey|args.shift().control) : false;
+	return (ctrl ? xajax_showPage : xajax_getPage).apply(null, args);
+}
+
+// Calls a page function to update content
+function loadContent(){ xajax_loadContent() };
+
+// Loads a page within an iframe
+function showPage(){ xajax_showPage() };
+
+// Initialize loaded page and events associated to new elements in it
+function iniPage(name) {
+	try{
+		var fn = window['ini_'+name];
+		fn && fn.apply(fn, IniParams.get());
+
+		// Add handler to old comboList widget
+		applyOldComboListHandlers();
+
+		// Add links to objects signled by model and id (hidden in the markup)
+		applyLink2Model();
+
+		// Style browse buttons
+		applyBrowseButtonsStyle();
+	} catch(e) {
+		return DEVELOPER_MODE ? test(e) : false;
+	}
+};
+
+// Current page's parameters (persistence)
+var IniParams = {
+	params: null,
+	set: function( data ){
+		this.params = Array.from(data);
+	},
+	get: function(){
+		var params = Array.from(this.params);
+		delete(this.params);
+		return params||{};
+	}
+};
+
+// Add handler to old comboList widget
+function applyOldComboListHandlers() {
+	J('.comboListOld').change(function(e){
+		getPage(e, J(this)._for() + 'Info', [J(this).val()]);
+	});
+}
+
+// Add links to objects signled by model and id (hidden in the markup)
+function applyLink2Model() {
+	CONTENT.find('.link2model').each(function(i, lnk){
+		var atts = (lnk._for()||'').split('|');
+		atts[0] && lnk.click(function(e){
+			getPage(e, atts[0], [atts[1]]);
+		});
+	}, true);
+}
+
+// Style browse buttons
+function applyBrowseButtonsStyle() {
+	var browse = J('<div />', {'class': 'browse_box'})
+		.append(J('<input type="text" />')
+			.attr({'class': 'browse_txt', 'disabled': true}))
+		.append(J('<input type="button" value="Examinar..." />')
+			.attr({'class': 'browse_btn'}))
+		.append(J('<div />')
+			.attr({'class': 'browse_hdn'}));
+	
+	J(':file').each(function(i, btn){
+		// Put the box next to the real button, then embed this button inside
+		browse.clone(true).insertBefore(btn).find('.browse_hdn').append(btn);
+
+		btn.change(function(){
+			var file = btn.val().split(/[\\\/]/).pop();
+			btn.parents('browse_box').find('.browse_txt').val(file);
+		})
+	}, true);
+}
+
+function hideMenu() {
+	toggleMenu(false);
+}
+
+function showMenu() {
+	toggleMenu(true);
+}
+
+function toggleMenu(show) {
+	J('#menuDiv')[show ? 'show' : 'hide']('drop', {}, show ? 100 : 200);
+	J('#main_box').animate({'margin-left': show ? 220 : 30}, 100);
+
+	J('#showMenu').toggle(!show);
+	J('#hideMenu').toggle(show);
+}
+
+function flagMenuItem(code) {
+	J('.menuItem.currentPage').removeClass('currentPage');
+	J('.menuItem[for="' + code + '"]').addClass('currentPage');
+}
+
+function switchNav(e, obj){
+	if( e && (e.control||e.ctrlKey) ) return;
+	for( var i=0, navs=J('.navCurrMod'), nav ; nav=navs[i] ; i++ ) nav.className = 'navMod';
+	$(obj).className = 'navCurrMod';
+};
+
+
+/******************************************************************************/
+/******************************** F R A M E S *********************************/
+/******************************************************************************/
+
+J(function(){ IN_FRAME && Frames.initialize(); });
+
 Frames = {
 	frames: [],
 	initialize: function(){		/* Called by an actual frame's onload event */
@@ -133,136 +294,22 @@ Frames = {
 		$('statusMsgs').setStyle('width', w + 10);
 	},
 	close: function(msg, code){
-		if( msg ) window.parent.showStatus(msg, code||0);
-		window.parent.Frames.garbageCollect( window.frameElement.uID );
+		msg && window.parent.showStatus(msg, code||0);
+		window.parent.Frames.garbageCollect(window.frameElement.uID);
 	},
-	garbageCollect: function( id ){
-		if( this.frames[id] ) document.body.removeChild( this.frames[id] );
+	garbageCollect: function(id) {
+		J('iframe#'+id+', iframe[name="'+id+'"]').detach();
 	}
 }
 
-var getPage = function(){
-	var args = Array.from( arguments );
-	var ctrl = (typeof(args[0]) == 'object') ? (args[0].ctrlKey|args.shift().control) : false;
-	return (ctrl ? xajax_showPage : xajax_getPage).apply(null, args);
-}
-var loadContent = xajax_loadContent;	/* Calls a page function to update content */
-var showPage = xajax_showPage;			/* Loads a page within an iframe */
 
-var IniParams = {
-	params: null,
-	set: function( data ){
-		this.params = Array.from( data );
-	},
-	get: function(){
-		var params = Array.from( this.params );
-		delete( this.params );
-		return params||{};
-	}
-};
-
-function iniPage( name ){
-	/* Call page's engine */
-	try{
-		if(window['ini_'+name]) window['ini_'+name].apply(window['ini_'+name], IniParams.get());
-		enableComboList();
-		enableLinks2Models();
-	}catch(e){
-		if( DEVELOPER_MODE ) test( e );
-		return false;
-	};
-	/* Autofix browse buttons and calendar inputs */
-	fixBrowseButton( document.documentElement , 'Examinar...' , 'browse' );
-};
-function enableLinks2Models(){
-	CONTENT.getElements('.link2model').forEach(function(lnk){
-		var atts = (lnk.getAttribute('FOR')||'|').split('|');
-		if( atts[0] ) lnk.addEvent('click', function(e){
-			getPage(e, atts[0], [atts[1]]);
-		});
-	});
-};
-
-function flagMenuItem( code ){
-	var newItem = $$('.menuItem').filter(function(mi){
-		return mi.getAttribute('FOR') == code;
-	});
-	if( newItem.length ){
-		$$('.menuItem.currentPage').removeClass('currentPage');
-		newItem.addClass('currentPage');
-	};
-};
-
-function hideMenu(){
-	window.fireEvent('menutoggled');
-	if( !$('showMenu') || !$('hideMenu') ) return;
-	(function(){
-		new Fx.Tween('menuDiv',
-			{property:'opacity', duration:400, fps:50,
-				onStart:function(){
-					this.set(1);
-				}, onComplete:function(){
-					$('hideMenu').style.display = 'none';
-					this.set('display', 'none');
-					$('showMenu').style.display = 'inline';
-					$('main_menu').setStyle('width', 'auto');
-					window.fireEvent('menutoggled');
-					fixTableHeader();									/* TEMP (Modules) */
-				}
-			}).start(0.3);
-	}).apply( $('hideMenu') );
-};
-function showMenu(){
-	if( !$('showMenu') || !$('hideMenu') ) return;
-	(function(){
-		new Fx.Tween('menuDiv',
-			{property:'opacity', duration:400, fps:50,
-				onStart:function(){
-					this.set(0.3);
-					$('showMenu').style.display = 'none';
-					this.set('display', 'block');
-					$('main_menu').setStyle('width', 1);
-					$('hideMenu').style.display = 'inline';
-					fixTableHeader();									/* TEMP (Modules) */
-				}, onComplete: function(){
-					window.fireEvent('menutoggled');
-				}
-			}).start(1);
-	}).apply( $('showMenu') );
-};
-
-/*************************************************************************************************/
-/***************************************** G E N E R A L *****************************************/
-/*************************************************************************************************/
+/******************************************************************************/
+/******************************* G E N E R A L ********************************/
+/******************************************************************************/
 
 function in_array( needle, hStack ){    /* Emulate PHP's in_array for both arrays and objects */
 	if( typeof(hStack) == 'object' ) for( var i in hStack ) if( hStack[i] == needle ) return true;
-};
-
-function validEmail( email ){
-   return !!/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$/.test(email);
-};
-
-function stristr(x, y){
-	var pos = (x||'').toLowerCase().indexOf((y||'').toLowerCase());
-	return pos != -1 ? (x||'').substr(pos) : '';
-};
-
-function count(a){
-	return (a||[]).length || 0;
-};
-
-function validateTimeInput(obj, attToEdit){
-	var p = $(obj).value.split(':');
-	var val = p[0].fill(2, 0, true) + ':' + (p[1]||'').fill(2, 0, true);
-	var ret = val.test(/^(2[0-3]|[01]\d):[0-5]\d$/) ? val : '';
-	if( ret && typeof(attToEdit) == 'string' ) $(obj)[attToEdit] = ret;
-	return ret || false;
-};
-
-function readTextArea( ta ){
-	return $(ta) ? $(ta).value || $(ta).innerHTML || $(ta).text || '' : '';
-};
+}
 
 function silentXajax(func, params){
 	var currentLoadingFunction = xajax.loadingFunction;
@@ -271,106 +318,16 @@ function silentXajax(func, params){
 	(window['xajax_'+func]||function(){}).apply(window, params||[]);
 	xajax.loadingFunction = currentLoadingFunction;
 	xajaxWaitCursor = true;
-};
+}
 
-/*************************************************************************************************/
-/************************************* A P P L I C A T I O N *************************************/
-/*************************************************************************************************/
 
-function switchNav(e, obj){
-	if( e && (e.control||e.ctrlKey) ) return;
-	for( var i=0, navs=$$('.navCurrMod'), nav ; nav=navs[i] ; i++ ) nav.className = 'navMod';
-	$(obj).className = 'navCurrMod';
-};
+/******************************************************************************/
+/****************************** S H O R T C U T S *****************************/
+/******************************************************************************/
 
-function fixBrowseButton( oBox , sText , sButtonClass , sTextClass ){
-	var oInputs = oBox && oBox.getElementsByTagName && oBox.getElementsByTagName('INPUT');
-	if( !oInputs || !oInputs.length ) return;
-	for( var i=0, oInput, aFiles=[] ; oInput=oInputs[i] ; i++ ){
-		if( (oInput.getAttribute('type')||'').toLowerCase() == 'file' ) aFiles.push( oInput );
-	};
-	if( !aFiles.length ) return;
-	var oBrowserBox = document.createElement( 'DIV' );
-	var oHiddenBox = document.createElement( 'DIV' );
-	var oText = document.createElement( 'INPUT' );
-	if( /*@cc_on!@*/false ){		// IE
-		var oButton = document.createElement( 'BUTTON' );
-		oHiddenBox.style.top = '0px';
-	}else{
-		var oButton = document.createElement( 'INPUT' );
-		oButton.type = 'button';
-		oHiddenBox.style.top = '-5px';
-		oText.setAttribute( 'type' , 'text' );
-	};
-	if( navigator.userAgent.toLowerCase().indexOf('chrome') > -1 ){
-		oButton.style.top = '0px';
-		oBrowserBox.style.left = '2px';
-		oText.setAttribute( 'type' , 'text' );
-	};
-	oButton.className = (sButtonClass||'');
-	oButton.setAttribute( 'value' , (sText||'') );
-	oButton.style.margin = '0px 2px';
-	oButton.style.width = '90px';
-	oHiddenBox.style.position = 'absolute';
-	oHiddenBox.style.left = '0px';
-	oHiddenBox.style.opacity = '0';
-	oHiddenBox.style.filter = 'alpha(opacity=0)';
-	oBrowserBox.appendChild( oText );
-	oBrowserBox.appendChild( oButton );
-	oBrowserBox.appendChild( oHiddenBox );
-	oText.className = (sTextClass||'');
-	oText.setAttribute( 'disabled' , 'disabled' );
-	oText.style.margin = '0px';
-	oText.style.cursor = 'pointer';
-	oBrowserBox.style.display = 'inline';
-	oBrowserBox.style.position = 'relative';
-	oBrowserBox.style.whiteSpace = 'nowrap';
-	for( var i=0, oFile ; oFile=aFiles[i] ; i++ ){
-		oNewBrowser = oBrowserBox.cloneNode( true );
-		oFile.onchange = function(){
-			this.parentNode.parentNode.firstChild.value = this.value.split(/[\\\/]/).pop();
-		};
-		oFile.parentNode.insertBefore( oNewBrowser , oFile );
-		oNewBrowser.getElementsByTagName( 'DIV' )[0].appendChild( oFile );
-		oNewBrowser.parentNode.style.overflow = 'hidden';
-	};
-};
-
-/*************************************************************************************************/
-/******************************************* T E X T S *******************************************/
-/*************************************************************************************************/
-
-function sprintf( str ){
-	if( !str ) return '';
-	aStr = str.split( '%s' );
-	if( aStr.length != arguments.length ) return str;	// Wrong parameters count
-	for( var i=1, resStr=aStr[0] ; i<arguments.length ; i++ ) resStr += arguments[i]+aStr[i];
-	return resStr;
-};
-
-/***********************************************************************************************/
-/********************************* C O M B O   S H O R T C U T S *******************************/
-/***********************************************************************************************/
-
-function addOption( oCombo , sValue , sText , bReset ){
-	if( bReset ) oCombo.options.length = 0;
-	var oOpt = document.createElement( 'OPTION' );
-	oOpt.value = sValue;
-	oOpt.text = sText;
-	oCombo.options.add( oOpt );
-	if( bReset ) oCombo.options[0].setAttribute( 'selected' , 'selected' );
-};
 function getOption(oCombo, sVal, sBy){	// sBy: 'value' (default) or 'text'
 	for( var i=0, opt ; opt=oCombo.options[i] ; i++ ) if( opt[(sBy||'value')] == sVal ) return i;
 	return null;
-};
-function remOption(oCombo, sVal, sBy){		// sBy: 'index' (default), 'selected', 'value' or 'text'
-	if( !sBy || sBy == 'index' ) return ( oCombo.options[sVal] ) ? oCombo.remove(sVal) : false;
-	if( sBy == 'selected' && oCombo.selectedIndex ) oCombo.remove( oCombo.selectedIndex );
-	for( var i=0 ; i<oCombo.options.length ; i++ ){
-		if( sBy == 'value' && oCombo.options[i].value == sVal ) oCombo.remove(i);
-		else if( sBy == 'text' && oCombo.options[i].text == sVal ) oCombo.remove(i);
-	};
 };
 function selectOption(oCombo, sVal, sBy){	// sBy: 'index' (default), 'value' or 'text'
 	if( !oCombo.get('multiple') ){
@@ -379,193 +336,10 @@ function selectOption(oCombo, sVal, sBy){	// sBy: 'index' (default), 'value' or 
 	if( sBy && sBy != 'index' ) selectOption(oCombo, getOption(oCombo, sVal, sBy));
 	else if( sVal >= 0 && sVal < oCombo.options.length ) oCombo.options[sVal].selected = true;
 };
-function getSelected( oCombo , sBy ){
-	if( oCombo && oCombo.options && oCombo.selectedIndex >= 0 ){
-		return oCombo.options[oCombo.selectedIndex][(sBy||'value')];
-	}else return null;
-};
-function seekOption( oCombo, str, sBy ){
-	for( var i=0, opt ; opt=oCombo.options[i] ; i++ ){
-		if( !opt[sBy||'text'].toLowerCase().trim().indexOf(str.toLowerCase().trim()) ) return i;
-	};
-};
-function checkFormElement(form, rads, val){		/* Check a radio button by val */
-	oRads = (typeof(form) == 'string' ? document.forms[form][rads] : form[rads]) || {};
-	for( var i=0, rad ; rad=oRads[i] ; i++ ) rad.checked = !!(rad.value == val);
-};
-function getRadioValue( rads ){
-	if( typeof(rads) == 'string' ) rads = document[rads] || {};
-	for( var i=0, rad ; rad=rads[i] ; i++ ) if( rad.checked ) return rad.value;
-};
-
-/*************************************************************************************************/
-/******************************************* P O P U P *******************************************/
-/*************************************************************************************************/
-
-function popup( mylink , windowname ){
-	var preferencias = '', href;
-	preferencias += 'width='+(window.screen.width*90/100)+',';
-	preferencias += 'height='+(window.screen.height*80/100)+',';
-	preferencias += 'scrollbars=yes,';
-	preferencias += 'screenX='+(window.screen.width*5/100)+',';
-	preferencias += 'screenY='+(window.screen.height*5/100);
-	if( !window.focus ) return true;
-	if( typeof(mylink) == 'string' ) href = mylink;
-	else href = mylink.href;
-	window.open( href , (windowname||null) , preferencias );
-	return false;
-};
-
-function reDirectMe( path , post ){
-	if( !path ) path = location.href;
-	if( !post ) location.href = path;
-	else{
-		var frm = document.createElement('FORM');
-		frm.action = path;
-		frm.method = 'POST';
-		var params = post.split( '&' );
-		for( var i=0 ; i<params.length ; i++ ){
-			var parts = params[i].split('=');
-			var newParam = document.createElement( 'INPUT' );
-			newParam.setAttribute( 'type' , 'hidden' );
-			newParam.setAttribute( 'name' , parts[0] );
-			newParam.setAttribute( 'value' , (parts[1]||'') );
-			frm.appendChild( newParam );
-		};
-		BODY.appendChild( frm );
-		frm.submit();
-		frm.parentNode.removeChild( frm );
-	};
-};
-
-function submitFormOnPopup( popupName, frmName, url, atts ){
-/***************
-** Author: dbarreiro (diego.bindart@gmail.com)
-** Opens a popup and submits an existing form into that new window
-****************/
-	if( !document.forms[frmName] ) return alert('submitFormOnPopup failed: Form not found!');
-	window.open('',popupName,(atts||'location=NO,menubar=NO,toolbar=NO'));
-	var tmpFrm = document.forms[frmName].cloneNode( true );
-	tmpFrm.setAttribute('action', url);
-	tmpFrm.setAttribute('target', popupName);
-	document.body.appendChild( tmpFrm );
-	tmpFrm.submit();
-	document.body.removeChild( tmpFrm );
-	delete( tmpFrm );
-};
-
-/*************************************************************************************************/
-/****************************************** E V E N T S ******************************************/
-/*************************************************************************************************/
-
-/**
-* Returns target of the event
-* from http://www.quirksmode.org/js/events_properties.html
-**/
-function getEventTarget( e ){
-	var targ = (e=e||window.event||{}).target||e.srcElement||{};
-	return ( targ.nodeType == 3 ) ? targ.parentNode : targ;
-};
-function stopEvent( e ){
-	if( !e ) e = window.event || {};
-	if( e.stopPropagation ) e.stopPropagation();
-	else e.cancelBubble = true;
-};
-function getKeyCode( e ){
-	if( !e ) e = window.event || {};
-	var keyCode = null;
-	if( e.keyCode ) keyCode = e.keyCode;		// IE
-	else if( e.which ) keyCode = e.which;		// NS4
-	else if( e.charCode ) keyCode = e.charCode;	// NS 6+, Mozilla 0.9+
-	return keyCode;
-};
-function checkEnter( e , fReturn , fEscape ){
-	var keyCode = getKeyCode( e );
-	if( keyCode == 13 && fReturn ) return fReturn( getEventTarget(e) );
-	else if( keyCode == 27 && fEscape ) return fEscape( getEventTarget(e) );
-	return true;
-};
-
-/*************************************************************************************************/
-/*********************************** D A T E   H A N D L I N G ***********************************/
-/*************************************************************************************************/
-
-function jsDate2MySqlDate( now ){
-	return (now=now||(new Date())).getFullYear() + '-' +
-		((now.getMonth()+1)+'').fill(2,'0',true) + '-' +
-		(now.getDate()+'').fill(2,'0',true);
-};
-
-/*************************************************************************************************/
-/********************************************* C S S *********************************************/
-/*************************************************************************************************/
-
-function addCSSRule(selectorText, declarations) {
-	// document.styleSheets support required
-	if( !document.styleSheets ) return false;
-	// Create element and append it
-	var styleElement = document.createElement('STYLE');
-	styleElement.type = 'text/css';
-	document.getElementsByTagName('HEAD')[0].appendChild( styleElement );
-	// Check we're ok this far
-	if( !document.styleSheets.length ) return false;
-	// Insert rules in the new styleSheet
-	var styleSheet = document.styleSheets[document.styleSheets.length - 1];
-	if( styleSheet.insertRule ){
-		styleSheet.insertRule(selectorText + ' { ' + declarations + ' }', styleSheet.cssRules.length);
-	}
-	else if( styleSheet.addRule ){
-		styleSheet.addRule(selectorText, declarations);
-	};
-};
-
-function db_isClass( oObj , sClass ){
-	if( typeof(oObj) != 'object' || typeof(sClass) != 'string' || !sClass ) return false;
-	return !!( oObj.className.match(new RegExp('\\b'+sClass+'\\b','i')) );
-};
-function db_addClass( oObj , sClass ){
-	if(!oObj.className.match(new RegExp('\\b'+sClass+'\\b','i'))) oObj.className += ' '+sClass;
-};
-function db_remClass( oObj , sClass ){
-	oObj.className = oObj.className.replace(new RegExp('\\b'+sClass+'\\b','i'),'').trimX();
-	if( !oObj.className ) oObj.removeAttribute( 'class' );
-};
-
-function highLight(obj, color, markedColor){
-	$(obj).highlight(color, markedColor||'#dfffbf');
-	if( $(obj).hasClass('selectable') ){
-		$(obj).removeClass('selectable');
-		$(obj).addEvent('click', function(){
-			$$('.selectedRow').forEach(function(row){ row.removeClass('selectedRow'); });
-			$(this).addClass('selectedRow');
-		});
-	}
-};
-
-function highLightBox( obj ){
-	obj.onfocus = function(){
-		if( this.select ) this.select();
-		db_remClass(this, 'input');
-		db_addClass(this, 'inputFocused');
-	};
-	obj.onblur = function(){
-		db_remClass(this, 'inputFocused');
-		db_addClass(this, 'input');
-	};
-	obj.onfocus();
-};
-
-function validEmail( email ){
-   return !!/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$/.test(email);
-};
-
-function showAlerts(){
-	alert('En construcción');
-};
 
 function xajaxSubmit(oForm, sFunc, showDisabled, atts){		/* Submit form through ajax */
 	window['xajax_'+sFunc]( xajax.getFormValues(oForm, showDisabled), atts||[] );
-};
+}
 
 function newTip(id, obj){
 	var tip = document.createElement('DIV');
@@ -575,23 +349,24 @@ function newTip(id, obj){
 		obj.parentNode.insertBefore(tip, obj.nextSibling);
 	}
 	return tip;
-};
+}
 
 function showTip(field, tip){
 	clearTimeout( showTip.to );
-	(showTip.sel||{}).innerHTML = '';
+	(showTip.sel||{}).html('');
 	if( !($field=$('tip_' + field)) ) throw('No existe el tip ' + field);
-	$field.innerHTML = tip;
-	showTip.to = setTimeout(function(){ $field.innerHTML = ''; }, 5000);
+	$field.html(tip);
+	showTip.to = setTimeout(function(){ $field.html(''); }, 5000);
 	showTip.sel = $field;
-};
+}
+
 function FTshowTip( field, tip ){
 	var $field = $(field), $tip = $('tip_'+field), $blur;
 	if( !$tip ) throw( 'No existe el elemento ' + field );
 	setTimeout( function(){	/* Blur preceeds focus, so make sure it shows after hiding (for re-submitting) */
 		$field.focus();
 		if( tip && $tip ){
-			$tip.innerHTML = tip;
+			$tip.html(tip);
 			$tip.setStyle('display', 'block');
 			$($tip.parentNode).setStyle('height', 24);
 			$field.addEvent('blur', function(event){
@@ -603,11 +378,13 @@ function FTshowTip( field, tip ){
 				}} ).start(0);
 			} );
 		};
-		var name = ($('field_'+field)||{}).innerHTML || '';
-		var msg = 'El valor del campo %s no es válido. Por favor verifique el dato ingresado';
-		showStatus( sprintf(msg, name) );
+
+		var name = J('#field_'+field).html() || '';
+		var msg = 'El valor del campo ' + name + ' no es válido.' +
+		          'Por favor verifique el dato ingresado';
+		showStatus(msg);
 	}, 300 );
-};
+}
 
 Modal = {
 	wins: [],
@@ -659,20 +436,6 @@ function closeAgendaEvent(id, msg, resched){
 
 
 /***********************************************************************************/
-/************************************ TABS ************************************/
-/***********************************************************************************/
-
-function initializeTabButtons(){
-	if( $('tabButtons') ) $('tabButtons').getElements('DIV').forEach(function(tab){
-		tab.removeEvents('click');
-		tab.addEvent('click', function(e){
-			e.stop();
-			xajax_switchTab( this.getAttribute('FOR') );
-		});
-	});
-};
-
-/***********************************************************************************/
 /************************************ L I S T S ************************************/
 /***********************************************************************************/
 
@@ -681,38 +444,34 @@ function initializeList(code, modifier, src){
 	var $list = $('listWrapper'), $titles = $('tableTitles');
 	if( !$list || !$titles ) return raise('missing required elements');
 	if( !$list.update ) $list.update = function(){
-		fixTableHeader($titles, $$('.listTable')[0]);
-		$$('.listRows').forEach(function(row){
-			row.addEvent('mouseover', function(){ highLight(this); });
-			if( row.getAttribute('FOR') ){
-				row.addEvent('click', function(e){
-					getPage(e, code + 'Info', [row.getAttribute('FOR')]);
-				});
-			};
+		fixTableHeader($titles, J('.listTable')[0]);
+		J('.listRows').click(function(e){
+			J(this)._for() && getPage(e, code + 'Info', [J(this)._for()]);
 		});
-		$$('.tblTools').forEach(function(tool){
-			var axn = tool.getAttribute('AXN');
-			var id = tool.getAttribute('FOR');
-			tool.addEvent('click', function(e){
-				e.stop();
-				switch( axn ){
-					case 'delete':
-						if( confirm('¿Realmente desea eliminar este elemento?') ){
-							window['xajax_delete' + code.capitalize()](id, modifier);
-						};
-						break;
-					case 'block':
-						if( confirm('¿Realmente desea bloquear este elemento?') ){
-							window['xajax_block' + code.capitalize()](id, modifier);
-						};
-						break;
-					default: 
-						getPage(e, axn + code.capitalize(), [id, modifier]);
-						break;
-				};
-			});
+		J('.tblTools').click(function(e){
+			var axn = J(this).attr('axn');
+			var id = J(this)._for();
+
+			switch (axn) {
+				case 'delete':
+					if( confirm('¿Realmente desea eliminar este elemento?') ){
+						window['xajax_delete' + code.capitalize()](id, modifier);
+					};
+					break;
+				case 'block':
+					if( confirm('¿Realmente desea bloquear este elemento?') ){
+						window['xajax_block' + code.capitalize()](id, modifier);
+					};
+					break;
+				default: 
+					getPage(e, axn + code.capitalize(), [id, modifier]);
+					break;
+			};
+
+			return false;
 		});
 	};
+
 	TableSearch.enableSearch(code, modifier, src||'');		/* Prepare search tools */
 };
 
@@ -730,20 +489,20 @@ function initializeSimpleList(){
 		};
 		this.enableEditItem = function( id ){
 			var tgt = that.selectRow( id );
-			$list.getElement('.createItemText').innerHTML = 'Modificar';
+			$list.getElement('.createItemText').html('Modificar');
 			editting = {id: id, row: tgt};
 		};
 		this.selectRow = function( id ){
 			that.disableEditItem();
 			// Locate the row we selected in the DOM
 			var i = 0, tgt;
-			while( (tgt=$list.rows[i++]) && tgt.getAttribute('FOR') !== id );
+			while( (tgt=$list.rows[i++]) && tgt._for() !== id );
 			// Clone its cells' values into the input boxes below
 			var j = 0;
 			that.inputs.forEach(function(el){
-				var val = tgt.cells[j].innerHTML;
+				var val = tgt.cells[j].html();
 				if( el.options ) selectOption(el, val, 'text');
-				else el.value = tgt.cells[j].innerHTML;
+				else el.value = tgt.cells[j].html();
 				j++;
 			});
 			return tgt;
@@ -751,55 +510,39 @@ function initializeSimpleList(){
 		this.disableEditItem = function(){
 			if( editting.tgt ) editting.tgt.removeClass('selectedRow');
 			that.inputs.forEach(function(inp){ inp.value = ''; });
-			$list.getElement('.createItemText').innerHTML = 'Agregar';
+			$list.find('.createItemText').html('Agregar');
 			editting = {};
 		};
 	};
-	$$('.simpleList').forEach(function($list){
+	J('.simpleList').each(function(i, $list){
         // Nothing to do if this list has no tools (no editting allowed)
-        if (!$list.getElement('.addItemToSimpleList')) return false;
-        var params = $list.getAttribute('FOR').split('|');
+        if (!$list.find('.addItemToSimpleList')) return false;
+        var params = $list._for().split('|');
         var code = params[0], modifier = params[1];
 		var SL = new SimpleList($list, code, modifier);
 		SL.inputs.forEach(function(input){
 			input.addEvent('enter', function(){
-				$list.getElement('.SLcreateItem').fireEvent('click');
+				$list.find('.SLcreateItem').click();
 			});
 		});
-		$list.getElements('.listRows').forEach(function(row){
-			row.addEvent('mouseover', function(){ highLight(this); });
-			row.addEvent('click', function(){ SL.enableEditItem( this.getAttribute('FOR') ); });
-		});
-		$list.getElement('.createItemText').onclick = SL.createItem;
-		$list.getElements('.tblTools').forEach(function(tool){
-			var id = tool.getAttribute('FOR');
-			var axn = tool.getAttribute('AXN');
-			var func = 'xajax_' + axn + code.capitalize();
-			tool.addEvent('click', function(e){
-				if( e ) e.stop();
-				switch( axn ){
-					case 'create':
-						return SL.createItem();
-					case 'edit':
-						return SL.enableEditItem( id );
-					case 'delete':
-						if( !confirm('¿Realmente desea eliminar este elemento?') ) return;
-						break;
-					case 'block':
-						if( !confirm('¿Realmente desea bloquear este elemento?') ) return;
-						break;
-				};
-				if( !window[func] ) throw('Function ' + func + ' is not registered!');
-				window[func](id, modifier);
-			});
-		});
-	});
-};
+		$list.find('.listRows').click(function(){ SL.enableEditItem( this._for() ); });
+		$list.find('.createItemText').click(SL.createItem);
+		$list.find('.tblTools').click(function(e){
+			switch (J(this).attr('axn')) {
+				case 'create': return SL.createItem();
+				case 'edit': return SL.enableEditItem(J(this)._for());
+				case 'delete':
+					if( !confirm('¿Realmente desea eliminar este elemento?') ) return;
+					break;
+				case 'block':
+					if( !confirm('¿Realmente desea bloquear este elemento?') ) return;
+					break;
+			};
 
-function enableComboList(){
-	$$('.comboListOld').forEach(function(cl){
-		cl.addEvent('change', function(e){
-			getPage(e, this.getAttribute('FOR') + 'Info', [this.value]);
+			var func = 'xajax_' + J(this).attr('axn') + code.capitalize();
+			if( !window[func] ) throw('Function ' + func + ' is not registered!');
+
+			return window[func](J(this)._for(), modifier) & false;
 		});
 	});
 };
@@ -818,10 +561,10 @@ var TableSearch = {
 	/* Methods */
 	enableSearch: function(){
 		if( !this.ini() ) throw('missing TableSearch parameters');
-		this.Buttons = $$('.tableColumnSearch');
+		this.Buttons = J('.tableColumnSearch');
 		this.populateList( arguments );
 		for( var i=0, att, btn ; btn=this.Buttons[i] ; i++ ){
-			att = btn.getAttribute('FOR');
+			att = btn._for();
 			btn.setAttribute('TableSearchCol', i);
 			btn.addEvent('click', function(e){ TableSearch.present(e, this, att); } );
 		};
@@ -830,7 +573,7 @@ var TableSearch = {
 	},
 	ini: function(){
 		var that = this;
-		var boxes = $$('.TableSearchBoxes')||[];
+		var boxes = J('.TableSearchBoxes')||[];
 		if( boxes.length > 1 ) document.body.removeChild(boxes[1]);
 		this.Box = $('TableSearchBox');
 		this.Input = $('TableSearchInput');
@@ -852,7 +595,7 @@ var TableSearch = {
 		for( var i=0, arg ; arg=args[i] ; i++ ) this.funcAtts.push( arg );
 	},
 	present: function(e, obj, att){
-		if( this.showing == obj.getAttribute('TableSearchCol') ) return this.hideBox();
+		if( this.showing == obj.attr('TableSearchCol') ) return this.hideBox();
 		this.hideBox();
 		this.showBox(e, obj);
 	},
@@ -866,8 +609,8 @@ var TableSearch = {
 		this.Box.setStyle('left', e.page.x - 100);
 		this.Box.setStyle('top', e.page.y + 48);
 		this.Box.setStyle('display', 'block');
-		this.showing = tgt.getAttribute('TableSearchCol');
-		this.Box.getElement('SPAN').innerHTML = this.Buttons[this.showing].alt;
+		this.showing = tgt.attr('TableSearchCol');
+		this.Box.find('span').html(this.Buttons[this.showing].alt);
 		$('TableSearchInput').focus();
 	},
 	process: function( clear ){
@@ -877,7 +620,7 @@ var TableSearch = {
 		/* Build filter */
 		var filter = {};
 		if( clear !== true ){
-			var col = this.Buttons[this.showing].getAttribute('FOR');
+			var col = this.Buttons[this.showing]._for();
 			filter[col] = this.lastSearch = searchString;
 		};
 		/* Pass the input and aditional info to registered xajax function */
@@ -887,13 +630,13 @@ var TableSearch = {
 	showResults: function( uID ){
 		/* Make sure we're receiving the most recent request */
 		if( !$('listWrapper') || uID != this.searchID ) return;
-		$('listWrapper').innerHTML = this.cacheBox.innerHTML;
-		this.cacheBox.innerHTML = '';
+		$('listWrapper').html(this.cacheBox.html());
+		this.cacheBox.html('');
 	}
 };
 
 /* Fix Table Titles */
-function fixTableHeader( oTitlesBox, oTable, cached ){
+function fixTableHeader(oTitlesBox, oTable, cached){
 	if( !arguments.length && typeof(arguments.callee.sets) == 'object' ){
 		for( var i=0, set ; set=arguments.callee.sets[i] ; i++ ){
 			fixTableHeader(set['titles'], set['table'], true);
@@ -920,31 +663,4 @@ function fixTableHeader( oTitlesBox, oTable, cached ){
 	};
 	// Hide titles that do not match any column in the results table
 	for( var j=i, oTitle ; oTitle=nlTitles[j] ; j++ ) oTitle.style.display = 'none';
-};
-
-
-/*************************************************************************************************/
-/************************************** O N D O M R E A D Y **************************************/
-/*************************************************************************************************/
-
-window.addEvent('domready', function(){			/* Global variables (pseudo constants) */
-	BODY = document.getElementsByTagName('BODY')[0]||document.createElement('DIV');
-	CONTENT = $('main_box');
-} );
-
-if( !window.IN_FRAME ){
-	
-	window.addEvent('domready', function(){			/* Main container's transition */
-		window.addEvent('resize', function(){
-			CONTENT.setStyle('height', $(BODY).getHeight() - 145 - (Browser.ie ? 10 : 0) + 'px');
-			fixTableHeader();											/* TEMP (Modules) */
-		} );
-		window.fireEvent('resize');
-	});
-	
-	window.addEvent('domready', function(){			/* Menu */
-		($('hideMenu')||{}).onclick = hideMenu;
-		($('showMenu')||{}).onclick = showMenu;
-	});
-	
 };

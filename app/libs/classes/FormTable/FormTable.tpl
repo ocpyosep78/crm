@@ -41,8 +41,7 @@
 						<textarea{foreach from=$x.atts key=att item=val} {$att}='{$val}'{/foreach}
 						>{$x.atts.value}</textarea>
 					{elseif $x.type == 'combo'}
-						<select{foreach from=$x.atts key=att item=val} {$att}='{$val}'{/foreach}
-							class='input' onfocus='highLightBox(this);' />
+						<select{foreach from=$x.atts key=att item=val} {$att}='{$val}'{/foreach} class='input' />
 							{foreach from=$x.value key=value item=text}
 								<option value='{$value}'{if $x.selected == $value} selected='selected'{/if}>
 									{$text}
@@ -50,9 +49,7 @@
 							{/foreach}
 						</select>
 					{else}
-						<input type='{$x.type}'
-							{if $x.type == 'text' || $x.type == 'password'} onfocus='highLightBox(this);'{/if}
-							{foreach from=$x.atts key=att item=val} {$att}='{$val}'{/foreach} />
+						<input type='{$x.type}' {foreach from=$x.atts key=att item=val} {$att}='{$val}'{/foreach} />
 					{/if}
 					</td>
 				{/if}

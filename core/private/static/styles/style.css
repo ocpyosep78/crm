@@ -15,14 +15,13 @@
 HTML, BODY{
 	margin:0px;
 	padding:0px;
-	background:#003366;
 	color:#000000;
 	font-family:Arial, Geneva, Helvetica, sans-serif;
 	font-size:10px;
 }
 BODY{
 	position:relative;
-	padding-top:90px;
+	padding-top:40px;
 	background-image:-webkit-gradient(linear, right bottom, left bottom, from(#d0d3e3), to(#ffffff));
 	background-image:-webkit-linear-gradient(right, #d0d3e3, #ffffff);
 	background-image:-moz-linear-gradient(right, #d0d3e3, #ffffff);
@@ -92,6 +91,7 @@ BODY{
  * LOGO LINE
  */
 #main_logoArea{
+	display:none;
 	position:fixed;
 	top:30px;
 	right:-1px;
@@ -128,36 +128,39 @@ BODY{
 ** _ M A I N   F R A M E   /   P R I M A R Y   E L E M E N T S
 ***************/
 
-#main_container{
-	margin:0px;
-	width:100%;
-	text-align:center;
-	white-space:normal;
-}
-
 #main_menu{
-	width:150px;
-	margin:0px;
+	position:fixed;
+	top:33px;
+	bottom:2px;
+	margin-left:2px;
 	padding:5px 5px 20px 0px;
-	vertical-align:top;
 	text-align:left;
 	background:#f0f0f8;
 	border-right:solid 1px #000060;
 	box-shadow:#909095 2px 0px 5px;
 	background-image:linear-gradient(#e0e0e0, #003366);
+	overflow:auto;
 }
+	#menuDiv{
+		display:none;
+		width:210px;
+		margin:0px;
+		padding:0px;
+		font-family:Geneva, Arial, Helvetica, sans-serif;
+	}
 
 #main_box{
-	padding:10px;
+	margin:0px 0px 25px 220px;
+	padding:6px 10px;
 	text-align:left;
 	font-family:Arial, Geneva, Helvetica, sans-serif;
 	font-size:12px;
-	vertical-align:top;
+	overflow:auto;
 }
 
 #main_foot{
-	height:25px;
-	vertical-align:super;
+	clear:both;
+	height:12px;
 	font-size:9px;
 	color:#000000;
 }
@@ -167,25 +170,26 @@ BODY{
 ** _ M A I N   F R A M E   /   S E C O N D A R Y   E L E M E N T S
 ***************/
 
-#main_foot span{
-	font-size:12px;
-	color:#000000;
-	font-family:Verdana, Arial, Helvetica, sans-serif;
-	font-variant:small-caps;
+#main_foot{
+	position:fixed;
+	bottom:0px;
+	height:30px;
+	left:0px;
+	right:0px;
+	background:#fff;
+	text-align:center;
 }
+	#main_foot span{
+		font-size:12px;
+		color:#000000;
+		font-family:Verdana, Arial, Helvetica, sans-serif;
+		font-variant:small-caps;
+	}
 
 
 /***************
 ** _ M A I N   F R A M E   /   M E N U
 ***************/
-
-#menuDiv{
-	width:210px;
-	display:none;
-	margin:0px;
-	padding:0px;
-	font-family:Geneva, Arial, Helvetica, sans-serif;
-}
 
 .menuGroup{
 	padding:30px 2px 8px 14px;
@@ -298,6 +302,11 @@ HR.sep{
 	font-weight:normal;
 	cursor:pointer;
 }
+
+.browse_box{ display:inline; position:relative; left:2px; whitespace:nowrap; }
+.browse_txt{ margin:0px; cursor:pointer; }
+.browse_btn{ top:0px; margin:0px 2px; width:90px; }
+.browse_hdn{ position: absolute; left:0px; opacity:0; }
 
 /**
  * COMMON

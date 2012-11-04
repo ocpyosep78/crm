@@ -36,7 +36,7 @@
 	{* JS code *}
 	<script type='text/javascript'>
 		{$Page->jsCode}
-		window.addEvent('domready', function(){literal}{{/literal}
+		J(function(){literal}{{/literal}
 			{$Page->jsOnLoad}
 		{literal}}{/literal} );
 	</script>
@@ -79,50 +79,35 @@
 		<img src="{$Page->appImg}" />
 		<span>{$Page->appName}</span>
 	</div>
-			
-			
-		</tr>
-	
-	<table id='main_container' border='0' cellpadding="1">
-		<tr>
+
+	<div id='main_box'>
+		{$Page->content}
+	</div>
+
+	<div id='main_foot'>
+		<hr class='sep' />
+		<span>customer relationship management / ingetec </span>v{$VERSION}
+		{$VERSION_STATUS}
+		&nbsp;&nbsp;&nbsp;&nbsp;
+		copyright <a href='mailto:diego.bindart@gmail.com'>dbarreiro</a>
+		{$LAST_UPDATE|date_locale:'d/m/Y'}
+	</div>
 		
-			<td id='main_menu' rowspan="2">
-				<img id='hideMenu' src='app/images/arrow_head_left.gif' title='Ocultar menú' />
-				<img id='showMenu' src='app/images/arrow_head_right.gif' title='Mostrar menú' />
-				<div id='menuDiv'>
-				  <div class='h_filler' style='width:140px;'>&nbsp;</div>
-				  {foreach from=$Page->menuItems key=key item=items}
-					<div class='menuGroup'>{$key}</div>
-					{foreach from=$items item=x}
-					  <div class='{if $x.action}menuItem{else}disabledMenuItem{/if}' for='{$x.code}'>
-						<a href='javascript:void(0);' {if $x.action}onclick='{$x.action};'{/if}>{$x.name}</a>
-					  </div>
-					{/foreach}
-				  {/foreach}
-				</div>
-			</td>
-		
-			<td id='main_box'>
-				{$Page->content}
-			</td>
-			
-			
-		</tr>
-		<tr>
-		
-		
-			<td id='main_foot' colspan="2">
-				<hr class='sep' />
-				<span>customer relationship management / ingetec </span>v{$VERSION}
-				{$VERSION_STATUS}
-				&nbsp;&nbsp;&nbsp;&nbsp;
-				copyright <a href='mailto:diego.bindart@gmail.com'>dbarreiro</a>
-				{$LAST_UPDATE|date_locale:'d/m/Y'}
-			</td>
-			
-			
-		</tr>
-	</table>
+	<div id='main_menu' rowspan="2">
+		<img id='hideMenu' src='app/images/arrow_head_left.gif' title='Ocultar menú' />
+		<img id='showMenu' src='app/images/arrow_head_right.gif' title='Mostrar menú' />
+		<div id='menuDiv'>
+		  <div class='h_filler' style='width:140px;'>&nbsp;</div>
+		  {foreach from=$Page->menuItems key=key item=items}
+			<div class='menuGroup'>{$key}</div>
+			{foreach from=$items item=x}
+			  <div class='{if $x.action}menuItem{else}disabledMenuItem{/if}' for='{$x.code}'>
+				<a href='javascript:void(0);' {if $x.action}onclick='{$x.action};'{/if}>{$x.name}</a>
+			  </div>
+			{/foreach}
+		  {/foreach}
+		</div>
+	</div>
 	
 	
 	<div id='curtain'></div>		{* modal windows, refer to JS:Modal object *}

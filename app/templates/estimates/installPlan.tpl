@@ -37,7 +37,7 @@
 	  </tr>
 	  
 	  {foreach from=$data item=row}
-		<tr onmouseover='highLight(this);'>
+		<tr class='highlight'>
 		  <td title='quitar de la lista' for='{$row.id_plan}'><img src='app/images/buttons/delete.png' /></td>
 		  <td class='planAmount'>{$row.amount}</td>
 		  <td class='planName'>{$row.name}</td>

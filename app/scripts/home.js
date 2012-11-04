@@ -2,17 +2,25 @@ function ini_home(){
 	J('#editAccInfo').click(function(e){
 		getPage(e, 'editAccInfo');
 	});
-};
+}
 
 function ini_createEvent(id_event){		/* Agenda */
+	function validateTimeInput(obj, attToEdit){
+		var p = $(obj).value.split(':');
+		var val = p[0].fill(2, 0, true) + ':' + (p[1]||'').fill(2, 0, true);
+		var ret = val.test(/^(2[0-3]|[01]\d):[0-5]\d$/) ? val : '';
+		if( ret && typeof(attToEdit) == 'string' ) $(obj)[attToEdit] = ret;
+		return ret || false;
+	}
+
 	J('#btn_saveEvent').click(function(){
-		if(J('#evt_iniTime').val() === '' || !validateTimeInput('evt_iniTime', 'value')){
+		if (J('#evt_iniTime').val() === '' || !validateTimeInput('evt_iniTime', 'value')) {
 			return FTshowTip('evt_iniTime', 'Hora de inicio inválida.');
 		};	/* Preformat time, validate and apply changes if valid */
-		if(J('#evt_endTime').val() !== '' && !validateTimeInput('evt_endTime', 'value')){
+		if (J('#evt_endTime').val() !== '' && !validateTimeInput('evt_endTime', 'value')) {
 			return FTshowTip('evt_endTime', 'Hora de finalización inválida.');
 		};
-		if(readTextArea('evt_event').trim() === ''){
+		if (J.trim(J('#evt_event').val()) === '') {
 			return FTshowTip('evt_event', 'Debe proporcionar una descripción del evento.');
 		};
 		
@@ -23,11 +31,11 @@ function ini_createEvent(id_event){		/* Agenda */
 	J('#evt_target').change(function(){
 		selectOption(J('#remind'), J(this).val(), 'value');
 	});
-};
+}
 
 function ini_editEvent(){		/* Agenda */
 	ini_createEvent(J('#id_event').val());
-};
+}
 
 function ini_agenda(){
 	setAgendaHandlers();
@@ -130,7 +138,7 @@ function ini_agenda(){
 		}
 		return false;
 	});
-};
+}
 
 function ini_agendaDay(){
 	J('.eventUnit').click(function(){
@@ -159,7 +167,7 @@ function ini_agendaDay(){
 	J('#showRescheduled').click(function(){
 		J('.eventRescheduled').toggle();
 	});
-};
+}
 
 function ini_activity(){
 	var msg = "¿Está seguro que desea descartar esta entrada?\n" + 
@@ -170,8 +178,8 @@ function ini_activity(){
 			confirm(msg) && xajax_closeActivityEntry(J(btn).attr('for'));
 		});
 	});
-};
+}
 
-function ini_activity_technical(){ ini_activity(); };
+function ini_activity_technical(){ ini_activity(); }
 
-function ini_activity_sales(){ ini_activity(); };
+function ini_activity_sales(){ ini_activity(); }

@@ -160,8 +160,6 @@ try{
 		if( ST ) ST.sync();
 		// See if we have a bigTools snippet attached, and store a reference
 		var bigTools = that.groups[atts.params.group_uID]['bigTools'];
-		// Add highlight effects to list's rows
-		listRowsHighlight( el );
 		// Add event handlers
 		el.getElements('.innerListRow').forEach(function(row){
 			var id = row.getAttribute('FOR');
@@ -251,8 +249,7 @@ try{
 		this.resetBigTools(el, atts, ['list', 'create', 'edit', 'delete'], atts.params.filters);
 		var resetFieldOnEdit = function(){};
 		el.getElements('.viewItemEditable').forEach(function(field){
-			field.addEvent('mouseover', function(){ this.highlight('#f0f0e6', '#e0e0e6'); });
-// Disable in-place edition for now (it's still half-way for some features)
+			// Disable in-place edition for now (it's still half-way for some features)
 			field.addEvent('click', function(){
 				// Store current value and reset field
 				var html = field.innerHTML;
@@ -322,28 +319,6 @@ try{
 			box.setStyle('display', 'block');
 		};
 	}
-};
-
-
-
-/**
- * @overview: adds animation to lists' rows on mouseover
- * @arguments: Element:el[, string:fromColor[, string:toColor]]
- * @returns: the list passed as first argument
- * @notes: can call it with different params as many times as you wish
- *         it will destroy previous handler and create one with new params
- * @disclaimer: this tool is tied to AppTemplate's library 'Snippet', so
- *              it requires mootools, and rows are of class innerListRow
- */
-function listRowsHighlight(el, from, to){
-	el.getElements('.innerListRow').forEach(function(row){
-		row.removeEvent('mouseover', row.ref);
-		row.addEvent('mouseover', row.ref=function(){
-			if( this.hasClass('selectedListRow') ) return;
-			this.highlight(from||'#f0f0e6', to||'#e0e0e6');
-		});
-	});
-	return el;
 };
 
 
@@ -494,6 +469,6 @@ function SyncTitles(el, atts){
 		return that;
 	};
 	// Re-sync if page is resized or menu is hidden
-	window.addEvent('resize', that.sync);
-	window.addEvent('menutoggled', that.sync);
-};
+	J(window).resize(that.sync);
+	J(window).on('menutoggled', that.sync);
+}

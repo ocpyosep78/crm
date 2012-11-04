@@ -33,7 +33,7 @@
 	{* JS code *}
 	<script type='text/javascript'>
 		{$Page->jsCode}
-		window.addEvent('domready', function(){literal}{{/literal}
+		J(function(){literal}{{/literal}
 			{$Page->jsOnLoad}
 		{literal}}{/literal} );
 	</script>

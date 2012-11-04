@@ -19,7 +19,7 @@
 
 			J('#debugFrame:visible').length
 				|| $('debugFrame')._src('index.php?stats');
-		};
+		});
 	});
 </script>
 {/literal}

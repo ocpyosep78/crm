@@ -39,9 +39,8 @@
 </style>
 
 <script type="text/javascript">
-	window.addEvent('domready', function(){
+	J(function(){
 		var oForm=$(document.forms.formLogin), oUser=$(oForm.user), oPass=$(oForm.pass);
-		oUser.onfocus = oPass.onfocus = function(e){ highLightBox(this); };
 		oForm.addEvent('submit', attemptLogin);
 		oUser.addEvent('keypress', function(e){
 			if( e.key == 'enter' && oUser.value !== '' && oPass.value === '' ){

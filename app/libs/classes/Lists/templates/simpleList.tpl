@@ -32,7 +32,7 @@
   <th>&nbsp;</th>
   
   {foreach from=$data key=id item=item}													{* ITEMS *}
-	<tr for='{$id}' bgcolor='{cycle values=$cycleValues}' class='listRows'>
+	<tr for='{$id}' bgcolor='{cycle values=$cycleValues}' class='listRows highlight'>
 	  {foreach from=$fields key=field item=x}<td>{$item.$field}</td>{/foreach}			{* CELLS *}
 	  <td class='simpleListTools'>
 		{foreach from=$item.tools key=axn item=permit}									{* TOOLS *}

@@ -60,8 +60,8 @@
 
 <script type='text/javascript'>
 	function showStatus(txt, type){ msgBox.hide(-1).setType(type).show(txt); };
-	function hideStatus( delay ){ return; msgBox.hide( delay ); };
-	
+	function hideStatus( delay ){ msgBox.hide( delay ); };
+
 	var msgBox = {
 		hideTO: null,	/* timeOut */
 		setType: function( type ){
@@ -70,6 +70,7 @@
 			return this;
 		},
 		show: function(txt, to){		/* to := 0 for persistant msg */
+			J('#main_logoArea').show('fast');
 			clearTimeout( this.hideTO );
 			if( !$('statusMsgs') || !txt ) return this;
 			var that = this;
@@ -83,6 +84,7 @@
 		hide: function( delay ){
 			if( $('statusMsgs') ){
 				new Fx.Tween('statusMsgs', {duration: delay||600}).start('opacity', 0);
+				J('#main_logoArea').hide('slow');
 			};
 			return this;
 		}

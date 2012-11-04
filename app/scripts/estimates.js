@@ -422,19 +422,26 @@ function ini_estimatePDF(id) {
 			J('#printEstimatePDF').hide();
 		};
 	});
-};
+}
 
-function ini_createEstimates_pack(){
+function ini_createEstimates_pack() {
 	J('#createEstimatesPack').click(function(){
 		var name = J('#createEstimatesPack_name').val();
 		var cust = J('#createEstimatesPack_id_customer').val();
-		if( name == '' || !cust ) return alert('Debe llenar todos los campos para continuar.');
+
+		if (!name || !cust) {
+			return alert('Debe llenar todos los campos para continuar.');
+		}
+
 		xajax_createEstimates_pack({name: name, id_customer: cust});
 	});
-};
+}
 
-function ini_editEstimates_pack( id ){ ini_estimates_packInfo(id); };
-function ini_estimates_packInfo( id ){
+function ini_editEstimates_pack(id) {
+	ini_estimates_packInfo(id);
+}
+
+function ini_estimates_packInfo(id) {
 	var pack = J('#estimates_pack_tools_add')._for();
 	J('#estimates_pack_tools_add').change(function(){
 		var estimate = J('#estimates_pack_tools_add').val();
@@ -443,4 +450,4 @@ function ini_estimates_packInfo( id ){
 	J('#createEstimate').click(function(){
 		getPage('createEstimates', ['', id]);
 	});
-};
+}

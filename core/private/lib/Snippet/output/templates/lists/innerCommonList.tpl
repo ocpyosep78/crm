@@ -5,7 +5,7 @@
 {else}
 	<table class='innerList'>
 	  {foreach from=$data key=id item=row}
-		<tr bgcolor='{cycle values=$cycleValues}' class='innerListRow' for='{$id}'
+		<tr bgcolor='{cycle values=$cycleValues}' class='innerListRow highlight' for='{$id}'
 		  {if $tipField && isset($row.$tipField)}title='{$row.$tipField}'{/if}>
 		  {foreach from=$fields key=field item=atts}
 			<td><div>{$row.$field|wordwrap:30:"<br />\n"|truncate:120:"...":true}</div></td>

@@ -143,9 +143,6 @@
 			addAssign('tabContent', 'innerHTML', $content);
 			addAssign('tabButtons', 'innerHTML', $this->template('tabButtons'));
 			
-			# Make sure to have tabs running JS-wise
-			addScript('initializeTabButtons();');
-			
 			# Javascript to be run after building content (one string or an array of strings)
 			if( $postCalls ){
 				if( is_string($postCalls) ) $postCalls = array( $postCalls );
