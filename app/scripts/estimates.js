@@ -109,32 +109,30 @@ Object Rows: array with custom methods
 /************** O B J E C T :   T A B L E **************/
 /*******************************************************/
 	Table = {
-		table: $$('TABLE.quotesTable')[0],
-		basicLine: $$('TR.quoteBasicLine')[0],
+		table: J('table.quotesTable')[0],
+		basicLine: J('tr.quoteBasicLine')[0],
 		selected: null,
 		createRow: function(){
-			var row = $(this.basicLine.cloneNode(true));
-			row.removeClass('quoteBasicLine');
-			this.basicLine.parentNode.insertBefore(row, this.basicLine);
-			return row;
+			var row = this.basicLine.clone(true).removeClass('quoteBasicLine');
+			return row.insertBefore(this.basicLine);
 		},
-		selectRow: function( row ){
+		selectRow: function(row){
 			if( this.selected ){
 				this.selected.removeClass('rowSelected');
 				if( this.selected.pos != row.pos ) this.acceptInput( this.selected.pos );
 			};
 			(this.selected = row).addClass('rowSelected');
 		},
-		addRowEvents: function( oRow ){
+		addRowEvents: function(oRow){
 			var that = this;
 			var map = oRow.map;
 			// Rapid list of events to catch
-			map.name.addEvent('keydown', keyDownOnName);
-			map.name.addEvent('keyup', keyUpOnName);
-			map.amount.addEvent('keyup', keyUpOnAmount);
-//			map.price.addEvent('keyup', keyUpOnPrice);
+			map.name.keydown(keyDownOnName);
+			map.name.keyup(keyUpOnName);
+			map.amount.keyup(keyUpOnAmount);
+//			map.price.keyup(keyUpOnPrice);
 			map.amount.onfocus = map.price.onfocus = map.name.onfocus = focused;
-			map.price.addEvent('enter', enterOnPrice);
+			map.price.enter(enterOnPrice);
 			// Event handlers
 			function focused(){
 				that.selectRow( map.row );
@@ -154,26 +152,26 @@ Object Rows: array with custom methods
 				if( !in_array(e.code, [8, 32, 46, 27]) && e.code < 48 ) return;
 				if( e.code > 191 && !in_array(e.code, [219, 220, 221]) ) return;
 				if( !in_array(e.key, ['space', 'backspace', 'delete', 'esc']) && e.key.length != 1 ) return;
-				if(this.value.trim() && e.code != 27) requestSuggest( this.value.trim() );
+				if(this.val().trim() && e.code != 27) requestSuggest( this.val().trim() );
 				else{
 					Suggest.destroyList();
-					map.suggest.innerHTML = '';
+					map.suggest.html('');
 					if( e.key == 'esc' ){
 						requestSuggest('');
-						this.value = '';
+						this.val('');
 					};
 				};
 			};
 			function keyUpOnAmount( e ){
-				if( e.key == 'enter' ) enterOnAmount();
-				else if( this.value ) that.fixRowVals( oRow );
+				if (e.which == 13) enterOnAmount();
+				else if (this.val()) that.fixRowVals(oRow);
 			};
 			function keyUpOnPrice( e ){
 //				that.fixRowVals( oRow );
 			};
 			// Auxiliary functions (still holding closure vars)
 			function enterOnAmount( e ){
-				if( !this.value ) this.value = 1;
+				if (!this.val()) this.val(1);
 				map.name.focus();
 			};
 			function enterOnName(){
@@ -185,7 +183,7 @@ Object Rows: array with custom methods
 				if( Rows[oRow.pos+1] ) Rows[oRow.pos+1].map.name.focus();
 			};
 			function requestSuggest( txt ){
-				map.suggest.innerHTML = '';
+				map.suggest.html('');
 				map.suggest.addClass('waiting');
 				Suggest.request(txt, oRow.pos);
 			};
@@ -194,10 +192,10 @@ Object Rows: array with custom methods
 			var row = Rows[pos];
 			row.data = data || {};
 			row.map.suggest.removeClass('waiting');
-			row.map.suggest.innerHTML = data.name || '(sin resultados)';
-			row.map.price.value = parseFloat(data.price) || 0;
-			if( data.amount ) row.map.amount.value = data.amount;
-			else row.data.amount = parseInt(row.map.amount.value) || 1;
+			row.map.suggest.html(data.name || '(sin resultados)');
+			row.map.price.val(parseFloat(data.price) || 0);
+			if( data.amount ) row.map.amount.val(data.amount);
+			else row.data.amount = parseInt(row.map.amount.val()) || 1;
 			this.fixRowVals( row );
 			return this;
 		},
@@ -205,11 +203,11 @@ Object Rows: array with custom methods
 			Rows.newLines();	/* Adds new rows as needed */
 			var oRow = Rows[pos];
 			// See if user deleted entry, to remove it from data too
-			if( oRow.data.accepted && oRow.map.name.value == '' ) oRow.data = {};
+			if( oRow.data.accepted && oRow.map.name.val() == '' ) oRow.data = {};
 			var name = oRow.data.name || '';
-			oRow.map.suggest.innerHTML = '';
+			oRow.map.suggest.html('');
 			if( name ){
-				oRow.map.name.value = name;
+				oRow.map.name.val(name);
 				oRow.data.accepted = true;
 			};
 			Suggest.destroyList();
@@ -217,12 +215,14 @@ Object Rows: array with custom methods
 		},
 		fixRowVals: function( row ){
 			var map = row.map, data = row.data;
-			data.price = parseFloat(map.price.value) || data.price || 0;
-			data.amount = map.amount.value = parseInt(map.amount.value) || 1;
-			map.price.value = data.price.toFixed(2);
-			var subTotal = map.subTotal.innerHTML = (data.price * data.amount).toFixed(2);
-			map.tax.innerHTML = (subTotal * taxes).toFixed(2);
-			map.total.innerHTML = (subTotal * (taxes + 1)).toFixed(2);
+			data.price = parseFloat(map.price.val()) || data.price || 0;
+			map.amount.val(parseInt(map.amount.val()) || 1);
+			data.amount = map.amount.val();
+			map.price.val(data.price.toFixed(2));
+			var subTotal = (data.price * data.amount).toFixed(2);
+			map.subTotal.html(subTotal);
+			map.tax.html((subTotal * taxes).toFixed(2));
+			map.total.html((subTotal * (taxes + 1)).toFixed(2));
 			this.fixTotals();
 		},
 		fixTotals: function(){
@@ -231,9 +231,9 @@ Object Rows: array with custom methods
 				if( !oRow.data || !oRow.data.amount ) continue;
 				tSubTotal += parseFloat(oRow.data.amount * oRow.data.price) || 0;
 			};
-			$('tSubTotal').innerHTML = tSubTotal.toFixed(2);
-			$('tTax').innerHTML = (tSubTotal * taxes).toFixed(2);
-			$('tTotal').innerHTML = (tSubTotal * (taxes + 1)).toFixed(2);
+			J('#tSubTotal').html(tSubTotal.toFixed(2));
+			J('#tTax')     .html((tSubTotal * taxes).toFixed(2));
+			J('#tTotal')   .html((tSubTotal * (taxes + 1)).toFixed(2));
 		}
 	};
 	
@@ -263,18 +263,19 @@ Object Rows: array with custom methods
 			};
 		},
 		showList: function(){
+			var that = this;
 			var pos = this.req.pos;
-			this.req.list.forEach(function(line, i){
-				var A = document.createElement('A');
-				A.innerHTML = '<div>' + line.name + '</div>';
-				$('suggestList').appendChild( A );
-				A.href = 'javascript:void(0);';		/* To style it in IE */
-				A.onclick = (function(i){ return function(){
+			J.each(this.req.list, function(line, i){
+				var fn = (function(i){ return function(){
 					Table.showSuggest(line, pos).acceptInput(pos);
 				}})(i);
-			}, this);
-			var coords = Rows[pos].map.name.getPosition();
-			$('listBox').setStyles({top:coords.y+22, left:coords.x-1, display:'block'});
+				J('<a />', {'href': 'javascript:void(0);'})
+					.click(fn)
+					.append(J('<div />').html(line.name))
+					.appendTo(J('#suggestList'));
+			});
+			var coords = Rows[pos].map.name.position();
+			J('#listBox').css({'top':coords.top+22, 'left':coords.left-1}).show();
 		},
 		pickOneResult: function(){	/* Keeps current result if it's in the list */
 			var req = this.req;
@@ -284,8 +285,8 @@ Object Rows: array with custom methods
 			return req.list[i] || {};
 		},
 		hideList: function(){
-			$('listBox').setStyle('display', 'none');
-			$('suggestList').innerHTML = '';	/* Clear results */
+			J('#listBox').hide();
+			J('#suggestList').html('');	/* Clear results */
 		},
 		destroyList: function(){
 			this.hideList();
@@ -299,15 +300,12 @@ Object Rows: array with custom methods
 		},
 		selectInList: function(){
 			var req = this.req;
-			req.product = (req.list[req.selected]||{}).id;
-			var prevSelected = $('listBox').getElement('A.selected');
-			if( prevSelected ) prevSelected.removeClass('selected');
-			var currSelected = $$('#listBox A')[req.selected];
-			if( currSelected ){
-				currSelected.addClass('selected');
-				if( currSelected.parentNode.scrollTop < currSelected.offsetTop ){
-					currSelected.scrollIntoView( false );
-				};
+			req.product = req.list[req.selected].id;
+			J('#listBox a.selected').removeClass('selected');
+			var currSelected = J('#listBox a')[req.selected];
+			currSelected.addClass('selected');
+			if (currSelected.parent().scrollTop() < currSelected.get(0).offsetTop){
+				currSelected.get(0).scrollIntoView(false);
 			};
 		}
 	};
@@ -318,36 +316,40 @@ Object Rows: array with custom methods
 /* Outside the table ( buttons ) */
 	
 	// id_estimate will be empty if we're creating a new estimate/quote
-	var id_estimate = $('hdn_id_estimate').value || '';
+	var id_estimate = J('#hdn_id_estimate').val() || '';
 	
-	if( $('btn_save') ) $('btn_save').onclick = function(){
-		if( !$('param_estimate').value ){
+	J('#btn_save').click(function(){
+		if (!J('#param_estimate').val()) {
 			return showStatus('Debe escribir un nombre válido para guardar un presupuesto o cotización.');
-		};
+		}
+
 		// Get data from the table, and estimate's params
 		var Data = Rows.getData();
 		var Params = {
 			'id_estimate': id_estimate,
-			'estimate': $('param_estimate').value,
-			'orderNumber': $('param_orderNumber').value || '',
-			'id_customer': $('param_id_customer').value || '',
-			'id_system': $('param_id_system').value || '',
-			'pack': $('hdn_pack').value || '',
+			'estimate': J('#param_estimate').val(),
+			'orderNumber': J('#param_orderNumber').val() || '',
+			'id_customer': J('#param_id_customer').val() || '',
+			'id_system': J('#param_id_system').val() || '',
+			'pack': J('#hdn_pack').val() || ''
 		};
+
 		// Ask for confirmation if table is empty
-		if( !Data.length && !confirm('La lista está vacía. ¿Desea guardarla de todos modos?') ) return;
-		if( !Params.orderNumber || !Params.id_customer || !Params.id_system ){
+		if (!Data.length && !confirm('La lista está vacía. ¿Desea guardarla de todos modos?')) {
+			return;
+		}
+
+		if (!Params.orderNumber || !Params.id_customer || !Params.id_system) {
 			alert('Faltan datos requeridos para crear un Presupuesto.\n' +
 				  'La lista será guardada como Cotización.');
 		};
+
 		xajax_saveEstimate(Params, Data, id_estimate);
-	};
+	});
 	
-	($('param_id_system')||{}).onchange = function(){
-		if( !this.value ) return;
-		$('img_system').src = 'app/images/systems/' + this.value + '.png';
-	};
-	
+	J('#param_id_system').change(function(){
+		this.val() && J('#img_system')._src('app/images/systems/'+this.val()+'.png');
+	});
 };
 
 function ini_editEstimates(){
@@ -355,28 +357,27 @@ function ini_editEstimates(){
 };
 
 function ini_estimatesInfo(){
-	var id = $('hdn_id_estimate').value;
-	($('btn_edit')||$E).addEvent('click', function(e){ getPage(e, 'editEstimates', [id]); });
-	($('btn_print')||$E).addEvent('click', function(){ xajax_printQuote( id ); });
-	($('btn_design')||$E).addEvent('click', function(e){ getPage(e, 'installPlan', [id]); });
-	($('btn_exportPDF')||$E).addEvent('click', function(e){
-		return getPage(e, 'estimatePDF', [id]);
+	var id = J('#hdn_id_estimate').val();
+
+	J('#btn_edit').click(function(e){ getPage(e, 'editEstimates', [id]); });
+	J('#btn_print').click(function(){ xajax_printQuote(id); });
+	J('#btn_design').click(function(e){ getPage(e, 'installPlan', [id]); });
+	J('#btn_exportPDF').click(function(e){
+		return getPage(e, 'estimatePDF', [id]); // TODO
 		var height = (parseInt(screen.availHeight) * .90) + 'px';
 		var width = (parseInt(screen.availWidth) * .90) + 'px';
 		var atts = 'location=NO,menubar=NO,toolbar=NO,height='+ height +',width='+ width;
 		window.open('app/export/pdf/estimate.php?id=' + id, 'Presupuesto', atts);
 	});
-	window.showWarnings = function(){
-		
-	};
+
+	window.showWarnings = function(){}; // TODO
 };
 
-
-
 function printQuote(){
-	var content = $('tmpDivToPrint').innerHTML;
-	$('tmpDivToPrint').innerHTML = '';
+	var content = J('#tmpDivToPrint').html();
+	J('#tmpDivToPrint').html('');
 	var ref = window.open('', 'printQuotePopup', 'height=500px, width=800px,left=10px,top=10px');
+
 	ref.document.open();
 	ref.document.write( "<link rel='stylesheet' type='text/css' href='app/styles/estimates.css'>" );
 	ref.document.write( "<div class='printableEstimate'>" + content + '</div>' );
@@ -387,48 +388,46 @@ function printQuote(){
 	ref.opener = null;
 };
 
-function ini_installPlan( id ){
-	var frm = $(document.forms.plan);
-	frm.addEvent('submit', function(){
-		xajax_addEntryToPlan(xajax.getFormValues(frm));
-		return false;
+function ini_installPlan(id) {
+	J.forms('plan').submit(function(){
+		return xajax_addEntryToPlan(xajax.getFormValues(this)) & false;
 	});
-	$('installPlan').getElements('IMG').forEach(function(img){
-		$(img.parentNode).addEvent('click', function(){
-			xajax_removeEntryFromPlan( this.getAttribute('FOR') );
-		});
+	J('#installPlan img').parent().click(function(){
+		xajax_removeEntryFromPlan(J(this)._for());
 	});
-	$('backToEstimateInfo').addEvent('click', function(){
+	J('#backToEstimateInfo').click(function(){
 		getPage('estimatesInfo', [id]);
 	});
 };
 
-function ini_estimatePDF( id ){
-	$('backToEstimateInfo').addEvent('click', function(){
+function ini_estimatePDF(id) {
+	J('#backToEstimateInfo').click(function(){
 		getPage('estimatesInfo', [id]);
 	});
 	// When clicking on Print button, a temporary iframe is created
-	$('printEstimatePDF').addEvent('click', function(){
-		if( $('printFra') ) document.body.removeChild( $('printFra') );
-		var printFra = document.createElement('IFRAME');
-		printFra.name = printFra.id = 'printFra';
-		$( document.body.appendChild(printFra) )
-			.setStyle('visibility', 'hidden')
-			.addEvent('load', function(){ window.frames.printFra.print(); })
-			.src = $('estimatePDF').src + '&printer&validated';
+	J('#printEstimatePDF').click(function(){
+		var src = J('#estimatePDF')._src + '&printer&validated';
+
+		J('#printFra').detach();
+		J('<iframe />', {'id'  : 'printFra',
+		                 'name': 'printFra',
+		                 'src' : src})
+			.load(function(){ J('#printFra').get(0).print(); })
+			.hide()
+			.appendTo('body');
 	});
 	// Show Print button only when the estimate is finally shown (after validation)
-	$('estimatePDF').addEvent('load', function(){
+	J('#estimatePDF').load(function(){
 		if( window.frames.estimatePDF.location.href.indexOf('validated') !== -1 ){
-			$('printEstimatePDF').setStyle('display', 'block');
+			J('#printEstimatePDF').hide();
 		};
 	});
 };
 
 function ini_createEstimates_pack(){
-	$('createEstimatesPack').addEvent('click', function(){
-		var name = $('createEstimatesPack_name').value;
-		var cust = $('createEstimatesPack_id_customer').value;
+	J('#createEstimatesPack').click(function(){
+		var name = J('#createEstimatesPack_name').val();
+		var cust = J('#createEstimatesPack_id_customer').val();
 		if( name == '' || !cust ) return alert('Debe llenar todos los campos para continuar.');
 		xajax_createEstimates_pack({name: name, id_customer: cust});
 	});
@@ -436,12 +435,12 @@ function ini_createEstimates_pack(){
 
 function ini_editEstimates_pack( id ){ ini_estimates_packInfo(id); };
 function ini_estimates_packInfo( id ){
-	var pack = $('estimates_pack_tools_add').getAttribute('FOR');
-	$('estimates_pack_tools_add').addEvent('change', function(){
-		var estimate = $('estimates_pack_tools_add').value;
-		if( estimate ) xajax_addEstimate2Pack( {pack: pack, id_estimate: estimate} );
+	var pack = J('#estimates_pack_tools_add')._for();
+	J('#estimates_pack_tools_add').change(function(){
+		var estimate = J('#estimates_pack_tools_add').val();
+		estimate && xajax_addEstimate2Pack({pack: pack, id_estimate: estimate});
 	});
-	$('createEstimate').addEvent('click', function(){
+	J('#createEstimate').click(function(){
 		getPage('createEstimates', ['', id]);
 	});
 };

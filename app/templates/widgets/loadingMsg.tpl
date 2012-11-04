@@ -35,21 +35,21 @@
 
 <script type="text/javascript">
 	function showLoading( h ){
-		$('loadingGif').setStyle('display', h === false ? 'none' : 'block');
+		J('#loadingGif').toggle(h);
 	};
 	function hideLoading(){
-		showLoading( false );
+		showLoading(false);
 	};
 	
-	window.addEvent('domready', function(){			/* Xajax addon */
-		if( window.xajax ){
+	J(function(){
+		if (window.xajax) {
 			xajax.loadingFunction = showLoading;
 			xajax.doneLoadingFunction = hideLoading;
 			xajax.loadingFailedFunction = hideLoading;
 		};
-	} );
-	
-	window.addEvent('beforeunload', showLoading);
+	});
+
+	J(window).on('beforeunload', showLoading);
 </script>
 {/literal}
 

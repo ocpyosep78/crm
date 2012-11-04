@@ -199,8 +199,8 @@ function ini_editTechVisits( data ){ ini_createTechVisits( data ); };
 function ini_techVisitsInfo( id ){
 	var src = 'app/export/pdf/techVisit.php?id=' + id;
 
-	J('#techVisitsPDF').attr('src', src + '#toolbar=0&navpanes=0&scrollbar=0');
-	J('#techVisitsPrintPDF').attr('src', src + '&printer#toolbar=0');
+	J('#techVisitsPDF')._src(src + '#toolbar=0&navpanes=0&scrollbar=0');
+	J('#techVisitsPrintPDF')._src(src + '&printer#toolbar=0');
 
 	J('#btn_techVisitsEdit').click(function(e){
 		getPage(e, 'editTechVisits', [id]);

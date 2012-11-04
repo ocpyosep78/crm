@@ -13,14 +13,12 @@
 </style>
 
 <script type='text/javascript'>
-	window.addEvent('domready', function(){
-		$('debugStats').onclick = function(){
-			if( $('debugFrame').style.display == 'block' ){
-				$('debugFrame').style.display = 'none';
-			}else{
-				$('debugFrame').src = 'index.php?stats';
-				$('debugFrame').style.display = 'block';
-			};
+	J(function(){
+		J('#debugStats').click(function(){
+			J('#debugFrame').toggle();
+
+			J('#debugFrame:visible').length
+				|| $('debugFrame')._src('index.php?stats');
 		};
 	});
 </script>
