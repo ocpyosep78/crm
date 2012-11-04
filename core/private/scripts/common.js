@@ -66,12 +66,25 @@ jQuery.forms = function(form, addNames) {
 
 	// Add reset method (which doesn't exist in jQuery for some reason)
 	frm.reset = function() {
-		frm.get(0).reset();
+		frm.get(0) && frm.get(0).reset();
 		return this;
 	}
 
 	return frm;
 };
+
+// Add the most relevant attributes as direct jQuery objects methods
+jQuery.each(['id', 'name', 'class', 'src', 'type', 'for', 'rel'], function(attr){
+	jQuery.fn['_'+attr] = function(val){ return this.attr(attr, val); };
+});
+
+// Add method print to jQuery objects
+jQuery.fn.print = function() {
+	this.get(0) && this.get(0).print();
+	return this;
+}
+
+
 
 $_ = {style:{}};
 $E = {
