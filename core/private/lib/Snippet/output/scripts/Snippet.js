@@ -7,8 +7,8 @@ SNIPPET_IMAGES = 'core/private/lib/Snippet/output/images';
 var SnippetPort = {
 	// Map #showError to a function that handles warning/error output for the
 	// user. It receives only one parameter: an error description string.
-	// By default, it uses AppTemplate's built-in function showStatus(msg, type)
-	showError: function(){ showStatus.apply(window, arguments); },
+	// By default, it uses AppTemplate's built-in function say(msg, type)
+	showError: function(){ say.apply(window, arguments); },
 	// Map #addSnippet to the function that will request a page to be printed
 	// through ajax.
 	// By default, that is xajax_addSnippet

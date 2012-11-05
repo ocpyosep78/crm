@@ -21,7 +21,7 @@
             $note = addslashes($note);
             $res = oSQL()->saveAdminTechNote($id, $note)->successCode;
         } else $res = NULL;
-        return showStatus($res ? 'Nota guardada con éxito' : 'Ocurrió un error al guardar la nota', !!$res);
+        return say($res ? 'Nota guardada con éxito' : 'Ocurrió un error al guardar la nota', !!$res);
     }
 	
 	function tchFormSuggest($key, $val){
@@ -30,7 +30,7 @@
 			$key = 'number';
 			if (!empty($val) && !is_numeric($val))
 			{
-				return showStatus('Número de cliente inválido.');
+				return say('Número de cliente inválido.');
 			}
 		}
 		
@@ -53,7 +53,7 @@
 	
 	function tchFormAcceptSale($id, $cust=NULL){	/* `id_sale` from `sales`, `id_customer` from `customers` */
 	
-		if( empty($id) && empty($cust) ) return showStatus('Faltan datos requeridos.');
+		if( empty($id) && empty($cust) ) return say('Faltan datos requeridos.');
 		
 		if( empty($id) ){
 			$data = oSQL()->getCustomer( $cust );
@@ -65,7 +65,7 @@
 		else{
 			# Get all relevant info for this invoice (either install or sale)
 			$data = oSQL()->getInstallForNewService( $id );
-			if( empty($data) ) return showStatus('Ocurrió un error al intentar leer los datos de la factura.');
+			if( empty($data) ) return say('Ocurrió un error al intentar leer los datos de la factura.');
 			# Part install date and fix warranty (from warranty months to warranty void date)
 			$data['warranty'] = strtotime($data['date'].' + '.$data['warranty'].' months') > time() ? 1 : 0;
 			list($data['installYear'], $data['installMonth'], $data['installDay']) = explode('-', $data['date']);
@@ -99,9 +99,9 @@
 		
 		# We should have either an id_customer or an id_sale left
 		if( empty($data['id_sale']) && empty($data['id_customer']) ){
-			return showStatus('Debe seleccionar un cliente (con o sin factura previa).');
+			return say('Debe seleccionar un cliente (con o sin factura previa).');
 		}
-		if( empty($data['date']) ) return showStatus('La fecha de la visita es un dato requerido.');
+		if( empty($data['date']) ) return say('La fecha de la visita es un dato requerido.');
 	
 		# Cost has to be fixed and the appropriate currency chosen
 		$data['currency'] = !empty($data['cost']) ? '$' : (!empty($data['costDollars']) ? 'U$S' : '');
@@ -117,7 +117,7 @@
 		
 		if( $res !== true ){
 			addScript("\$('technicalForm').handler.select('{$res['field']}');");
-			return showStatus('Hay un error en los datos ingresados: '.strtolower($res['tip'] ? $res['tip'] : ''));
+			return say('Hay un error en los datos ingresados: '.strtolower($res['tip'] ? $res['tip'] : ''));
 		}
 		
 		# Some fields are saved in `sales` table...
@@ -146,13 +146,13 @@
 			oSQL()->ROLLBACK();
 			# Handle expected errors
 			if( $ans->column == 'invoice' && $ans->error == SQL_ERROR_DUPLICATE ){
-				return showStatus("Ya existe una factura con número {$data['invoice']} registrada.");
+				return say("Ya existe una factura con número {$data['invoice']} registrada.");
 			}
 			if( $ans->column == 'number' && $ans->error = SQL_ERROR_DUPLICATE ){
-				return showStatus("El número de visita {$data['number']} ya está en uso.");
+				return say("El número de visita {$data['number']} ya está en uso.");
 			}
 			# Fall back to a generic error message
-			return showStatus('Ocurrió un error al intentar guardar el formulario. '.
+			return say('Ocurrió un error al intentar guardar el formulario. '.
 				'Revise sus datos e inténtelo nuevamente.');
 		}
 		oSQL()->COMMIT();

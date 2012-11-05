@@ -13,26 +13,31 @@
 	<meta http-equiv="Last-Modified" content="0">
 	<meta http-equiv="Cache-Control" content="no-cache, mustrevalidate">
 	<meta name="robots" content="none">
-	
+
 	<link rel="shortcut icon" href="favicon.ico" />
 
 	<title>{$Page->appTitle}</title>
-	
+
+
 	{* Styles *}
+	<link rel="stylesheet" type="text/css" href="core/private/scripts/jquery/themes/{$jQueryUiTheme}/jquery-ui.css" />
+
 	{foreach from=$Page->styleSheets item=styleSheet}
 		<link rel="stylesheet" type="text/css" href="{$styleSheet}" />
 	{/foreach}
-	
-	{* Ajax *}
-	{$Xajax->printJavascript()}
-	{$Pajax->printJavascript()}
-	
-	{* javaScript files *}
+
+
+	{* JS files *}
+	<script type='text/javascript' src='core/private/scripts/jquery/jquery-1.8.2.min.js'></script>
+	<script type='text/javascript' src='core/private/scripts/jquery/jquery-ui-1.9.1.min.js'></script>
+
 	<script type='text/javascript'>window.IN_FRAME = {$IN_FRAME}</script>
+	<script type='text/javascript' src='{$core_scripts}common.js'></script>
+
 	{foreach from=$Page->jScripts item=jScript}
 		<script type='text/javascript' src='{$jScript}'></script>
 	{/foreach}
-	
+
 	{* JS code *}
 	<script type='text/javascript'>
 		{$Page->jsCode}
@@ -40,12 +45,15 @@
 			{$Page->jsOnLoad}
 		{literal}}{/literal} );
 	</script>
-	
+
+	{* Xajax *}
+	{$Xajax->printJavascript()}
+
 </head>
 <body>
 
 	<div id='main_navBar'>
-	
+
 		<div id='navButtonsBar'>
 		  {foreach from=$Page->navButtons key=key item=item}
 			&nbsp;&nbsp;
@@ -54,7 +62,7 @@
 				onclick='switchNav(event, this); {if $item.action}{$item.action};{/if}' /></a>
 		  {/foreach}
 		</div>
-		
+
 		<div id='loggedAs'>
 		  {if $USER}
 			<span>usuario:</span> {$USER}
@@ -62,7 +70,7 @@
 			<span>perfil:</span> {$PROFILE}
 		  {/if}
 		</div>
-		
+
 		<div id='navSteps'>
 		  {if $USER}
 			<span>ruta</span>
@@ -72,12 +80,15 @@
 			{/foreach}
 		  {/if}
 		</div>
-		
+
 	</div>
-	
-	<div id='main_logoArea' colspan="2">
-		<img src="{$Page->appImg}" />
+
+	<div id='notifications'>
 		<span>{$Page->appName}</span>
+		<img class='errorStatus' src='app/images/statusMsg/error.png'>
+		<img class='successStatus' src='app/images/statusMsg/success.png'>
+		<img class='warningStatus' src='app/images/statusMsg/warning.png'>
+		<div></div>
 	</div>
 
 	<div id='main_box'>
@@ -92,7 +103,7 @@
 		copyright <a href='mailto:diego.bindart@gmail.com'>dbarreiro</a>
 		{$LAST_UPDATE|date_locale:'d/m/Y'}
 	</div>
-		
+
 	<div id='main_menu' rowspan="2">
 		<img id='hideMenu' src='app/images/arrow_head_left.gif' title='Ocultar menú' />
 		<img id='showMenu' src='app/images/arrow_head_right.gif' title='Mostrar menú' />
@@ -108,20 +119,19 @@
 		  {/foreach}
 		</div>
 	</div>
-	
-	
+
+
 	<div id='curtain'></div>		{* modal windows, refer to JS:Modal object *}
-	
+
 	<div id='xajax_addElement'></div>
-	
+
 	{* Widgets *}
 	{if $USER && $Permits->can('agenda')}{include file='widgets/eventInfo.tpl'}{/if}
 	{if $USER && $Permits->can('chatActivity')}{include file='widgets/chat.tpl'}{/if}
 	{if $USER}{include file='widgets/alerts.tpl'}{/if}
-	{include file='widgets/statusMsgs.tpl'}
 	{include file='widgets/loadingMsg.tpl'}
 	{if $Page->debugger}{include file='widgets/debugger.tpl'}{/if}
-	
-	
+
+
 </body>
 </html>

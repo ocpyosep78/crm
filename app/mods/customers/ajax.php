@@ -50,15 +50,15 @@
 		# Handled errors
 		if( $ans->error == 1062 ){
 			if( $ans->column == 'customer' ){
-				return showStatus("El nombre {$atts['customer']} ya está registrado en la base de datos.");
+				return say("El nombre {$atts['customer']} ya está registrado en la base de datos.");
 			}
 			elseif( $ans->column == 'number' ){
-				return showStatus("Ya existe un cliente con ese número. Verifique sus datos o inténtelo nuevamente.");
+				return say("Ya existe un cliente con ese número. Verifique sus datos o inténtelo nuevamente.");
 			}
 		}
 		
 		# Unhandled error
-		return showStatus( $ans->msg );
+		return say( $ans->msg );
 		
 	}
 	
@@ -84,7 +84,7 @@
 		if( $atts['number'] ){
 			$res = oSQL()->getCustomers(array('number' => $atts['number']));
 			if( count($res) > 1 || (count($res) == 1 && $res[0]['id_customer'] != $atts['id_customer']) ){
-				return showStatus("Ya existe un cliente con ese número.\\n".
+				return say("Ya existe un cliente con ese número.\\n".
 					"Verifique sus datos o inténtelo nuevamente.");
 			}
 		}
@@ -95,7 +95,7 @@
 		$ans = oSQL()->editCustomers( $atts );
 		
 		if( $ans->error ){
-			return showStatus( $ans->msg, $ans->successCode );
+			return say( $ans->msg, $ans->successCode );
 		}else{
 			return oNav()->getPage('customersInfo', array($atts['id_customer']), $ans->msg, $ans->successCode);
 		}
@@ -132,7 +132,7 @@
 			# If it failed with an error other than 1062 (duplicate), we abort
 			if( $ans1->error && $ans1->error != 1062 ){
 				oSQL()->ROLLBACK();
-				return showStatus( $ans1->msg );
+				return say( $ans1->msg );
 			}
 			# If it either inserted a new invoice, or it already existed, we're ready to go
 			oSQL()->setErrMsg('Ocurrió un error al intentar ingresar la venta en la base de datos.');
@@ -140,7 +140,7 @@
 			$ans2 = oSQL()->insert($data, 'sales');
 			if( $ans2->error ){
 				oSQL()->ROLLBACK();
-				return showStatus( $ans2->msg );
+				return say( $ans2->msg );
 			}
 		oSQL()->COMMIT();
 		
@@ -148,7 +148,7 @@
 		addScript("document.forms.frmOldSales.restart();");
 		
 		/* TEMP: it should take you to new sale's page, but for now we're bulk registering sales */
-		return showStatus('La venta fue ingresada correctamente en la base de datos.', 1);
+		return say('La venta fue ingresada correctamente en la base de datos.', 1);
 		
 	}
 	
@@ -165,7 +165,7 @@
 		if( ($valid=oValidate()->test($data, 'customerContacts')) === true ){
 			$ans = oSQL()->{$id ? 'update' : 'insert'}($data, 'customers_contacts', array('id_contact'));
 			if( !$ans->error ) return oNav()->reloadPage();
-			else return showStatus('No se pudo procesar su consulta. '.
+			else return say('No se pudo procesar su consulta. '.
 				'Compruebe los datos ingresados y vuelva a intentarlo.');
 		}
 		else return addScript("FTshowTip('ccc_{$valid['field']}', '{$valid['tip']}');");
@@ -176,7 +176,7 @@
 		
 		$ans = oSQL()->delete('customers_contacts', array('id_contact' => $id));
 		if( !$ans->error ) return oNav()->reloadPage();
-		else return showStatus('Ocurrió un error. El elemento no pudo ser eliminado.');
+		else return say('Ocurrió un error. El elemento no pudo ser eliminado.');
 		
 	}
 	
@@ -195,7 +195,7 @@
 		if( ($valid=oValidate()->test($data, 'customerOwners')) === true ){
 			$ans = oSQL()->{$id ? 'update' : 'insert'}($data, 'customers_owners', array('id_owner'));
 			if( !$ans->error ) return oTabs()->switchTab('owners');
-			else return showStatus('No se pudo procesar su consulta. '.
+			else return say('No se pudo procesar su consulta. '.
 				'Compruebe los datos ingresados y vuelva a intentarlo.');
 		}
 		else return addScript("FTshowTip('cco_{$valid['field']}', '{$valid['tip']}');");
@@ -206,6 +206,6 @@
 		
 		$ans = oSQL()->delete('customers_owners', array('id_owner' => $id));
 		if( !$ans->error ) return oTabs()->switchTab('owners');
-		else return showStatus('Ocurrió un error. El elemento no pudo ser eliminado.');
+		else return say('Ocurrió un error. El elemento no pudo ser eliminado.');
 		
 	}

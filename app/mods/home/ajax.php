@@ -50,12 +50,12 @@
 		
 		$ans = oSQL()->editUsers( $data );
 		if( $ans->error ){
-			return showStatus($ans->msg, $ans->successCode);
+			return say($ans->msg, $ans->successCode);
 		}
 		elseif( !$ans->rows ){
 			$msg1 = 'No se han guardado cambios. Verifique los datos ingresados.';
 			$msg2 = 'Es posible que su cuenta no disponga de permisos suficientes.';
-			return showStatus("{$msg1}<br />{$msg2}");
+			return say("{$msg1}<br />{$msg2}");
 		}
 		else{
 			return logout('Inicie sesión con su nueva contraseña.', 2);
@@ -80,7 +80,7 @@
 		# Check that the user has required permissions
 		if( $id ){
 			$event = oSQL()->getEventsInfo( $data['id_event'] );
-			if( empty($event) ) return showStatus('No se encontró el evento pedido. Inténtelo nuevamente.');
+			if( empty($event) ) return say('No se encontró el evento pedido. Inténtelo nuevamente.');
 			if( !canEditEvent(getSes('user'), $event['creator']) ) return oPermits()->noAccessMsg();
 		}
 		elseif( !oPermits()->can('createEvent') ) return oPermits()->noAccessMsg();
@@ -118,7 +118,7 @@
 		if( !$id ) $data['creator'] = getSes('user');
 		$ans = $id ? oSQL()->editEvent($data, $info) : oSQL()->createEvent($data, $info);
 		
-		if( $ans->error ) return showStatus( $ans->msg );
+		if( $ans->error ) return say( $ans->msg );
 		else{
 			$key = $id ? $id : $ans->ID;
 			$event = $id ? 'agendaEventEdited' : 'agendaEventCreated';

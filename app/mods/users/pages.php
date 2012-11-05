@@ -108,7 +108,7 @@
 		oFormTable()->addInput('Email', array('id' => 'email'));
 
         oFormTable()->addTitle( '' );
-        oFormTable()->addFile('Imagen', array('id' => 'img'), '');
+        oFormTable()->addFile('Imagen', array('id' => 'img'), $edit ? 'editUsers' : 'createUsers');
         oFormTable()->addTitle( '' );
 		
 		# Block 'Interno'
@@ -129,14 +129,10 @@
 			);
 		
 			oFormTable()->fillValues( $user );
-			
 		}
 		
 		# Submit line
 		oFormTable()->addSubmit( $edit ? 'Guardar Cambios' : 'Guardar' );
-		
-		# Set onsubmit action (submitting through xajax)
-		oFormTable()->pajaxSubmit( $edit ? 'editUsers' : 'createUsers' );
 		
 		# Add commands and actions to Xajax response object
 		oNav()->updateContent(oFormTable()->getTemplate(), true);

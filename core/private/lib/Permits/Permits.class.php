@@ -102,7 +102,7 @@
 		 * Normalized 'access restricted' message
 		 */
 		public function noAccessMsg(){
-			return showStatus('Su cuenta no posee permisos para realizar esta acción.');
+			return say('Su cuenta no posee permisos para realizar esta acción.');
 		}
 		
 		/**

@@ -2,7 +2,7 @@ function ini_estimates(){};
 function ini_quotes(){};
 
 function ini_createEstimates( Data ){
-	
+
 /*
 
 Rows: hash of Row objects, plus common logical methods
@@ -32,13 +32,13 @@ Premises:
 	- Table knows no logic, except recognizing input (events)
 	- Suggest doesn't know what it's handling
 	- All DOM changes and listening are done by Table (exclusive)
-	
-	
+
+
 Object Rows: array with custom methods
 	It keeps an ordered list of Row objects, and provides usefull
 	common methods for them to use (mostly requiring pos -index).
 
-	
+
 ***** Rows.push *****			@params: DOM[TR]:row, Data:data
 - Adds Row objects to the array
 - Optionally, accepts Data object to link to the Row
@@ -48,7 +48,7 @@ Object Rows: array with custom methods
 ***** Rows.createRow *****
 - Creates a DOM row in the estimates table, and returns it
 
-						
+
 */
 /*******************************************************/
 /*************** O B J E C T :   R O W S ***************/
@@ -79,7 +79,7 @@ Object Rows: array with custom methods
 			Table.acceptInput( pos );
 		};
 	};
-	
+
 /*******************************************************/
 /*********** C O N S T R U C T O R :   R O W ***********/
 /*******************************************************/
@@ -104,7 +104,7 @@ Object Rows: array with custom methods
 		};
 		Table.addRowEvents( this );
 	};
-	
+
 /*******************************************************/
 /************** O B J E C T :   T A B L E **************/
 /*******************************************************/
@@ -236,7 +236,7 @@ Object Rows: array with custom methods
 			J('#tTotal')   .html((tSubTotal * (taxes + 1)).toFixed(2));
 		}
 	};
-	
+
 /*******************************************************/
 /************ O B J E C T :   S U G G E S T ************/
 /*******************************************************/
@@ -309,18 +309,18 @@ Object Rows: array with custom methods
 			};
 		}
 	};
-	
+
 	Rows.batchAdd( Data );		/* If there is data to initialize table, insert it (edit) */
 	Rows.newLines();			/* Adds new rows as needed */
-	
+
 /* Outside the table ( buttons ) */
-	
+
 	// id_estimate will be empty if we're creating a new estimate/quote
 	var id_estimate = J('#hdn_id_estimate').val() || '';
-	
+
 	J('#btn_save').click(function(){
 		if (!J('#param_estimate').val()) {
-			return showStatus('Debe escribir un nombre válido para guardar un presupuesto o cotización.');
+			return say('Debe escribir un nombre válido para guardar un presupuesto o cotización.');
 		}
 
 		// Get data from the table, and estimate's params
@@ -346,7 +346,7 @@ Object Rows: array with custom methods
 
 		xajax_saveEstimate(Params, Data, id_estimate);
 	});
-	
+
 	J('#param_id_system').change(function(){
 		this.val() && J('#img_system')._src('app/images/systems/'+this.val()+'.png');
 	});
@@ -408,7 +408,7 @@ function ini_estimatePDF(id) {
 	J('#printEstimatePDF').click(function(){
 		var src = J('#estimatePDF')._src + '&printer&validated';
 
-		J('#printFra').detach();
+		J('#printFra').remove();
 		J('<iframe />', {'id'  : 'printFra',
 		                 'name': 'printFra',
 		                 'src' : src})

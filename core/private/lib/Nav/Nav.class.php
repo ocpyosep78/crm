@@ -38,11 +38,11 @@
 				case 'viewItem':
 					$page = "{$code}Info";
 				default:
-					return showStatus("La página solicitada no está disponible{$detail}.");
+					return say("La página solicitada no está disponible{$detail}.");
 			}
 		
 			if( !oPermits()->can($page) ){
-				return showStatus("Su cuenta no posee permisos para acceder a esta página{$detail}.");
+				return say("Su cuenta no posee permisos para acceder a esta página{$detail}.");
 			}
 			
 			$this->code = time().microtime();
@@ -117,10 +117,10 @@
 				return $this->loadContent();
 			}
 			elseif( $code === NULL ){
-				return showStatus("La página solicitada no está disponible.");
+				return say("La página solicitada no está disponible.");
 			}
 			elseif( !$code ){
-				return showStatus("No es posible cargar la página solicitada.");
+				return say("No es posible cargar la página solicitada.");
 			}
 			elseif( !$inFrame ){
 				return addScript("location.href = '{$href}'");
@@ -136,11 +136,11 @@
 //            test($page);
 			$href = $this->getPage($page, $atts, $msg, $type, true);
 			
-			# Object returned by #getPage could be an code(correct) or a showStatus() call (error)
+			# Object returned by #getPage could be an code(correct) or a say() call (error)
 			if( is_string($href) ) return addScript("Frames.loadPage('{$href}');");
 			else{
 				$this->inFrame = false;
-				return $href;	/* Not a real href but a xajax addscript call to showStatus */
+				return $href;	/* Not a real href but a xajax addscript call to say */
 			}
 		}
 		
@@ -185,7 +185,7 @@
 			if( !$parsed && !is_file($page) && !is_file(TEMPLATES_PATH.$page) ){
 				return $this->inFrame
 					? $this->abortFrame('La página que intenta cargar no está disponible.')
-					: showStatus('La página que intenta cargar no está disponible.');
+					: say('La página que intenta cargar no está disponible.');
 			}
 			
 			$HTML = $parsed ? $page : oSmarty()->fetch($page);
@@ -365,8 +365,8 @@
 			$queued = $_SESSION['queuedMsg'];
 			$this->queueMsg();		/* Clear session var after using it once */
 			if( $msg=addslashes($queued['msg']) ){	/* Try both ajax and regular call methods */
-				oPageCfg()->add_jsOnLoad( "showStatus('{$msg}', '{$queued['type']}');" );
-				return showStatus($msg, $queued['type']);
+				oPageCfg()->add_jsOnLoad( "say('{$msg}', '{$queued['type']}');" );
+				return say($msg, $queued['type']);
 			}
 		}
 		

@@ -101,7 +101,7 @@
 		},
 		remove: function(x){
 			J('#alertsList div').each(function(i, el){
-				(J(el).attr('ref') == x) && J(el).detach();
+				(J(el).attr('ref') == x) && J(el).remove();
 			});
 			J('#alertsList div').length || this.hide();
 		},
@@ -120,7 +120,7 @@
 			setTimeout(function(){ row.className = ''; }, 30000);
 		}
 	};
-	
+
 	J(function(){			/* Alerts & Sync */
 		sync.request();
 		var syncItvl = setInterval(sync.request, 5000);
@@ -139,7 +139,7 @@
 			$box.hasClass('shown') ? $box.focus() : $box.css('scrollTop', 0);
 		});
 	});
-	
+
 </script>
 {/literal}
 

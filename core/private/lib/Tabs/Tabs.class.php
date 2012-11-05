@@ -129,7 +129,7 @@
 			oSmarty()->assign('tabs', $this->getTabs());
 			
 			# Run the tab's function (so it can assign smarty vars)
-			if( !$allowed ) return showStatus('No se puede cargar la pestaña solicitada.');
+			if( !$allowed ) return say('No se puede cargar la pestaña solicitada.');
 				
 			# Call tab handler
 			$postCalls = call_user_func_array("tab_{$this->page}_{$tab}", oNav()->getCurrentAtts());

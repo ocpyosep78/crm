@@ -10,51 +10,51 @@
 
 
 /**********************************************************************************
-** 
+**
 ** The app has only one entry point: this file. All calls, ajax or direct, start
 ** and end in this script. If a user is logged, module's engine handles the logic
 ** related to pages and modules: CORE_PRIVATE.'pageMgr.php'.
-** 
+**
 ** What follows is a short summary of what index.php does.
-** 
-** 
+**
+**
 ** INITIALIZE.PHP
-** 
+**
 ** - It sets PHP config parameters like error_reporting, time limit, etc.
 ** - It sends headers
 ** - It loads main files like config.cfg.php (constants), local.cfg.php (devel
 **   constants).
 ** - It autoloads general functions (folder app/libs/functions/)
-** 
-** 
+**
+**
 ** BUILDER CLASS
-** 
+**
 ** - It initializes Builder object, that in turn is capable of initializing and
 **	 returning most global objects, on demand. These objects can then be called
 **	 later (acting somehow like singletons) with $Builder->get(objectName) or
 **	 through handy shortcuts (functions) o{objectName}():
-** 
+**
 **		- oSQL()						Communication with mySQL database
 **		- oSmarty()						Templates
 **		- oXajax & oXajaxResp()			Ajax
 **		- oPageCfg()					Page layout, menu and other basic elements
 **		- oValidate()					Input validation
 **		- oFT() (FormTable)				Simple Forms in basic Table format
-** 
-** 
+**
+**
 ** PAGEMGR.PHP
-** 
+**
 ** - The application is composed of atomic pages. In general, no page depends
 ** on other pages (though disencouraged, there might be a few exceptions). So,
 ** pages are also loaded in the most automatized way possible. See doc header in
 ** CORE_PRIVATE.'pageMgr.php' for more information on pages, modules and the way
 ** they are handled.
-** 
+**
 ** - If conditions are met, debugging mode is turned on, adding a debug messages
 ** box to the main template (CORE_TEMPLATES.'main.tpl') and setting error_reporting value
 ** to E_ALL. A user-defined error-handling function prepares the output to be sent
 ** to this box for developpers to see.
-** 
+**
 ** - Finally, this script's in charge again after returning from pageMgr, and it
 ** either displays the page (through Smarty) or answers the requests (through Xajax)
 ** if there is one.
@@ -65,16 +65,16 @@
 **	 sync calls and getPage (first step to request a new page, see Nav class for more
 **	 info on the navigation system). To add more, see section URGENT AJAX CALLS.
 **
-** 
+**
 ***********************************************************************************
-** 
+**
 ** O T H E R   I M P O R T A N T   D O C U M E N T A T I O N   (OUT OF DATE INFO)
-** 
-** 
+**
+**
 ** For more information on basic objects, procedures, functions and concepts see:
-** 
+**
 ** - dev.info.php			Links to most important doc headers, briefly explained
-** 
+**
 **********************************************************************************/
 
 function db($var, $die=true)
@@ -84,10 +84,11 @@ function db($var, $die=true)
 	$die && die();
 }
 
+
 /***************
 ** I N I T I A L   C O N F I G U R A T I O N
 ***************/
-	
+
 	# Site constants definitions (cfg/config.cfg.php)
 	# PHP configuration (time limit, memory limit, session_start, env & locale, timezone)
 	# Developer's local config (cfg/local.cfg.php)
@@ -105,13 +106,13 @@ function db($var, $die=true)
 		'getPage'	=> array('getPage', oNav(), 'getPage'),
 		'showPage'	=> array('showPage', oNav(), 'showPage'),
 	);
-	
+
 	foreach( $urgentAjax as $key => $code ){
 		oXajax()->registerFunction( $code );
 		if( isXajax($key) ) oXajax()->processRequests();
 	}
-	
-	
+
+
 
 /***************
 ** S M A R T Y   V A R S   (some general-use variables for Smarty's workspace)
@@ -133,12 +134,12 @@ function db($var, $die=true)
 		require_once('debug/stats.php');
 	}
 	addScript( 'window.DEVELOPER_MODE = '.((int)DEVELOPER_MODE).';' );
-	
+
 
 /***************
 ** G L O B A L   X A J A X   F U N C T I O N S   ( R E G U L A R )
 ***************/
-	
+
 	oXajax()->registerFunction('login');
 	oXajax()->registerFunction(array('loadContent', oNav(), 'loadContent'));
 	if( loggedIn() ){
@@ -154,24 +155,19 @@ function db($var, $die=true)
 /***************
 ** P A G E C F G
 ***************/
-	
-	$jQueryUiTheme = 'dot-luv';
+
+	oSmarty()->assign('jQueryUiTheme', 'dot-luv');
+	oSmarty()->assign('core_scripts', CORE_SCRIPTS);
 
 	oPageCfg()->set_appTitle( loggedIn() );
-	oPageCfg()->add_styleSheets(array(
-		getSkinCss(),
-		"//ajax.googleapis.com/ajax/libs/jqueryui/1.9.0/themes/{$jQueryUiTheme}/jquery-ui.css"));
+	oPageCfg()->add_styleSheets(getSkinCss());
 
-	oPageCfg()->add_jScripts(array(
-		CORE_SCRIPTS.'mootools 1.3.js',
-		'//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js',
-		'//ajax.googleapis.com/ajax/libs/jqueryui/1.9.0/jquery-ui.min.js',
-		CORE_SCRIPTS.'libs.js',
-		CORE_SCRIPTS.'common.js'));
+	oPageCfg()->add_jScripts(array(CORE_SCRIPTS.'mootools 1.3.js',
+	                               CORE_SCRIPTS.'libs.js'));
 	oPageCfg()->add_jsCode("window.loggedIn = '".loggedIn()."'");
-	
+
 	if( oNav()->inFrame ) oPageCfg()->add_styleSheets( FRAME_CSS_PATH );
-	
+
 
 
 /***************
@@ -195,15 +191,15 @@ function db($var, $die=true)
 		oPageCfg()->set_content(CORE_TEMPLATES.'login.tpl');
 		oNav()->processQueuedMsg();
 	}
-	
-	
+
+
 
 /***************
 ** P R O C E S S   A J A X   C A L L S
 ***************/
-	
+
 	oXajax()->processRequests();
-	oPajax()->processRequests();
+	FileForm::processRequests();
 
 
 
@@ -214,8 +210,7 @@ function db($var, $die=true)
 	/* Skin */
 
 	oSmarty()->assign('Xajax', oXajax());
-	oSmarty()->assign('Pajax', oPajax());
 	oSmarty()->assign('Page', oPageCfg()->getPage());
-	
+
 	header("Content-Type: text/html; charset=iso-8859-1");
 	oSmarty()->display( oNav()->inFrame ? FRAME_TPL_PATH : getSkinTpl() );

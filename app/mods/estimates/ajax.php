@@ -26,7 +26,7 @@
 		
 		# Validate input
 		if( ($ans=oValidate()->test($data, 'estimates')) !== true ){
-			return showStatus('Los datos ingresados no son válidos.');
+			return say('Los datos ingresados no son válidos.');
 		}
 		
 		foreach( $products as &$product ){
@@ -52,7 +52,7 @@
 		if( !$ans->error && ($id || $ans->ID) ){		/* Answer is new estimate's ID */
 			return oNav()->getPage('estimatesInfo', array($id ? $id : $ans->ID), $ans->msg, 1);
 		}
-		else return showStatus($ans->msg, $ans->successCode);
+		else return say($ans->msg, $ans->successCode);
 	
 	}
 	
@@ -62,7 +62,7 @@
 		oSQL()->setOkMsg("El presupuesto fue eliminado correctamente.");
 		$ans = oSQL()->deleteEstimates( $id );
 		
-		if( $ans->error ) return showStatus( $ans->msg );
+		if( $ans->error ) return say( $ans->msg );
 		else return oNav()->getPage($isQuote ? 'quotes' : 'estimates', array(), $ans->msg, 1);
 		
 	}
@@ -98,20 +98,20 @@
 		
 		# Make sure we have enough of this product defined in this estimate
 		if( !$maxAmount || $data['amount'] > $maxAmount ){
-			if( $maxAmount < 1 ) return showStatus('No hay más elementos disponibles de este tipo.');
+			if( $maxAmount < 1 ) return say('No hay más elementos disponibles de este tipo.');
 			else{
 				$s = ($maxAmount == 1) ? '' : 's';			/* Plurales */
 				$n = ($maxAmount == 1) ? '' : 'n';			/* Plurales */
-				return showStatus("Queda{$n} disponible{$s} solamente {$maxAmount} producto{$s} de este tipo.");
+				return say("Queda{$n} disponible{$s} solamente {$maxAmount} producto{$s} de este tipo.");
 			}
 		}
 		
 		# Make sure at least one product was selected
-		if( empty($data['amount']) ) return showStatus("Debe seleccionar una cantidad mayor o igual que uno.");
+		if( empty($data['amount']) ) return say("Debe seleccionar una cantidad mayor o igual que uno.");
 		
 		# Make sure a description was given
 		if( empty($data['position']) ){
-			return showStatus('Debe ingresar una descripción para esta entrada del Plan de Obras.');
+			return say('Debe ingresar una descripción para esta entrada del Plan de Obras.');
 		}
 		
 		# Attempt to save the new entry
@@ -120,7 +120,7 @@
 		# If no error occurred, reload page_installPlan() (adding the id of the last inserted product)
 		return !$ans->error
 			? oNav()->reloadPageWithAtts(array($data['id_estimate'], $data['id_product']))
-			: showStatus('No se pudo guardar la entrada. Verifique sus datos e inténtelo nuevamente.');
+			: say('No se pudo guardar la entrada. Verifique sus datos e inténtelo nuevamente.');
 		
 	}
 	
@@ -140,7 +140,7 @@
 		$ans = oSQL()->insert($data, 'estimates_pack');
 		
 		return $ans->error
-			? showStatus('Ocurrió un error al intentar crear este elemento.')
+			? say('Ocurrió un error al intentar crear este elemento.')
 			: oNav()->getPage('estimates_packInfo', (array)$ans->ID);
 	
 	}
@@ -150,7 +150,7 @@
 		$ans = oSQL()->update($data, 'estimates', array('id_estimate'));
 		
 		return $ans->error
-			? showStatus('Ocurrió un error al intentar agregar el presupuesto.')
+			? say('Ocurrió un error al intentar agregar el presupuesto.')
 			: oNav()->reloadPage();
 	
 	}

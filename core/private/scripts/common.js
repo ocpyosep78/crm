@@ -78,7 +78,9 @@ jQuery.forms = function(form, addNames) {
 };
 
 // Add the most relevant attributes as direct jQuery objects methods
-jQuery.map(['id', 'name', 'class', 'src', 'type', 'for', 'rel'], function(attr){
+var jDirectMethods = ['id', 'name', 'class', 'for', 'rel',
+                      'src', 'type', 'target', 'method'];
+jQuery.map(jDirectMethods, function(attr){
 	jQuery.fn['_'+attr] = function(val){
 		return this.attr.apply(this, jQuery.merge([attr], arguments));
 	};
@@ -107,42 +109,102 @@ function raise( msg ){
 /******************************* D O M R E A D Y ******************************/
 /******************************************************************************/
 
-J(function(){
-	window.BODY = J('body');
-	window.CONTENT = J('#main_box');
+J(function($){
+	window.BODY = $('body');
+	window.CONTENT = $('#main_box');
 
 	/* Main container's transition */
-	window.IN_FRAME || J(window).resize(function(){
+	window.IN_FRAME || $(window).resize(function(){
 		fixTableHeader();
 	}).resize();
 
 	// Menu animation
-	J('#hideMenu').click(hideMenu);
-	J('#showMenu').click(showMenu);
-	J(window).on('menutoggled', fixTableHeader);
-	
-	// Hide status messages when clicking on them
-	J('#statusMsgs').click(function(){ hideStatus(); });
-	
+	$('#hideMenu').click(hideMenu);
+	$('#showMenu').click(showMenu);
+	$(window).on('menutoggled', fixTableHeader);
+
+	// Activate Notifications (errors, success notifications, warnings)
+	window.say = function(txt, type, stay) {
+		var mt = txt.split(/<br ?\/>./, 3).length * 1.4;
+		var cl = ($.isNumeric(type||0) ? (type ? 'success' : 'error') : type);
+		$('#notifications').hide(1)._class(cl + 'Status')
+			.find('div:last').html(txt).css('margin-top', -(mt/2) + 'em').end()
+			.show('drop', {direction:'up'}, 500, function(){
+				// Cancel pending hiding and queue a new one (0 == don't hide)
+				clearTimeout(J(this).data('hto'));
+				(stay !== 0) && J(this).data('hto', setTimeout(function(){
+					$('#notifications').fadeOut({queue:false});
+				}, (stay||10)*1000));
+			});
+	};
+	$('#notifications').click(function(){
+		J('#notifications').hide({duration:'fast', effect: 'blind'});
+	});
+
 	// Highlighting table rows and other elements
-	J('body').on('mouseenter', '.highlight', function(){
-		J(this).effect('highlight', {color: '#f0f0e6'}, 300);
+	$('body').on('mouseenter', '.highlight', function(){
+		$(this).effect('highlight', {color: '#f0f0e6'}, 300);
 	});
 
 	// Activate highlighting of input fields
 	var input_selector = '[type="text"].input, [type="password"].input';
-	J('body').on('focus', input_selector, function(){
-		J(this).removeClass('input').addClass('inputFocused');
-		J(this).select && J(this).select();
+	$('body').on('focus', input_selector, function(){
+		$('.inputFocused').removeClass('inputFocused');
+		$(this).addClass('inputFocused');
+		$(this).select && $(this).select();
+	}).on('blur', input_selector, function(){
+		$(this).removeClass('inputFocused');
 	});
-	J('body').on('blur', input_selector, function(){
-		J(this).removeClass('inputFocused').addClass('input');
+
+	// Add handler to old comboList widget
+	$('body').on('change', '.comboListOld', function(e){
+		getPage(e, $(this)._for() + 'Info', [$(this).val()]);
 	});
 
 	// Tabs functionality
-	J('body').on('click', '#tabButtons div', function(){
-		return xajax_switchTab(J(this)._for()) & false;
+	$('body').on('click', '#tabButtons div', function(){
+		return xajax_switchTab($(this)._for()) & false;
 	});
+
+	// FileForm: add pseudo-ajax submit to forms with File inputs
+	$('body').one('submit', 'form:has(input[type="file"][ffcb])', function(){
+		$('<iframe />', {id:'fffr', name:'fffr'}).hide().appendTo($('body'));
+		var cb = $(this).find('input[type="file"][ffcb]').attr('ffcb');
+		$(this).append($('<input type="hidden" name="ffcb" value="'+cb+'" />'))
+			.attr({target:'fffr', method:'post', enctype:'multipart/form-data'})
+			.submit(function(){ showLoading(); });
+	});
+});
+
+
+/******************************************************************************/
+/********************************* L O G I N **********************************/
+/******************************************************************************/
+
+// Login page only
+J(function(){
+	var frm = J.forms('formLogin');
+
+	if (frm.length) {
+		// Show the main logo above when in Login window
+		say('', 'none', 0);
+
+		frm.user.addClass('inputFocused').focus();
+
+		frm.submit(function(){
+			if (!frm.user.val()) {
+				var msg = 'Debe escribir un nombre de usuario.';
+				return frm.user.focus() & say(msg, 'error', 0) & false;
+			} else if (!frm.pass.val()) {
+				var msg = 'Debe escribir su contraseña.';
+				return frm.pass.focus() & say(msg, 'error', 0) & false;
+			} else {
+				xajax_login(frm.user.val(), frm.pass.val());
+			}
+
+			return false;
+		});
+	}
 });
 
 
@@ -168,9 +230,6 @@ function iniPage(name) {
 		var fn = window['ini_'+name];
 		fn && fn.apply(fn, IniParams.get());
 
-		// Add handler to old comboList widget
-		applyOldComboListHandlers();
-
 		// Add links to objects signled by model and id (hidden in the markup)
 		applyLink2Model();
 
@@ -194,13 +253,6 @@ var IniParams = {
 	}
 };
 
-// Add handler to old comboList widget
-function applyOldComboListHandlers() {
-	J('.comboListOld').change(function(e){
-		getPage(e, J(this)._for() + 'Info', [J(this).val()]);
-	});
-}
-
 // Add links to objects signled by model and id (hidden in the markup)
 function applyLink2Model() {
 	CONTENT.find('.link2model').each(function(i, lnk){
@@ -220,7 +272,7 @@ function applyBrowseButtonsStyle() {
 			.attr({'class': 'browse_btn'}))
 		.append(J('<div />')
 			.attr({'class': 'browse_hdn'}));
-	
+
 	J(':file').each(function(i, btn){
 		// Put the box next to the real button, then embed this button inside
 		browse.clone(true).insertBefore(btn).find('.browse_hdn').append(btn);
@@ -242,7 +294,7 @@ function showMenu() {
 
 function toggleMenu(show) {
 	J('#menuDiv')[show ? 'show' : 'hide']('drop', {}, show ? 100 : 200);
-	J('#main_box').animate({'margin-left': show ? 220 : 30}, 100);
+	J('#main_box').animate({'margin-left': show ? 250 : 30}, 100);
 
 	J('#showMenu').toggle(!show);
 	J('#hideMenu').toggle(show);
@@ -291,14 +343,14 @@ Frames = {
 		$('frameArea').setStyle('width', w);
 		$('frameTitle').setStyle('width', w);
 		$('frameContent').setStyle('marginTop', h/8 - 30);
-		$('statusMsgs').setStyle('width', w + 10);
+		$('notifications').setStyle('width', w + 10);
 	},
 	close: function(msg, code){
-		msg && window.parent.showStatus(msg, code||0);
+		msg && window.parent.say(msg, code||0);
 		window.parent.Frames.garbageCollect(window.frameElement.uID);
 	},
 	garbageCollect: function(id) {
-		J('iframe#'+id+', iframe[name="'+id+'"]').detach();
+		J('iframe#'+id+', iframe[name="'+id+'"]').remove();
 	}
 }
 
@@ -360,29 +412,30 @@ function showTip(field, tip){
 	showTip.sel = $field;
 }
 
-function FTshowTip( field, tip ){
-	var $field = $(field), $tip = $('tip_'+field), $blur;
-	if( !$tip ) throw( 'No existe el elemento ' + field );
+function FTshowTip(field, tip){
+	var $field = J('#'+field),
+	    $tip   = J('#tip_'+field),
+	    $blur;
+
+	if (!$tip) throw( 'No existe el elemento ' + field );
 	setTimeout( function(){	/* Blur preceeds focus, so make sure it shows after hiding (for re-submitting) */
 		$field.focus();
-		if( tip && $tip ){
-			$tip.html(tip);
-			$tip.setStyle('display', 'block');
-			$($tip.parentNode).setStyle('height', 24);
-			$field.addEvent('blur', function(event){
-				this.removeEvent('blur', arguments.callee);	/* Avoid collecting events */
+		if (tip && $tip) {
+			$tip.html(tip).show().parent().height(24);
+			$field.on('blur.ft', function(event){
+				$(this).removeEvent('blur.ft');
 				$blur = new Fx.Tween('tip_'+field, {property:'opacity', duration:300, fps:50, onComplete:function(){
 					this.set('display', 'none');
 					this.set('opacity', 1);
-					$($tip.parentNode).setStyle('height', '');
+					$tip.parent().height('');
 				}} ).start(0);
-			} );
+			});
 		};
 
 		var name = J('#field_'+field).html() || '';
-		var msg = 'El valor del campo ' + name + ' no es válido.' +
+		var msg = 'El valor del campo ' + name + ' no es válido. ' +
 		          'Por favor verifique el dato ingresado';
-		showStatus(msg);
+		say(msg);
 	}, 300 );
 }
 
@@ -420,9 +473,9 @@ function closeAgendaEvent(id, msg, resched){
 
 	var action = resched ? 'cancelar' : 'cerrar';
 	var res = prompt('Escriba un comentario para ' + action + ' el evento:', msg||'');
-	
+
 	if( res === '' ){
-        return showStatus('Se debe incluir un comentario al ' + action + ' un evento.');
+        return say('Se debe incluir un comentario al ' + action + ' un evento.');
     }else if( res ){
         var cfm = "Se dispone a " + action + " el evento con el siguiente mensaje:\n\n" + res +
                   "\n\nPulse Cancelar para editar el mensaje o Aceptar para confirmar.";
@@ -463,7 +516,7 @@ function initializeList(code, modifier, src){
 						window['xajax_block' + code.capitalize()](id, modifier);
 					};
 					break;
-				default: 
+				default:
 					getPage(e, axn + code.capitalize(), [id, modifier]);
 					break;
 			};

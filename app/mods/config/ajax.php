@@ -64,7 +64,7 @@
 					? oConfig()->removeUserPermission($id, $code)
 					: oConfig()->addUserPermission($id, $code);
 			break;
-			default: return showStatus('No se reconoce el objeto asociado a los permisos.');
+			default: return say('No se reconoce el objeto asociado a los permisos.');
 		}
 	
 		# Clear permissions, modules, pages, areas, from cache (to stay updated always)

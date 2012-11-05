@@ -2,14 +2,14 @@
 	/**
 	 *	chatCheck is an auxiliar iframe whose original src is CHAT_SERVICE_PATH/?chatCheck
 	 *	chatActivity is the actual iframe where the observer will run if loading succeeds
-	 * 
+	 *
 	 * chatCheck should be hidden, while chatActivity should be correctly styled: hidden by
 	 * default, and shown if it is of class 'ready' (which this script ensures upon loading).
-	 * 
+	 *
 	 * This script uses jQuery if present, but doesn't depend on it.
-	 * 
+	 *
 	 ************************************   IMPORTANT   ************************************
-	 * 
+	 *
 	 * - $CHAT_ADDRESS needs to be defined for Smarty vars, as the url to the chat engine.
 	 * - $URL needs to be defined as any address to this app's domain (a page that just dies
 	 * with no output is recommended, it only has to be on this app's domain and load).
@@ -18,7 +18,7 @@
 	 * be discarded (removed). If you want something else to be done (i.e. loading a page of
 	 * your own alerting that the chat service is down or the server could not be reached),
 	 * just replace dispose() function content with your own.
-	 * 
+	 *
 	 */
 *}
 
@@ -43,7 +43,7 @@
 
 	addCSSRule('#chatActivity', 'position:fixed;right:0px;bottom:0px;');
 	addCSSRule('#chatActivity.ready', 'height:78px;width:122px;');
-	
+
 </script>
 {/literal}
 
@@ -61,7 +61,7 @@
 
 	var chatCheck = window.frames['chatCheck'];
 	var observer = J('#chatActivity');
-		
+
 	if (chatCheck && observer) {
 		var cnt = 0;
 		var testChat = function(){
@@ -76,11 +76,11 @@
 		};
 
 		var delChatCheck = function(){
-			J('#chatCheck').detach();
+			J('#chatCheck').remove();
 		};
 
 		var dispose = function(){
-			observer.detach();
+			observer.remove();
 			delChatCheck();
 		};
 

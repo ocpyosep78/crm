@@ -9,8 +9,8 @@
 
 
 	
-	function showStatus($msg, $type='', $img=''){
-		return addScript("showStatus('{$msg}', '{$type}', '{$img}');");
+	function say($msg, $type='', $img=''){
+		return addScript("say('{$msg}', '{$type}', '{$img}');");
 	}
 	
 	function returnSearchResults($tgt, $tpl, $uID){

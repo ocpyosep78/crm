@@ -28,7 +28,7 @@
 	function login($user, $pass){
 		if( $info=oSQL()->attemptLogin($user, $pass) ){
 			if( $info['blocked'] == '1' ){
-				return showStatus('Este usuario se encuentra actualmente bloqueado. '.
+				return say('Este usuario se encuentra actualmente bloqueado. '.
 					'Por más información consulte a un administrador.');
 			};
 			if( substr($_SERVER['REMOTE_ADDR'], 0, 3) != '192' ){
@@ -43,7 +43,7 @@
 			doActionsAtLogin();
 			return addScript('setTimeout(function(){location.href = location.href;},20);');
 		}
-		else return showStatus('Nombre de usuario o contraseña incorrectos.');
+		else return say('Nombre de usuario o contraseña incorrectos.');
 	}
 	
 	function logout($msg='Su sesión fue cerrada correctamente.', $type=1){

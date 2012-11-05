@@ -13,9 +13,7 @@
 	<div class='FormTableBox'>
 {/if}
 
-{if $FT->hasForm()}
-  <form {foreach from=$FT->formAtts key=att item=value} {$att}="{$value}"{/foreach}>
-{/if}
+<form {foreach from=$FT->formAtts key=att item=value} {$att}="{$value}"{/foreach}>
 	<table{foreach from=$FT->tableAtts key=att item=value} {$att}='{$value}'{/foreach}>
 		{foreach from=$FT->data item=x}
 			<tr{if $x.hidden} style='display:none;'{/if}{if $x.atts.id} id='row_{$x.atts.id}'{/if}>
@@ -59,9 +57,7 @@
 			{/if}
 		{/foreach}
 	</table>
-{if $FT->hasForm()}
-  </form>
-{/if}
+</form>
 
 {if $FT->hasFrame()}
 	</fieldset>

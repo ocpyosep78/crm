@@ -26,7 +26,7 @@
             if( $img['size'] ){
                 if( ($imgAtts=getimagesize($img['tmp_name'])) === false || $imgAtts[2] != IMAGETYPE_PNG ){
                     $msg = "El archivo subido debe ser una imagen con formato/extensión \'png\'.";
-                    return oPajax()->addResponse("showStatus('{$msg}');");
+                    return FileForm::addResponse("say('{$msg}');");
                 }
             }
             
@@ -38,19 +38,19 @@
 			$ans = oSQL()->createUsers( $atts );
             
 			if( $ans->error ){
-				return oPajax()->addResponse("showStatus('{$ans->msg}');");
+				return FileForm::addResponse("say('{$ans->msg}');");
 			}else{
                 # Save picture if one was chosen and data was stored
                 if( $img['size'] ){
                     if( !move_uploaded_file($img['tmp_name'], "app/images/users/{$atts['user']}.png") ){
                         $msg = "No se pudo guardar la imagen. Inténtelo nuevamente.";
-                        return oPajax()->addResponse("showStatus('{$msg}');");
+                        return FileForm::addResponse("say('{$msg}');");
                     }
                 }
-				return oPajax()->addResponse("getPage('usersInfo', ['{$atts['user']}'], '{$ans->msg}', 1);");
+				return FileForm::addResponse("getPage('usersInfo', ['{$atts['user']}'], '{$ans->msg}', 1);");
 			}
 		}
-		else return oPajax()->addResponse("FTshowTip('createUsers_{$valid['field']}', '{$valid['tip']}');");
+		else return FileForm::addResponse("FTshowTip('createUsers_{$valid['field']}', '{$valid['tip']}');");
 	}
 	
 	function blockUsers($user, $unblock=false){
@@ -73,14 +73,14 @@
 			}
 			else return oNav()->reloadPage($ans->msg, 1);
 		}
-		else return showStatus( $ans->msg );
+		else return say( $ans->msg );
 	
 	}
 	
 	function deleteUsers( $user ){
 		
 		if( $user == loggedIn() ){		# Double check
-			return showStatus('No es posible eliminar su propio usuario.');
+			return say('No es posible eliminar su propio usuario.');
 		}
 		
 		# Handle security issues to the right function (security.php)
@@ -92,6 +92,6 @@
 			
 		$ans = oSQL()->deleteUsers( $user );
 		if( !$ans->error ) return oNav()->reloadPage($ans->msg, 1);
-		else return showStatus( $ans->msg );
+		else return say( $ans->msg );
 	
 	}

@@ -90,7 +90,7 @@ BODY{
 /**
  * LOGO LINE
  */
-#main_logoArea{
+#notifications{
 	position:fixed;
 	top:30px;
 	right:-1px;
@@ -106,7 +106,7 @@ BODY{
 	opacity:0.8;
 	z-index:500;
 }
-#main_logoArea SPAN{
+#notifications SPAN{
 	float:right;
 	margin-top:24px;
 	color:#ffffff;
@@ -114,7 +114,7 @@ BODY{
 	font-weight:bold;
 	text-shadow:#003366 2px 2px 1px !important;
 }
-#main_logoArea > IMG{
+#notifications > IMG{
 	float:right;
 	height:45px;
 	width:75px;
