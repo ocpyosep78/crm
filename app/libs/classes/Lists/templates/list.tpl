@@ -1,7 +1,7 @@
 {if not $data}
 	<div class='noResMsg'>No hay {$params.plural|lower} para listar.</div>
 {else}
-	<table class='data listTable'>
+	<table id='listTable' class='data'>
 	  {foreach from=$data key=id item=row}
 		<tr bgcolor='{cycle values=$cycleValues}' class='listRows highlight'
 			{if $Permits->can($infoPage)}for='{$id}' {else}style='cursor:default;'{/if}title='{$row.tip}'>

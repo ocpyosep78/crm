@@ -514,10 +514,10 @@ TABLE.simpleList .simpleListCreate{ white-space:nowrap; }
 /**
  * TABLE SEARCH
  */
-#TableSearchBox{ position:absolute; height:50px; width:203px; margin-top:-90px; padding:5px 10px; background:#003060; border:ridge 2px #003000; display:none; z-index:200; border-radius:6px; box-shadow:#a0a0a0 3px 3px 4px; }
-#TableSearchBox > DIV{ font-family:Arial, Helvetica, sans-serif; font-size:11px; font-weight:bold; color:#c0c0c0; }
-#TableSearchBox > DIV > SPAN{ position:relative; left:3px; font-size:13px; color:#ccddaa; text-shadow:none; }
-#TableSearchInput{ height:1.5em; width:200px; margin:5px 0px; background:#ccddaa; border:2px solid #000000; }
+#TSBox{ position:absolute; height:50px; width:203px; margin-top:-90px; padding:5px 10px; background:#003060; border:ridge 2px #003000; display:none; z-index:200; border-radius:6px; box-shadow:#a0a0a0 3px 3px 4px; }
+#TSBox > DIV{ font-family:Arial, Helvetica, sans-serif; font-size:11px; font-weight:bold; color:#c0c0c0; }
+#TSBox > DIV > SPAN{ position:relative; left:3px; font-size:13px; color:#ccddaa; text-shadow:none; }
+#TSInput{ height:1.5em; width:200px; margin:5px 0px; background:#ccddaa; border:2px solid #000000; }
 .tblTools{ float:right; width:20px !important; }
 .listRows, .tblTools IMG{ cursor:pointer; }
 

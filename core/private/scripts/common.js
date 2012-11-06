@@ -79,7 +79,7 @@ jQuery.forms = function(form, addNames) {
 
 // Add the most relevant attributes as direct jQuery objects methods
 var jDirectMethods = ['id', 'name', 'class', 'for', 'rel',
-                      'src', 'type', 'target', 'method'];
+                      'src', 'alt', 'type', 'target', 'method'];
 jQuery.map(jDirectMethods, function(attr){
 	jQuery.fn['_'+attr] = function(val){
 		return this.attr.apply(this, jQuery.merge([attr], arguments));
@@ -92,6 +92,9 @@ jQuery.fn.print = function() {
 	return this;
 }
 
+jQuery.capitalize = function(txt) {
+	return txt.replace(/\b[a-z]/g, function(x){ return x.toUpperCase(); });
+}
 
 /******************************************************************************/
 /***************************** D E B U G G I N G ******************************/
@@ -113,15 +116,9 @@ J(function($){
 	window.BODY = $('body');
 	window.CONTENT = $('#main_box');
 
-	/* Main container's transition */
-	window.IN_FRAME || $(window).resize(function(){
-		fixTableHeader();
-	}).resize();
-
 	// Menu animation
 	$('#hideMenu').click(hideMenu);
 	$('#showMenu').click(showMenu);
-	$(window).on('menutoggled', fixTableHeader);
 
 	// Activate Notifications (errors, success notifications, warnings)
 	window.say = function(txt, type, stay) {
@@ -168,11 +165,29 @@ J(function($){
 
 	// FileForm: add pseudo-ajax submit to forms with File inputs
 	$('body').one('submit', 'form:has(input[type="file"][ffcb])', function(){
-		$('<iframe />', {id:'fffr', name:'fffr'}).hide().appendTo($('body'));
+		$('<iframe />', {id:'fffr', name:'fffr'}).hide().appendTo('body');
 		var cb = $(this).find('input[type="file"][ffcb]').attr('ffcb');
 		$(this).append($('<input type="hidden" name="ffcb" value="'+cb+'" />'))
 			.attr({target:'fffr', method:'post', enctype:'multipart/form-data'})
 			.submit(function(){ showLoading(); });
+	});
+
+
+	// Activate liquid table headers
+	$(window).on('resize menutoggled', function(){
+		$('#listTable').trigger('modified');
+	});
+
+	$('body').on('modified', '#listTable', function(){
+		setTimeout(function(){
+			var firstRow = $('#listTable tr');
+			$('#tableTitles').toggle(!!firstRow.length)
+				.find('div').each(function(i){
+					var td = firstRow.find('td:eq('+i+')'),
+						lastCol = !this.next('div').length;
+					this.width((td && !lastCol) ? td.width()+1 : '').toggle(!!td);
+				}, true);
+		}, 300);
 	});
 });
 
@@ -298,6 +313,8 @@ function toggleMenu(show) {
 
 	J('#showMenu').toggle(!show);
 	J('#hideMenu').toggle(show);
+
+	J(window).trigger('menutoggled');
 }
 
 function flagMenuItem(code) {
@@ -321,17 +338,21 @@ J(function(){ IN_FRAME && Frames.initialize(); });
 Frames = {
 	frames: [],
 	initialize: function(){		/* Called by an actual frame's onload event */
-		var that = this, d = document, id = window.frameElement.uID;
-		function close(){ window.parent.Frames.garbageCollect( id ); }
-		$(d.body).addEvent('escape', close);
-		$('FrameCloseButton').addEvent('click', close);
+		var that = this;
+		var close = function(){
+			window.parent.Frames.garbageCollect(window.frameElement._id());
+		}
+		J('body').escape(close);
+		J('#FrameCloseBtn').click(close);
+		J(window.parent).resize(function(){
+			that.fixDimensions();
+		});
 		this.fixDimensions();
-		$(window.parent).addEvent('resize', function(){ that.fixDimensions(); });
-		window.frameElement.style.visibility = 'visible';
+		window.frameElement.show();
 	},
 	loadPage: function( href ){
 		var id = this.frames.length, d = document;
-		var ifr = this.frames[id] = d.body.appendChild( d.createElement('IFRAME') );
+		var ifr = this.frames[id] = J('<iframe />').appendTo('body');
 		ifr.className = 'ifrForShowPage';
 		ifr.src = href + '&iframe';
 		ifr.uID = id;
@@ -493,14 +514,13 @@ function closeAgendaEvent(id, msg, resched){
 /***********************************************************************************/
 
 function initializeList(code, modifier, src){
-	// Make sure the list exists (listFrame, named {code}List)
-	var $list = $('listWrapper'), $titles = $('tableTitles');
-	if( !$list || !$titles ) return raise('missing required elements');
-	if( !$list.update ) $list.update = function(){
-		fixTableHeader($titles, J('.listTable')[0]);
+	J('#listWrapper').prop('update', function(){
+		J('#listTable').trigger('modified');
+
 		J('.listRows').click(function(e){
 			J(this)._for() && getPage(e, code + 'Info', [J(this)._for()]);
 		});
+
 		J('.tblTools').click(function(e){
 			var axn = J(this).attr('axn');
 			var id = J(this)._for();
@@ -508,22 +528,22 @@ function initializeList(code, modifier, src){
 			switch (axn) {
 				case 'delete':
 					if( confirm('¿Realmente desea eliminar este elemento?') ){
-						window['xajax_delete' + code.capitalize()](id, modifier);
+						window['xajax_delete' + J.capitalize(code)](id, modifier);
 					};
 					break;
 				case 'block':
 					if( confirm('¿Realmente desea bloquear este elemento?') ){
-						window['xajax_block' + code.capitalize()](id, modifier);
+						window['xajax_block' + J.capitalize(code)](id, modifier);
 					};
 					break;
 				default:
-					getPage(e, axn + code.capitalize(), [id, modifier]);
+					getPage(e, axn + J.capitalize(code), [id, modifier]);
 					break;
 			};
 
 			return false;
 		});
-	};
+	});
 
 	TableSearch.enableSearch(code, modifier, src||'');		/* Prepare search tools */
 };
@@ -537,7 +557,7 @@ function initializeSimpleList(){
 		this.createItem = function(){
 			var data = editting.id ? {SL_ID: editting.id} : {};
 			that.inputs.forEach(function(input){ data[input.name] = input.value; });
-			var func = 'xajax_create' + code.capitalize();
+			var func = 'xajax_create' + J.capitalize(code);
 			if( window[func] ) window[func](data, modifier);
 		};
 		this.enableEditItem = function( id ){
@@ -592,7 +612,7 @@ function initializeSimpleList(){
 					break;
 			};
 
-			var func = 'xajax_' + J(this).attr('axn') + code.capitalize();
+			var func = 'xajax_' + J(this).attr('axn') + J.capitalize(code);
 			if( !window[func] ) throw('Function ' + func + ' is not registered!');
 
 			return window[func](J(this)._for(), modifier) & false;
@@ -603,117 +623,75 @@ function initializeSimpleList(){
 var TableSearch = {
 	/* Properties */
 	Box: null,					/* Search box */
-	Input: null,				/* Input field */
-	CloseButton: null,			/* Button to close search tools */
-	Buttons: [],				/* Collection of search buttons in the page */
 	funcAtts: [],				/* Attributes to pass on through Xajax */
 	showing: null,				/* Currently shown search box */
 	searchID: null,				/* Unique ID for each search request */
-	cacheBox: null,				/* DOM box to contain returned results */
 	lastSearch: null,			/* Last searched term */
 	/* Methods */
 	enableSearch: function(){
-		if( !this.ini() ) throw('missing TableSearch parameters');
-		this.Buttons = J('.tableColumnSearch');
-		this.populateList( arguments );
-		for( var i=0, att, btn ; btn=this.Buttons[i] ; i++ ){
-			att = btn._for();
-			btn.setAttribute('TableSearchCol', i);
-			btn.addEvent('click', function(e){ TableSearch.present(e, this, att); } );
-		};
-		/* Do first search (unfiltered) */
-		this.process( true );
-	},
-	ini: function(){
 		var that = this;
-		var boxes = J('.TableSearchBoxes')||[];
-		if( boxes.length > 1 ) document.body.removeChild(boxes[1]);
-		this.Box = $('TableSearchBox');
-		this.Input = $('TableSearchInput');
-		this.CloseButton = $('TableSearchCloseButton');
-		this.Input.addEvent('keyup', function(e){ that.process(e); });
-		this.CloseButton.addEvent('click', function(){ that.hideBox.apply(that); });
-		this.createCacheBox();
+		// Remove all TS boxes but one
+		J('.TSBoxes:gt(0)').remove();
+		this.funcAtts = J.makeArray(arguments);
+		this.Box = J('#TSBox').appendTo('body');
+
+		if (!J('#TSCache').length) {
+			J('<div />')._id('TSCache').hide().appendTo('body');
+		}
+
+		J('#TSInput').keyup(function(){
+			that.process();
+		});
+
+		J('#TSCloseBtn').click(function(){
+			that.hideBox.apply(that);
+		});
+
+		J('.tableColumnSearch').click(function(e){
+			that.present(e, J(this), J(this)._for());
+		}).attr('TSCol', function(i){ return i; });
+
 		this.showing = -1;
-		return this.Box && this.Input && BODY.appendChild( this.Box );
-	},
-	createCacheBox: function(){
-		if( $('TableSearchCache') ) return;
-		var tmp = this.cacheBox = $(document.createElement('DIV')).setStyle('display', 'none');
-		tmp.id = 'TableSearchCache';
-		BODY.appendChild( tmp );
-	},
-	populateList: function( args ){
-		this.funcAtts = [];
-		for( var i=0, arg ; arg=args[i] ; i++ ) this.funcAtts.push( arg );
+		this.process(true); // Run first search, unfiltered
 	},
 	present: function(e, obj, att){
-		if( this.showing == obj.attr('TableSearchCol') ) return this.hideBox();
+		if (this.showing == obj.attr('TSCol')) {
+			return this.hideBox();
+		}
 		this.hideBox();
 		this.showBox(e, obj);
 	},
 	hideBox: function(){
-		this.Box.style.display = 'none';
-		this.Input.value = '';
-		if( this.showing >= 0 ) this.process( true );
+		this.Box.hide();
+		J('#TSInput').val('');
+		(this.showing >= 0) && this.process(true);
 		this.showing = -1;
 	},
 	showBox: function(e, tgt){
-		this.Box.setStyle('left', e.page.x - 100);
-		this.Box.setStyle('top', e.page.y + 48);
-		this.Box.setStyle('display', 'block');
-		this.showing = tgt.attr('TableSearchCol');
-		this.Box.find('span').html(this.Buttons[this.showing].alt);
-		$('TableSearchInput').focus();
+		this.Box.attr({left: e.page.x - 100, top: e.page.y + 48}).show()
+			.find('span').html(J('.tableColumnSearch')[this.showing]._alt());
+		this.showing = tgt.attr('TSCol');
+		J('#TSInput').focus();
 	},
-	process: function( clear ){
+	process: function(clear){
 		/* Don't repeat search when keyup provoked no changes */
-		var searchString = this.Input.value.replace('*', '%');
-		if( this.lastSearch == searchString ) return;
+		var q = J('#TSInput').val(J('#TSInput').val().replace('*', '%'));
+		if (this.lastSearch == q) return;
 		/* Build filter */
 		var filter = {};
-		if( clear !== true ){
-			var col = this.Buttons[this.showing]._for();
-			filter[col] = this.lastSearch = searchString;
-		};
+		if (!clear) {
+			var col = J('.tableColumnSearch')[this.showing]._for();
+			filter[col] = this.lastSearch = q;
+		}
 		/* Pass the input and aditional info to registered xajax function */
-		var params = [this.searchID=newSID().toString()].concat(filter, this.funcAtts);
+		this.searchID = newSID().toString();
+		var params = [this.searchID].concat(filter, this.funcAtts);
 		xajax_updateList.apply(window, params);
 	},
-	showResults: function( uID ){
+	showResults: function(uID) {
 		/* Make sure we're receiving the most recent request */
-		if( !$('listWrapper') || uID != this.searchID ) return;
-		$('listWrapper').html(this.cacheBox.html());
-		this.cacheBox.html('');
+		if (!J('#listWrapper') || uID != this.searchID) return;
+		J('#listWrapper').html(J('#TSCache').html());
+		J('#TSCache').html('');
 	}
-};
-
-/* Fix Table Titles */
-function fixTableHeader(oTitlesBox, oTable, cached){
-	if( !arguments.length && typeof(arguments.callee.sets) == 'object' ){
-		for( var i=0, set ; set=arguments.callee.sets[i] ; i++ ){
-			fixTableHeader(set['titles'], set['table'], true);
-		};
-		return;
-	};
-	if( !arguments.callee.sets ) arguments.callee.sets = [];
-	if( !oTitlesBox || !oTitlesBox.style || !oTable || !oTable.rows || !oTable.rows[0] ){
-		if( oTitlesBox && oTitlesBox.style ) oTitlesBox.style.display = 'none';
-		return;
-	};
-	if( oTitlesBox && oTitlesBox.style ) oTitlesBox.style.display = 'block';
-	if( !cached ) arguments.callee.sets.push( {titles:oTitlesBox, table:oTable} );
-	var nlCells = oTable.rows[0].cells;
-	var nlTitles = oTitlesBox.getElementsByTagName('DIV');
-	var isIE = !!(/*@cc_on!@*/false);
-	var totalWidth = 10;
-	for( var i=0, len=nlTitles.length, oCell, iWidth, title ; oCell=nlCells[i], oTitle=nlTitles[i] ; i++ ){
-		iWidth = oCell.offsetWidth - 10;
-		if( nlTitles[i+1] ) oTitle.style.width = iWidth + 'px';
-		else oTitle.style.width = 'auto';
-		totalWidth += iWidth;
-		oTitle.style.display = 'block';
-	};
-	// Hide titles that do not match any column in the results table
-	for( var j=i, oTitle ; oTitle=nlTitles[j] ; j++ ) oTitle.style.display = 'none';
 };

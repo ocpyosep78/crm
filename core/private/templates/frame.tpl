@@ -58,7 +58,7 @@
 	  <div id='frameTitle'>
 		{$Page->page}
 		<img class='CloseButtonHover' src="app/images/buttons/closeHover.png" alt='cerrar' title='cerrar ventana' />
-		<img id='FrameCloseButton' class='CloseButton' src="app/images/buttons/close.png" alt='cerrar' />
+		<img id='FrameCloseBtn' class='CloseButton' src="app/images/buttons/close.png" alt='cerrar' />
 	  </div>
 	  <div id='frameArea'>
 		<div id='notifications'>

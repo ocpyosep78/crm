@@ -289,8 +289,8 @@ try{
 			});
 		});
 	},
-	
-	
+
+
 	complexList: function(el, atts){
 		$$('.complexList_group').forEach(function(grp){
 			var hdr = grp.getElement('.complexList_groupHeader');
@@ -352,7 +352,7 @@ var SnippetToolTips = function( fields ){
 
 
 /**
- * 
+ *
  */
 function ListSearch(el, atts){
 	/**************************************************************************/
@@ -440,7 +440,7 @@ function ListSearch(el, atts){
 
 
 /**
- * 
+ *
  */
 function SyncTitles(el, atts){
 	var that = this;
@@ -469,6 +469,5 @@ function SyncTitles(el, atts){
 		return that;
 	};
 	// Re-sync if page is resized or menu is hidden
-	J(window).resize(that.sync);
-	J(window).on('menutoggled', that.sync);
+	J(window).on('resize menutoggled', that.sync);
 }
