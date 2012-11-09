@@ -668,8 +668,11 @@ IMG.agenda_eventType{ float:right; height:30px; width:30px; margin:3px; }
  * LOGIN
  */
 #loginWrapper{
-	display:inline-block;
+	text-align:center;
 	margin:120px 0px 50px 0px;
+}
+#loginWrapper > form{
+	display:inline-block;
 	padding:25px 80px;
 	text-align:center;
 	background:#ccc;
