@@ -45,9 +45,6 @@ Object Rows: array with custom methods
 - Passing a DOM row (TR) is optional. One will be created if not passed
 - Links main own methods to the Row object being added
 
-***** Rows.createRow *****
-- Creates a DOM row in the estimates table, and returns it
-
 
 */
 /*******************************************************/
@@ -87,13 +84,13 @@ Object Rows: array with custom methods
 		row = row || Table.createRow();
 		row.map = this.map = {
 			'row': row,
-			'amount': row.getElement('INPUT.quoteAmount'),
-			'name': row.getElement('INPUT.productName'),
-			'suggest': row.getElement('DIV.suggestDIV'),
-			'price': row.getElement('INPUT.quotePrice'),
-			'subTotal': row.getElement('TD.quoteSub'),
-			'tax': row.getElement('TD.quoteTax'),
-			'total': row.getElement('TD.quoteTotal')
+			'amount': row.find('input.quoteAmount'),
+			'name': row.find('input.productName'),
+			'suggest': row.find('div.suggestDIV'),
+			'price': row.find('input.quotePrice'),
+			'subTotal': row.find('TD.quoteSub'),
+			'tax': row.find('TD.quoteTax'),
+			'total': row.find('TD.quoteTotal')
 		};
 		this.pos = pos;
 		this.data = {};
@@ -112,10 +109,6 @@ Object Rows: array with custom methods
 		table: J('table.quotesTable')[0],
 		basicLine: J('tr.quoteBasicLine')[0],
 		selected: null,
-		createRow: function(){
-			var row = this.basicLine.clone(true).removeClass('quoteBasicLine');
-			return row.insertBefore(this.basicLine);
-		},
 		selectRow: function(row){
 			if( this.selected ){
 				this.selected.removeClass('rowSelected');

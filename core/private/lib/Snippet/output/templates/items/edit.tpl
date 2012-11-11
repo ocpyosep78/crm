@@ -1,7 +1,7 @@
 {*
 
 	Accepted types of fields:
-		
+
 		- text (default)
 		- image
 		- list (combo)
@@ -36,9 +36,9 @@
 			  <input type='text' name='{$field}' class='calendar'
 				value='{if $data}{$data[$field]}{else}{$NOW|date_locale:'Y-m-d'}{/if}' />
 			{elseif $atts.type == 'datetime'}
-			  <input type='text' name='{$field}' class='calendar'
+			  <input type='text' name='{$field}_date' class='calendar'
 				value='{if $data}{$data[$field]|date_locale:'Y-m-d'}{else}{$NOW|date_locale:'Y-m-d'}{/if}' />
-			  <input type='text' name='{$field}' class='time_input'
+			  <input type='text' name='{$field}_time' class='time_input'
 				value='{if $data}{$data[$field]|date_locale:'H:i'}{else}{$NOW|date_locale:'H:i'}{/if}' />
 			{elseif $atts.type == 'area'}
 			  <textarea name='{$field}'>{if $data}{$data[$field]}{/if}</textarea>
@@ -64,11 +64,11 @@
 	  {/foreach}
 	  <tr class='snippet_submitRow'>
 		<td colspan='2' align='center'>
-		  <input type='button' class='button' value='Guardar' />
+		  <input type='submit' class='button' value='Guardar' />
 		</td>
 	  </tr>
 	</table>
    </form>
   </div>
-  
+
 </div>

@@ -1,16 +1,16 @@
 {*
 
 	This template is not suppsed to be used directly by anyone but Lists object.
-	
+
 	A simple list is a list without search tools, combo list or pagination tools.
-	
+
 	It includes (if permissions are granted) tools to edit or add items in place, and tools to sort
 	by column. Same as regular (tabular) lists, the configuration of each type of object to list is
 	specified in ./staticData/{$code}.sd.php.
-	
+
 	Title width fixing is not needed as these lists are expected to be short hence requiring no
 	overflow control. Simple lists are embedded in boxes with a loose height (auto).
-	
+
 *}
 
 {literal}
@@ -30,10 +30,12 @@
 	<th>{if is_array($name)}{$name[0]}{else}{$name}{/if}</th>
   {/foreach}
   <th>&nbsp;</th>
-  
+
   {foreach from=$data key=id item=item}													{* ITEMS *}
 	<tr for='{$id}' bgcolor='{cycle values=$cycleValues}' class='listRows highlight'>
-	  {foreach from=$fields key=field item=x}<td>{$item.$field}</td>{/foreach}			{* CELLS *}
+	  {foreach from=$fields key=field item=x}                                           {* CELLS *}
+		<td>{$item.$field}</td>
+	  {/foreach}
 	  <td class='simpleListTools'>
 		{foreach from=$item.tools key=axn item=permit}									{* TOOLS *}
 		  {if $Permits->can($permit)}
@@ -52,7 +54,7 @@
 	  </td>
 	</tr>
   {/foreach}
-  
+
   {if $canCreate}
 	<tr class='addItemToSimpleList'>
 	  {foreach from=$fields key=field item=name}										{* ADD ITEM *}

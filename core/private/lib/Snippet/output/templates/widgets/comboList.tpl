@@ -1,4 +1,4 @@
-<div class='comboListBox'>
+<div class='snp_comboListBox'>
 	<select class='comboList'>
 	  <option value='' {if not $combo.selected} selected='selected'{/if}>
 		(seleccionar {if $gender == 'f'}una{else}un{/if} {$name|lower} de esta lista para ver información detallada)

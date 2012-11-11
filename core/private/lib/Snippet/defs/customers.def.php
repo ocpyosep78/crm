@@ -7,19 +7,19 @@
  * Licence: GNU GENERAL PUBLIC LICENSE <http://www.gnu.org/licenses/gpl.txt>
  */
 
-	
+
 	class Snippet_def_customers extends Snippets_Handler_Source{
-	
+
 		protected function getBasicAttributes(){
-			
+
 			return array(
 				'name'		=> 'Cliente',
 				'plural'	=> 'Clientes',
 			);
-			
+
 		}
-		
-		
+
+
 		/**
 		 * @overview: List of tables involving this module, and each relevant field in them,
 		 *            plus attributes for each field that could be used by Modules.
@@ -34,7 +34,7 @@
 		 *            hidden => false explicitly to override.
 		 */
 		protected function getDatabaseDefinition(){
-		
+
 			return array(
 				'customers' => array(
 					'id_customer'	=> array('name' => 'ID', 'isKey' => true),
@@ -60,11 +60,11 @@
 					'seller'	=> array('name' =>'Vendedor', 'aliasOf' => '$name $lastName'),
 				),
 			);
-			
+
 		}
-		
+
 		protected function getFieldsFor( $type ){
-		
+
 			switch( $type ){
 				case 'list':
 					return array('number', 'customer', 'legal_name', 'address', 'phone', 'sellerName');
@@ -76,13 +76,13 @@
 					return array('number', 'customer', 'legal_name', 'rut', 'since', '>',
 						'phone', 'email', 'address', 'location', 'sellerName');
 			}
-		
+
 		}
-		
+
 		protected function getTools(){
             SnippetLayer_access::addCustomPermit('newCustomerTech');
             SnippetLayer_access::addCustomPermit('newAgendaEvent');
-		
+
 			return array('view',
                          array('newCustomerTech' => 'Nueva ficha técnica para el'),
                          array('newAgendaEvent'  => 'Nuevo evento para el'),
@@ -90,13 +90,13 @@
                          'edit',
                          'delete');
 		}
-				
+
 /*		protected function checkFilter( &$filters ){
 		}/**/
-		
+
 /*		protected function checkData( &$data ){
 		}/**/
-		
+
 		protected function getValidationRuleSet(){
 
 			return array(
@@ -110,28 +110,28 @@
 				'billingaddress'=> array('text', NULL, 80),
 				'id_location'	=> array('selection'),
 			);
-			
+
 		}/**/
-		
+
 /*		protected function strictValidation(){
 			return true;
 		}/**/
 
 /* TEMP : All these methods below should be automatically created based on the definition */
-		
+
 private function globalFilters( &$filters ){
 
 	$srch = $filters['*'];
 	$filters = array();
-	
+
 	$fields = array_diff($this->getFieldsFor('view'), (array)'>');
 	foreach( $fields as $field ) $filters["`{$field}`"] = $srch;
-	
+
 	$filters["`cc`.`name`"] = $srch;
 	$filters["`co`.`name`"] = $srch;
-	
+
 }
-		
+
 protected function getListData($filters=array(), $join='AND'){
 	if( isset($filters['*']) ){
 		$this->globalFilters( $filters );
@@ -157,6 +157,7 @@ protected function getListData($filters=array(), $join='AND'){
 			LEFT JOIN `customers_owners` `co` USING (`id_customer`)
 			WHERE ({$this->array2filter($filters, $join)})
 			AND {$this->getFilterFromModifier()}
+			GROUP BY `c`.`id_customer`
 			ORDER BY `c`.`customer`";
 	return $sql;
 }
@@ -170,5 +171,5 @@ private function getFilterFromModifier(){
 	}
 	return '1';		# No filter for status (show all customers)
 }
-		
+
 	}

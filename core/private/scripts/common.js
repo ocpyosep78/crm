@@ -81,6 +81,7 @@ J(function($){
 	// Activate liquid table headers
 	$(window).on('resize menutoggled', function(){
 		$('#listTable').trigger('modified');
+		J('.listWrapper').trigger('fill');
 	});
 
 	$('body').on('modified', '#listTable', function(){
@@ -344,6 +345,7 @@ function FTshowTip(field, tip){
 	    $blur;
 
 	if (!$tip) throw( 'No existe el elemento ' + field );
+
 	setTimeout( function(){	/* Blur preceeds focus, so make sure it shows after hiding (for re-submitting) */
 		$field.focus();
 		if (tip && $tip) {
@@ -358,9 +360,9 @@ function FTshowTip(field, tip){
 			});
 		};
 
-		var name = J('#field_'+field).html() || '';
-		var msg = 'El valor del campo ' + name + ' no es válido. ' +
-		          'Por favor verifique el dato ingresado';
+		var name = J('#field_'+field).html() || '',
+		    msg = 'El valor del campo ' + name + ' no es válido. ' +
+		          'Verifique el dato ingresado e inténtelo nuevamente.';
 		say(msg);
 	}, 300 );
 }
