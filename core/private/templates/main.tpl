@@ -131,10 +131,10 @@
 
 	{* Widgets *}
 	{if $USER && $Permits->can('agenda')}{include file='widgets/eventInfo.tpl'}{/if}
-	{if $USER && $Permits->can('chatActivity')}{include file='widgets/chat.tpl'}{/if}
-	{if $USER}{include file='widgets/alerts.tpl'}{/if}
+	{if false && $USER && $Permits->can('chatActivity')}{include file='widgets/chat.tpl'}{/if}
+	{if false && $USER}{include file='widgets/alerts.tpl'}{/if}
 	{include file='widgets/loadingMsg.tpl'}
-	{if $Page->debugger}{include file='widgets/debugger.tpl'}{/if}
+	{if false && $Page->debugger}{include file='widgets/debugger.tpl'}{/if}
 
 
 </body>
