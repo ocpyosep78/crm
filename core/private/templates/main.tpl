@@ -28,8 +28,11 @@
 
 
 	{* JS files *}
+	<script type='text/javascript' src='core/private/scripts/mootools 1.3.js'></script> <!-- ALMOST GONE! -->
 	<script type='text/javascript' src='core/private/scripts/jquery/jquery-1.8.2.min.js'></script>
 	<script type='text/javascript' src='core/private/scripts/jquery/jquery-ui-1.9.1.min.js'></script>
+	<script type='text/javascript' src='core/private/scripts/jquery/jquery.qtip2.js'></script>
+	<script type='text/javascript' src='core/private/scripts/libs.js'></script>
 
 	<script type='text/javascript'>window.IN_FRAME = {$IN_FRAME}</script>
 	<script type='text/javascript' src='{$core_scripts}common.js'></script>
