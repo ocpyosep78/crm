@@ -21,6 +21,7 @@
 
 	{* Styles *}
 	<link rel="stylesheet" type="text/css" href="core/private/scripts/jquery/themes/{$jQueryUiTheme}/jquery-ui.css" />
+	<link rel="stylesheet" type="text/css" href="core/private/scripts/jquery/jquery.qtip2.css" />
 
 	{foreach from=$Page->styleSheets item=styleSheet}
 		<link rel="stylesheet" type="text/css" href="{$styleSheet}" />

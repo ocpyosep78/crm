@@ -22,6 +22,9 @@ J(function($){
 	$('#hideMenu').click(hideMenu);
 	$('#showMenu').click(showMenu);
 
+	// Styled ToolTips
+	$('body').qtip();
+
 	// Activate Notifications (errors, success notifications, warnings)
 	window.say = function(txt, type, stay) {
 		var mt = txt.split(/<br ?\/>./, 3).length * 1.4;
