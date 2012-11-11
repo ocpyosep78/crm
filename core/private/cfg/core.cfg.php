@@ -32,7 +32,6 @@
 
 	# General
 	define('MAIN_TPL_PATH', realpath(CORE_TEMPLATES.'main.tpl'));
-	define('FRAME_TPL_PATH', realpath(CORE_TEMPLATES.'frame.tpl'));
 	define('FRAME_CSS_PATH', CORE_STYLES.'frame.css');
 
 	# Logs

@@ -13,12 +13,6 @@
 		return addScript("say('{$msg}', '{$type}', '{$img}');");
 	}
 
-	function returnSearchResults($tgt, $tpl, $uID){
-		addAssign('TSCache', 'innerHTML', oSmarty()->fetch($tpl));
-		addScript("TableSearch.showResults('{$uID}');");
-		return addScript("\$('{$tgt}').update();");
-	}
-
 	function showMenu(){
 		isXajax() ? addScriptCall('showMenu') : oPageCfg()->add_jsOnLoad("showMenu();");
 	}
@@ -48,9 +42,8 @@
 	}
 
 	function addElement($id, $content=''){
-		addAssign('xajax_addElement', 'innerHTML', "{$content}");
-		return addScript("\$('{$id}').adopt( \$('xajax_addElement').getChildren() );" );
-		return addScript("xajax_addElement('{$id}');");
+		addAssign('importedElement', 'innerHTML', "{$content}");
+		return addScript("importElement('{$id}');");
 	}
 
 	function addScript( $x ){

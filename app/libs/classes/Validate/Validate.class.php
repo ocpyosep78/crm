@@ -8,34 +8,34 @@
  */
 
 
-	
+
 	require_once( dirname(__FILE__).'/Rules.class.php' );
 	require_once( dirname(__FILE__).'/Tips.class.php' );
 
 	class Validate{
-	
+
 		private $Rules;				/* Object of Class Rules, to hold definition sets */
 		private $expressions;                   /* List of understood regular expressions by codename */
-		
+
 		private $Tips;				/* Object holding tips for the user, for test failure */
 		private $fmtTips;			/* Keeps a list of tips for validations that fail on format */
 		private $lenTips;			/* Keeps a list of tips for validations that fail on length */
-		
+
 		public function __construct(){
-		
+
 			$this->Rules = new Rules();
 			$this->expressions = $this->Rules->expressions;
-			
+
 			$this->Tips = new Tips();
 			$this->fmtTips = $this->Tips->format;
 			$this->lenTips = $this->Tips->length;
-			
+
 			foreach( $this->expressions as $code => $expr ){
 				if( !isset($this->fmtTips[$code]) ) $this->fmtTips[$code] = '';
 			}	/* Initialize all keys to avoid E_NOTICE */
-			
+
 		}
-		
+
 		public function preProcessInput(&$input, $prefix=' '){
 			foreach( $input as $key => $val ){
 				$isoVal = is_string($val) ? trim($val) : $val;
@@ -58,7 +58,7 @@
 ***************/
 
 		private function testRules($set, $ruleSet, $strict=false){
-		
+
 			# If strict, validate all data received has defined rules
 			if( $strict ){
 				foreach( $set as $field => $value ){
@@ -103,35 +103,35 @@
 			}
 			return true;
 		}
-		
+
 		/**
-		 * This function looks for the right tip (in Tips class) and returns a formatted answer
-		 * It handles errors in format validation
-		 * $rng means length has both limits
-		 * if $l == $u then both limits exist and are equal
+		 * This function looks for the right tip (in Tips class) and returns a
+		 * formatted answer. It handles errors in format validation. $rng means
+		 * length has both limits. If $l == $u then both exist and are equal
 		 */
-		private function fmtFailed($field, $exprType){
+		private function fmtFailed($field, $exprType)
+		{
 			return array(
 				'tip'		=> $this->fmtTips[$exprType],
 				'field'		=> $field,
 				'errType'	=> 'fmt',
 			);
 		}
-		
+
 		/**
-		 * This function looks for the right tip (in Tips class) and returns a formatted answer
-		 * It handles errors in length validation
-		 * $rng means length has both limits
-		 * if $l == $u then both limits exist and are equal
+		 * This function looks for the right tip (in Tips class) and returns a
+		 * formatted answer. It handles errors in length validation. $rng means
+		 * length has both limits. If $l == $u then both exist and are equal
 		 */
-		private function lenFailed($field, $l, $u, $rng=false){
-			
-			$tip = sprintf($this->lenTips[$l == $u ? '000' : (int)!!$rng.(int)!!$l.(int)!!$u], $l, $u);
+		private function lenFailed($field, $l, $u, $rng=false)
+		{
+			$key = ($l == $u) ? '000' : (int)!!$rng.(int)!!$l.(int)!!$u;
+
 			return array(
-				'tip'		=> $tip,
+				'tip'		=> sprintf($this->lenTips[$key], $l, $u),
 				'field'		=> $field,
 				'errType'	=> 'len',
 			);
 		}
-		
+
 	}

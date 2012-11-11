@@ -52,9 +52,6 @@
 					</td>
 				{/if}
 			</tr>
-			{if $x.atts.id}
-				<tr><td colspan='2' class='Tip'><div id='tip_{$x.atts.id}'></div></td></tr>
-			{/if}
 		{/foreach}
 	</table>
 </form>

@@ -201,12 +201,8 @@ function Snippet(el){
 			});
 
 			this.tooltip = function(field, msg) {
-				my('.snippet_createForm [name="'+field+'"]')
-					.qtip({content: {text: msg},
-					       position: {at: 'bottom left'},
-					       solo: J('.snippet_createForm'),
-					       show: {target: J()}})
-					.qtip('show');
+				var tgt = my('.snippet_createForm [name="'+field+'"]');
+				showTip(tgt, msg, 'bottom left', '.snippet_createForm');
 			};
 		},
 

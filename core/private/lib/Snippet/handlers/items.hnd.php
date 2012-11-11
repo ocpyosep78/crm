@@ -47,7 +47,7 @@
 
 			$this->assign('lists', $fieldsByType['list']);
 
-			# Empty unless editting
+			# Empty unless editing
 			$this->assign('objectID', $objectID);
 			$this->assign('data', $data);
 

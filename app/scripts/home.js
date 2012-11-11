@@ -15,15 +15,15 @@ function ini_createEvent(id_event){		/* Agenda */
 
 	J('#btn_saveEvent').click(function(){
 		if (J('#evt_iniTime').val() === '' || !validateTimeInput('evt_iniTime', 'value')) {
-			return FTshowTip('evt_iniTime', 'Hora de inicio inválida.');
+			return showTip('evt_iniTime', 'Hora de inicio inválida.');
 		};	/* Preformat time, validate and apply changes if valid */
 		if (J('#evt_endTime').val() !== '' && !validateTimeInput('evt_endTime', 'value')) {
-			return FTshowTip('evt_endTime', 'Hora de finalización inválida.');
+			return showTip('evt_endTime', 'Hora de finalización inválida.');
 		};
 		if (J.trim(J('#evt_event').val()) === '') {
-			return FTshowTip('evt_event', 'Debe proporcionar una descripción del evento.');
+			return showTip('evt_event', 'Debe proporcionar una descripción del evento.');
 		};
-		
+
 		var data = xajax.getFormValues(J('form[name="frmEditEvent"]').get(0));
 		xajax_createEvent(data, id_event || 0);
 	});
@@ -38,8 +38,6 @@ function ini_editEvent(){		/* Agenda */
 }
 
 function ini_agenda(){
-	setAgendaHandlers();
-
 	// Tie events to each day
 	J('.agenda_dayWrapper').each(function(i, block){
 		var preview = function(){
@@ -58,7 +56,7 @@ function ini_agenda(){
 	J('#btn_createEvent').click(function(e){
 		getPage(e, 'createEvent', []);
 	});
-	
+
 	J("#agenda_calendar").datepicker({
 		showOn: 'button',
 		dateFormat: 'yy/mm/dd',
@@ -80,7 +78,7 @@ function ini_agenda(){
 			getPage('agenda', [day, getFilters()]);
 		}
 	});
-	
+
 	function getFilters(){
 		var filters = {};
 		J('.sel_agendaFilters').each(function(i, sel){
@@ -120,7 +118,7 @@ function ini_agenda(){
 			'opacity': 1
 		});
 	});
-	
+
 	// Activate Event Tools
 	J('.eventTools img').click(function(e){
 		var eventID = J(this).parents('.eventUnit:first').find('[name="id_event"]').val();
@@ -144,7 +142,7 @@ function ini_agendaDay(){
 	J('.eventUnit').click(function(){
 		xajax_eventInfo(J(this).find('input[type="hidden"]').val());
 	});
-	
+
 	function getFilters(){
 		var filters = {};
 		J('.sel_agendaFilters').each(function(i, sel){
@@ -170,7 +168,7 @@ function ini_agendaDay(){
 }
 
 function ini_activity(){
-	var msg = "¿Está seguro que desea descartar esta entrada?\n" + 
+	var msg = "¿Está seguro que desea descartar esta entrada?\n" +
 		"Si continúa, el elemento no volverá a aparecer en esta lista.";
 
 	J('.closeActivityEntry').each(function(i, btn){

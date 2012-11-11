@@ -23,7 +23,7 @@ jQuery.datepicker.setDefaults(jQuery.datepicker.regional['es'] = {
 	yearSuffix: ''
 });
 
-// Make $().each to provide extended arguments and scope, when args === true
+// Extend jQuery().each inner arguments and scope, when args == true (not array)
 jQuery.fn.each = function(cb, args) {
 	if (!jQuery.isArray(args) && args) {
 		var jSet = this;

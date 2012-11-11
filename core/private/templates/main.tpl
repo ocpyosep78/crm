@@ -3,9 +3,9 @@
 <head>
 
 	<meta http-equiv="X-UA-Compatible" content="IE=8" />
-<!--[if IE 9]>
-	<meta http-equiv="X-UA-Compatible" content="IE=9" />
-<![endif]-->
+	<!--[if IE 9]>
+	  <meta http-equiv="X-UA-Compatible" content="IE=9" />
+	<![endif]-->
 
 	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 	<meta http-equiv="Pragma" content="no-cache">
@@ -50,14 +50,27 @@
 		{literal}}{/literal} );
 	</script>
 
-	{* Xajax *}
+	{* Ajax *}
 	{$Xajax->printJavascript()}
 
 </head>
 <body>
 
-	<div id='main_navBar'>
+  {if $IN_FRAME}
 
+	<div id='frameCover'></div>
+
+	<div id='frameContent'>
+	  <div id='frameTitle'>
+		{$Page->page}
+		<img class='CloseButtonHover' src="app/images/buttons/closeHover.png" alt='cerrar' title='cerrar ventana' />
+		<img id='FrameCloseBtn' class='CloseButton' src="app/images/buttons/close.png" alt='cerrar' />
+	  </div>
+	  <div id='frameArea'>
+
+  {else}
+
+	<div id='main_navBar'>
 		<div id='navButtonsBar'>
 		  {foreach from=$Page->navButtons key=key item=item}
 			&nbsp;&nbsp;
@@ -84,8 +97,9 @@
 			{/foreach}
 		  {/if}
 		</div>
-
 	</div>
+
+  {/if}
 
 	<div id='notifications'>
 		<span>{$Page->appName}</span>
@@ -95,9 +109,14 @@
 		<div></div>
 	</div>
 
-	<div id='main_box'>
-		{$Page->content}
+	<div id='main_box'>{$Page->content}</div>
+
+  {if $IN_FRAME}
+
+	  </div>
 	</div>
+
+  {else}
 
 	<div id='main_foot'>
 		<hr class='sep' />
@@ -124,17 +143,39 @@
 		</div>
 	</div>
 
+  {/if}
 
 	<div id='curtain'></div>		{* modal windows, refer to JS:Modal object *}
 
-	<div id='xajax_addElement'></div>
+	<div id='importedElement'></div>
 
 	{* Widgets *}
 	{if $USER && $Permits->can('agenda')}{include file='widgets/eventInfo.tpl'}{/if}
-	{if false && $USER && $Permits->can('chatActivity')}{include file='widgets/chat.tpl'}{/if}
-	{if false && $USER}{include file='widgets/alerts.tpl'}{/if}
-	{include file='widgets/loadingMsg.tpl'}
-	{if false && $Page->debugger}{include file='widgets/debugger.tpl'}{/if}
+
+	{if false && !$IN_FRAME && $USER && $Permits->can('chatActivity')}{include file='widgets/chat.tpl'}{/if}
+	{if false && !$IN_FRAME && $USER}{include file='widgets/alerts.tpl'}{/if}
+
+	<div id='loadingGif'>
+		<div>Cargando...</div>
+		<img src="app/images/loading.gif" alt="Cargando..." />
+	</div>
+
+	{if $Page->debugger}
+	  <div id='debugHeader'>
+		<div>
+		  <div id="openDebug" onclick="$('debugHeader').removeClass('dbgHid');"></div>
+		  <img id='debugStats' src='app/images/stats.gif' alt='extended info' />
+		  <div style='float:left; width:600px;' onclick="$('debugHeader').addClass('dbgHid');">
+			Debugger <span style="color:#0000a0; cursor:pointer;">(click para minimizar)</span>
+			<br />
+			{foreach from=$Page->develMsgs item=develMsg}{$develMsg}<br />{/foreach}
+		  </div>
+		</div>
+		{if $Page->errMsgs}<hr style='clear:both;' />{/if}
+		{foreach from=$Page->errMsgs item=errMsg}{$errMsg}<br />{/foreach}
+		<iframe id='debugger'></iframe>
+	  </div>
+	{/if}
 
 
 </body>

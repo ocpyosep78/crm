@@ -145,7 +145,7 @@
 				array('id' => 'id_system', 'selected' => $id ? (int)$prod['id_system'] : '' ));
 		}
 
-		# Fill form values if editting
+		# Fill form values if editing
 		if( $id ){
 			oFormTable()->hiddenRow();
 			oFormTable()->addInput('', array('id' => 'id_product'), 'hidden');

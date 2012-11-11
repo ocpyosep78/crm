@@ -10,23 +10,23 @@
 
 
 	function page_technical(){
-	
+
 		return page_techVisits();
-		
+
 	}
 
 	function page_techVisits(){
 		/* Include code in case it's called with an alias */
 		return oLists()->printList('techVisits');
-		
+
 	}
-	
+
 	function page_installs(){
-	
+
 		return oLists()->printList();
-		
+
 	}
-	
+
 	function page_createTechVisits($id=NULL, $customerid=NULL){
 		# If an id was provided, we pass the visit's data, to pre-fill the form (edit/info mode)
 		if(!$id && !$customerid){
@@ -69,7 +69,7 @@
     [onSale] =>
     [technician] => rdelossantos
     [starts] => */
-		/* If we're editting, get data and fix special fields */
+		/* If we're editing, get data and fix special fields */
 		elseif( $data=oSQL()->getTechVisit($id) ){
 			list($data['year'], $data['month'], $data['day']) = explode('-', $data['date']);
 			if( !empty($data['installDate']) ){
@@ -82,32 +82,32 @@
 			if( !empty($data['ends']) ) list($data['endsH'], $data['endsM']) = explode(':', $data['ends']);
 			$data['costDollars'] = $data['currency'] == 'U$S' ? $data['cost'] : '';
 			$data['cost'] = $data['currency'] == '$' ? $data['cost'] : '';
-			
+
 			oNav()->setJSParams( $data );
 		}
 		else return oNav()->getPage('techVisits', 'No se encontró la visita pedida.');
-		
+
 		oSmarty()->assign('systems', oLists()->systems());
 		oSmarty()->assign('technicians', oLists()->technicians());
-	
+
 		hideMenu();
-		
+
 	}
-	
+
 	function page_editTechVisits( $id ){
-	
+
 		return page_createTechVisits( $id );
-		
+
 	}
-	
+
 	function page_techVisitsInfo( $id ){
-	
+
 		oSmarty()->assign('id', $id);
 
         if(oPermits()->can('adminTechNotes')){
             oSmarty()->assign('adminNote', oSql()->getAdminTechNote($id));
         }
-		
+
 		oNav()->setJSParams( $id );
-		
+
 	}

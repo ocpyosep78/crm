@@ -46,11 +46,11 @@
  *
  * Lists#printList() will attempt to load static data in the first phase,
  * which includes the list of fields (for the tabular data), a few params
- * like screen name (singular and plural), whether to show a tip on each
- * row, and the list of tools that will be available to a tabular list:
- * edit, delete, block, are the most common options.
+ * like screen name (singular and plural) and the list of tools that will
+ * be available to a tabular list: edit, delete, block, are the most
+ * common options.
  *
- * Creating a new Data Provider script, or editting an existing one:
+ * Creating a new Data Provider script, or editing an existing one:
  *
  * You don't need to worry about HOW data arrives to where it will be used.
  * All you need to do is create a regular PHP script in staticData/ folder
@@ -192,8 +192,8 @@
 		/**
 		 * Called through Xajax, automatically
 		 */
-		public function updateList($uID, $filter, $code, $modifier=NULL, $src=NULL){
-
+		public function updateList($uID, $filter, $code, $modifier=NULL, $src=NULL)
+		{
 			$this->code = $code;
 			$this->modifier = $modifier;
 

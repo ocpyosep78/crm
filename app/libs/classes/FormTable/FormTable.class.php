@@ -162,10 +162,6 @@
 			$this->createRow($type, '', '', array('value' => $value, 'class' => 'button') + ($atts ? $atts : array()));
 		}
 
-		public function addTip( $tip='' ){
-			if( $cnt=count($this->data) ) $this->data[$cnt-1]['tip'] = $tip;
-		}
-
 		public function addNote( $value, $atts=array() ){
 			$this->createRow('note', '', $value, $atts);
 		}

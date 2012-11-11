@@ -33,8 +33,6 @@ Snippet{ position:relative; }
 .snippet_item TABLE{ margin:20px 30px; }
 .snippet_item TH{ height:1.5em; padding-left:30px; padding-right:5px; white-space:nowrap; text-indent:0px !important; text-align:right !important; color:#606090 !important; }
 .snippet_item TD{ min-width:200px; text-indent:0px !important; color:#000060 !important; }
-.snippet_item .Tip{color:#800000 !important;font-size:11px;}
-.snippet_item .Tip DIV{padding:2px;}
 
 
 /**

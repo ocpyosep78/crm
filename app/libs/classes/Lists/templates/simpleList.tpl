@@ -76,7 +76,6 @@
 				disabled='disabled'
 			  {/if} />
 		  {/if}
-		  <div class='tip' id='tip_{$simpleListID}{$field}'></div>
 		</td>
 	  {/foreach}
 	  <td class='simpleListCreate'>

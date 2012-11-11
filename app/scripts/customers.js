@@ -22,10 +22,6 @@ function ini_editCustomers() {
 function ini_registerSales() {
 	var frm = J.forms('frmOldSales');
 
-	frm.elements.filter(':not(:radio)').each(function(){
-		newTip(this.name, this);
-	});
-
 	frm.setSeller = function(code){
 		this.seller.val(code);
 	};

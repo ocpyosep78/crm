@@ -29,14 +29,14 @@
                     return FileForm::addResponse("say('{$msg}');");
                 }
             }
-            
+
 			# Set messages to return to the user after processing the request
 			oSQL()->setErrMsg("El usuario {$atts['user']} fue creado con éxito");
 			oSQL()->setErrMsg("Ocurrió un error al intentar crear el usuario {$atts['user']}");
 			oSQL()->setDuplMsg("El usuario {$atts['user']} ya existe. Debe elegir otro nombre de usuario");
 			# Request query and catch answer, then return it to the user
 			$ans = oSQL()->createUsers( $atts );
-            
+
 			if( $ans->error ){
 				return FileForm::addResponse("say('{$ans->msg}');");
 			}else{
@@ -50,21 +50,21 @@
 				return FileForm::addResponse("getPage('usersInfo', ['{$atts['user']}'], '{$ans->msg}', 1);");
 			}
 		}
-		else return FileForm::addResponse("FTshowTip('createUsers_{$valid['field']}', '{$valid['tip']}');");
+		else return FileForm::addResponse("showTip('createUsers_{$valid['field']}', '{$valid['tip']}');");
 	}
-	
+
 	function blockUsers($user, $unblock=false){
-	
+
 		$unblock = !!$unblock; # Cast to boolean values received through xajax
-		
+
 		# Verify that the user can take this action
 		if( !oPermits()->can('blockUsers') ) return oPermits()->noAccessMsg();
-		
+
 		$blockStatus = $unblock ? 'desbloqueado' : 'bloqueado';
 		oSQL()->setOkMsg("El usuario {$user} fue {$blockStatus} correctamente.");
 		oSQL()->setErrMsg("El usuario {$user} no pudo ser bloqueado. ".
 			"Verifique sus permisos e inténtelo nuevamente.");
-			
+
 		$ans = oSQL()->blockUsers($user, $unblock);
 		if( !$ans->error ){
 			if( $user == loggedIn() ){
@@ -74,24 +74,24 @@
 			else return oNav()->reloadPage($ans->msg, 1);
 		}
 		else return say( $ans->msg );
-	
+
 	}
-	
+
 	function deleteUsers( $user ){
-		
+
 		if( $user == loggedIn() ){		# Double check
 			return say('No es posible eliminar su propio usuario.');
 		}
-		
+
 		# Handle security issues to the right function (security.php)
 		if( !oPermits()->can('deleteUsers') ) return oPermits()->noAccessMsg();
-		
+
 		oSQL()->setOkMsg("El usuario {$user} fue eliminado correctamente.");
 		oSQL()->setErrMsg("No se pudo eliminar el usuario {$user}. ".
 			"Verifique sus permisos e inténtelo nuevamente.");
-			
+
 		$ans = oSQL()->deleteUsers( $user );
 		if( !$ans->error ) return oNav()->reloadPage($ans->msg, 1);
 		else return say( $ans->msg );
-	
+
 	}

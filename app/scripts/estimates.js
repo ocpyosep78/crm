@@ -141,47 +141,63 @@ Object Rows: array with custom methods
 				e.preventDefault();
 			};
 			function keyUpOnName( e ){		// Non-special chars
-				if( in_array(e.code, [91, 92, 93]) || (e.code > 111 && e.code < 187) ) return;
-				if( !in_array(e.code, [8, 32, 46, 27]) && e.code < 48 ) return;
-				if( e.code > 191 && !in_array(e.code, [219, 220, 221]) ) return;
-				if( !in_array(e.key, ['space', 'backspace', 'delete', 'esc']) && e.key.length != 1 ) return;
-				if(this.val().trim() && e.code != 27) requestSuggest( this.val().trim() );
-				else{
+				if ((J.inArray(e.code, [91, 92, 93]))
+				 || ((e.code > 111) && (e.code < 187))
+				 || (!J.inArray(e.code, [8, 32, 46, 27]) && (e.code < 48))
+				 || ((e.code > 191) && !J.inArray(e.code, [219, 220, 221]))
+				 || (!J.inArray(e.key, ['space', 'backspace', 'delete', 'esc']) && (e.key.length != 1))) {
+					return;
+				}
+				if (this.val().trim() && e.which != 27) {
+					requestSuggest(this.val().trim());
+				} else {
 					Suggest.destroyList();
 					map.suggest.html('');
-					if( e.key == 'esc' ){
+					if (e.which == 27) {
 						requestSuggest('');
 						this.val('');
-					};
-				};
-			};
-			function keyUpOnAmount( e ){
-				if (e.which == 13) enterOnAmount();
-				else if (this.val()) that.fixRowVals(oRow);
-			};
-			function keyUpOnPrice( e ){
+					}
+				}
+			}
+
+			function keyUpOnAmount(e) {
+				if (e.which == 13) {
+					enterOnAmount();
+				} else if (this.val()) {
+					that.fixRowVals(oRow);
+				}
+			}
+
+			function keyUpOnPrice() {
 //				that.fixRowVals( oRow );
-			};
+			}
+
 			// Auxiliary functions (still holding closure vars)
-			function enterOnAmount( e ){
-				if (!this.val()) this.val(1);
+			function enterOnAmount() {
+				this.val() || this.val(1);
 				map.name.focus();
-			};
-			function enterOnName(){
-				that.acceptInput( oRow.pos );
+			}
+
+			function enterOnName() {
+				that.acceptInput(oRow.pos);
 				map.price.focus();
-			};
+			}
+
 			// Auxiliary functions (still holding closure vars)
-			function enterOnPrice(){
-				if( Rows[oRow.pos+1] ) Rows[oRow.pos+1].map.name.focus();
-			};
-			function requestSuggest( txt ){
+			function enterOnPrice() {
+				if (Rows[oRow.pos+1]) {
+					Rows[oRow.pos+1].map.name.focus();
+				}
+			}
+
+			function requestSuggest(txt) {
 				map.suggest.html('');
 				map.suggest.addClass('waiting');
 				Suggest.request(txt, oRow.pos);
-			};
+			}
 		},
-		showSuggest: function(data, pos){
+
+		showSuggest: function(data, pos) {
 			var row = Rows[pos];
 			row.data = data || {};
 			row.map.suggest.removeClass('waiting');
