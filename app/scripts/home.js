@@ -5,19 +5,18 @@ function ini_home(){
 }
 
 function ini_createEvent(id_event){		/* Agenda */
-	function validateTimeInput(obj, attToEdit){
-		var p = $(obj).value.split(':');
-		var val = p[0].fill(2, 0, true) + ':' + (p[1]||'').fill(2, 0, true);
-		var ret = val.test(/^(2[0-3]|[01]\d):[0-5]\d$/) ? val : '';
-		if( ret && typeof(attToEdit) == 'string' ) $(obj)[attToEdit] = ret;
-		return ret || false;
+	function validateTimeInput(el){
+		var p = el.val().split(':'),
+		    val = p[0].fill(2, 0, true) + ':' + (p[1]||'').fill(2, 0, true),
+		    ret = val.test(/^(2[0-3]|[01]\d):[0-5]\d$/) ? val : '';
+		return ret && el.val(ret);
 	}
 
 	J('#btn_saveEvent').click(function(){
-		if (J('#evt_iniTime').val() === '' || !validateTimeInput('evt_iniTime', 'value')) {
+		if (J('#evt_iniTime').val() === '' || !validateTimeInput(J('#evt_iniTime'))) {
 			return showTip('evt_iniTime', 'Hora de inicio inválida.');
 		};	/* Preformat time, validate and apply changes if valid */
-		if (J('#evt_endTime').val() !== '' && !validateTimeInput('evt_endTime', 'value')) {
+		if (J('#evt_endTime').val() !== '' && !validateTimeInput(J('#evt_iniTime'))) {
 			return showTip('evt_endTime', 'Hora de finalización inválida.');
 		};
 		if (J.trim(J('#evt_event').val()) === '') {

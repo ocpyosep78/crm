@@ -118,22 +118,27 @@
 
 /* TEMP : All these methods below should be automatically created based on the definition */
 
-		private function globalFilters( &$filters ){
-
+		private function globalFilters( &$filters )
+		{
 			$srch = $filters['*'];
 			$filters = array();
 
 			$fields = array_diff($this->getFieldsFor('view'), (array)'>');
 
-			foreach( $fields as $field ) $filters["`{$field}`"] = $srch;
-
+			foreach ($fields as $field)
+			{
+				$filters["`{$field}`"] = $srch;
+			}
 		}
 
-		protected function getListData($filters=array(), $join='AND'){
-			if( isset($filters['*']) ){
+		protected function getListData($filters=array(), $join='AND')
+		{
+			if (isset($filters['*']))
+			{
 				$this->globalFilters( $filters );
 				$join = 'OR';
 			}
+
 			$this->fixFilters($filters, array(
 				'assigned'	=> "CONCAT(`u`.`name`,' ', `u`.`lastName`)",
 				'typeLabel'	=> "IF(`ll`.`type` = 'technical', 'Técnica', 'Ventas')",
@@ -154,11 +159,12 @@
 					ORDER BY `ll`.`date`";
 
 			return $sql;
-
 		}
+
 		protected function getItemData( $id ){
 			return $this->getListData( array('id_call' => array($id, '=')) );
 		}
+
 		private function getFilterFromModifier(){
 			switch( $this->params['modifier'] ){
 				case 'customers': return 'NOT ISNULL(`since`)';

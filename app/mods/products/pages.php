@@ -163,6 +163,6 @@
 		# Add commands and actions to Xajax response object
 		oNav()->updateContent('products/editProducts.tpl');
 
-		return addScript("\$('np_id_category').focus();");
+		return addScript("J('#np_id_category').focus();");
 
 	}

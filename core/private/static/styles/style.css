@@ -8,21 +8,21 @@
 /**
  * GLOBAL
  */
-.CLEAR{
+.clear{
 	clear:both;
 }
 
-HTML, BODY{
+html, body{
 	margin:0px;
 	padding:0px;
 	color:#000000;
 	font-family:Arial, Geneva, Helvetica, sans-serif;
 	font-size:10px;
 }
-BODY{
+body{
 	position:relative;
 	padding-top:40px;
-	background-image:-webkit-gradient(linear, right bottom, left bottom, from(#eaedfd), to(#fff));
+	background-image:linear-gradient(135deg, #eeeed0, #fff);
 }
 
 
@@ -50,17 +50,17 @@ BODY{
 	text-align:right;
 	margin:0px 20px;
 }
-#loggedAs > SPAN, #navSteps > SPAN{
+#loggedAs > span, #navSteps > span{
 	color:#999999;
 }
-#navSteps A{
+#navSteps a{
 	color:#ffffff;
 	text-decoration:none;
 }
-#main_navBar A{
+#main_navBar a{
 	z-index:600;
 }
-#main_navBar IMG{
+#main_navBar img{
 	height:20px;
 	width:20px;
 	padding:2px 4px;
@@ -68,7 +68,7 @@ BODY{
 	text-decoration:none;
 	border:none;
 }
-#main_navBar IMG.navMod:hover{
+#main_navBar img.navMod:hover{
 	position:relative;
 	top:-6px;
 	left:-8px;
@@ -139,18 +139,15 @@ BODY{
 }
 #notifications.errorStatus   > img.errorStatus,
 #notifications.successStatus > img.successStatus,
-#notifications.warningStatus > img.warningStatus{
-	display:block;
-}
+#notifications.warningStatus > img.warningStatus{ display:block; }
 #notifications.errorStatus  { background-image:linear-gradient(#e0f0ff, #c09898); color:#400000; }
 #notifications.successStatus{ background-image:linear-gradient(#e0f0ff, #78a078); color:#400000; }
 #notifications.warningStatus{ background-image:linear-gradient(#e0f0ff, #b0b078); color:#404000; }
 
 
-/***************
-** _ M A I N   F R A M E   /   P R I M A R Y   E L E M E N T S
-***************/
-
+/**
+ * MAIN FRAME / PRIMARY ELEMENTS
+ */
 #main_menu{
 	position:fixed;
 	top:33px;
@@ -164,13 +161,13 @@ BODY{
 	background-image:linear-gradient(#e0e0e0, #003366);
 	overflow:auto;
 }
-	#menuDiv{
-		display:none;
-		width:240px;
-		margin:0px;
-		padding:0px;
-		font-family:Geneva, Arial, Helvetica, sans-serif;
-	}
+#menuDiv{
+	display:none;
+	width:240px;
+	margin:0px;
+	padding:0px;
+	font-family:Geneva, Arial, Helvetica, sans-serif;
+}
 
 #main_box{
 	margin-top:0px;
@@ -189,10 +186,9 @@ BODY{
 }
 
 
-/***************
-** _ M A I N   F R A M E   /   S E C O N D A R Y   E L E M E N T S
-***************/
-
+/**
+ * MAIN FRAME / SECONDARY ELEMENTS
+ */
 #main_foot{
 	position:fixed;
 	bottom:0px;
@@ -202,18 +198,17 @@ BODY{
 	background:#fff;
 	text-align:center;
 }
-	#main_foot span{
-		font-size:12px;
-		color:#000000;
-		font-family:Verdana, Arial, Helvetica, sans-serif;
-		font-variant:small-caps;
-	}
+#main_foot span{
+	font-size:12px;
+	color:#000000;
+	font-family:Verdana, Arial, Helvetica, sans-serif;
+	font-variant:small-caps;
+}
 
 
-/***************
-** _ M A I N   F R A M E   /   M E N U
-***************/
-
+/**
+ * MAIN FRAME / MENU
+ */
 .menuGroup{
 	padding:30px 2px 8px 14px;
 	color:#400000;
@@ -222,7 +217,7 @@ BODY{
 	font-size:13px;
 }
 
-.menuItem > A, .disabledMenuItem > A{
+.menuItem > a, .disabledMenuItem > a{
 	display:block;
 	width:100%;
 	padding:1px 0px;
@@ -231,15 +226,15 @@ BODY{
 	text-indent:20px;
 	font-size:12px;
 }
-.menuItem > A{
+.menuItem > a{
 	color:#400000;
 }
-.disabledMenuItem > A{
+.disabledMenuItem > a{
 	color:#909090;
 	cursor:default;
 }
 
-.menuItem > A:hover{
+.menuItem > a:hover{
 	color:#106060;
 	background:#e0c090;
 }
@@ -248,13 +243,13 @@ BODY{
 	background-image:linear-gradient(#e0e0e0, #003366);
 	border-radius:0px 20px 20px 0px;
 }
-.menuItem.currentPage A{
+.menuItem.currentPage a{
 	background:none;
 	color:#ffb850;
 	font-size:13px;
 	font-weight:bold;
 }
-.menuItem.currentPage > A:hover{
+.menuItem.currentPage > a:hover{
 	color:#cccccc;
 }
 
@@ -271,11 +266,10 @@ BODY{
 }
 
 
-/***************
-** D O M   T A G S
-***************/
-
-LEGEND{
+/**
+ * DOM TAGS
+ */
+legend{
 	border-left:solid 2px #036;
 	border-right:solid 2px #036;
 	color:#036;
@@ -285,7 +279,7 @@ LEGEND{
 	padding:4px;
 }
 
-BUTTON, .button{
+button, .button{
 	margin:20px;
 	margin-left:0px;
 	padding:2px 8px;
@@ -302,12 +296,12 @@ BUTTON, .button{
 
 
 }
-BUTTON:hover, .button:hover{
+button:hover, .button:hover{
 	background:#d0d0da;
 	color:#000000;
 }
 
-HR.sep{
+hr.sep{
 	background-color:#6E89A7;
 	color:#6E89A7;
 	height:2px;
@@ -318,7 +312,6 @@ HR.sep{
 /**
  * BOXES
  */
-
 .linkLike{
 	color:#0000cc;
 	font-size:1em;
@@ -426,7 +419,7 @@ HR.sep{
 	color:#0000e0;
 	cursor:pointer;
 }
-#main_box H2{
+#main_box h2{
 	margin-top:30px;
 	padding:5px;
 	color:#330000;
@@ -439,25 +432,23 @@ HR.sep{
 }
 
 
-/***************
-** T A B L E S
-***************/
-TABLE.data{
+/**
+ * TABLES
+ */
+table.data{
 	width:100%;
 	padding:2px 2px 2px 2px;
 	border-collapse:collapse;
 	background:#ffffff;
 	border-radius:8px;
-
-
 }
-TABLE.data TD{
+table.data td{
 	padding:4px 5px;
 	margin-left:-2px;
 	font-size:12px;
 	font-family:Arial, Helvetica, sans-serif;
 }
-TABLE.data TD DIV{
+table.data td div{
 	min-width:60px;
 }
 .tableOutterWrapper{
@@ -475,27 +466,20 @@ TABLE.data TD DIV{
 	background:#eaeaf5;
 	border-radius:8px;
 	box-shadow:#000000 2px 2px 5px;
-
-
 }
 .tableWrapper{
 	height:auto;
 	width:auto;
 	overflow:hidden;
 }
-.tableColumnSearch{
-	height:16px;
-	width:16px;
-	cursor:pointer;
-}
 
-.data IMG{
+.data img{
 	height:14px;
 	width:14px;
 	margin:3px;
 	padding:0px;
 }
-.data IMG:hover{
+.data img:hover{
 	position:relative;
 	bottom:-2px;
 	right:3px;
@@ -509,53 +493,30 @@ TABLE.data TD DIV{
 /**
  * SHOW PAGE (iframe paralel content)
  */
-
-.ifrForShowPage{
-	position:fixed;
-	top:0px;
-	bottom:0px;
-	left:0px;
-	right:0px;
-	height:100%;
-	width:100%;
-	margin:0px;
-	padding:0px;
-	z-index:2500;
-	visibility:hidden;
-	overflow:hidden;
-}
+.ifrForShowPage{ position:fixed; top:0px; bottom:0px; left:0px; right:0px; height:100%; width:100%; margin:0px; padding:0px; z-index:2500; visibility:hidden; overflow:hidden; }
 
 /**
  * LISTS
  */
-TABLE.simpleList{ border:solid 1px #000000; border-left:none; }
-TABLE.simpleList INPUT{ margin:0px; width:99%; }
-TABLE.simpleList TH{ padding:5px 5px; background-image:linear-gradient(#336699, #e0e0e0); }
-TABLE.simpleList TH, TABLE.simpleList TD{ border-left:solid 1px #909090; border-bottom:solid 1px #909090; white-space:nowrap; }
-TABLE.simpleList TR.addItemToSimpleList TD{ border-color:#036; }
-TABLE.simpleList .noResMsg{ background:#ffffff; padding:20px 0px 30px 0px; font-weight:bold; }
-TABLE.simpleList.data{ background:#036; }
-TABLE.simpleList .addItemToSimpleList .tip{ display:none; color:#ffffff; position:absolute; margin-left:-6px; padding:3px 5px; background:#036; }
-TABLE.simpleList .addItemToSimpleList IMG{ margin:0px; height:24px; width:24px; }
-TABLE.simpleList .addItemToSimpleList IMG:hover{ top:-2px; height:28px; width:28px; margin-bottom:-4px; opacity:1; }
-TABLE.simpleList .addItemToSimpleList SPAN{ float:right; padding:4px 12px; color:#036; text-shadow:#ffffff 1px 1px 3px; font-weight:bold; font-size:14px; cursor:pointer; }
-TABLE.simpleList .addItemToSimpleList:hover SPAN{ color:#ffffff; text-shadow:#000000 1px 1px 1px; }
-#infoSummary > DIV{ padding:10px 20px; }
-TABLE.simpleList TD:first-child{ white-space:normal; width:100%; }
-TABLE.simpleList .simpleListCreate{ white-space:nowrap; }
+table.simpleList{ border:solid 1px #000000; border-left:none; }
+table.simpleList input{ margin:0px; width:99%; }
+table.simpleList th{ padding:5px 5px; background-image:linear-gradient(#336699, #e0e0e0); }
+table.simpleList th, table.simpleList td{ border-left:solid 1px #909090; border-bottom:solid 1px #909090; white-space:nowrap; }
+table.simpleList tr.addItemToSimpleList td{ border-color:#036; }
+table.simpleList .noResMsg{ background:#ffffff; padding:20px 0px 30px 0px; font-weight:bold; }
+table.simpleList.data{ background:#036; }
+table.simpleList .addItemToSimpleList img{ margin:0px; height:24px; width:24px; }
+table.simpleList .addItemToSimpleList img:hover{ top:-2px; height:28px; width:28px; margin-bottom:-4px; opacity:1; }
+table.simpleList .addItemToSimpleList span{ float:right; padding:4px 12px; color:#036; text-shadow:#ffffff 1px 1px 3px; font-weight:bold; font-size:14px; cursor:pointer; }
+table.simpleList .addItemToSimpleList:hover span{ color:#ffffff; text-shadow:#000000 1px 1px 1px; }
+#infoSummary > div{ padding:10px 20px; }
+table.simpleList td:first-child{ white-space:normal; width:100%; }
+table.simpleList .simpleListCreate{ white-space:nowrap; }
 
 .tableTitles{ height:18px;position:relative;width:auto; margin:0px -3px 5px -3px;padding:7px 0px 9px 0px;text-align:left;font-size:14px;color:#303000; font-weight:bold;font-family:"Times New Roman", Times, serif;white-space:nowrap;overflow:hidden;z-index:50; border:solid 1px #503030; border-radius:12px;   box-shadow:#000000 2px 1px 5px;   }
 .tableTitles div{ display:none;float:left;position:relative;margin:0px 5px;padding:0px;border:none;text-indent:1px;overflow:hidden; }
-
-/**
- * TABLE SEARCH
- */
-#TSBox{ position:absolute; height:50px; width:203px; margin-top:-90px; padding:5px 10px; background:#003060; border:ridge 2px #003000; display:none; z-index:200; border-radius:6px; box-shadow:#a0a0a0 3px 3px 4px; }
-#TSBox > DIV{ font-family:Arial, Helvetica, sans-serif; font-size:11px; font-weight:bold; color:#c0c0c0; }
-#TSBox > DIV > SPAN{ position:relative; left:3px; font-size:13px; color:#ccddaa; text-shadow:none; }
-#TSInput{ height:1.5em; width:200px; margin:5px 0px; background:#ccddaa; border:2px solid #000000; }
 .tblTools{ float:right; width:20px !important; }
-.listRows, .tblTools IMG{ cursor:pointer; }
+.listRows, .tblTools img{ cursor:pointer; }
 
 /**
  * COMBO LIST
@@ -570,19 +531,19 @@ TABLE.simpleList .simpleListCreate{ white-space:nowrap; }
  * FORMTABLE
  */
 .infoBlocks{ float:left; margin:10px; padding:10px 0px; background:#fff; border:solid 1px #d0d0e0; border-radius:8px;   box-shadow:#909095 3px 3px 5px;   }
-.infoBlocks > DIV{ display:inline-block; zoom:1; /* IE */ *display: inline;	/* IE */ }
-.infoBlocks TH{ text-indent:0px !important; text-align:right !important; color:#000000 !important; }
-.infoBlocks TD{ text-indent:0px !important; color:#000060 !important; }
+.infoBlocks > div{ display:inline-block; zoom:1; /* IE */ *display: inline;	/* IE */ }
+.infoBlocks th{ text-indent:0px !important; text-align:right !important; color:#000000 !important; }
+.infoBlocks td{ text-indent:0px !important; color:#000060 !important; }
 .FormTableBox{ float:left; border:solid 1px #202020; text-align:left; padding:10px; margin-bottom:10px; margin-right:10px; box-shadow:#808080 3px 3px 5px;   }
 .infoBlocks .FormTableBox{ float:none; margin:0px 15px; border:solid 1px #e0e0f0; }
 .FormTable{margin:0px 20px;border-collapse:collapse;font-size:12px;}
 .FormTablePreText{float:right; margin-right:10px; text-align:right;}
-.FormTable TR{white-space:nowrap;}
-.FormTable TH{height:1.4em;width:130px;padding:5px 10px 2px 3px;font-weight:normal;text-indent:15px;white-space:nowrap;}
-.FormTable TD{color:#002060;}
+.FormTable tr{white-space:nowrap;}
+.FormTable th{height:1.4em;width:130px;padding:5px 10px 2px 3px;font-weight:normal;text-indent:15px;white-space:nowrap;}
+.FormTable td{color:#002060;}
 .FormTable .FormTableTitle{padding-top:16px; padding-bottom:8px; text-align:left;font-size:13px;font-weight:bold;text-indent:0px;}
-.FormTable INPUT.input, .FormTable INPUT.inputFocused{width:150px;}
-.FormTable SELECT{width:154px;}
+.FormTable input.input, .FormTable input.inputFocused{width:150px;}
+.FormTable select{width:154px;}
 .FormTable .FormTableSubmitLine{text-align:left;}
 
 
@@ -590,10 +551,10 @@ TABLE.simpleList .simpleListCreate{ white-space:nowrap; }
  * AGENDA
  */
 #agendaTbl{ width:100%; empty-cells:show; }
-#agendaTbl TD{ height:270px; width:25%; padding:0px 2px; border:solid 2px #808090; border-radius:6px;   box-shadow:#606065 2px 2px 3px;   vertical-align:top; }
+#agendaTbl td{ height:270px; width:25%; padding:0px 2px; border:solid 2px #808090; border-radius:6px;   box-shadow:#606065 2px 2px 3px;   vertical-align:top; }
 #agendaTbl .noResMsg{ margin:0px; padding:25px 0px; font-weight:bold; }
 .agenda_dayName{ padding:0px 3px; color:#b09d9d; font-family:monospace, Arial; font-size:24px; cursor:pointer; }
-.agenda_dayName.agenda_today, #agendaTbl TD:hover .agenda_dayName{ color:#907d7d; font-weight:bold; }
+.agenda_dayName.agenda_today, #agendaTbl td:hover .agenda_dayName{ color:#907d7d; font-weight:bold; }
 .agenda_dayDate{ padding:0px 5px; font-size:11px; cursor:pointer; }
 .agenda_dayWrapper{ position:relative; height:100%; }
 .agendaHalfDays .agenda_dayWrapper{ height:45%; }
@@ -604,12 +565,12 @@ TABLE.simpleList .simpleListCreate{ white-space:nowrap; }
 .agenda_eventInfo{ color:#003300; font-weight:bold !important; }
 .eventClosed{ background:#f0ffc0; background-image:linear-gradient(#f0ffe8, #f0ffa0); }
 .eventClosed .agenda_eventText{ color:#000000; }
-IMG.agenda_eventUser{ float:left; height:40px; width:30px; margin-bottom:2px; margin-right:3px; }
-IMG.agenda_eventType{ float:right; height:30px; width:30px; margin:3px; }
+img.agenda_eventUser{ float:left; height:40px; width:30px; margin-bottom:2px; margin-right:3px; }
+img.agenda_eventType{ float:right; height:30px; width:30px; margin:3px; }
 #agenda_move{ position:relative; text-align:center; margin:0px 300px; }
 #btn_createEvent{ float:right; margin-right:5px; }
-#agenda_move IMG{ height:24px; width:24px; margin:0px 2px; cursor:pointer; }
-#agenda_move IMG:hover{ opacity:0.9; }
+#agenda_move img{ height:24px; width:24px; margin:0px 2px; cursor:pointer; }
+#agenda_move img:hover{ opacity:0.9; }
 #agenda_eventInfo{ display:none; }
 .modalEventInfo{ padding:5px; border:solid 2px #000000; top:100px; left:200px; right:200px; height:auto; margin:0px; font-size:12px; }
 .agenda_eventInfoInner{ position:relative; width:99%; height:99%; margin:0.5%; }
@@ -617,7 +578,7 @@ IMG.agenda_eventType{ float:right; height:30px; width:30px; margin:3px; }
 .eventInfoTitle{ padding:10px; padding-bottom:3px; margin-left:20px; font-size:14px; font-weight:bold; color:#300; }
 .eventInfoSubTitle{ padding:0px 10px 20px 10px; margin-left:20px; font-size:28px; font-weight:bold; color:#000; }
 .eventInfoTbl{ margin:10px; empty-cells:show; }
-.eventInfoTbl TH{ text-align:right; width:120px; border-bottom:dotted 1px #e0e0e0; }
+.eventInfoTbl th{ text-align:right; width:120px; border-bottom:dotted 1px #e0e0e0; }
 .eventCustomer{ color:#603000; font-weight:bold; cursor:pointer; }
 .eventInfo_Creator{ float:left; }
 .agenda_customer{ color:#600000; font-size:13px; text-transform:lowercase; font-variant:small-caps; }
@@ -631,23 +592,9 @@ IMG.agenda_eventType{ float:right; height:30px; width:30px; margin:3px; }
 .eventClosedMsg{ text-align:center; color:#000000; margin:30px 0px 20px 0px; }
 .eventRescheduled{ display:none; background:#f0ccc0; }
 .eventInfoRescheduled{ color:#993300; font-size:18px; font-weight:bold; font-family:Arial, Helvetica, sans-serif; text-transform:uppercase; }
-.eventTools{
-	position:absolute;
-	top:8px;
-	right:45px;
-	overflow:hidden;
-}
-.eventTools img{
-	position:relative;
-	right:-300px;
-	height:24px;
-	width:24px;
-	margin:0px 2px;
-}
-#ui-datepicker-div{
-	margin-top:30px;
-	margin-left:-87px;
-}
+.eventTools{ position:absolute; top:8px; right:45px; overflow:hidden; }
+.eventTools img{ position:relative; right:-300px; height:24px; width:24px; margin:0px 2px; }
+#ui-datepicker-div{ margin-top:30px; margin-left:-87px; }
 
 
 /**
@@ -655,8 +602,8 @@ IMG.agenda_eventType{ float:right; height:30px; width:30px; margin:3px; }
  */
 #tabsBox{ clear:both; float:left; width:100%; position:relative; padding:30px 0px; }
 #tabButtons{ float:left; height:26px; margin-bottom:0px; border-bottom:3px solid #f0f0f0; overflow:hidden; }
-#tabButtons > DIV{ float:left; height:18px; margin-right:4px; padding:4px 8px 2px 8px; border:1px solid #567; border-left:1px solid #a0a0a0; border-radius:0px 6px 0px 0px; background-image:linear-gradient(#506070, #f0f0f0); box-shadow:#c0c0c0 3px 2px 5px; font-size:13px; color:#fff; text-shadow:#000000 2px 2px 4px; text-align:center; font-weight:bold; cursor:pointer; opacity:0.6; }
-#tabButtons > DIV:hover{ color:#000030; opacity:0.8; }
+#tabButtons > div{ float:left; height:18px; margin-right:4px; padding:4px 8px 2px 8px; border:1px solid #567; border-left:1px solid #a0a0a0; border-radius:0px 6px 0px 0px; background-image:linear-gradient(#506070, #f0f0f0); box-shadow:#c0c0c0 3px 2px 5px; font-size:13px; color:#fff; text-shadow:#000000 2px 2px 4px; text-align:center; font-weight:bold; cursor:pointer; opacity:0.6; }
+#tabButtons > div:hover{ color:#000030; opacity:0.8; }
 #tabContent{ clear:both; margin-top:3px; padding-top:0px !important; overflow:hidden; }
 #tabButtons > .selectedTab, #tabButtons > .selectedTab:hover{ height:20px; border-bottom:2px solid #f0f0f0; color:#203050; text-shadow:#ffffff 1px 1px 5px; opacity:1; cursor:default; }
 
@@ -692,3 +639,104 @@ IMG.agenda_eventType{ float:right; height:30px; width:30px; margin:3px; }
 #loadingGif{ display:none; position:fixed; top:50%; left:50%; height:26px; width:150px; margin:-30px 0px 0px -80px; padding:5px 0px; border-radius:4px; background-image:linear-gradient(#000040, #90a3c0); opacity:0.8; z-index:2000; }
 #loadingGif div{ margin-left:8px; color:#ffffe0; font-family:"Times New Roman"; font-size:12px; font-weight:bold; }
 #loadingGif img{ margin-top:3px; height:8px; width:150px; }
+
+snippet{ position:relative; }
+.snp_commonList{ position:relative; clear:both; margin:20px 0px 30px 0px; }
+.snp_comboList{ float:right; margin:20px 10px; z-index:195; }
+.snp_bigTools{ float:left; z-index:200; }
+.snp_viewItem{ position:relative; clear:both; }
+
+
+/**
+ * SNIPPETS : BIGTOOLS
+ */
+.bigTools{ position:relative; left:5px; text-align:center; }
+.bigTools > div{ display:inline-block; zoom:1 /* IE */; *display: inline /* IE */; margin:0px 3px; padding:2px; border:solid 1px #808080; border-bottom-width:2px; border-right-width:2px; border-radius:6px; background-image:linear-gradient(#c0d0df, #7090af); box-shadow:#000000 2px 2px 6px; opacity:0.3; }
+.bigTools > div.btOn{ opacity:1; cursor:pointer; }
+.bigTools > div.btOn:hover{ margin:0px 4px; padding-bottom:3px; background:#7090af; border-width:1px; border-color:#303030; box-shadow:#000000 1px 1px 4px;   }
+.bigTools > div.btOn:hover > img{ height:35px; width:35px; }
+.bigTools img{ height:36px; width:36px; margin:0px 5px; }
+
+
+/**
+ * SNIPPETS : ITEMS : GENERAL
+ */
+
+.snippet_item{ clear:both; margin:10px; padding:10px; text-align:center; opacity:0.8; }
+.snippet_item > span{ display:block; position:relative; height:18px; padding:8px 10px; border-radius:12px;   box-shadow:#000000 2px 1px 5px;   white-space:nowrap; overflow:hidden; z-index:50; background-image:linear-gradient(#203050, #e4e5e8); font-size:16px; font-weight:bold; font-family:"Times New Roman", Times, serif; color:#ffffff; }
+.snippet_item > span:hover{ color:#ffffe0; }
+.snippet_item > span > strong{ color:#302050; }	/* Debugging */
+.snippet_item > div{ display:inline-block; vertical-align:middle; margin:10px; margin-top:20px; padding:10px; border-top:solid 1px #c0c0d0; border-left:solid 1px #c0c0d0; border-radius:6px;   box-shadow:#404045 4px 4px 6px;   text-align:left; background:#ffffff; }
+.snippet_item table{ margin:20px 30px; }
+.snippet_item th{ height:1.5em; padding-left:30px; padding-right:5px; white-space:nowrap; text-indent:0px !important; text-align:right !important; color:#606090 !important; }
+.snippet_item td{ min-width:200px; text-indent:0px !important; color:#000060 !important; }
+
+
+/**
+ * SNIPPETS : CREATE PAGE
+ */
+.createForm div{ display:block; }
+.createForm textarea{ height:100px; width:350px; }
+.createForm input[type=text]{ width:200px; }
+.createForm input.calendar{ width:80px; }
+.createForm input.time_input{ width:60px; }
+.createForm select{ width:205px; }
+.snippet_submitRow{ padding-top:20px; }
+
+/**
+ * SNIPPETS : VIEW PAGE
+ */
+.embeddedView .infoData{ background:none; border:none; }
+.embeddedView .infoData > span{ display:none; }
+.embeddedView .infoData > div{ margin:0px 10px; }
+.embeddedView .infoData > div > table{ margin:10px 20px; }
+.embeddedView .infoData > div > table td{ max-width:180px; }
+.viewItemEditable{ position:relative; overflow:visible; cursor:pointer; }
+.viewItemEditable > input{ position:absolute; top:-2px; left:-2px; right:38px; height:100%; }
+.viewItemEditable > img{ float:right; height:16px; width:16px; margin-left:3px; cursor:pointer; }
+.snippetFrozenField{ color:#606050; }		/* Non-edittable field */
+.emptyFieldMsg{ position:static; }
+
+/**
+ * SNIPPETS : LISTS : GENERAL
+ */
+.listWrapper{ height:auto; width:auto; overflow:hidden; }
+.listPreLoad{ padding:37px 5px; text-align:center; color:#a0b0d0; font-family:"Times New Roman", Times, serif; font-size:16px; font-weight:bold; }
+.listPreLoad img{ height:30px; width:30px; margin:0px 10px; vertical-align:middle; }
+.innerListEmpty{ color:#603020; }
+.innerList{ position:relative; width:100%; padding:2px 2px 2px 2px; border-collapse:collapse; border-radius:8px;   }
+.innerList td{ padding:4px 2px; font-size:12px; font-family:Arial, Helvetica, sans-serif; }
+.innerList td > div{ min-width:70px; }
+.innerListRow{ border-top: solid 1px #ffffff; }
+.selectedListRow{ border-top: solid 1px #ffffa0; border-bottom: solid 1px #ffffa0; padding-bottom:1px; background:#cfcfca; }
+
+/**
+ * SNIPPETS : LISTS : TOOLS
+ */
+.innerListTools > div{ min-width: 180px; padding:0px 3px; text-align:right; white-space:nowrap; }
+.innerListTools > div > img{ height:18px; width:18px; padding:0px; margin:2px 2px 0px 0px; cursor:pointer; }
+.innerListTools > div > img:hover{ position:relative; left:-2px; height:26px; width:26px; margin:-2px -4px -4px -2px; opacity:0.6; }
+
+/**
+ * SNIPPETS : LISTS : TITLES
+ */
+.listTitles{ height:18px; position:relative; width:auto; margin:0px -6px 5px -6px; padding:8px 0px 9px 5px; text-align:left; font-size:14px; font-weight:bold; font-family:"Times New Roman", Times, serif; border-radius:12px;   box-shadow:#000000 2px 1px 5px;   white-space:nowrap; overflow:hidden; z-index:50; background-image:linear-gradient(#203050, #e4e5e8); }
+.listTitles > div{ position:absolute; margin:0px 5px; padding:0px; text-indent:6px; color:#ffffff; overflow:hidden; }
+.listTitles > div:hover{ color:#ffffe0; }
+.listTitles .tablesearch{ text-align:right; }
+.listTitles .tablesearch input{ height:1.1em; width:120px; padding-left:20px; background:#fff url(../images/snippet/buttons/search.png) no-repeat 2px 1px; }
+
+/**
+ * SNIPPETS : COMBO LIST
+ */
+.snp_comboListBox{ display:inline-block; margin:0px !important; padding:6px 8px; border:solid 1px #909095; border-radius:4px; background-image:linear-gradient(#e0f0ff, #b0a8b8); box-shadow:#808080 3px 3px 5px; max-width:99%; }
+.comboList{ max-width:99%; }
+.infoPageTools{ float:right; display:block; padding:8px 12px; }
+.infoPageTools:hover{ background:#cccce0; }
+#firstLoginMsg{ color:#600000; font-size:12px; font-weight:bold; }
+
+/**
+ * SNIPPETS : COMMON LIST
+ */
+.commonListWrapper{ clear:both; padding:5px; margin:0px 5px 15px 5px; z-index:190; }
+.commonListInnerWrapper{ width:auto; min-height:100px; padding:2px; margin:0px; border:solid 1px #503030; background:#eaeaf5; border-radius:8px; box-shadow:#000000 2px 2px 5px; }

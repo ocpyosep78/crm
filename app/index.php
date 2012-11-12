@@ -151,7 +151,6 @@ if (loggedIn())
 {
 	oXajax()->registerFunction('logout');
 	oXajax()->registerFunction('takeCall');
-	oXajax()->registerFunction(array('updateList', oLists(), 'updateList'));
 	oXajax()->registerFunction(array('switchTab', oTabs(), 'switchTab'));
 	oXajax()->registerFunction(array('addSnippet', oSnippet(), 'addSnippet'));
 }
@@ -176,16 +175,6 @@ if (oNav()->inFrame)
 }
 
 
-
-/***************
-** M O D U L E S			/* TEMP */ /*
-***************/
-
-oPageCfg()->add_jScripts(SNIPPET_PATH.'/output/scripts/Snippet.js');
-oPageCfg()->add_styleSheets(SNIPPET_PATH.'/output/styles/Snippet.css');
-
-
-
 /***************
 ** P A G E   M A N A G E R
 ***************/
@@ -193,12 +182,12 @@ oPageCfg()->add_styleSheets(SNIPPET_PATH.'/output/styles/Snippet.css');
 # User regularly logged in
 if (loggedIn())
 {
-	require_once(CORE_PRIVATE.'pageMgr.php');
+	require_once(CORE_PRIVATE . 'pageMgr.php');
 }
 elseif (!isXajax())
 {
 	oPageCfg()->set_appTitle('Iniciar sesion');
-	oPageCfg()->set_content(CORE_TEMPLATES.'login.tpl');
+	oPageCfg()->set_content(CORE_TEMPLATES . 'login.tpl');
 	oNav()->processQueuedMsg();
 }
 

@@ -7,7 +7,7 @@
 function testResponse($input)
 {
 	$res = '<pre>' . var_export($input, true) . '</pre>';
-	$cmd = 'jQuery("#test").html("' . addslashes($res) . '")';
+	$cmd = 'jQuery("#test").html("' . nl2br(addslashes($res)) . '")';
 
 	FileForm::addResponse($cmd);
 }
@@ -21,13 +21,11 @@ FileForm::processRequests();
 	<title>FileForm Example</title>
 
 	<script type='text/javascript' src='//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js'></script>
+	<script type='text/javascript' src='fileform.js'></script>
 	<script type='text/javascript'>
-	  $(function(){
-		$('body').one('submit', 'form:has(input[type="file"][ffcb])', function(){
-			$('<iframe />', {id:'fffr', name:'fffr'}).hide().appendTo($('body'));
-			var cb = $(this).find('input[type="file"][ffcb]').attr('ffcb');
-			$(this).append($('<input type="hidden" name="ffcb" value="'+cb+'" />'))
-				.attr({target:'fffr', method:'post', enctype:'multipart/form-data'});
+	  jQuery(function($){
+		$(':submit').click(function(){
+			$('test').html('');
 		});
 	  });
 	</script>
@@ -41,7 +39,7 @@ FileForm::processRequests();
 		<input type='text' name='field_1' value="Hello" />
 		<input type='text' name='field_2' value="World!" />
 		<br />
-		<input type='submit' class='button' value='Test' onclick="$('test').html('');" />
+		<input type='submit' value='Test' />
 	</form>
 
 	<br />

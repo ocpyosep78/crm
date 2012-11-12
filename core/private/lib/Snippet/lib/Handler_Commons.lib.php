@@ -180,10 +180,11 @@ abstract class Snippets_Handler_Commons{
 		return $this;
 	}
 
-	private function registerConfig(){
-
+	private function registerConfig()
+	{
 		########## FIELDS ###########
 		$dt = $this->getDataType();
+
 		$fields = $dt ? $this->Source->getFields($dt) : array();
 		$this->fields = $this->assign('fields', $fields);
 
@@ -197,22 +198,24 @@ abstract class Snippets_Handler_Commons{
 
 	}
 
-	private function getDataType(){
-
-		switch( $this->snippet ){
+	private function getDataType()
+	{
+		switch ($this->snippet)
+		{
 			case 'commonList':
 			case 'innerCommonList':
 			case 'simpleList':
 			case 'comboList':
 				return 'list';
+
 			case 'viewItem':
 			case 'editItem':
 			case 'createItem':
 				return preg_replace('/Item$/', '', $this->snippet);
+
 			default:
 				return NULL;
 		}
-
 	}
 
 	/**

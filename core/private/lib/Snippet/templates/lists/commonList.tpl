@@ -6,9 +6,7 @@
 	  {/if}
 	{/foreach}
 
-	<div class='tablesearch' style='text-align:right;'>
-		<input type='text' />
-	</div>
+	<div class='tablesearch' style='text-align:right;'><input type='text' /></div>
   </div>
 
   <div style='clear:both;'></div>

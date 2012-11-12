@@ -146,28 +146,27 @@
 ** OBJECT'S MAIN (TABULAR) LISTS
 ***************/
 
-		public function printList($code=NULL, $modifier=NULL){
-
+		public function printList($code=NULL, $modifier=NULL)
+		{
 			# Update page content (prints list frame)
 			oNav()->updateContent($this->listHTML($code, $modifier), true);
 
 			# Call JS function to start rolling
 			return $this->initializeList();
-
 		}
 
-		public function initializeList(){
+		public function initializeList()
+		{
 			return addScript("initializeList('{$this->code}', '{$this->modifier}', '{$this->src}');");
 		}
 
 		/**
 		 * This function generates a list of any particular object suitable for
 		 * tabular listing (users, customers, products, etc.). It doesn't fill
-		 * it with the actual data, but sets the frame for self#updateList to
-		 * work with (and calls it automatically).
+		 * it with the actual data yet.
 		 */
-		public function listHTML($code=NULL, $modifier=NULL){
-
+		public function listHTML($code=NULL, $modifier=NULL)
+		{
 			$this->code = is_null($code) ? oNav()->getCurrentPage() : $code;
 			$this->modifier = $modifier;
 
@@ -186,55 +185,7 @@
 
 			# Fetch the template and return it
 			return $this->template('listFrame');
-
 		}
-
-		/**
-		 * Called through Xajax, automatically
-		 */
-		public function updateList($uID, $filter, $code, $modifier=NULL, $src=NULL)
-		{
-			$this->code = $code;
-			$this->modifier = $modifier;
-
-			# Import static data
-			$static = $this->getStaticData();
-			$tipField = $static['params']['tipField'];
-
-			# Pre-process filters if function name was defined (in static object's data)
-			if( $static['preProcess'] && function_exists($static['preProcess']) ){
-				call_user_func_array($static['preProcess'], array(&$filter));
-			}
-
-			# Get Data
-			$source = ($src ? $src : $this->code).'List';
-			$data = $this->$source($filter, $modifier);
-
-			# Post-process data if function name was defined (in static object's data)
-			if( $static['postProcess'] && function_exists($static['postProcess']) ){
-				call_user_func_array($static['postProcess'], array(&$data));
-			}
-
-			# Sort defined fields as defined (w/ user-defined function array_sort_keys)
-			foreach( $data as $k => &$v ){
-				array_sort_keys($data[$k], $static['fields']);
-				$data[$k]['tip'] = isset($v[$tipField]) ? $v[$tipField] : '';
-			}
-
-			oSmarty()->assign('params', $static['params']);
-			oSmarty()->assign('fields', $static['fields']);
-			oSmarty()->assign('data', isset($data) ? $data : array());
-			oSmarty()->assign('axns', $static['actions']);
-			oSmarty()->assign('tools', $static['tools']);
-			oSmarty()->assign('infoPage', "{$this->code}Info");
-
-			addAssign('TSCache', 'innerHTML', $this->template('list'));
-			addScript("TableSearch.showResults('{$uID}');");
-
-			return addScript("J('#listWrapper').prop('update')();");
-
-		}
-
 
 
 /***************

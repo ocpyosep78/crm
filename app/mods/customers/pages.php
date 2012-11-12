@@ -36,13 +36,17 @@
 	function page_editCustomers($id=NULL)
 	{
 		$cust = $id ? oSQL()->getCustomer( $id ) : array();
-		if( $id && empty($cust) ) return oNav()->getPage('customers', array(), 'Cliente no encontrado.');
+		if ($id && empty($cust))
+		{
+			return oNav()->getPage('customers', array(), 'Cliente no encontrado.');
+		}
 
 		oFormTable()->clear();
 		oFormTable()->addFormAtt('id', 'createCustomerForm');
 		oFormTable()->setPrefix( $id ? 'editCust_' : 'newCust_' );
 
-		if( $id ){
+		if ($id)
+		{
 			oFormTable()->hiddenRow();
 			oFormTable()->addInput('', array('id' => 'id_customer'), 'hidden');
 		}
@@ -76,48 +80,51 @@
 
 		# Submit line (depends on status and availability of options to change status)
 		$submit = '';
-		if( !$id ){												/* New customer */
+		if (!$id)									/* New customer */
+		{
 			$submit .= "<input type='submit' class='button' value='Guardar' />";
 			$submit .= "<input type='button' class='button freeWidth'".
 				"value='Guardar como posible cliente' id='potentialSubmit' />";
 		}
-		elseif( !empty($cust['since']) ){							/* Confirmed customer */
+		elseif (!empty($cust['since']))				/* Confirmed customer */
+		{
 			$submit .= "<input type='submit' class='button' value='Guardar Cambios' />";
 		}
-		else{														/* Unconfirmed customer */
+		else										/* Unconfirmed customer */
+		{
+
 			$submit .= "<input type='button' class='button' value='Guardar Cambios' id='potentialSubmit' />";
 			$submit .= "<input type='submit' class='button freeWidth' value='Confirmar Cliente y Guardar' />";
 		}
+
 		oFormTable()->addRowHTML("<td colspan='2'>{$submit}</td>");
 
 
 		# Fill Values
-		if( $id ) oFormTable()->fillValues( $cust );
+		$id && oFormTable()->fillValues($cust);
 
 		# Submit line
-		oFormTable()->xajaxSubmit( $id ? 'editCustomers' : 'createCustomers');
+		oFormTable()->xajaxSubmit($id ? 'editCustomers' : 'createCustomers');
 
 		# Attach comboList and get the page
 		oLists()->includeComboList('customers', !empty($cust['since']) ? 'customers' : 'potential', $id);
 		oSmarty()->assign('editCustomerTbl', oFormTable()->getTemplate());
 
 		# Add commands and actions to Xajax response object
-		addScript("\$('".($id ? 'editCust' : 'newCust')."_number').focus();");
-
+		$prefix = $id ? 'editCust' : 'newCust';
+		addScript("J('#{$prefix}_number').focus();");
 	}
 
-	function page_sales(){
-
+	function page_sales()
+	{
 		return oLists()->printList('sales', 'sale');
-
 	}
 
 
 
 	/* TEMP */
-	function page_registerSales(){
-
+	function page_registerSales()
+	{
 		/* TEMP: it should always show current date, but for now we're registering OLD sales */
 		oSmarty()->assign('tmpDate', isset($_GET['f']) ? "{$_GET['f']}-01" : date('Y-m-d'));
-
 	}

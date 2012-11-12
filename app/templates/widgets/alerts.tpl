@@ -121,7 +121,7 @@
 		}
 	};
 
-	J(function(){			/* Alerts & Sync */
+	jQuery(function(){			/* Alerts & Sync */
 		sync.request();
 		var syncItvl = setInterval(sync.request, 5000);
 		var $box = J('#alertsBox');

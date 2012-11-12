@@ -34,6 +34,7 @@ class Snippet_Initialize{
 	private $code;
 	private $params;
 
+
 	public function __construct($code, $params)
 	{
 		$this->Layers = new Snippet_Layers;
@@ -118,12 +119,10 @@ class Snippet_Initialize{
 				return 'lists';
 			case 'createItem':
 			case 'editItem':
-#test( array('snippet' => $snippet, 'code' => $this->code) + $this->params );
 			case 'viewItem':
 				return 'items';
-			case 'block':
-			case 'unblock':
-test( array('snippet' => $snippet, 'code' => $this->code) + $this->params );
+			case 'blockItem':
+			case 'unblockItem':
 			case 'editField':
 			case 'edit':
 			case 'create':
@@ -208,7 +207,7 @@ Array(
 		# For each code it might or might not add other snippets after
 		# or before the main one, to build a composed snippet (usually
 		# meant to be a whole working page)
-		$list = $this->getComposedList( $snippet );
+		$list = $this->getComposedList($snippet);
 
 		# Clear writeTo param to avoid each snippet being printed
 		$writeTo = $this->params['writeTo'];
@@ -216,7 +215,9 @@ Array(
 
 		# Get each individual snippet and tie them in one piece of HTML
 		$HTML = '';
-		foreach( $list as $snp ){
+
+		foreach ($list as $snp)
+		{
 			$HTML .= $this->getSingleSnippet($snp);
 		}
 
@@ -241,7 +242,8 @@ Array(
 		$params['type'] = $snippet;
 
 		# Get Handler, redirect error output on failure
-		$Handler = $this->getHandlerFor( $snippet );
+		$Handler = $this->getHandlerFor($snippet);
+
 		if (!$Handler)
 		{
 			$msg = "Snippets Initialize: Handler not found for {$snippet}";
@@ -296,10 +298,10 @@ Array(
 	 *            integrity of the request. If everything's in place, it
 	 * @returns: a Handler object
 	 */
-	private function getHandlerFor( $snippet ){
-
+	private function getHandlerFor($snippet)
+	{
 		# Get name
-		$hndName = $this->getHandlerName( $snippet );
+		$hndName = $this->getHandlerName($snippet);
 		if( !$hndName ) return NULL;
 
 		# Get class path and name

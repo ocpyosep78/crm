@@ -32,11 +32,8 @@ define('SNIPPET_LIB_PATH', dirname(__FILE__).'/lib');
 define('SNIPPET_HANDLERS_PATH', dirname(__FILE__).'/handlers');
 
 # Paths for output (templates, images, styles, jScripts)
-define('SNIPPET_OUTPUT', SNIPPET_PATH.'/output');
-define('SNIPPET_TEMPLATES', SNIPPET_OUTPUT.'/templates');
-define('SNIPPET_IMAGES', SNIPPET_OUTPUT.'/images');
-define('SNIPPET_STYLES', SNIPPET_OUTPUT.'/styles');
-define('SNIPPET_SCRIPTS', SNIPPET_OUTPUT.'/scripts');
+define('SNIPPET_TEMPLATES', SNIPPET_PATH.'/templates');
+define('SNIPPET_IMAGES', CORE_IMAGES.'snippet');
 
 
 # Path to snippet definition files
@@ -63,16 +60,11 @@ class Snippet{
 	}
 
 	/**
-	 * string getSnippet ( string $snippet , string $code [, array $params] )
-	 * @access: public
+	 * string getSnippet(string $snippet, string $code[, array $params = array()])
+	 *		Creates an Initialize object and calls its getSnippet method,
+	 * forwarding what it returns as its own return value (HTML str expected).
 	 *
-	 * @overview: creates an Initialize object and calls its #getSnippet,
-	 *            forwarding what it returns as its own return value
-	 *            (HTML string expected)
-	 *
-	 * @onError: this function doesn't handle errors
-	 *
-	 * @returns: an HTML string
+	 * @returns: string (HTML)
 	 */
 	public function getSnippet($snippet, $code, $params=array())
 	{
@@ -102,7 +94,7 @@ class Snippet{
 
 		# Make sure the param 'writeTo' is set (it flags the request
 		# as addSnippet, which means it needs to be printed)
-		isset($params['writeTo']) || $params['writeTo'] = PAGE_CONTENT_BOX;
+		isset($params['writeTo']) || ($params['writeTo'] = PAGE_CONTENT_BOX);
 
 		$this->getSnippet($snippet, $code, $params);
 

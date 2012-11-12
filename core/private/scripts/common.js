@@ -137,13 +137,13 @@ function switchNav(e, obj){
 /******************************* D O M R E A D Y ******************************/
 /******************************************************************************/
 
-J(function($){
+jQuery(function($){
 	// Menu animation
 	$('#hideMenu').click(hideMenu);
 	$('#showMenu').click(showMenu);
 
 	$('#notifications').click(function(){
-		J('#notifications').hide({duration:'fast', effect: 'blind'});
+		$('#notifications').hide({duration:'fast', effect: 'blind'});
 	});
 
 	// Activate Debugger
@@ -160,7 +160,7 @@ J(function($){
 	});
 
 	// Activate Loading widget on pageclose/navigation/ajax
-	J(window).on('beforeunload', function(){ showLoading(); });
+	$(window).on('beforeunload', function(){ showLoading(); });
 	xajax.loadingFunction = function(){ showLoading(); };
 	xajax.doneLoadingFunction = function(){ showLoading(false); };
 	xajax.loadingFailedFunction = function(){ showLoading(false); };
@@ -174,8 +174,8 @@ J(function($){
 	$('body').qtip();
 
 	// Activate link2model
-	J('body').on('click', '.link2model', function(e){
-		var atts = (J(this)._for()||'').split('|');
+	$('body').on('click', '.link2model', function(e){
+		var atts = ($(this)._for()||'').split('|');
 		atts[0] && getPage(e, atts[0], [atts[1]]);
 		return false;
 	});
@@ -185,14 +185,9 @@ J(function($){
 		$(this).effect('highlight', {color: '#f0f0e6'}, 300);
 	});
 
-	// Add handler to old comboList widget
-	$('body').on('change', '.comboListOld', function(e){
-		getPage(e, $(this)._for() + 'Info', [$(this).val()]);
-	});
-
 	// Activate agenda eventUnits
-	J('body').on('click', '.eventUnit', function(){
-		xajax_eventInfo(J(this).find('input[type="hidden"]').val());
+	$('body').on('click', '.eventUnit', function(){
+		xajax_eventInfo($(this).find('input[type="hidden"]').val());
 	});
 
 	// FileForm: add pseudo-ajax submit to forms with File inputs
@@ -207,34 +202,26 @@ J(function($){
 
 	// Activate liquid table headers
 	$(window).on('resize menutoggled', function(){
-		$('#listTable').trigger('modified');
-		J('.listWrapper').trigger('fill');
-	});
-
-	$('body').on('modified', '#listTable', function(){
-		setTimeout(function(){
-			var firstRow = $('#listTable tr');
-			$('#tableTitles').toggle(!!firstRow.length)
-				.find('div').each(function(i){
-					var td = firstRow.find('td:eq('+i+')'),
-						lastCol = !this.next('div').length;
-					this.width((td && !lastCol) ? td.width()+1 : '').toggle(!!td);
-				}, true);
-		}, 300);
+		var fixTitles = function(){
+			$('#listTable').trigger('modified');
+			$('.listWrapper').trigger('fill');
+		};
+		// Sometimes it takes some time to get the position/dimension right
+		fixTitles && setTimeout(fixTitles, 200) && setTimeout(fixTitles, 1000);
 	});
 
 	// Actions on content load
-	J('body').on('contentload', function(){
+	$('body').on('contentload', function(){
 		// Apply styles to browse buttons (input type=file)
-		var browse = J('<div />', {'class': 'browse_box'})
-			.append(J('<input type="text" />')
+		var browse = $('<div />', {'class': 'browse_box'})
+			.append($('<input type="text" />')
 				.attr({'class': 'browse_txt', 'disabled': true}))
-			.append(J('<input type="button" value="Examinar..." />')
+			.append($('<input type="button" value="Examinar..." />')
 				.attr({'class': 'browse_btn'}))
-			.append(J('<div />')
+			.append($('<div />')
 				.attr({'class': 'browse_hdn'}));
 
-		J(':file:not(.file_styled)').each(function(i, btn){
+		$(':file:not(.file_styled)').each(function(i, btn){
 			// Put the box next to the real button, then embed this button inside
 			browse.clone(true).insertBefore(btn)
 				.find('.browse_hdn').append(btn);
@@ -245,6 +232,14 @@ J(function($){
 			});
 		}, true);
 	});
+
+	// Activate Snippets
+	$('body').on('snippets', function(){
+		J('snippet[initialized!="true"]').each(function(){
+			this.attr('initialized', 'true');
+			Snippets.add(new Snippet(this));
+		}, true);
+	});
 });
 
 
@@ -253,7 +248,7 @@ J(function($){
 /******************************************************************************/
 
 // Login page only
-J(function($){
+jQuery(function($){
 	var frm = $.forms('formLogin');
 
 	if (frm.length) {
@@ -365,23 +360,229 @@ function closeAgendaEvent(id, msg, resched){
 	var action = resched ? 'cancelar' : 'cerrar';
 	var res = prompt('Escriba un comentario para ' + action + ' el evento:', msg||'');
 
-	if( res === '' ){
+	if (res === '') {
         return say('Se debe incluir un comentario al ' + action + ' un evento.');
-    }else if( res ){
+    } else if(res) {
         var cfm = "Se dispone a " + action + " el evento con el siguiente mensaje:\n\n" + res +
                   "\n\nPulse Cancelar para editar el mensaje o Aceptar para confirmar.";
-        if (confirm(cfm)){
+        if (confirm(cfm)) {
             xajax_closeAgendaEvent(id, res, resched ? 1 : 0);
         } else {
             closeAgendaEvent(id, res, resched);
         }
     }
-};
+}
 
 
-/***********************************************************************************/
-/************************************ L I S T S ************************************/
-/***********************************************************************************/
+/******************************************************************************/
+/****************************** S N I P P E T S *******************************/
+/******************************************************************************/
+
+/**
+ * Central store of loaded Snippet objects
+ */
+var Snippets = {
+	members: {},
+
+	add: function(Snippet){
+		var groupId = Snippet.getGroupId();
+
+		if (groupId)
+		{
+			this.members[groupId] || (this.members[groupId] = {});
+			this.members[groupId][Snippet.getType()] = Snippet;
+		}
+	},
+
+	get: function(groupId, type) {
+		return (this.members[groupId]||{})[type];
+	}
+}
+
+
+
+/**
+ * Snippet Constructor
+ */
+function Snippet(el){
+	var params = J.parseJSON(el.attr('params')),
+	    code = params.code,
+	    type = params.type,
+	    groupId = params.groupId;
+
+	/**
+	 * Public methods (getters)
+	 */
+	this.getType    = function(){ return type;    };
+	this.getCode    = function(){ return code;    };
+	this.getGroupId = function(){ return groupId; };
+
+	/**
+	 * Private "methods"
+	 */
+	function my(sel) {
+		return el.find(sel);
+	}
+
+	function linked(type) {
+		return Snippets.get(groupId, type);
+	}
+
+	function resetBigToolsState(btns) {
+		linked('bigTools') && linked('bigTools').disable().enable(btns||true);
+	}
+
+	/**
+	 * Load a new snippet
+	 */
+	function addSnippet(snippet, opts) {
+		xajax_addSnippet(snippet, code, J.extend({}, params, opts));
+	}
+
+	/**
+	 * Request a new Snippet from the server, or perform an action
+	 */
+	function request(snippet, filters) {
+		var ask = {deleteItem: '¿Realmente desea eliminar este elemento?',
+		           blockItem: '¿Realmente desea bloquear este elemento?'};
+		if (!ask[snippet] || confirm(ask[snippet])) {
+			addSnippet(snippet, {filters: filters, writeTo: ''});
+		}
+	}
+
+	/**
+	 * Snippet especialized initializers
+	 */
+	var methods = {
+		comboList: function() {
+			my('.comboList').change(function(){
+				J(this).val() && request('viewItem', J(this).val());
+			});
+		},
+
+		bigTools: function() {
+			var btns = J.extend(my('[btn][class!="btOff"]'), {
+				// Empty code: all btns; string or array: listed btn(s)
+				get: function(code) {
+					var set = code ? btns.filter(':not([btn])') : this;
+					code && J.each(J.isArray(code) ? code : [code], function(){
+						set = set.add(btns.filter('[btn="'+this+'"]'));
+					});
+					return set;
+				}
+			}).click(function(){
+				var axn = J(this).attr('btn'),
+				    uid = my('[btn]').attr('uid') || '';
+				J(this).hasClass('btOn') && request(axn + 'Item', uid);
+			});
+
+			this.disable = function(code) {
+				btns.get(code).removeClass('btOn');
+				return this;
+			};
+
+			this.enable = function(code) {
+				var btn = (code === true) ? this.enable.ss : btns.get(code);
+				this.enable.ss = btn.addClass('btOn');
+				return this;
+			};
+
+			this.id = function(uid) {
+				return uid ? (this.uid = uid) && this : this.uid;
+			};
+
+			this.enable.ss = J();
+		},
+
+		commonList: function() {
+			resetBigToolsState(['create']);
+
+			my('.listWrapper').on('fill', function(){
+				// Store horizontal position and width of each cell...
+				my('tbody tr:first td').each(function(i){
+					my('.listTitles div:eq('+i+')')
+						.width(J(this).width())
+						.css('left', J(this).position().left);
+				});
+			});
+
+			// Append set filters, and tgt ID to parent's atts
+			addSnippet('innerCommonList', {writeTo: 'lw_'+groupId, page: 1});
+		},
+
+		innerCommonList: function() {
+			el.parents('.listWrapper').trigger('fill');
+
+			my('.innerListRow').click(function(){
+				my('.selectedListRow').removeClass('selectedListRow');
+				J(this).addClass('selectedListRow');
+				linked('bigTools').enable().id(J(this)._for());
+			});
+
+			my('.innerListRow').dblclick(function(){
+				// Create new embeddedView if there was none in current row
+				if (!J(this).next().find('.embeddedView').remove().length) {
+					my('.embeddedView').parents('tr').remove();
+
+					J('<td />', {
+						'id': 'embed_' + groupId,
+						'class': 'embeddedView',
+						'colspan': J(this).find('td').length
+					}).on('embed', function(){
+						this.scrollIntoView();
+					}).appendTo(J('<tr />').insertAfter(this));
+
+					// Request the embeddedView content
+					addSnippet('snp_viewItem', {filters: J(this)._for(),
+					                            writeTo: 'embed_' + groupId});
+				}
+			});
+
+			my('.innerListTools').on('click', '[btn]', function(){
+				var uid = J(this).parents('.innerListRow')._for();
+				request(J(this).attr('btn') + 'Item', uid);
+			});
+		},
+
+		simpleList: function() {
+			// TODO
+		},
+
+		viewItem: function() {
+			resetBigToolsState(['list', 'create', 'edit', 'delete']);
+			J('#embed_'+groupId).trigger('embed');
+		},
+
+		createItem: function(editing){
+			// BigTools buttons
+			editing && resetBigToolsState(['create', 'view']);
+			linked('bigTools').enable('list'); // Enabled either way
+
+			// Form submitting
+			my('.snippet_createForm').submit(function(){
+				var filters = J(this).serializeJSON();
+				return request(editing ? 'edit' : 'create', filters) & false;
+			});
+
+			this.tooltip = function(field, msg) {
+				var tgt = my('.snippet_createForm [name="'+field+'"]');
+				showTip(tgt, msg, 'bottom left', '.snippet_createForm');
+			};
+		},
+
+		editItem: function() {
+			this.createItem(true);
+		}
+	}
+
+	// Call the handler method of this Snippet
+	methods[type] && methods[type].call(this);
+}
+
+
+/******************************************************************************/
+/**************************** D E P R E C A T E D *****************************/
+/******************************************************************************/
 
 function initializeList(code, modifier, src){
 	J('#listWrapper').prop('update', function(){
@@ -414,10 +615,10 @@ function initializeList(code, modifier, src){
 			return false;
 		});
 	});
-};
+}
 
-function initializeSimpleList(){
-	function SimpleList(list, code, modifier){     // Simple List Constructor
+function initializeSimpleList() {
+	function SimpleList(list, code, modifier) {     // Simple List Constructor
 		var my = function(sel) {
 			return list.find(sel);
 		}
@@ -496,3 +697,23 @@ function initializeSimpleList(){
 		});
 	});
 };
+
+jQuery(function($){
+	// Old common list
+	$('body').on('modified', '#listTable', function(){
+		setTimeout(function(){
+			var firstRow = $('#listTable tr');
+			$('#tableTitles').toggle(!!firstRow.length)
+				.find('div').each(function(i){
+					var td = firstRow.find('td:eq('+i+')'),
+						lastCol = !this.next('div').length;
+					this.width((td && !lastCol) ? td.width()+1 : '').toggle(!!td);
+				}, true);
+		}, 300);
+	});
+
+	// Old comboList widget
+	$('body').on('change', '.comboListOld', function(e){
+		getPage(e, $(this)._for() + 'Info', [$(this).val()]);
+	});
+})
