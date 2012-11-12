@@ -24,6 +24,8 @@
 
 	abstract class Connection{
 
+		protected $params;
+
 		private $isDevel;				/* Grants direct access to query/modify for debugging */
 
 		private $conn;					/* Mysql link */
@@ -42,17 +44,19 @@
 ** P R O T E C T E D   M E T H O D S
 ***************/
 
-		public function __construct( $params=NULL ){
-
+		public function __construct($params=NULL)
+		{
 			$this->isDevel = (getSes('id_profile') == 1) || DEVELOPER_MODE;
 
-			if( is_null($params) ) $params = getConnectionParams();
+			!is_null($params) || ($params = getConnectionParams());
+			$this->params = $params;
 
 			$this->conn = mysql_connect($params['host'], $params['user'], $params['pass'], true)
 				or die('Unable to connect to database.');
-			if( !mysql_select_db($params['db'], $this->conn) ){
+			if (!mysql_select_db($params['db'], $this->conn))
+			{
 				$this->isDevel
-					? $this->createDB( $params )
+					? $this->createDB($params)
 					: die('Unable to open database.');
 			}
 
@@ -207,7 +211,7 @@ EOF;
 		 * for more info on how you can dinamically design such queries).
 		 *
 		 * For security reasons, keys must always be given (it might be a problem if
-		 * you intend to update all rows in a table; use your own methods if needed).
+		 * you intend to updateschema all rows in a table; use your own methods if needed).
 		 */
 		public function update($data, $table, $arrKeys=array()){
 			foreach( (array)$arrKeys as $key ){

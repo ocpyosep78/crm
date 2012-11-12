@@ -1,14 +1,5 @@
 <?php
 
-/**
- * AppTemplate - PHP Framework for building CRM-like applications
- * GitHub https://github.com/dbarreiro/crm_template/
- * Copyright (C) 2011 Diego Barreiro <diego.bindart@gmail.com>
- * Licence: GNU GENERAL PUBLIC LICENSE <http://www.gnu.org/licenses/gpl.txt>
- */
-
-
-
 /**********************************************************************************
 **
 ** The app has only one entry point: this file. All calls, ajax or direct, start
@@ -95,6 +86,16 @@ function db($var, $die=true)
 # PHP common and app-specific functions (libs/common.php and FUNCTIONS_PATH)
 require_once('initialize.php');
 
+
+									// TESTING
+									if (!empty($_GET['t']))
+									{
+										require_once('core/private/lib/Snippet/layers/mysql.layer.php');
+
+										$mysql = new SnippetLayer_mysql;
+										$sql = $mysql->setTable('_users')->generate();
+										db($sql);
+									}
 
 
 /***************
