@@ -88,7 +88,7 @@ require_once('initialize.php');
 
 
 									// TESTING
-									if (!empty($_GET['t']))
+									if (isset($_GET['t']))
 									{
 										require_once('core/private/lib/Snippet/layers/connect/mysql.layer.php');
 
@@ -96,8 +96,7 @@ require_once('initialize.php');
 										try
 										{
 											$find = (new snp_Layer_mysql)->feed(array('table' => '_users'))->find();
-											$find->query = 1;
-											db($find->query);
+											db($find->flat());
 										}
 										catch (Exception $e)
 										{

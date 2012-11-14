@@ -115,20 +115,20 @@ class Snippets_Handler_Source extends Snippets_Handler_Defaults{
 				$format = 'named';
 				$params = $this->getSummary('keys');
 				$offset = ($this->params['page']-1) * 10;
-				$sql = $this->getListData($filters);
+				$sql = $this->getListData($filters, $type);
 				break;
 
 			case 'hash':		# asHash
 				$format = 'col';
 				$params = array('key' => $this->getSummary('keysString'),
 								'val' => 'tipToolText');
-				$sql = $this->getListData($filters);
+				$sql = $this->getListData($filters, $type);
 				break;
 
 			case 'item':		# query, type row
 				$format = 'row';
 				$params = NULL;
-				$sql = $this->getItemData( $filters );
+				$sql = $this->getItemData($filters);
 				break;
 		}
 
@@ -500,9 +500,10 @@ return join(' ', $sql);
 
 
 
-	final protected function find($filters=array())
+	final protected function find()
 	{
-		return $this->sqlEngine->find($filters);
+		$args = func_get_args() + array(NULL, NULL, NULL, NULL);
+		return $this->sqlEngine->find($args[0], $args[1], $args[2], $args[3]);
 	}
 
 }

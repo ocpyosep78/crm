@@ -36,12 +36,38 @@ class snp_Layer_mysql extends snp_Database_mysql
 
 		if ($fields === '*')
 		{
-			$this->search->select = array();
+			$cols = array();
 		}
 		else
 		{
-			$this->search->select = array_merge($this->search->select, (array)$fields);
+			$cols = array();
+
+			foreach ((array)$fields as $k => $v)
+			{
+				if (is_numeric($k))
+				{
+					// E.g. ::select('c1 as col1'), select(array("`c2` as 'col2'"))
+					if (preg_match('_(\w+|`\w+`) +as +([\'"][^\'"]+[\'"]|[^\'"]+)_i', $v, $matches))
+					{
+						$cols[trim($matches[2], '`')] = trim($matches[1], '"\'');
+					}
+					// E.g. ::select('col1', 'col2', ...)
+					else
+					{
+						$cols[$v] = $v;
+					}
+				}
+				// E.g. ::select('c1' => 'col1', 'c2' => 'col2', ...)
+				else
+				{
+					$cols[$v] = $k;
+				}
+			}
+
+			$cols = ($cols + $this->search->select);
 		}
+
+		$this->search->select = $cols;
 	}
 
 	public function where($filter)
@@ -102,6 +128,7 @@ class snp_Layer_mysql extends snp_Database_mysql
 	 */
 	public function find()
 	{
+
 		// Apply received arguments (filters, listing fields, order, limit)
 		$args = func_get_args();
 
@@ -140,7 +167,7 @@ class snp_Layer_mysql extends snp_Database_mysql
 			{
 				$this->limit($arg);
 			}
-			else
+			elseif (!is_null($arg))
 			{
 				$msg = 'Cannot interpret parameter #' . ($i+2) . ' passed to find(): ' . var_export($arg, true);
 				throw new Exception($msg);
@@ -185,18 +212,23 @@ class snp_Layer_mysql extends snp_Database_mysql
 		{
 			case 'id':
 				return (is_string($arg) || is_numeric($arg));
+
 			case 'filter':
 				return (is_array($arg) && !is_numeric(key($arg)));
 
 			case 'fields':
-				return (is_array($arg) && is_int(key($arg)))
-				    || (is_string($arg) && preg_match('_^(\*|\w+)$_', $arg));
+				$regex = '_^(\*|(`\w+`|\w+)( +as [\'"]?\w+[\'"]?)?)$_i';
+				return (is_string($arg) && preg_match($regex, $arg))
+				    || is_array($arg);
 
 			case 'order':
-				return (is_string($arg) && preg_match('_[^\w](asc|desc)$_i', $arg));
+				$regex = '_[^\w](asc|desc)$_i';
+				return (is_string($arg) && preg_match($regex, $arg));
+
 			case 'limit':
+				$regex = '_^\d+( *, *\d+)?$_';
 				return (is_numeric($arg))
-				    || (is_string($arg) && preg_match('_^\d+( *, *\d+)?$_', trim($arg)));
+				    || (is_string($arg) && preg_match($regex, trim($arg)));
 
 			default:
 				return false;
@@ -225,13 +257,30 @@ class snp_Layer_mysql extends snp_Database_mysql
 	{
 		extract($this->read());
 
+		$select = array();
+
+		foreach ($columns['own'] as $fqn => $c)
+		{
+			foreach ($this->search->select as $field)
+			{
+			}
+		}
+
 		$fields = array_merge($columns['own'], $columns['src']);
+
+		foreach ($fields as $fqn => $c)
+		{
+			$fields["{$c['TABLE_NAME']}.{$c['COLUMN_NAME']}"] = $fqn;
+			$fields[$c['COLUMN_NAME']] = $fqn;
+		}
+
+//		foreach ($this->select as $
+db($fields);
 
 		foreach ($fields as $fqn => $c)
 		{
 			$col = $c['COLUMN_NAME'];
 			$ord = $tables['ordinals']["{$c['TABLE_SCHEMA']}.{$c['TABLE_NAME']}"];
-
 			$fieldsSql[] = "`t{$ord}`.`{$c['COLUMN_NAME']}` AS '{$fqn}'";
 		}
 
