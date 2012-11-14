@@ -5,7 +5,7 @@
 
 
 
-	class Snippet_Layers{
+	class snp_Layers{
 
 		private $list=array();
 
@@ -19,7 +19,7 @@
 			$path = SNIPPETS_LAYERS."/{$layer}.layer.php";
 			is_file($path) && require_once($path);
 
-			$class = "SnippetLayer_{$layer}";
+			$class = "snp_Layer_{$layer}";
 
 			if (!class_exists($class))
 			{

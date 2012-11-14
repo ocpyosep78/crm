@@ -99,7 +99,7 @@
 
 		# Get pack info if estimate belongs to a pack
 		if( empty($packID) && $estimate['pack'] ) $packID = $estimate['pack'];
-		$pack = $packID ? oSQL()->select('estimates_pack', '*', array('id_estimates_pack' => $packID), 'row') : NULL;
+		$pack = $packID ? oSQL()->doselect('estimates_pack', '*', array('id_estimates_pack' => $packID), 'row') : NULL;
 		oSmarty()->assign('pack', $pack);
 
 		# Initialize estimate keys in case it comes empty
@@ -132,7 +132,7 @@
 
 		# Get pack info if estimate belongs to a pack
 		$packID = $estimate['pack'];
-		$pack = $packID ? oSQL()->select('estimates_pack', '*', array('id_estimates_pack' => $packID), 'row') : NULL;
+		$pack = $packID ? oSQL()->doselect('estimates_pack', '*', array('id_estimates_pack' => $packID), 'row') : NULL;
 		oSmarty()->assign('pack', $pack);
 
 		$isQuote = isQuote( $estimate );

@@ -79,8 +79,8 @@ class Snippet_def_users extends Snippets_Handler_Source{
 
 	protected function getTools()
 	{
-		SnippetLayer_access::addCustomPermit('newCustomerTech');
-		SnippetLayer_access::addCustomPermit('newAgendaEvent');
+		snp_Layer_access::addCustomPermit('newCustomerTech');
+		snp_Layer_access::addCustomPermit('newAgendaEvent');
 
 		return array('view', 'create', 'edit', 'delete');
 	}
@@ -107,48 +107,14 @@ class Snippet_def_users extends Snippets_Handler_Source{
 		);
 	}
 
-
-
-	// TEMP : All these methods below should be automatically created based on the definition
-
-	private function globalFilters(&$filters)
+	protected function getListData($filters=array())
 	{
-		$srch = $filters['*'];
-		$filters = array();
+		$filters['blocked'] = array(0, '!=');
+		$fields = $this->getFieldsFor($type);
 
-		$fields = array_diff($this->getFieldsFor('view'), (array)'>');
-		foreach ($fields as $field)
-		{
-			$filters["`{$field}`"] = $srch;
-		}
+		$data = $this->find($filters, $fields, '0, 10')->flat();
 
-		$filters["`p`.`profile`"] = $srch;
-		$filters["`d`.`department`"] = $srch;
-	}
-
-	protected function getListData($filters=array(), $join='AND')
-	{
-		if (isset($filters['*']))
-		{
-			$this->globalFilters($filters);
-			$join = 'OR';
-		}
-
-		$this->fixFilters($filters, array(
-			'profile'       => '`p`.`profile`',
-			'department'    => '`d`.`department`',
-		));
-
-		$sql = "SELECT	`u`.*,
-						`p`.`profile`,
-						`d`.`department`,
-						CONCAT(`u`.`name`, ' ', `u`.`lastName`) AS 'fullName'
-				FROM `_users` `u`
-				JOIN `_profiles` `p` USING (`id_profile`)
-				JOIN `_departments` `d` USING (`id_department`)
-				WHERE ({$this->array2filter($filters, $join)})
-				AND NOT `blocked`";
-		return $sql;
+		return $data;
 	}
 
 	protected function getItemData($id)

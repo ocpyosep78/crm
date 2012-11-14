@@ -1,6 +1,6 @@
 <?php
 
-	class SnippetLayer_modules{
+	class snp_Layer_modules{
 
 		public function getModule($code, $params=array())
 		{

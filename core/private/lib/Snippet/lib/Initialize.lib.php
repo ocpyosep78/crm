@@ -3,7 +3,7 @@
 /**
  * DEPENDS ON:
  *
- *    class Snippet_Layers (always)
+ *    class snp_Layers (always)
  *        layer ajax, for #addSnippet (on error and on $params['writeTo'])
  *            #display(string $msg, 'error')
  *            #write(string $writeTo, string $HTML)
@@ -37,7 +37,7 @@ class Snippet_Initialize{
 
 	public function __construct($code, $params)
 	{
-		$this->Layers = new Snippet_Layers;
+		$this->Layers = new snp_Layers;
 
 		$this->code = $code;
 

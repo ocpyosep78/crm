@@ -90,11 +90,21 @@ require_once('initialize.php');
 									// TESTING
 									if (!empty($_GET['t']))
 									{
-										require_once('core/private/lib/Snippet/layers/mysql.layer.php');
+										require_once('core/private/lib/Snippet/layers/connect/mysql.layer.php');
 
-										$mysql = new SnippetLayer_mysql;
-										$sql = $mysql->setTable('_users')->generate();
-										db($sql);
+
+										try
+										{
+											$find = (new snp_Layer_mysql)->feed(array('table' => '_users'))->find();
+											$find->query = 1;
+											db($find->query);
+										}
+										catch (Exception $e)
+										{
+											db($e->getMessage());
+										}
+
+										die();
 									}
 
 

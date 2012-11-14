@@ -1,7 +1,7 @@
 <?php
 
-	class SnippetLayer_navigation{
-	
-		
-	
+	class snp_Layer_navigation{
+
+
+
 	}

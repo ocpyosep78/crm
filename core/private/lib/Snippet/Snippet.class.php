@@ -3,7 +3,7 @@
 /**
  * DEPENDS ON:
  *
- *    class Snippet_Layers (always)
+ *    class snp_Layers (always)
  *        layer ajax (always for #addSnippet)
  *            #getResponse()
  *    class Snippet_Initialize (always)
@@ -55,7 +55,7 @@ class Snippet{
 
 	public function __construct(){
 
-		$this->Layers = new Snippet_Layers;
+		$this->Layers = new snp_Layers;
 
 	}
 

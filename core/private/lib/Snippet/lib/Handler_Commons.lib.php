@@ -3,7 +3,7 @@
 /**
  * DEPENDS ON:
  *
- *    class Snippet_Layers
+ *    class snp_Layers
  *        layer ajax
  *            #display( string $msg , string $errType )
  *        layer error
@@ -63,7 +63,7 @@ abstract class Snippets_Handler_Commons{
 
 	public function __construct( $snippet ){
 
-		$this->Layers = new Snippet_Layers;
+		$this->Layers = new snp_Layers;
 
 		$this->Access = $this->Layers->get('access');
 

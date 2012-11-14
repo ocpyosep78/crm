@@ -28,11 +28,11 @@ class Snippets_Handler_Source extends Snippets_Handler_Defaults{
 
 	public function __construct(){
 
-		$this->Layers = new Snippet_Layers;
+		$this->Layers = new snp_Layers;
 
-		$this->sqlEngine = $this->Layers->get( SNIPPETS_SQL_ENGINE );
+		$this->sqlEngine = $this->Layers->get('connect/' . SNIPPETS_SQL_ENGINE);
 
-		$this->Access = $this->Layers->get( 'access' );
+		$this->Access = $this->Layers->get('access');
 
 		$this->warnings = array();
 
@@ -115,8 +115,7 @@ class Snippets_Handler_Source extends Snippets_Handler_Defaults{
 				$format = 'named';
 				$params = $this->getSummary('keys');
 				$offset = ($this->params['page']-1) * 10;
-				$sql = "{$this->getListData($filters)}
-						LIMIT {$offset}, 10";
+				$sql = $this->getListData($filters);
 				break;
 
 			case 'hash':		# asHash
@@ -197,7 +196,7 @@ class Snippets_Handler_Source extends Snippets_Handler_Defaults{
 		$this->buildDBSummary();
 
 		# Build the sql layer and feed it what we have aquired
-		$this->sqlEngine->feed( $this->summary );
+		$this->sqlEngine->feed($this->summary);
 
 		return $this;
 	}
@@ -497,5 +496,13 @@ $sql[] = $this->getQueryConstraints( $constraints );
 return join(' ', $sql);
 
 }
+
+
+
+
+	final protected function find($filters=array())
+	{
+		return $this->sqlEngine->find($filters);
+	}
 
 }

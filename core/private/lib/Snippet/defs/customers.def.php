@@ -72,8 +72,8 @@ class Snippet_def_customers extends Snippets_Handler_Source
 
 	protected function getTools()
 	{
-		SnippetLayer_access::addCustomPermit('newCustomerTech');
-		SnippetLayer_access::addCustomPermit('newAgendaEvent');
+		snp_Layer_access::addCustomPermit('newCustomerTech');
+		snp_Layer_access::addCustomPermit('newAgendaEvent');
 
 		return array('view',
 		             array('newCustomerTech' => 'Nueva ficha técnica para el'),

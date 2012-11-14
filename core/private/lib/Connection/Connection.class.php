@@ -172,7 +172,7 @@ EOF;
 		/**
 		 *
 		 */
-		public function select($table, $fields, $filters=array(), $type='array'){
+		public function doselect($table, $fields, $filters=array(), $type='array'){
 			if( $fields === '*' || $fields === NULL ) $fieldsSQL = '*';
 			else $fieldsSQL = '`'.join('`, `', (array)$fields).'`';
 			$sql = "SELECT {$fieldsSQL}

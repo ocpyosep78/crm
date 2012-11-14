@@ -9,7 +9,7 @@ class Snippet_Tools{
 
 	public static function issueWarning($msg=NULL)
 	{
-		$Layers = new Snippet_Layers;
+		$Layers = new snp_Layers;
 
 		switch (SNIPPET_ERROR_OUTPUT)
 		{

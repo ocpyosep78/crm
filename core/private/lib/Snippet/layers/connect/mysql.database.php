@@ -3,127 +3,27 @@
 require_once(CONNECTION_PATH);
 
 
-class SnippetLayer_mysql extends Connection
+class snp_Database_mysql extends Connection
 {
 
-	private $mainTable;
-	private $tables;
-	private $fields;
-	private $shown;
-	private $keys;
-	private $FKs;
-
-	private $schema;
-	private $table;
+	protected $schema;
+	protected $table;
 
 
-	public function __construct()
+	final protected function getPk()
 	{
-		parent::__construct();
-		$this->schema = $this->params['db'];
+		$structure = $this->read();
+		return $structure['keys']['pri'];
 	}
 
-
-	public function delete($table, $filters)
-	{
-		return parent::delete($table, $filters);
-	}
-
-	public function update($data, $table, $keys)
-	{
-		return parent::update($data, $table, $keys);
-	}
-
-	public function feed($summary)
-	{
-		# We assume Source sends the right keys,
-		# for this is internal and wouldn't be abused
-		foreach ($summary as $k => $v)
-		{
-			$this->$k = $v;
-		}
-
-		return $this;
-	}
-
-
-
-
-
-
-	  //////////////////////////////////////////////////////////
-	 //////////////////////// TESTING /////////////////////////
-	//////////////////////////////////////////////////////////
-
-	public function setTable($table)
-	{
-		$this->table = $table;
-		return $this;
-	}
-
-	public function generate($what=NULL)
-	{
-		switch ($what)
-		{
-			case 'list':
-			default:
-				return $this->sql4List();
-		}
-	}
-
-	private function sql4List()
-	{
-		$fieldsSql = $this->getFieldsSql();
-		$tablesSql = $this->getTablesSql();
-
-		$sql = "SELECT {$fieldsSql}\nFROM {$tablesSql}";
-
-		return $sql;
-	}
-
-	private function getFieldsSql()
-	{
-		extract($this->getStructure());
-
-		$fields = array_merge($columns['own'], $columns['src']);
-
-		foreach ($fields as $fqn => $c)
-		{
-			$col = $c['COLUMN_NAME'];
-			$ord = $tables['ordinals']["{$c['TABLE_SCHEMA']}.{$c['TABLE_NAME']}"];
-
-			$fieldsSql[] = "`t{$ord}`.`{$c['COLUMN_NAME']}` AS '{$fqn}'";
-		}
-
-		return empty($fieldsSql) ? array('*') : join(",\n       ", $fieldsSql);
-	}
-
-	private function getTablesSql()
-	{
-		extract($this->getStructure());
-
-		foreach ($keys['src'] as $k)
-		{
-			$ord = $tables['ordinals']["{$k['sch2']}.{$k['tbl2']}"];
-
-			$f1 = "`t0`.`{$k['col1']}`";
-			$f2 = "`t{$ord}`.`{$k['col2']}`";
-
-			$joins[] = "JOIN `{$k['sch2']}`.`{$k['tbl2']}` `t{$ord}` ON ({$f2} = {$f1})";
-		}
-
-		$sql = "`{$this->schema}`.`{$this->table}` `t0`\n" . join("\n", $joins);
-
-		return $sql;
-	}
-
-	private function getStructure()
+	final protected function read()
 	{
 		static $structure;
 
 		if (!$structure)
 		{
 			$keys    = $this->getKeys($this->schema, $this->table);
+
 			$tables  = $this->getTables($keys['all']);
 			$columns = $this->getColumns($tables['all']);
 
@@ -272,6 +172,92 @@ class SnippetLayer_mysql extends Connection
 		$columns = compact('all', 'own', 'src', 'tgt');
 
 		return $columns;
+	}
+
+}
+
+
+
+
+class snp_Result
+{
+
+	private $__search;      // Query parameters (filters, limit, order, etc.)
+	private $__query;       // The sql query
+	private $__dataset;     // Result (migth be formatted)
+	private $__datatype;    // Result format (array, named, row, col, res, ...)
+
+
+	public function __construct($search, $query, $dataset, $datatype)
+	{
+		$this->__search = $search;
+		$this->__query = $query;
+		$this->__dataset = $dataset;
+		$this->__datatype = $datatype;
+	}
+
+	/**
+	 * array flat()
+	 *      Remove schema and table namespaces from result sets. This might
+	 * mean that some fields will be overwritten, if called the same.
+	 *
+	 * @return array
+	 */
+	public function flat()
+	{
+		static $flat;
+
+		if (is_null($flat))
+		{
+			switch ($this->datatype)
+			{
+				case 'array':
+				case 'named':
+					foreach ($this->dataset as $row_no => $row)
+					{
+						foreach ($row as $field => $val)
+						{
+							$flat[$row_no][end(explode('.', $field))] = $val;
+						}
+					}
+					break;
+
+				default: return $this->dataset;
+			}
+		}
+
+		return $flat;
+	}
+
+
+	/**
+	 * Magic method __get()
+	 *      Together with __set() makes all properties visible but readonly.
+	 *
+	 * @param string $prop
+	 * @return mixed
+	 */
+	public function __get($prop)
+	{
+		if (property_exists($this, "__{$prop}"))
+		{
+			return $this->{"__{$prop}"};
+		}
+	}
+
+	/**
+	 * Magic method __set()
+	 *      Deny creation of undeclared properties.
+	 *
+	 * @param string $prop
+	 * @param mixed $value
+	 */
+	public function __set($prop, $value)
+	{
+		if (property_exists($this, "__{$prop}"))
+		{
+			trigger_error("Attempting to modify readonly property $prop", E_USER_WARNING);
+		}
 	}
 
 }
