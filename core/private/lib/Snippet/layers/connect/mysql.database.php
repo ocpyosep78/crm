@@ -182,18 +182,48 @@ class snp_Database_mysql extends Connection
 class snp_Result
 {
 
-	private $__search;      // Query parameters (filters, limit, order, etc.)
-	private $__query;       // The sql query
-	private $__dataset;     // Result (migth be formatted)
-	private $__datatype;    // Result format (array, named, row, col, res, ...)
+	private $__search;          // Query parameters (filters, limit, order, etc.)
+	private $__query;           // The sql query
+	private $__datatype;        // Result format (array, named, row, col, res, ...)
+	private $__dataset;         // Result (migth be formatted)
+
+	private $__orig_dataset;    // Original result set (unformatted)
+
+	private $caller;            // Sql Layer who initialized this object
 
 
-	public function __construct($search, $query, $dataset, $datatype)
+	public function __construct($search, $query, $dataset, $caller)
 	{
 		$this->__search = $search;
 		$this->__query = $query;
+		$this->__datatype = 'res';
+
 		$this->__dataset = $dataset;
-		$this->__datatype = $datatype;
+		$this->__orig_dataset = $dataset;
+
+		$this->caller = $caller;
+	}
+
+	public function get()
+	{
+		return $this->__dataset;
+	}
+
+	public function convert($to, $atts=NULL)
+	{
+		if (!is_callable(array($this->caller, "res2{$to}")))
+		{
+			throw new Exception("Cannot convert resultset to {$to}");
+		}
+
+		$this->__datatype = $to;
+
+		$method = "res2{$to}";
+
+		$this->caller->$method($this->__orig_dataset, $atts);
+		$this->__dataset = $this->caller->formattedRes;
+
+		return $this;
 	}
 
 	/**
@@ -205,29 +235,41 @@ class snp_Result
 	 */
 	public function flat()
 	{
-		static $flat;
-
-		if (is_null($flat))
+		switch ($this->datatype)
 		{
-			switch ($this->datatype)
-			{
-				case 'array':
-				case 'named':
-					foreach ($this->dataset as $row_no => $row)
-					{
-						foreach ($row as $field => $val)
-						{
-							$flat[$row_no][end(explode('.', $field))] = $val;
-						}
-					}
-					break;
+			case 'res':
+				$this->convert('array');
+				// break intentionally left out
 
-				default: return $this->dataset;
-			}
+			case 'array':
+			case 'named':
+				foreach ($this->__dataset as $k => $row)
+				{
+					foreach ($row as $field => $val)
+					{
+						$rows[$k][end(explode('.', $field))] = $val;
+					}
+				}
+				$this->__dataset = $rows;
+				break;
+
+			case 'row':
+				foreach ($this->__dataset as $field => $val)
+				{
+					$row[end(explode('.', $field))] = $val;
+				}
+
+				$this->__dataset = $row;
+				break;
+
+			default:
+			case 'col':
+				break;
 		}
 
-		return $flat;
+		return $this;
 	}
+
 
 
 	/**

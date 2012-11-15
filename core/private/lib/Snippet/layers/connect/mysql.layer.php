@@ -27,6 +27,11 @@ class snp_Layer_mysql extends snp_Database_mysql
 	}
 
 
+	/**
+	 *
+	 * @param mixed $fields
+	 * @return snp_Layer_mysql
+	 */
 	public function select($fields)
 	{
 		if (!$this->seems('fields', $fields))
@@ -34,40 +39,43 @@ class snp_Layer_mysql extends snp_Database_mysql
 			throw new Exception('Invalid parameter passed to filter()');
 		}
 
-		if ($fields === '*')
-		{
-			$cols = array();
-		}
-		else
-		{
-			$cols = array();
+		is_array($fields) || ($fields = func_get_args());
 
-			foreach ((array)$fields as $k => $v)
+		foreach ($fields as $k => $v)
+		{
+			if (is_numeric($k))
 			{
-				if (is_numeric($k))
+				// E.g. ::select('c1 as col1'), select(array("`c2` as 'col2'"))
+				if (preg_match('_(.+) +as +([\'"][^\'"]+[\'"]|[^\'"]+)_i', trim($v), $matches))
 				{
-					// E.g. ::select('c1 as col1'), select(array("`c2` as 'col2'"))
-					if (preg_match('_(\w+|`\w+`) +as +([\'"][^\'"]+[\'"]|[^\'"]+)_i', $v, $matches))
-					{
-						$cols[trim($matches[2], '`')] = trim($matches[1], '"\'');
-					}
-					// E.g. ::select('col1', 'col2', ...)
-					else
-					{
-						$cols[$v] = $v;
-					}
+					$cols[trim($matches[1], '\'" ')] = trim($matches[2], '\'" ');
 				}
-				// E.g. ::select('c1' => 'col1', 'c2' => 'col2', ...)
+				// E.g. ::select('col1', 'col2', ...)
+				elseif (preg_match('_[^\w\.]_', trim($v, ' `\'"')))
+				{
+					$msg = 'Complex fields and non-alphanumeric field names are required to have an alias.';
+					throw new Exception($msg);
+				}
 				else
 				{
-					$cols[$v] = $k;
+					$cols[$v] = trim(trim($v, '\'" `'));
 				}
 			}
-
-			$cols = ($cols + $this->search->select);
+			// E.g. ::select('c1' => 'col1', 'c2' => 'col2', ...)
+			elseif (preg_match('_\w+_', trim($v, '\'" ')))
+			{
+				$cols[$k] = trim($v, '\'" ');
+			}
+			else
+			{
+				$msg = "Aliases can only contain alphanumeric characters.";
+				throw new Exception($msg);
+			}
 		}
 
-		$this->search->select = $cols;
+		$this->search->select = ($cols + $this->search->select);
+
+		return $this;
 	}
 
 	public function where($filter)
@@ -78,6 +86,8 @@ class snp_Layer_mysql extends snp_Database_mysql
 		}
 
 		$this->search->where = array_merge($this->search->where, $filter);
+
+		return $this;
 	}
 
 	public function order($order)
@@ -88,6 +98,8 @@ class snp_Layer_mysql extends snp_Database_mysql
 		}
 
 		$this->search->order = $order;
+
+		return $this;
 	}
 
 	public function limit($limit)
@@ -98,6 +110,8 @@ class snp_Layer_mysql extends snp_Database_mysql
 		}
 
 		$this->search->limit = $limit;
+
+		return $this;
 	}
 
 	public function setId($id)
@@ -115,6 +129,8 @@ class snp_Layer_mysql extends snp_Database_mysql
 
 		// ::setId() resets filters, if any was set before
 		$this->search->where = array($field => $id);
+
+		return $this;
 	}
 
 	/**
@@ -187,10 +203,10 @@ class snp_Layer_mysql extends snp_Database_mysql
 		       "WHERE {$this->array2filter($where, 'AND', 'LIKE')}\n" .
 		       ($order ? "ORDER BY {$order}\n" : '') .
 		       ($limit ? "LIMIT {$limit}" : '');
-		$res = $this->query($sql, 'named');
+		$res = $this->query($sql);
 
 		// Create a new Result
-		$Result = new snp_Result($this->search, $sql, $res, 'named');
+		$Result = new snp_Result($this->search, $sql, $res, $this);
 
 		// Reset @search object
 		$this->initSearchObj();
@@ -257,34 +273,48 @@ class snp_Layer_mysql extends snp_Database_mysql
 	{
 		extract($this->read());
 
-		$select = array();
+		$select = array_flip($this->search->select);
 
-		foreach ($columns['own'] as $fqn => $c)
+		// Translate each short fieldname to its fully qualified name
+		// If there is a conflict, fields from the main table will have priority
+		foreach (($columns['own'] + $columns['src']) as $fqn => $c)
 		{
-			foreach ($this->search->select as $field)
+			$col = $c['COLUMN_NAME'];
+			$tbl = "{$c['TABLE_NAME']}.{$col}";
+
+			// Find matches with decreasing specificity
+			if (($inc = array_search($fqn, $select))
+			 || ($inc = array_search($tbl, $select))
+			 || ($inc = array_search($col, $select)))
 			{
+				$select[$inc] = $fqn;
 			}
 		}
 
-		$fields = array_merge($columns['own'], $columns['src']);
+		// Update fqns in the real select list
+		$this->search->select = array_flip($select);
 
-		foreach ($fields as $fqn => $c)
+		foreach ($this->search->select as $fqn => $alias)
 		{
-			$fields["{$c['TABLE_NAME']}.{$c['COLUMN_NAME']}"] = $fqn;
-			$fields[$c['COLUMN_NAME']] = $fqn;
+			if (isset($columns['all'][$fqn]))
+			{
+				$col = $columns['all'][$fqn]['COLUMN_NAME'];
+				$sch = $columns['all'][$fqn]['TABLE_SCHEMA'];
+				$tbl = $columns['all'][$fqn]['TABLE_NAME'];
+
+				$ord = $tables['ordinals']["{$sch}.{$tbl}"];
+
+				$fieldsSql[] = "`t{$ord}`.`{$col}` AS '{$fqn}'";
+			}
+			else
+			{
+				$fieldsSql[] = "{$fqn} AS '{$alias}'";
+			}
 		}
 
-//		foreach ($this->select as $
-db($fields);
+		$sql = empty($fieldsSql) ? array('*') : join(",\n       ", $fieldsSql);
 
-		foreach ($fields as $fqn => $c)
-		{
-			$col = $c['COLUMN_NAME'];
-			$ord = $tables['ordinals']["{$c['TABLE_SCHEMA']}.{$c['TABLE_NAME']}"];
-			$fieldsSql[] = "`t{$ord}`.`{$c['COLUMN_NAME']}` AS '{$fqn}'";
-		}
-
-		return empty($fieldsSql) ? array('*') : join(",\n       ", $fieldsSql);
+		return $sql;
 	}
 
 	/**

@@ -92,11 +92,12 @@ require_once('initialize.php');
 									{
 										require_once('core/private/lib/Snippet/layers/connect/mysql.layer.php');
 
-
 										try
 										{
-											$find = (new snp_Layer_mysql)->feed(array('table' => '_users'))->find();
-											db($find->flat());
+											$q = (new snp_Layer_mysql)->feed(array('table' => '_users'))
+												->select('user', '_departments.id_department', 'id_department', "CONCAT(`name`, ' ', `lastName`) As 'fullname'")
+												->find();
+											db($q->convert('col')->get());
 										}
 										catch (Exception $e)
 										{

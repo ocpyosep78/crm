@@ -95,8 +95,17 @@ class Snippets_Handler_Source extends Snippets_Handler_Defaults{
 		# Take the right list of fields from definition file (or defaults)
 		$setFields = $this->getFieldsFor($dt);
 
+		if (!$setFields)
+		{
+			return array();
+		}
+
 		$fields = array_intersect_key(array_flip($setFields), $fieldsAtts);
-		foreach( $fields as $field => &$atts ) $atts = $fieldsAtts[$field];
+
+		foreach ($fields as $field => &$atts)
+		{
+			$atts = $fieldsAtts[$field];
+		}
 
 		return $fields;
 	}

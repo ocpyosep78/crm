@@ -63,6 +63,9 @@ class Snippet_def_users extends Snippets_Handler_Source{
 	{
 		switch ($type)
 		{
+			case 'list':
+				return array('user', 'fullName', 'phone', 'email', 'profile');
+
 			case 'view':
 				return array('user', 'name', 'lastName', 'address', 'phone', 'department', '>',
 				             'email', 'employeeNum', 'position', 'profile', 'last_access');
@@ -110,22 +113,20 @@ class Snippet_def_users extends Snippets_Handler_Source{
 		{
 			default:
 			case 'list':
-				$fields = array('user', 'fullName', 'phone', 'email', 'profile');
 				$filters['blocked'] = array(0, '!=');
-				$limit = '0, 10';
-				return;
+				$fullName = "CONCAT(name, ' ', lastName) AS fullName";
+				$fields = array('user', $fullName, 'phone', 'email', 'profile');
+				$data = $this->find($filters, $fields, '0, 10')->flat();
 				break;
 
 			case 'hash':
+				$filters = array('blocked' => array(0, '!='));
 				$fields = array('user', "CONCAT(`name`, ' ', `lastName`)" => 'fullName');
-				$filters = array();
-				$limit = 0;
+				$data = $this->find($filters, $fields, 0)->convert('col');
 				break;
 		}
 
-		$data = $this->find($filters, $fields, $limit);
-
-		return $data->flat();
+		return $data->get();
 	}
 
 	protected function getItemData($id)

@@ -244,34 +244,41 @@ EOF;
 
 
 /***************
-** P R I V A T E   M E T H O D S
+** C O N V E R T   M E T H O D S
 ***************/
 
-		private function res2bool( $res ){
+		public function res2bool($res)
+		{
 			$this->formattedRes = !!mysql_fetch_array($res);
 		}
 
-		private function res2array( $res ){
+		public function res2array($res)
+		{
 			$this->formattedRes = array();
-			while( $data=mysql_fetch_assoc($res) ) $this->formattedRes[] = $data;
+			while ($data=mysql_fetch_assoc($res))
+			{
+				$this->formattedRes[] = $data;
+			}
 		}
 
-		private function res2row( $res, $field ){
+		public function res2row($res, $field)
+		{
 			$row = mysql_fetch_assoc( $res );
 			$this->formattedRes = $row
 				? ( empty($field) ? $row : $row[$field] )
 				: ( empty($field) ? array() : NULL );
 		}
 
-		private function res2field($res, $field=NULL){
+		public function res2field($res, $field=NULL)
+		{
 			$row = mysql_fetch_array( $res );
 			$this->formattedRes = !is_null($field)
 				? (isset($row[$field]) ? $row[$field] : NULL)
 				: (isset($row[0]) ? $row[0] : NULL);
 		}
 
-		private function res2col($res, $atts){
-
+		public function res2col($res, $atts)
+		{
 			# First, let's see if we have any result at all
 			$data = mysql_fetch_array( $res );
 			if( empty($data) ) return $this->formattedRes = array();
@@ -294,7 +301,8 @@ EOF;
 
 		}
 
-		private function res2named($res, $keys=array()){
+		public function res2named($res, $keys=array())
+		{
 			$this->formattedRes = array();
 			# Make sure keys are given as array, or fix it to be
 			$keys = (array)$keys;
@@ -315,13 +323,15 @@ EOF;
 			}
 		}
 
-		private function res2list( $res ){
+		public function res2list($res)
+		{
 			$this->res2col($res, NULL);
 			$this->formattedRes = "'".join("','", $this->formattedRes)."'";
 		}
 
 
-		private function findError( $silent=false ){
+		private function findError($silent=false)
+		{
 			$this->error = new ErrorSQL($this->conn, $this->sql);
 			if( !mysql_error($this->conn) ) return false;
 			if( !$silent ) $this->error->raiseError();
