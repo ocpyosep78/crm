@@ -261,7 +261,7 @@ EOF;
 			}
 		}
 
-		public function res2row($res, $field)
+		public function res2row($res, $field=NULL)
 		{
 			$row = mysql_fetch_assoc( $res );
 			$this->formattedRes = $row
@@ -277,14 +277,20 @@ EOF;
 				: (isset($row[0]) ? $row[0] : NULL);
 		}
 
-		public function res2col($res, $atts)
+		public function res2col($res, $atts=NULL)
 		{
+			$this->formattedRes = array();
+
 			# First, let's see if we have any result at all
-			$data = mysql_fetch_array( $res );
-			if( empty($data) ) return $this->formattedRes = array();
+			$data = mysql_fetch_array($res);
+
+			if (empty($data))
+			{
+				return;
+			}
 
 			# Peek at the first row to see if we have requested keys, then reset pointer
-			$availKeys = array_keys( $data );
+			$availKeys = array_keys($data);
 			mysql_data_seek($res, 0);
 
 			# Attempt to set keys as requested, try default behavior on failure

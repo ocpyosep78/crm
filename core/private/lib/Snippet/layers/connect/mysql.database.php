@@ -185,23 +185,28 @@ class snp_Result
 	private $__search;          // Query parameters (filters, limit, order, etc.)
 	private $__query;           // The sql query
 	private $__datatype;        // Result format (array, named, row, col, res, ...)
-	private $__dataset;         // Result (migth be formatted)
 
 	private $__orig_dataset;    // Original result set (unformatted)
+	private $__dataset;         // Result (migth be formatted)
+	private $__namespace;      // Full namespace (2), partial (1) or none (0)
 
 	private $caller;            // Sql Layer who initialized this object
 
 
 	public function __construct($search, $query, $dataset, $caller)
 	{
+		$this->caller = $caller;
+
 		$this->__search = $search;
 		$this->__query = $query;
-		$this->__datatype = 'res';
-
-		$this->__dataset = $dataset;
 		$this->__orig_dataset = $dataset;
 
-		$this->caller = $caller;
+		$this->__dataset = $dataset;
+		$this->__datatype = 'res';
+		$this->__namespace = 2;
+
+		// Results are flat by default (will be converted to 'array' as well)
+		$this->flat();
 	}
 
 	public function get()
@@ -209,59 +214,73 @@ class snp_Result
 		return $this->__dataset;
 	}
 
-	public function convert($to, $atts=NULL)
-	{
-		if (!is_callable(array($this->caller, "res2{$to}")))
-		{
-			throw new Exception("Cannot convert resultset to {$to}");
-		}
-
-		$this->__datatype = $to;
-
-		$method = "res2{$to}";
-
-		$this->caller->$method($this->__orig_dataset, $atts);
-		$this->__dataset = $this->caller->formattedRes;
-
-		return $this;
-	}
-
 	/**
-	 * array flat()
-	 *      Remove schema and table namespaces from result sets. This might
-	 * mean that some fields will be overwritten, if called the same.
+	 * snp_Result flat()
+	 *      Remove fields namespace dataset. This might mean that some fields
+	 * will be overwritten, if called the same but in different tables.
 	 *
-	 * @return array
+	 * @return snp_Result
 	 */
 	public function flat()
 	{
+		return $this->ns(0);
+	}
+
+	/**
+	 * snp_Snippet ns([boolean $full = false])
+	 *      Add/Remove field namespace from dataset
+	 *
+	 * @param boolean $full
+	 * @return snp_Result
+	 */
+	public function ns($ns=1)
+	{
+		list($oldNs, $this->__namespace) = array($this->__namespace, (int)$ns);
+
+		$nsRemove = $oldNs - $ns;
+
+		// If we're extending the namespace, we need to restore it full first
+		if ($nsRemove < 0)
+		{
+			$this->convert($this->__datatype);
+			$nsRemove = 2 - $ns;
+		}
+		// Same namespace level, nothing to do
+		elseif ($nsRemove === 0)
+		{
+			return $this;
+		}
+
 		switch ($this->datatype)
 		{
 			case 'res':
 				$this->convert('array');
-				// break intentionally left out
 
 			case 'array':
 			case 'named':
+				$rows = array();
+
 				foreach ($this->__dataset as $k => $row)
 				{
 					foreach ($row as $field => $val)
 					{
-						$rows[$k][end(explode('.', $field))] = $val;
+						$rows[$k][end(explode('.', $field, $nsRemove+1))] = $val;
 					}
 				}
+
 				$this->__dataset = $rows;
 				break;
 
 			case 'row':
 				foreach ($this->__dataset as $field => $val)
 				{
-					$row[end(explode('.', $field))] = $val;
+					$row[end(explode('.', $field, $nsRemove+1))] = $val;
 				}
 
 				$this->__dataset = $row;
 				break;
 
+			// Other types are originally flat
 			default:
 			case 'col':
 				break;
@@ -270,7 +289,34 @@ class snp_Result
 		return $this;
 	}
 
+	public function convert($to, $atts=NULL)
+	{
+		if (($to !== 'res') && !is_callable(array($this->caller, "res2{$to}")))
+		{
+			throw new Exception("Cannot convert resultset to {$to}");
+		}
 
+		$this->__datatype = $to;
+
+		if ($to === 'res')
+		{
+			$this->__dataset = $this->__orig_dataset;
+		}
+		else
+		{
+			$method = "res2{$to}";
+
+			mysql_data_seek($this->__orig_dataset, 0);
+			$this->caller->$method($this->__orig_dataset);
+			$this->__dataset = $this->caller->formattedRes;
+
+			// Restore namespace status
+			list($this->__namespace, $ns) = array(2, $this->__namespace);
+			$this->ns($ns);
+		}
+
+		return $this;
+	}
 
 	/**
 	 * Magic method __get()

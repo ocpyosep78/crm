@@ -234,7 +234,7 @@ class snp_Layer_mysql extends snp_Database_mysql
 
 			case 'fields':
 				$regex = '_^(\*|(`\w+`|\w+)( +as [\'"]?\w+[\'"]?)?)$_i';
-				return (is_string($arg) && preg_match($regex, $arg))
+				return (is_string($arg) && !is_numeric($arg) && preg_match($regex, $arg))
 				    || is_array($arg);
 
 			case 'order':

@@ -94,10 +94,42 @@ require_once('initialize.php');
 
 										try
 										{
-											$q = (new snp_Layer_mysql)->feed(array('table' => '_users'))
-												->select('user', '_departments.id_department', 'id_department', "CONCAT(`name`, ' ', `lastName`) As 'fullname'")
-												->find();
-											db($q->convert('col')->get());
+											$t = new snp_Layer_mysql('_users');
+
+											$filters['blocked'] = array(0, '!=');
+											$fields = array('user', "CONCAT(name, ' ', lastName) AS fullName", 'phone', 'email', 'profile');
+
+											echo "\n" . '$q = $t->find($filters, $fields, "0, 3")'."\n";
+											$q = $t->find($filters, $fields, '2');
+											db($q->get(), false);
+
+											echo "\n" . '$q->flat()'."\n";
+											$q->flat();
+											db($q->get(), false);
+
+											echo "\n" . '$q->ns(2)'."\n";
+											$q->ns(2);
+											db($q->get(), false);
+
+											echo "\n" . '$q->convert("col")'."\n";
+											$q->convert('col');
+											db($q->get(), false);
+
+											echo "\n" . '$q->ns(1)'."\n";
+											$q->ns(1);
+											db($q->get(), false);
+
+											echo "\n" . '$q->convert("array")'."\n";
+											$q->convert('array');
+											db($q->get(), false);
+
+											echo "\n" . '$q->flat()'."\n";
+											$q->flat();
+											db($q->get(), false);
+
+											echo "\n" . '$q->flat($q->convert("res");)'."\n";
+											$q->convert('res');
+											db($q->get(), false);
 										}
 										catch (Exception $e)
 										{
