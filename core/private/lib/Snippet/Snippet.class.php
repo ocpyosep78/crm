@@ -1,16 +1,5 @@
 <?php
 
-/**
- * DEPENDS ON:
- *
- *    class snp_Layers (always)
- *        layer ajax (always for #addSnippet)
- *            #getResponse()
- *    class Snippet_Initialize (always)
- *        #getSnippet( string $snippet )
- *    constant PAGE_CONTENT_BOX (for #addSnippet when $params['writeTo'] is empty)
- */
-
 # Error messages when retrieving a snippet can go either as a status message,
 # however the application handles it (through communications layer), or as the
 # HTML of the snippet itself.
@@ -94,7 +83,7 @@ class Snippet{
 
 		# Make sure the param 'writeTo' is set (it flags the request
 		# as addSnippet, which means it needs to be printed)
-		isset($params['writeTo']) || ($params['writeTo'] = PAGE_CONTENT_BOX);
+		isset($params['writeTo']) || ($params['writeTo'] = 'main_box');
 
 		$this->getSnippet($snippet, $code, $params);
 

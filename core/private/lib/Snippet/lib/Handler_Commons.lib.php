@@ -57,7 +57,7 @@ abstract class Snippets_Handler_Commons{
 
 	protected $basics;
 	protected $fields;
-	protected $keys;
+	protected $key;
 	protected $tools;
 
 
@@ -89,7 +89,7 @@ abstract class Snippets_Handler_Commons{
 
 	public function getSnippet()
 	{
-		# Register common/config data (fields, keys, tools)
+		# Register common/config data (fields, key, tools)
 		$this->registerCommonVars()->registerConfig();
 
 		# Pass control to the specific handler
@@ -189,7 +189,7 @@ abstract class Snippets_Handler_Commons{
 		$this->fields = $this->assign('fields', $fields);
 
 		########## KEYS ###########
-		$this->keys = $this->assign('keys', $this->Source->getSummary('keys'));
+		$this->key = $this->assign('key', $this->Source->getSummary('key'));
 
 		########## TOOLS ###########
 		$this->tools = $this->assign('tools', $this->Source->getSummary('tools'));

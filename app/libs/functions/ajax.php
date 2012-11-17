@@ -41,9 +41,10 @@
 		return oXajaxResp();
 	}
 
-	function addElement($id, $content=''){
+	function addElement($content='', $selector='body', $hidden=true){
+		$hide = $hidden ? 'true' : 'false';
 		addAssign('importedElement', 'innerHTML', "{$content}");
-		return addScript("importElement('{$id}');");
+		return addScript("importElement('{$selector}', {$hide});");
 	}
 
 	function addScript( $x ){

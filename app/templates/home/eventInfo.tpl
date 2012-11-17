@@ -10,15 +10,15 @@
 <div class='eventInfoSubTitle'>{$event.ini|date_locale:'H:i'}{if $event.end} - {$event.end|date_locale:'H:i'}{/if}</div>
 
 <img class='eventInfo_Creator' alt='' title='{$event.creator}' src='{$event.creatorimg}' />
-   
+
 <table class='eventInfoTbl' cellpadding="3" cellspacing="0">
 	<tr>
 		<th>Descripción</th>
-		<td style='font-style:italic; color:#000000'>{$event.event}</td>
+		<td style='font-style:italic;'>{$event.event}</td>
 	</tr>
 	<tr>
 		<th>Agendado para</th>
-		<td style='color:#300000; font-weight:bold;'>
+		<td>
 			{$event.ini|date_locale:'d/m/Y, H:i'}
 			{if $event.end} - {$event.end|date_locale:'H:i'}{/if}
 		</td>
@@ -43,7 +43,7 @@
 	<tr>
 		<th>Creado por</th>
 		<td>
-			<span style='color:#000000; font-weight:bold;'>{$event.creator}</span>
+			<span>{$event.creator}</span>
 			({$event.created|date_locale:'d/m/Y, H:i'})
 		</td>
 	</tr>
@@ -52,7 +52,7 @@
 		<th>Editado por:</th>
 		<td>
 		  {foreach from=$editions item=edition}
-			<span style='color:#000000; font-weight:bold;'>{$edition.by}</span>
+			<span>{$edition.by}</span>
 			({$edition.on|date_locale:'d/m/Y, H:i'})<br />
 		  {/foreach}
 		</td>

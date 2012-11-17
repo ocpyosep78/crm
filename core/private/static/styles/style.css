@@ -563,6 +563,7 @@ table.simpleList .simpleListCreate{ white-space:nowrap; }
 .eventUnit{ position:relative; clear:both; min-height:40px; margin:1px 3px 5px 1px; padding:1px 2px; cursor:pointer; background-image:linear-gradient(#e0f0ff, #d0d0ef); box-shadow:#606065 2px 2px 3px; }
 .eventUnit:hover{ background:#e0e0e0; color:#600000; }
 .agenda_eventInfo{ color:#003300; font-weight:bold !important; }
+#eventInfo_dialog{ width:300px; color:#fff; }
 .eventClosed{ background:#f0ffc0; background-image:linear-gradient(#f0ffe8, #f0ffa0); }
 .eventClosed .agenda_eventText{ color:#000000; }
 img.agenda_eventUser{ float:left; height:40px; width:30px; margin-bottom:2px; margin-right:3px; }
@@ -571,27 +572,26 @@ img.agenda_eventType{ float:right; height:30px; width:30px; margin:3px; }
 #btn_createEvent{ float:right; margin-right:5px; }
 #agenda_move img{ height:24px; width:24px; margin:0px 2px; cursor:pointer; }
 #agenda_move img:hover{ opacity:0.9; }
-#agenda_eventInfo{ display:none; }
-.modalEventInfo{ padding:5px; border:solid 2px #000000; top:100px; left:200px; right:200px; height:auto; margin:0px; font-size:12px; }
-.agenda_eventInfoInner{ position:relative; width:99%; height:99%; margin:0.5%; }
-.agenda_eventInfo_close{ position:absolute !important; top:5px; right:5px; height:16px; width:16px; background:url(../images/cancel.gif) no-repeat; cursor:pointer; }
-.eventInfoTitle{ padding:10px; padding-bottom:3px; margin-left:20px; font-size:14px; font-weight:bold; color:#300; }
-.eventInfoSubTitle{ padding:0px 10px 20px 10px; margin-left:20px; font-size:28px; font-weight:bold; color:#000; }
-.eventInfoTbl{ margin:10px; empty-cells:show; }
-.eventInfoTbl th{ text-align:right; width:120px; border-bottom:dotted 1px #e0e0e0; }
 .eventCustomer{ color:#603000; font-weight:bold; cursor:pointer; }
-.eventInfo_Creator{ float:left; }
 .agenda_customer{ color:#600000; font-size:13px; text-transform:lowercase; font-variant:small-caps; }
 .agenda_targetUser{ font-size:11px; color:#000000; }
 .agenda_eventText{ font-size:12px; color:#606080; }
-.agenda_noInfo{ color:#a0a0a0; }
 .tabEventsBox{ max-height:400px; margin-top:5px; padding:5px; border:solid 1px #c0c0c0; border-radius:8px;   background:#fffcfc; overflow:auto; }
 #agendaFilters{ float:left; margin:-5px 0px 5px 7px; padding:3px 5px; border:solid 1px #000090; border-radius:4px;   background-image:linear-gradient(#e0f0ff, #b0a8b8); box-shadow:#808080 3px 3px 5px; }
 .eventUnit.eventinstall .agenda_eventText{ color:#c00000; }
-.editEventFromEventInfo{ clear:both; }
-.eventClosedMsg{ text-align:center; color:#000000; margin:30px 0px 20px 0px; }
 .eventRescheduled{ display:none; background:#f0ccc0; }
-.eventInfoRescheduled{ color:#993300; font-size:18px; font-weight:bold; font-family:Arial, Helvetica, sans-serif; text-transform:uppercase; }
+
+.eventClosedMsg{ text-align:center; margin:10px; }
+.eventInfoRescheduled{ color:#930; font-size:18px; font-weight:bold; font-family:Arial, Helvetica, sans-serif; text-transform:uppercase; }
+.eventInfoTitle{ padding:10px; padding-bottom:3px; margin-left:20px; font-size:14px; font-weight:bold; }
+.eventInfoSubTitle{ padding:0px 10px 20px 10px; margin-left:20px; font-size:28px; font-weight:bold; }
+.eventInfoTbl{ margin:10px; empty-cells:show; }
+.eventInfoTbl th{ text-align:right; width:120px; border-bottom:dotted 1px #eee; }
+.eventInfoTbl td span{ font-weight:bold; }
+.eventInfo_Creator{ float:left; }
+.agenda_noInfo{ color:#a0a0a0; }
+.editEventFromEventInfo{ clear:both; }
+
 .eventTools{ position:absolute; top:8px; right:45px; overflow:hidden; }
 .eventTools img{ position:relative; right:-300px; height:24px; width:24px; margin:0px 2px; }
 #ui-datepicker-div{ margin-top:30px; margin-left:-87px; }
@@ -630,7 +630,7 @@ img.agenda_eventType{ float:right; height:30px; width:30px; margin:3px; }
 .sqlError{color:#993300;text-indent:5px;}
 #debugHeader #openDebug{display:none;}
 #debugHeader.dbgHid{height:16px;width:16px;margin:0px;padding:0px;overflow:hidden;}
-#debugHeader.dbgHid #openDebug{background-image:url(app/images/arrow_green_rigth.png);background-color:#000000;position:absolute;left:0px;top:0px;height:16px;width:16px;z-index:300;cursor:pointer;display:block;}
+#debugHeader.dbgHid #openDebug{background-image:url(app/images/arrow_green_right.png);background-color:#000000;position:absolute;left:0px;top:0px;height:16px;width:16px;z-index:300;cursor:pointer;display:block;}
 
 
 /**

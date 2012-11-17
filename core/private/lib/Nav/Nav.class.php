@@ -192,7 +192,7 @@
 
 			$HTML = $parsed ? $page : oSmarty()->fetch($page);
 
-			return addAssign(PAGE_CONTENT_BOX, 'innerHTML', $HTML);
+			return addAssign('main_box', 'innerHTML', $HTML);
 
 		}
 
@@ -225,7 +225,6 @@
 				else trigger_error("No se pudo encontrar la plantilla de la página ({$tpl})");
 			}
 
-			addScript('Modal.close();');	/* Just in case */
 			addScriptCall('iniPage', $page);
 			$this->processQueuedMsg();
 

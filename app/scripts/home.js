@@ -138,10 +138,6 @@ function ini_agenda(){
 }
 
 function ini_agendaDay(){
-	$('.eventUnit').click(function(){
-		xajax_eventInfo($(this).find('input[type="hidden"]').val());
-	});
-
 	function getFilters(){
 		var filters = {};
 		$('.sel_agendaFilters').each(function(i, sel){

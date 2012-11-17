@@ -171,8 +171,12 @@ function xajaxSubmit(oForm, sFunc, showDisabled, atts){
 	window['xajax_'+sFunc]( xajax.getFormValues(oForm, showDisabled), atts||[] );
 }
 
-function importElement(id) {
-	$('#'+id).append($('#importedElement').contents());
+function importElement(id, hide) {
+	if (!$(id).length) {
+		$('<div />').hide()._id(id.replace(/^#/, '')).appendTo('body');
+	}
+
+	$(id).toggle(!hide).append($('#importedElement').contents());
 }
 
 // Show styled ToolTips (qTip2) near an element
@@ -313,7 +317,10 @@ $(function(){
 
 	// Activate agenda eventUnits
 	$('body').on('click', '.eventUnit', function(){
-		xajax_eventInfo($(this).find('input[type="hidden"]').val());
+		var id = $(this).find('input[type="hidden"]').val();
+		$('<div />').load('index.php?load=eventInfo&id='+id, function(){
+			this.dialog({width:650, modal:true});
+		}).appendTo('body');
 	});
 
 	// FileForm: add pseudo-ajax submit to forms with File inputs
@@ -400,104 +407,6 @@ $(function(){
 		});
 	}
 });
-
-
-/******************************************************************************/
-/******************************** F R A M E S *********************************/
-/******************************************************************************/
-
-$(function(){ IN_FRAME && Frames.initialize(); });
-
-Frames = {
-	frames: [],
-	initialize: function(){		/* Called by an actual frame's onload event */
-		var that = this;
-		var close = function(){
-			window.parent.Frames.garbageCollect(window.frameElement._id());
-		}
-		$('body').escape(close);
-		$('#FrameCloseBtn').click(close);
-		$(window.parent).resize(function(){
-			that.fixDimensions();
-		});
-		this.fixDimensions();
-		window.frameElement.show();
-	},
-	loadPage: function( href ){
-		var id = this.frames.length, d = document;
-		var ifr = this.frames[id] = $('<iframe />').appendTo('body');
-		ifr.className = 'ifrForShowPage';
-		ifr.src = href + '&iframe';
-		ifr.uID = id;
-	},
-	fixDimensions: function(){
-		var h = Math.round($(window.frameElement).height() * 0.8);
-		var w = Math.round($(window.frameElement).width() * 0.9);
-		$('#frameArea').height(h).width(w);
-		$('#frameTitle').width(w);
-		$('#frameContent').css('marginTop', h/8 - 30);
-		$('#notifications').css('width', w + 10);
-	},
-	close: function(msg, code){
-		msg && parent.say(msg, code||0);
-		parent.Frames.garbageCollect(window.frameElement.uID);
-	},
-	garbageCollect: function(id) {
-		$('#iframe#'+id+', iframe[name="'+id+'"]').remove();
-	}
-}
-
-
-/******************************************************************************/
-/****************************** S H O R T C U T S *****************************/
-/******************************************************************************/
-
-Modal = {
-	wins: [],
-	curtain: 'curtain',
-
-	open: function(win){
-		if (win) {
-			this.wins.hide(1);
-			var newWin = win.clone()._class('modalWin')._id('').appendTo('body');
-			this.wins.push(newWin);
-			IN_FRAME || $('#'+this.curtain).show();
-		}
-	},
-
-	close: function(){
-		this.wins.length && this.wins.pop().destroy();
-		if (this.wins.length) {
-			$('#'+this.curtain).hide();
-		} else {
-			this.wins[this.wins.length-1].show();
-		}
-	}
-};
-
-
-/***********************************************************************************/
-/*********************************** A G E N D A ***********************************/
-/***********************************************************************************/
-
-function closeAgendaEvent(id, msg, resched){
-	(typeof resched === 'undefined') && (resched = $('#showRescheduled').attr('checked'));
-
-	var action = resched ? 'cancelar' : 'cerrar';
-	var res = prompt('Escriba un comentario para ' + action + ' el evento:', msg||'');
-
-	if (res === '') {
-        return say('Se debe incluir un comentario al ' + action + ' un evento.');
-    } else if(res) {
-        var cfm = "Se dispone a " + action + " el evento con el siguiente mensaje:\n\n" + res +
-                  "\n\nPulse Cancelar para editar el mensaje o Aceptar para confirmar.";
-        if (confirm(cfm)) {
-            xajax_closeAgendaEvent(id, res, resched ? 1 : 0);
-        } else {
-            closeAgendaEvent(id, res, resched);
-        }
-    }
-}
 
 
 /******************************************************************************/
@@ -710,6 +619,66 @@ function Snippet(el){
 /**************************** D E P R E C A T E D *****************************/
 /******************************************************************************/
 
+$(function(){ IN_FRAME && Frames.initialize(); });
+
+Frames = {
+	frames: [],
+	initialize: function(){		/* Called by an actual frame's onload event */
+		var that = this;
+		var close = function(){
+			window.parent.Frames.garbageCollect(window.frameElement._id());
+		}
+		$('body').escape(close);
+		$('#FrameCloseBtn').click(close);
+		$(window.parent).resize(function(){
+			that.fixDimensions();
+		});
+		this.fixDimensions();
+		window.frameElement.show();
+	},
+	loadPage: function( href ){
+		var id = this.frames.length, d = document;
+		var ifr = this.frames[id] = $('<iframe />').appendTo('body');
+		ifr.className = 'ifrForShowPage';
+		ifr.src = href + '&iframe';
+		ifr.uID = id;
+	},
+	fixDimensions: function(){
+		var h = Math.round($(window.frameElement).height() * 0.8);
+		var w = Math.round($(window.frameElement).width() * 0.9);
+		$('#frameArea').height(h).width(w);
+		$('#frameTitle').width(w);
+		$('#frameContent').css('marginTop', h/8 - 30);
+		$('#notifications').css('width', w + 10);
+	},
+	close: function(msg, code){
+		msg && parent.say(msg, code||0);
+		parent.Frames.garbageCollect(window.frameElement.uID);
+	},
+	garbageCollect: function(id) {
+		$('#iframe#'+id+', iframe[name="'+id+'"]').remove();
+	}
+}
+
+function closeAgendaEvent(id, msg, resched){
+	(typeof resched === 'undefined') && (resched = $('#showRescheduled').attr('checked'));
+
+	var action = resched ? 'cancelar' : 'cerrar';
+	var res = prompt('Escriba un comentario para ' + action + ' el evento:', msg||'');
+
+	if (res === '') {
+        return say('Se debe incluir un comentario al ' + action + ' un evento.');
+    } else if(res) {
+        var cfm = "Se dispone a " + action + " el evento con el siguiente mensaje:\n\n" + res +
+                  "\n\nPulse Cancelar para editar el mensaje o Aceptar para confirmar.";
+        if (confirm(cfm)) {
+            xajax_closeAgendaEvent(id, res, resched ? 1 : 0);
+        } else {
+            closeAgendaEvent(id, res, resched);
+        }
+    }
+}
+
 function initializeList(code, modifier, src){
 	$('#listWrapper').prop('update', function(){
 		$('#listTable').trigger('modified');
@@ -842,4 +811,4 @@ $(function(){
 	$('body').on('change', '.comboListOld', function(e){
 		getPage(e, $(this)._for() + 'Info', [$(this).val()]);
 	});
-})
+});

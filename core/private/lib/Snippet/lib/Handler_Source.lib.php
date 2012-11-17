@@ -55,7 +55,7 @@ class Snippets_Handler_Source extends Snippets_Handler_Defaults{
 
 	}
 
-	public function getSummary( $key=NULL ){
+	public function getSummary($key=NULL){
 
 		return $key ? $this->summary[$key] : $this->summary;
 
@@ -122,14 +122,14 @@ class Snippets_Handler_Source extends Snippets_Handler_Defaults{
 		{
 			case 'list':		# asList
 				$format = 'named';
-				$params = $this->getSummary('keys');
+				$params = $this->getSummary('key');
 				$offset = ($this->params['page']-1) * 10;
 				$sql = $this->getListData($filters, $type);
 				break;
 
 			case 'hash':		# asHash
 				$format = 'col';
-				$params = array('key' => $this->getSummary('keysString'),
+				$params = array('key' => $this->getSummary('key'),
 								'val' => 'tipToolText');
 				$sql = $this->getListData($filters, $type);
 				break;
@@ -201,7 +201,7 @@ class Snippets_Handler_Source extends Snippets_Handler_Defaults{
 		# 3. Get tools set in definition and mix it with @toolsBase
 		$this->aquireDB()->fillAttributes()->storeTools();
 
-		# Build lists from tables (@hidden, @keys)
+		# Build lists from tables (@hidden, @key)
 		$this->buildDBSummary();
 
 		# Build the sql layer and feed it what we have aquired
@@ -243,7 +243,7 @@ class Snippets_Handler_Source extends Snippets_Handler_Defaults{
 	}
 
 	/**
-	 * Fix ambiguous entries and fill unset keys in tables definition
+	 * Fix ambiguous entries and fill unset key in tables definition
 	 */
 	private function fillAttributes(){
 
@@ -256,12 +256,10 @@ class Snippets_Handler_Source extends Snippets_Handler_Defaults{
 				empty($atts['type']) && $atts['type'] = 'text';
 				# Set isKey fields where not set
 				$atts['isKey'] = !empty($atts['isKey']);
-				# Hidden default is true for keys, false for all others
+				# Hidden default is true for key, false for all others
 				!isset($atts['hidden']) && $atts['hidden'] = !!$atts['isKey'];
 				# Unless explicitly frozen, all fields are assumed to be edittable
 				$atts['frozen'] = !empty($atts['frozen']);
-				# Set FK where not set
-				!isset($atts['FK']) && $atts['FK'] = NULL;
 			}
 		}
 
@@ -290,7 +288,7 @@ class Snippets_Handler_Source extends Snippets_Handler_Defaults{
 	}
 
 	/**
-	 * Export relevant data to more accessible lists (keys, fks, etc.)
+	 * Export relevant data to more accessible lists (key, fks, etc.)
 	 */
 	private function buildDBSummary(){
 
@@ -302,13 +300,13 @@ class Snippets_Handler_Source extends Snippets_Handler_Defaults{
 		$fieldsAtts = array();
 		$shown = array();
 		$frozen = array();
-		$keys = array();
+		$key = '';
 		$FKs = array();
 		$tools = $this->tools;
 
 		# Initialize $fieldsByType
 		$fieldTypes = array('text', 'area', 'list', 'image', 'date',
-			'time', 'datetime', 'option', 'options');
+		                    'time', 'datetime', 'option', 'options');
 		foreach( $fieldTypes as $type ) $fieldsByType[$type] = array();
 
 		foreach( $db as $table => $content ){
@@ -329,16 +327,13 @@ class Snippets_Handler_Source extends Snippets_Handler_Defaults{
 				# List of shown fields, by fullID
 				$atts['hidden'] || $shown[] = $fullID;
 				# List of key fields, by field name
-				if( $atts['isKey'] && isset($mainTable[$code])  ){
-					$keys[] = $field;
+				if ($atts['isKey'] && isset($mainTable[$code]))
+				{
+					$key = $field;
 				}
 				# List of frozen (uneditable) fields
 				!$atts['frozen'] || $frozen[] = $field;
-				# List of foreign keys, by field (always from mainTable)
-				!$atts['FK'] || $FKs[$field] = array(
-					'table'		=> $code,
-					'target'	=> $atts['FK'],
-				);
+
 				# Set text as default type and fill $fieldsByType array
 				!empty($atts['type']) || $atts['type'] = 'text';
 				$fieldsByType[$atts['type']][$field] = $atts;
@@ -361,8 +356,7 @@ class Snippets_Handler_Source extends Snippets_Handler_Defaults{
 			'fieldsByType'	=> $fieldsByType,
 			'shown'			=> $shown,
 			'frozen'		=> $frozen,
-			'keys'			=> $keys,
-			'keysString'	=> join('__|__', $keys),
+			'key'			=> $key,
 			'FKs'			=> $FKs,
 			'tools'			=> $tools,
 		);
@@ -380,7 +374,7 @@ class Snippets_Handler_Source extends Snippets_Handler_Defaults{
 	{
 		$vKeys = (array)$vKeys;
 
-		$fKeys = $this->summary['keys'];
+		$fKeys = $this->summary['key'];
 		$table = array_shift($this->summary['mainTable']);
 
 		if (count($fKeys) == 1 && count($vKeys) == 1)
@@ -404,7 +398,7 @@ class Snippets_Handler_Source extends Snippets_Handler_Defaults{
 	{
 		$vKeys = (array)$vKeys;
 
-		$fKeys = $this->summary['keys'];
+		$fKeys = $this->summary['key'];
 		$table = array_shift($this->summary['mainTable']);
 
 		if (count($fKeys) == 1 && count($vKeys) == 1)

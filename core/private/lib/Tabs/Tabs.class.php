@@ -99,22 +99,22 @@
 		public function start($HTML=NULL)
 		{
 			$tab = array_shift(array_keys($this->getTabs()));
-			$box = PAGE_CONTENT_BOX;
 
 			# If $HTML parameter is NULL, we automatically add the fixed page...
 			if (is_null($HTML))
 			{
 				$path = realpath(TEMPLATES_PATH."{$this->module}/{$this->page}.tpl");
-				$path && addAssign($box, 'innerHTML', oSmarty()->fetch($path));
+				$path && addAssign('main_box', 'innerHTML', oSmarty()->fetch($path));
 			}
 			# ...else if it's a string we use it as page content
 			elseif(is_string($HTML))
 			{
-				addAssign($box, 'innerHTML', $HTML);
+				addAssign('main_box', 'innerHTML', $HTML);
 			}
 
 			# Display the tabs skeleton below fixed content
-			addElement($box, oSmarty()->fetch(dirname(__FILE__).'/templates/tabs.tpl'));
+			$content = oSmarty()->fetch(dirname(__FILE__).'/templates/tabs.tpl');
+			addElement($content, '#main_box', false);
 
 			# Now we're ready to load the first tab through regular method switchTab
 			return $this->switchTab($tab);

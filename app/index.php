@@ -204,7 +204,8 @@ if (loggedIn())
 ** P A G E C F G
 ***************/
 
-oSmarty()->assign('jQueryUiTheme', 'dot-luv');
+//oSmarty()->assign('jQueryUiTheme', 'dot-luv');
+oSmarty()->assign('jQueryUiTheme', 'start');
 oSmarty()->assign('core_scripts', CORE_SCRIPTS);
 
 oPageCfg()->set_appTitle( loggedIn() );
@@ -226,6 +227,11 @@ if (oNav()->inFrame)
 if (loggedIn())
 {
 	require_once(CORE_PRIVATE . 'pageMgr.php');
+
+	if (isset($_GET['load']) && is_callable($_GET['load']))
+	{
+		$_GET['load']();
+	}
 }
 elseif (!isXajax())
 {

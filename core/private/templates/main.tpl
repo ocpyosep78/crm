@@ -143,13 +143,9 @@
 
   {/if}
 
-	<div id='curtain'></div>		{* modal windows, refer to JS:Modal object *}
-
 	<div id='importedElement'></div>
 
 	{* Widgets *}
-	{if $USER && $Permits->can('agenda')}{include file='widgets/eventInfo.tpl'}{/if}
-
 	{if false && !$IN_FRAME && $USER && $Permits->can('chatActivity')}{include file='widgets/chat.tpl'}{/if}
 	{if false && !$IN_FRAME && $USER}{include file='widgets/alerts.tpl'}{/if}
 

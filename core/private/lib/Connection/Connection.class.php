@@ -255,7 +255,7 @@ EOF;
 		public function res2array($res)
 		{
 			$this->formattedRes = array();
-			
+
 			while ($data=mysql_fetch_assoc($res))
 			{
 				$this->formattedRes[] = $data;
