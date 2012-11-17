@@ -28,31 +28,20 @@ class Snippet_def_users extends Snippets_Handler_Source{
 	protected function getDatabaseDefinition()
 	{
 		return array(
-
 			'_users' => array(
 				'user'			=> array('name' => 'Usuario', 'isKey' => true, 'hidden' => false),
 				'pass'			=> array('name' => 'Contraseña', 'hidden' => true),
-				'id_profile'	=> array('FK' => '_profiles.id_profile', 'hidden' => true),
 				'name'			=> 'Nombre',
 				'lastName'		=> 'Apellido',
 				'fullName'		=> 'Nombre',
 				'address'		=> 'Dirección',
 				'phone'			=> 'Teléfono',
-				'department'	=> array('name' => 'Departamento', 'FK' => '_departments.id_department', 'hidden' => true),
 				'email'			=> 'Email',
 				'employeeNum'	=> 'Número',
 				'position'		=> 'Cargo',
 				'last_access'	=> array('name' => 'Último Login', 'frozen' => true),
 				'blocked'		=> array('name' => 'Bloqueado', 'frozen' => true),
-			),
-
-			'_profiles' => array(
-				'id_profile'    => array('FK' => '_users.profile', 'hidden' => true),
 				'profile'		=> array('name' => 'Perfil', 'frozen' => true),
-			),
-
-			'_departments' => array(
-				'id_department'	=> array('FK' => '_users.department', 'hidden' => true),
 				'department'	=> array('name' => 'Departamento'),
 			),
 		);
@@ -107,7 +96,7 @@ class Snippet_def_users extends Snippets_Handler_Source{
 		);
 	}
 
-	protected function getListData($filters=array(), $type)
+	protected function getListData($filters=array(), $type='list')
 	{
 		switch ($type)
 		{
@@ -116,7 +105,7 @@ class Snippet_def_users extends Snippets_Handler_Source{
 				$filters['blocked'] = array(0, '!=');
 				$fullName = "CONCAT(name, ' ', lastName) AS fullName";
 				$fields = array('user', $fullName, 'phone', 'email', 'profile');
-				$data = $this->find($filters, $fields, '0, 10')->flat();
+				$data = $this->find($filters, $fields, '0, 10');
 				break;
 
 			case 'hash':
@@ -124,6 +113,13 @@ class Snippet_def_users extends Snippets_Handler_Source{
 				$fields = array('user', "CONCAT(`name`, ' ', `lastName`)" => 'fullName');
 				$data = $this->find($filters, $fields, 0)->convert('col');
 				break;
+
+			case 'view':
+				$filters['blocked'] = array(0, '!=');
+				$fields = array('user', 'name', 'lastName', 'address', 'phone', 'department',
+				                'email', 'employeeNum', 'position', 'profile', 'last_access');
+				$data = $this->find($filters, $fields, 1)->convert('row');
+
 		}
 
 		return $data->get();
@@ -131,7 +127,7 @@ class Snippet_def_users extends Snippets_Handler_Source{
 
 	protected function getItemData($id)
 	{
-		return $this->getListData(array('user' => array($id, '=')));
+		return $this->getListData(array('user' => array($id, '=')), 'view');
 	}
 
 }

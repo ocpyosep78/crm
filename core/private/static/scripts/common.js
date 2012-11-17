@@ -1,4 +1,125 @@
 /******************************************************************************/
+/******************************** J Q U E R Y *********************************/
+/******************************************************************************/
+
+// Localize DatePicker
+$.datepicker.setDefaults($.datepicker.regional['es'] = {
+	closeText: 'Cerrar',
+	prevText: '&#x3c;Ant',
+	nextText: 'Sig&#x3e;',
+	currentText: 'Hoy',
+	monthNames: ['Enero','Febrero','Marzo','Abril','Mayo','Junio', 'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'],
+	monthNamesShort: ['Ene','Feb','Mar','Abr','May','Jun', 'Jul','Ago','Sep','Oct','Nov','Dic'],
+	dayNames: ['Domingo','Lunes','Martes','Mi&eacute;rcoles','Jueves','Viernes','S&aacute;bado'],
+	dayNamesShort: ['Dom','Lun','Mar','Mi&eacute;','Juv','Vie','S&aacute;b'],
+	dayNamesMin: ['Do','Lu','Ma','Mi','Ju','Vi','S&aacute;'],
+	weekHeader: 'Sm',
+	dateFormat: 'dd/mm/yy',
+	firstDay: 1,
+	isRTL: false,
+	showMonthAfterYear: false,
+	yearSuffix: ''
+});
+
+// Extend $().each inner arguments and scope, when args == true (not array)
+$.fn.each = function(cb, args) {
+	if (!$.isArray(args) && args) {
+		var jSet = this;
+		args = null; // We don't want to pass a truthy args to $.each()
+		$.each(this, function(i, k){ jSet[i] = $(k); });
+	}
+
+	return $.each(this, cb, args);
+};
+
+// Implement custom onEnter and onEscape $ events
+$.fn.enter = function(cb){
+	return cb ? this.on('enter', cb) : this.trigger('enter');
+}
+$.fn.escape = function(cb){
+	return cb ? this.on('escape', cb) : this.trigger('escape');
+}
+$(function(){
+	$('body').on('keyup', '*', function(e){
+		return (e.which != 13) || $(this).enter();
+	});
+	$('body').on('keyup', ':input', function(e){
+		return (e.which != 27) || $(this).escape();
+	});
+});
+
+// Add serializeJSON (thanks Arjen Oosterkamp)
+$.fn.serializeJSON = function() {
+	var json = {};
+	$.map(this.serializeArray(), function(n){
+		json[n.name] = n.value;
+	});
+	return json;
+}
+
+// Extend forms, add entries for its elements, and add names when requested
+$.forms = function(form, addNames) {
+	var frm = $('form#' + form + ', form[name="' + form + '"]').first();
+
+	// Add the names, based on the ids (with an optional prefix)
+	if (addNames) {
+		var prefix = (typeof addNames === 'string') ? addNames : '';
+		frm.find(':input:not([name])[id^="' + prefix + '"]').each(function(){
+			var name =  $(this).attr('id').substr(prefix.length);
+			$(this).attr('name', name);
+		});
+	}
+
+	frm.elements = frm.find(':input[name]').each(function(i){
+		var name = $(this).attr('name');
+		frm[name] = frm.find(':input[name="' + name + '"]');
+	});
+
+	// Add reset method (which doesn't exist in jQuery for some reason)
+	frm.reset = function() {
+		frm.get(0) && frm.get(0).reset();
+		return this;
+	}
+
+	return frm;
+};
+
+// Add the most relevant attributes as direct jQuery objects methods
+var jDirectMethods = ['id', 'name', 'class', 'for', 'rel', 'title', 'checked',
+                      'src', 'alt', 'type', 'target', 'method'];
+$.map(jDirectMethods, function(attr){
+	$.fn['_'+attr] = function(val){
+		return this.attr.apply(this, $.merge([attr], arguments));
+	};
+});
+
+// Add method print to jQuery objects
+$.fn.print = function() {
+	this.get(0) && this.get(0).print();
+	return this;
+}
+
+$.capitalize = function(txt) {
+	return txt.replace(/\b[a-z]/g, function(x){ return x.toUpperCase(); });
+}
+
+
+/******************************************************************************/
+/**************************** P R O T O T Y P E S *****************************/
+/******************************************************************************/
+String.prototype.fill = function(i , s , r){	/* times, fillStr, reverse */
+	if( i<0 ){ r = true; i = Math.abs(i); };
+	if( i > this.length ) var a=(new Array(i-this.length+1)).join( s||0 );
+	else return ( r ) ? this.substr(this.length-i--): this.substr( 0 , i );
+	return r ? a+this.toString() : this.toString()+a;
+};
+
+function test(x) {
+	console.log(x);
+	alert('Debug log generated for: ' + x);
+}
+
+/******************************************************************************/
 /***************************** D E B U G G I N G ******************************/
 /******************************************************************************/
 
@@ -17,14 +138,14 @@ function raise( msg ){
 // Notifications
 function say(txt, type, stay) {
 	var mt = txt.split(/<br ?\/>./, 3).length * 1.4;
-	var cl = (J.isNumeric(type||0) ? (type ? 'success' : 'error') : type);
-	J('#notifications').hide(1)._class(cl + 'Status')
+	var cl = ($.isNumeric(type||0) ? (type ? 'success' : 'error') : type);
+	$('#notifications').hide(1)._class(cl + 'Status')
 		.find('div:last').html(txt).css('margin-top', -(mt/2) + 'em').end()
 		.show('drop', {direction:'up'}, 500, function(){
 			// Cancel pending hiding and queue a new one (0 == don't hide)
-			clearTimeout(J(this).data('hto'));
-			(stay !== 0) && J(this).data('hto', setTimeout(function(){
-				J('#notifications').fadeOut({queue:false});
+			clearTimeout($(this).data('hto'));
+			(stay !== 0) && $(this).data('hto', setTimeout(function(){
+				$('#notifications').fadeOut({queue:false});
 			}, (stay||10)*1000));
 		});
 }
@@ -33,7 +154,7 @@ function say(txt, type, stay) {
 function silentXajax(func, params) {
 	var fn = window['xajax_'+func],
 	    loadFn = xajax.loadingFunction;
-	xajax.loadingFunction = J.noop();
+	xajax.loadingFunction = $.noop();
 	xajaxWaitCursor = false;
 	fn && fn.apply(window, params||[]);
 	xajaxWaitCursor = true;
@@ -42,7 +163,7 @@ function silentXajax(func, params) {
 
 // Loading animation
 function showLoading(show){
-	J('#loadingGif').toggle(show !== false);
+	$('#loadingGif').toggle(show !== false);
 };
 
 // Submit forms through ajax
@@ -51,26 +172,26 @@ function xajaxSubmit(oForm, sFunc, showDisabled, atts){
 }
 
 function importElement(id) {
-	J('#'+id).append(J('#importedElement').contents());
+	$('#'+id).append($('#importedElement').contents());
 }
 
 // Show styled ToolTips (qTip2) near an element
 function showTip(field, tip, position, area){
 	field.qtip({content: {text: tip},
 			   position: {at: position||'bottom left'},
-			   solo: area||J('body'),
-			   show: {target: J()}}).qtip('show');
+			   solo: area||$('body'),
+			   show: {target: $()}}).qtip('show');
 }
 
 // Show/Hide main menu
 function toggleMenu(show) {
-	J('#menuDiv')[show ? 'show' : 'hide']('drop', {}, show ? 100 : 200);
-	J('#main_box').animate({'margin-left': show ? 250 : 30}, 100);
+	$('#menuDiv')[show ? 'show' : 'hide']('drop', {}, show ? 100 : 200);
+	$('#main_box').animate({'margin-left': show ? 250 : 30}, 100);
 
-	J('#showMenu').toggle(!show);
-	J('#hideMenu').toggle(show);
+	$('#showMenu').toggle(!show);
+	$('#hideMenu').toggle(show);
 
-	J(window).trigger('menutoggled');
+	$(window).trigger('menutoggled');
 }
 
 // Shortcuts to toggleMenu
@@ -83,7 +204,7 @@ function hideMenu(){ toggleMenu(false); }
 /******************************************************************************/
 
 function getPage() {
-	var args = Array.from( arguments );
+	var args = $.makeArray(arguments);
 	var ctrl = (typeof(args[0]) == 'object') ? (args[0].ctrlKey|args.shift().control) : false;
 	return (ctrl ? xajax_showPage : xajax_getPage).apply(null, args);
 }
@@ -104,31 +225,31 @@ function iniPage(name) {
 		return DEVELOPER_MODE ? test(e) : false;
 	}
 
-	J('body').trigger('contentload');
-};
+	$('body').trigger('contentload');
+}
 
 // Current page's parameters (persistence)
 var IniParams = {
 	params: null,
 	set: function( data ){
-		this.params = Array.from(data);
+		this.params = $.makeArray(data);
 	},
 	get: function(){
-		var params = Array.from(this.params);
+		var params = $.makeArray(this.params);
 		delete(this.params);
 		return params||{};
 	}
-};
+}
 
 function flagMenuItem(code) {
-	J('.menuItem.currentPage').removeClass('currentPage');
-	J('.menuItem[for="' + code + '"]').addClass('currentPage');
+	$('.menuItem.currentPage').removeClass('currentPage');
+	$('.menuItem[for="' + code + '"]').addClass('currentPage');
 }
 
 function switchNav(e, obj){
 	if (!e || !e.ctrlKey) {
-		J('.navCurrMod')._class('navMod');
-		J(obj)._class('navCurrMod');
+		$('.navCurrMod')._class('navMod');
+		$(obj)._class('navCurrMod');
 	}
 }
 
@@ -137,11 +258,12 @@ function switchNav(e, obj){
 /******************************* D O M R E A D Y ******************************/
 /******************************************************************************/
 
-jQuery(function($){
+$(function(){
 	// Menu animation
 	$('#hideMenu').click(hideMenu);
 	$('#showMenu').click(showMenu);
 
+	// Activate closing notifications on click
 	$('#notifications').click(function(){
 		$('#notifications').hide({duration:'fast', effect: 'blind'});
 	});
@@ -149,6 +271,10 @@ jQuery(function($){
 	// Activate Debugger
 	$('body').on('click', '#debugStats', function(){
 		$('#debugger').toggle().filter(':visible')._src('index.php?stats');
+	}).on('click', '#openDebug', function(){
+		$('#debugHeader').removeClass('dbgHid');
+	}).on('click', '#debuggerbox', function(){
+		$('#debugHeader').addClass('dbgHid');
 	});
 
 	// Activate highlighting of input fields
@@ -235,7 +361,7 @@ jQuery(function($){
 
 	// Activate Snippets
 	$('body').on('snippets', function(){
-		J('snippet[initialized!="true"]').each(function(){
+		$('snippet[initialized!="true"]').each(function(){
 			this.attr('initialized', 'true');
 			Snippets.add(new Snippet(this));
 		}, true);
@@ -248,7 +374,7 @@ jQuery(function($){
 /******************************************************************************/
 
 // Login page only
-jQuery(function($){
+$(function(){
 	var frm = $.forms('formLogin');
 
 	if (frm.length) {
@@ -280,7 +406,7 @@ jQuery(function($){
 /******************************** F R A M E S *********************************/
 /******************************************************************************/
 
-J(function(){ IN_FRAME && Frames.initialize(); });
+$(function(){ IN_FRAME && Frames.initialize(); });
 
 Frames = {
 	frames: [],
@@ -289,9 +415,9 @@ Frames = {
 		var close = function(){
 			window.parent.Frames.garbageCollect(window.frameElement._id());
 		}
-		J('body').escape(close);
-		J('#FrameCloseBtn').click(close);
-		J(window.parent).resize(function(){
+		$('body').escape(close);
+		$('#FrameCloseBtn').click(close);
+		$(window.parent).resize(function(){
 			that.fixDimensions();
 		});
 		this.fixDimensions();
@@ -299,25 +425,25 @@ Frames = {
 	},
 	loadPage: function( href ){
 		var id = this.frames.length, d = document;
-		var ifr = this.frames[id] = J('<iframe />').appendTo('body');
+		var ifr = this.frames[id] = $('<iframe />').appendTo('body');
 		ifr.className = 'ifrForShowPage';
 		ifr.src = href + '&iframe';
 		ifr.uID = id;
 	},
 	fixDimensions: function(){
-		var h = Math.round(J(window.frameElement).height() * 0.8);
-		var w = Math.round(J(window.frameElement).width() * 0.9);
-		J('frameArea').height(h).width(w);
-		J('frameTitle').width(w);
-		J('frameContent').css('marginTop', h/8 - 30);
-		J('notifications').css('width', w + 10);
+		var h = Math.round($(window.frameElement).height() * 0.8);
+		var w = Math.round($(window.frameElement).width() * 0.9);
+		$('#frameArea').height(h).width(w);
+		$('#frameTitle').width(w);
+		$('#frameContent').css('marginTop', h/8 - 30);
+		$('#notifications').css('width', w + 10);
 	},
 	close: function(msg, code){
 		msg && parent.say(msg, code||0);
 		parent.Frames.garbageCollect(window.frameElement.uID);
 	},
 	garbageCollect: function(id) {
-		J('iframe#'+id+', iframe[name="'+id+'"]').remove();
+		$('#iframe#'+id+', iframe[name="'+id+'"]').remove();
 	}
 }
 
@@ -335,14 +461,14 @@ Modal = {
 			this.wins.hide(1);
 			var newWin = win.clone()._class('modalWin')._id('').appendTo('body');
 			this.wins.push(newWin);
-			IN_FRAME || J('#'+this.curtain).show();
+			IN_FRAME || $('#'+this.curtain).show();
 		}
 	},
 
 	close: function(){
 		this.wins.length && this.wins.pop().destroy();
 		if (this.wins.length) {
-			J('#'+this.curtain).hide();
+			$('#'+this.curtain).hide();
 		} else {
 			this.wins[this.wins.length-1].show();
 		}
@@ -355,7 +481,7 @@ Modal = {
 /***********************************************************************************/
 
 function closeAgendaEvent(id, msg, resched){
-	(typeof resched === 'undefined') && (resched = J('#showRescheduled').attr('checked'));
+	(typeof resched === 'undefined') && (resched = $('#showRescheduled').attr('checked'));
 
 	var action = resched ? 'cancelar' : 'cerrar';
 	var res = prompt('Escriba un comentario para ' + action + ' el evento:', msg||'');
@@ -405,7 +531,7 @@ var Snippets = {
  * Snippet Constructor
  */
 function Snippet(el){
-	var params = J.parseJSON(el.attr('params')),
+	var params = $.parseJSON(el.attr('params')),
 	    code = params.code,
 	    type = params.type,
 	    groupId = params.groupId;
@@ -436,7 +562,7 @@ function Snippet(el){
 	 * Load a new snippet
 	 */
 	function addSnippet(snippet, opts) {
-		xajax_addSnippet(snippet, code, J.extend({}, params, opts));
+		xajax_addSnippet(snippet, code, $.extend({}, params, opts));
 	}
 
 	/**
@@ -456,24 +582,24 @@ function Snippet(el){
 	var methods = {
 		comboList: function() {
 			my('.comboList').change(function(){
-				J(this).val() && request('viewItem', J(this).val());
+				$(this).val() && request('viewItem', $(this).val());
 			});
 		},
 
 		bigTools: function() {
-			var btns = J.extend(my('[btn][class!="btOff"]'), {
+			var btns = $.extend(my('[btn][class!="btOff"]'), {
 				// Empty code: all btns; string or array: listed btn(s)
 				get: function(code) {
 					var set = code ? btns.filter(':not([btn])') : this;
-					code && J.each(J.isArray(code) ? code : [code], function(){
+					code && $.each($.isArray(code) ? code : [code], function(){
 						set = set.add(btns.filter('[btn="'+this+'"]'));
 					});
 					return set;
 				}
 			}).click(function(){
-				var axn = J(this).attr('btn'),
+				var axn = $(this).attr('btn'),
 				    uid = my('[btn]').attr('uid') || '';
-				J(this).hasClass('btOn') && request(axn + 'Item', uid);
+				$(this).hasClass('btOn') && request(axn + 'Item', uid);
 			});
 
 			this.disable = function(code) {
@@ -491,7 +617,7 @@ function Snippet(el){
 				return uid ? (this.uid = uid) && this : this.uid;
 			};
 
-			this.enable.ss = J();
+			this.enable.ss = $();
 		},
 
 		commonList: function() {
@@ -501,8 +627,8 @@ function Snippet(el){
 				// Store horizontal position and width of each cell...
 				my('tbody tr:first td').each(function(i){
 					my('.listTitles div:eq('+i+')')
-						.width(J(this).width())
-						.css('left', J(this).position().left);
+						.width($(this).width())
+						.css('left', $(this).position().left);
 				});
 			});
 
@@ -515,32 +641,32 @@ function Snippet(el){
 
 			my('.innerListRow').click(function(){
 				my('.selectedListRow').removeClass('selectedListRow');
-				J(this).addClass('selectedListRow');
-				linked('bigTools').enable().id(J(this)._for());
+				$(this).addClass('selectedListRow');
+				linked('bigTools').enable().id($(this)._for());
 			});
 
 			my('.innerListRow').dblclick(function(){
 				// Create new embeddedView if there was none in current row
-				if (!J(this).next().find('.embeddedView').remove().length) {
+				if (!$(this).next().find('.embeddedView').remove().length) {
 					my('.embeddedView').parents('tr').remove();
 
-					J('<td />', {
+					$('<td />', {
 						'id': 'embed_' + groupId,
 						'class': 'embeddedView',
-						'colspan': J(this).find('td').length
+						'colspan': $(this).find('td').length
 					}).on('embed', function(){
-						this.scrollIntoView();
-					}).appendTo(J('<tr />').insertAfter(this));
+//						this.scrollIntoView();
+					}).appendTo($('<tr />').insertAfter(this));
 
 					// Request the embeddedView content
-					addSnippet('snp_viewItem', {filters: J(this)._for(),
+					addSnippet('snp_viewItem', {filters: $(this)._for(),
 					                            writeTo: 'embed_' + groupId});
 				}
 			});
 
 			my('.innerListTools').on('click', '[btn]', function(){
-				var uid = J(this).parents('.innerListRow')._for();
-				request(J(this).attr('btn') + 'Item', uid);
+				var uid = $(this).parents('.innerListRow')._for();
+				request($(this).attr('btn') + 'Item', uid);
 			});
 		},
 
@@ -550,7 +676,7 @@ function Snippet(el){
 
 		viewItem: function() {
 			resetBigToolsState(['list', 'create', 'edit', 'delete']);
-			J('#embed_'+groupId).trigger('embed');
+			$('#embed_'+groupId).trigger('embed');
 		},
 
 		createItem: function(editing){
@@ -560,7 +686,7 @@ function Snippet(el){
 
 			// Form submitting
 			my('.snippet_createForm').submit(function(){
-				var filters = J(this).serializeJSON();
+				var filters = $(this).serializeJSON();
 				return request(editing ? 'edit' : 'create', filters) & false;
 			});
 
@@ -585,30 +711,30 @@ function Snippet(el){
 /******************************************************************************/
 
 function initializeList(code, modifier, src){
-	J('#listWrapper').prop('update', function(){
-		J('#listTable').trigger('modified');
+	$('#listWrapper').prop('update', function(){
+		$('#listTable').trigger('modified');
 
-		J('.listRows').click(function(e){
-			J(this)._for() && getPage(e, code + 'Info', [J(this)._for()]);
+		$('.listRows').click(function(e){
+			$(this)._for() && getPage(e, code + 'Info', [$(this)._for()]);
 		});
 
-		J('.tblTools').click(function(e){
-			var axn = J(this).attr('axn');
-			var id = J(this)._for();
+		$('.tblTools').click(function(e){
+			var axn = $(this).attr('axn');
+			var id = $(this)._for();
 
 			switch (axn) {
 				case 'delete':
 					if( confirm('¿Realmente desea eliminar este elemento?') ){
-						window['xajax_delete' + J.capitalize(code)](id, modifier);
+						window['xajax_delete' + $.capitalize(code)](id, modifier);
 					};
 					break;
 				case 'block':
 					if( confirm('¿Realmente desea bloquear este elemento?') ){
-						window['xajax_block' + J.capitalize(code)](id, modifier);
+						window['xajax_block' + $.capitalize(code)](id, modifier);
 					};
 					break;
 				default:
-					getPage(e, axn + J.capitalize(code), [id, modifier]);
+					getPage(e, axn + $.capitalize(code), [id, modifier]);
 					break;
 			};
 
@@ -629,7 +755,7 @@ function initializeSimpleList() {
 			this.inputs.each(function(){
 				data[this._name()] = this.val();
 			}, true);
-			var func = 'xajax_create' + J.capitalize(code);
+			var func = 'xajax_create' + $.capitalize(code);
 			window[func] && window[func](data, modifier);
 		};
 
@@ -649,7 +775,7 @@ function initializeSimpleList() {
 		};
 	};
 
-	J('.simpleList').each(function(){
+	$('.simpleList').each(function(){
         if (!this.find('.addItemToSimpleList')) {
 			return false;
 		}
@@ -671,11 +797,11 @@ function initializeSimpleList() {
 		});
 
 		this.find('.tblTools').click(function(e){
-			switch (J(this).attr('axn')) {
+			switch ($(this).attr('axn')) {
 				case 'create':
 					return SL.createItem();
 				case 'edit':
-					return SL.enableEditItem(J(this)._for());
+					return SL.enableEditItem($(this)._for());
 				case 'delete':
 					if( !confirm('¿Realmente desea eliminar este elemento?') ) {
 						return;
@@ -688,17 +814,17 @@ function initializeSimpleList() {
 					break;
 			};
 
-			var func = 'xajax_' + J(this).attr('axn') + J.capitalize(code);
+			var func = 'xajax_' + $(this).attr('axn') + $.capitalize(code);
 			if( !window[func] ) {
 				throw('Function ' + func + ' is not registered!');
 			}
 
-			return window[func](J(this)._for(), modifier) & false;
+			return window[func]($(this)._for(), modifier) & false;
 		});
 	});
 };
 
-jQuery(function($){
+$(function(){
 	// Old common list
 	$('body').on('modified', '#listTable', function(){
 		setTimeout(function(){

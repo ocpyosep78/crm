@@ -254,7 +254,7 @@ class snp_Result
 		switch ($this->datatype)
 		{
 			case 'res':
-				$this->convert('array');
+				$this->convert('named');
 
 			case 'array':
 			case 'named':
@@ -306,7 +306,10 @@ class snp_Result
 		{
 			$method = "res2{$to}";
 
-			mysql_data_seek($this->__orig_dataset, 0);
+			if (mysql_num_rows($this->__orig_dataset))
+			{
+				mysql_data_seek($this->__orig_dataset, 0);
+			}
 			$this->caller->$method($this->__orig_dataset);
 			$this->__dataset = $this->caller->formattedRes;
 

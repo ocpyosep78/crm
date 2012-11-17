@@ -86,30 +86,28 @@
 		add: function(al){
 			this.list[al.id] = al;
 			this.lastRead = Math.max(al.id||0, this.lastRead);
-			J('<div />')
+			$('<div />')
 				.html(this.alertRead + al.date + al.msg)
 				.attr('ref', al.id)		/* Reference to alert's ID */
-				.prependTo(J('#alertsList'))
+				.prependTo($('#alertsList'))
 				.find('img').click(function(){
-					sync.requestRemoval.apply(J(this));
-					clearTimeout(J('#alertsBox').showAlertsTO);
+					sync.requestRemoval.apply($(this));
+					clearTimeout($('#alertsBox').showAlertsTO);
 					return false;
 				});
-			J('#alertsList').parent().scrollTop(0);
+			$('#alertsList').parent().scrollTop(0);
 			this.show();
 			this.firstLoad || this.highlightRow(el);
 		},
 		remove: function(x){
-			J('#alertsList div').each(function(i, el){
-				(J(el).attr('ref') == x) && J(el).remove();
-			});
-			J('#alertsList div').length || this.hide();
+			$('#alertsList div[ref="'+x+'"]').remove();
+			$('#alertsList div').length || this.hide();
 		},
 		show: function(){
-			J('#alertsBox').show();
+			$('#alertsBox').show();
 		},
 		hide: function(){
-			J('#alertsBox').hide();
+			$('#alertsBox').hide();
 		},
 		hasAlerts: function(){
 			for(x in this.list) if(this.list.hasOwnProperty(x)) return true;
@@ -121,10 +119,10 @@
 		}
 	};
 
-	jQuery(function(){			/* Alerts & Sync */
+	$(function(){			/* Alerts & Sync */
 		sync.request();
 		var syncItvl = setInterval(sync.request, 5000);
-		var $box = J('#alertsBox');
+		var $box = $('#alertsBox');
 		$box.mouseenter(function(){
 			$box.showAlertsTO = setTimeout(function(){
 				$box.addClass('shown');

@@ -3,15 +3,15 @@ function ini_customers(type) {};
 function ini_potentialCustomers() {};
 
 function ini_customersInfo() {
-	J('#editCustomers').click(function(e){
-		getPage(e, 'editCustomers', [J(this).attr('for')]);
+	$('#editCustomers').click(function(e){
+		getPage(e, 'editCustomers', [$(this)._for()]);
 	});
 };
 
 function ini_createCustomers(isNotNew) {
-	J('#potentialSubmit').click(function(){
+	$('#potentialSubmit').click(function(){
 		var action = isNotNew ? 'editCustomers' : 'createCustomers';
-		xajaxSubmit(J('#createCustomerForm'), action, true);
+		xajaxSubmit($('#createCustomerForm'), action, true);
 	});
 };
 
@@ -20,7 +20,7 @@ function ini_editCustomers() {
 };
 
 function ini_registerSales() {
-	var frm = J.forms('frmOldSales');
+	var frm = $.forms('frmOldSales');
 
 	frm.setSeller = function(code){
 		this.seller.val(code);
@@ -48,14 +48,14 @@ function ini_registerSales() {
 	frm.find('[name="saleType"]').click(function(e){
 		e.stopPropagation();
 
-		J.each(optionalFields.fields, function(i, field){
+		$.each(optionalFields.fields, function(i, field){
 			frm[field].attr('disabled', true);
 		});
-		J.each(optionalFields[J(this).val()], function(i, field){
+		$.each(optionalFields[$(this).val()], function(i, field){
 			frm[field].attr('disabled', false);
 		});
 	}).parent().click(function(){
-		J(this).find('[name="saleType"]').click();
+		$(this).find('[name="saleType"]').click();
 	});
 
 	frm.restart();

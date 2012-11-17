@@ -44,7 +44,7 @@
 
 		# Add commands and actions to Xajax response object
 		oNav()->updateContent( oFormTable()->getTemplate(), true );
-		return addScript("J('#editAcc_oldPass').focus();");
+		return addScript("\$('#editAcc_oldPass').focus();");
 
 	}
 

@@ -148,7 +148,7 @@ function page_editUsers($acc=NULL)
 	oNav()->updateContent(oFormTable()->getTemplate(), true);
 
 	$prefix = $edit ? 'editUsers' : 'createUsers';
-	return addScript("J('#{$prefix}_user').focus();");
+	return addScript("\$('#{$prefix}_user').focus();");
 }
 
 function page_createUsers()

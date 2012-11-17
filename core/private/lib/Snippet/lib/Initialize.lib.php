@@ -282,7 +282,7 @@ Array(
 	private function runSnippet($snippet)
 	{
 		$ajax =& $this->Layers->get('ajax');
-		$ajax->addScript("J('body').trigger('snippets');");
+		$ajax->addScript("\$('body').trigger('snippets');");
 	}
 
 

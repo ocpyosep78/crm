@@ -255,6 +255,7 @@ EOF;
 		public function res2array($res)
 		{
 			$this->formattedRes = array();
+			
 			while ($data=mysql_fetch_assoc($res))
 			{
 				$this->formattedRes[] = $data;
@@ -296,35 +297,40 @@ EOF;
 			# Attempt to set keys as requested, try default behavior on failure
 			$fKey = (is_array($atts) && !empty($atts['key'])) ? $atts['key'] : 0;
 			$fVal = (is_array($atts) && !empty($atts['val'])) ? $atts['val'] : 1;
+
 			# If keys are not part of the result, try $0 => $1 or even $0 => $0
-			if( !in_array($fKey, $availKeys, true) ) $fKey = 0;
-			if( !in_array($fVal, $availKeys, true) ) $fVal = min(count($availKeys)/2 - 1, 1);
+			if (!in_array($fKey, $availKeys, true))
+			{
+				$fKey = 0;
+			}
+
+			if (!in_array($fVal, $availKeys, true))
+			{
+				$fVal = min(count($availKeys)/2 - 1, 1);
+			}
 
 			# Now we're ready to read data
-			while( $data=mysql_fetch_array($res) ){
+			while ($data=mysql_fetch_array($res))
+			{
 				$this->formattedRes[$data[$fKey]] = $data[$fVal];
 			}
 
 		}
 
-		public function res2named($res, $keys=array())
+		public function res2named($res, $key=NULL)
 		{
 			$this->formattedRes = array();
-			# Make sure keys are given as array, or fix it to be
-			$keys = (array)$keys;
-			# Amount of keys
-			$cntKeys = count( $keys );
+
 			# Browse all rows and fix each index with key fields
-			while( $data=mysql_fetch_assoc($res) ){
-				$arrIDs = array();
-				foreach( $keys as $key ) if( isset($data[$key]) ) $arrIDs[] = $data[$key];
-				# Don't use key fields as index if a key field is missing in data
-				if( !$cntKeys || empty($arrIDs) || count($arrIDs) != $cntKeys ){
-					$this->formattedRes[] = $data;
+			while ($data=mysql_fetch_assoc($res))
+			{
+				if ($key && isset($data[$key]))
+				{
+					$this->formattedRes[$data[$key]] = $data;
 				}
-				else{
-					$idRow = join('__|__', $arrIDs);
-					$this->formattedRes[$idRow] = $data;
+				else
+				{
+					$this->formattedRes[current($data)] = $data;
 				}
 			}
 		}

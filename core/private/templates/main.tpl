@@ -20,8 +20,8 @@
 
 
 	{* Styles *}
-	<link rel="stylesheet" type="text/css" href="core/private/scripts/jquery/themes/{$jQueryUiTheme}/jquery-ui.css" />
-	<link rel="stylesheet" type="text/css" href="core/private/scripts/jquery/jquery.qtip2.css" />
+	<link rel="stylesheet" type="text/css" href="{$core_scripts}jquery/themes/{$jQueryUiTheme}/jquery-ui.css" />
+	<link rel="stylesheet" type="text/css" href="{$core_scripts}jquery/jquery.qtip2.css" />
 
 	{foreach from=$Page->styleSheets item=styleSheet}
 		<link rel="stylesheet" type="text/css" href="{$styleSheet}" />
@@ -29,23 +29,21 @@
 
 
 	{* JS files *}
-	<script type='text/javascript' src='core/private/scripts/mootools 1.3.js'></script> <!-- ALMOST GONE! -->
-	<script type='text/javascript' src='core/private/scripts/jquery/jquery-1.8.2.min.js'></script>
-	<script type='text/javascript' src='core/private/scripts/jquery/jquery-ui-1.9.1.min.js'></script>
-	<script type='text/javascript' src='core/private/scripts/jquery/jquery.qtip2.js'></script>
-	<script type='text/javascript' src='core/private/scripts/libs.js'></script>
+	<script type="text/javascript" src="{$core_scripts}jquery/jquery-1.8.2.min.js"></script>
+	<script type="text/javascript" src="{$core_scripts}jquery/jquery-ui-1.9.1.min.js"></script>
+	<script type="text/javascript" src="{$core_scripts}jquery/jquery.qtip2.js"></script>
 
-	<script type='text/javascript'>window.IN_FRAME = {$IN_FRAME}</script>
-	<script type='text/javascript' src='{$core_scripts}common.js'></script>
+	<script type="text/javascript">window.IN_FRAME = {$IN_FRAME}</script>
+	<script type="text/javascript" src="{$core_scripts}common.js"></script>
 
 	{foreach from=$Page->jScripts item=jScript}
-		<script type='text/javascript' src='{$jScript}'></script>
+		<script type="text/javascript" src="{$jScript}"></script>
 	{/foreach}
 
 	{* JS code *}
-	<script type='text/javascript'>
+	<script type="text/javascript">
 		{$Page->jsCode}
-		J(function(){literal}{{/literal}
+		$(function(){literal}{{/literal}
 			{$Page->jsOnLoad}
 		{literal}}{/literal} );
 	</script>
@@ -163,9 +161,9 @@
 	{if $Page->debugger}
 	  <div id='debugHeader'>
 		<div>
-		  <div id="openDebug" onclick="$('debugHeader').removeClass('dbgHid');"></div>
+		  <div id="openDebug"></div>
 		  <img id='debugStats' src='app/images/stats.gif' alt='extended info' />
-		  <div style='float:left; width:600px;' onclick="$('debugHeader').addClass('dbgHid');">
+		  <div id="debuggerbox" style='float:left; width:600px;'>
 			Debugger <span style="color:#0000a0; cursor:pointer;">(click para minimizar)</span>
 			<br />
 			{foreach from=$Page->develMsgs item=develMsg}{$develMsg}<br />{/foreach}

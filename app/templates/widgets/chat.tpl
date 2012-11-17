@@ -30,7 +30,7 @@
 		if (!document.styleSheets) return false;
 
 		// Create element and append it
-		J('head').append(J('<style />', {'type': 'text/css'}));
+		$('head').append($('<style />', {'type': 'text/css'}));
 
 		// Insert rules in the new styleSheet
 		var styleSheet = document.styleSheets[document.styleSheets.length - 1];
@@ -60,7 +60,7 @@
 <script type="text/javascript">
 
 	var chatCheck = window.frames['chatCheck'];
-	var observer = J('#chatActivity');
+	var observer = $('#chatActivity');
 
 	if (chatCheck && observer) {
 		var cnt = 0;
@@ -76,7 +76,7 @@
 		};
 
 		var delChatCheck = function(){
-			J('#chatCheck').remove();
+			$('#chatCheck').remove();
 		};
 
 		var dispose = function(){

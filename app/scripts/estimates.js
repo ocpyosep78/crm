@@ -106,8 +106,8 @@ Object Rows: array with custom methods
 /************** O B J E C T :   T A B L E **************/
 /*******************************************************/
 	Table = {
-		table: J('table.quotesTable')[0],
-		basicLine: J('tr.quoteBasicLine')[0],
+		table: $('table.quotesTable')[0],
+		basicLine: $('tr.quoteBasicLine')[0],
 		selected: null,
 		selectRow: function(row){
 			if( this.selected ){
@@ -141,15 +141,15 @@ Object Rows: array with custom methods
 				e.preventDefault();
 			};
 			function keyUpOnName( e ){		// Non-special chars
-				if ((J.inArray(e.code, [91, 92, 93]))
+				if (($.inArray(e.code, [91, 92, 93]))
 				 || ((e.code > 111) && (e.code < 187))
-				 || (!J.inArray(e.code, [8, 32, 46, 27]) && (e.code < 48))
-				 || ((e.code > 191) && !J.inArray(e.code, [219, 220, 221]))
-				 || (!J.inArray(e.key, ['space', 'backspace', 'delete', 'esc']) && (e.key.length != 1))) {
+				 || (!$.inArray(e.code, [8, 32, 46, 27]) && (e.code < 48))
+				 || ((e.code > 191) && !$.inArray(e.code, [219, 220, 221]))
+				 || (!$.inArray(e.key, ['space', 'backspace', 'delete', 'esc']) && (e.key.length != 1))) {
 					return;
 				}
-				if (this.val().trim() && e.which != 27) {
-					requestSuggest(this.val().trim());
+				if ($.trim(this.val()) && e.which != 27) {
+					requestSuggest($.trim(this.val()));
 				} else {
 					Suggest.destroyList();
 					map.suggest.html('');
@@ -240,9 +240,9 @@ Object Rows: array with custom methods
 				if( !oRow.data || !oRow.data.amount ) continue;
 				tSubTotal += parseFloat(oRow.data.amount * oRow.data.price) || 0;
 			};
-			J('#tSubTotal').html(tSubTotal.toFixed(2));
-			J('#tTax')     .html((tSubTotal * taxes).toFixed(2));
-			J('#tTotal')   .html((tSubTotal * (taxes + 1)).toFixed(2));
+			$('#tSubTotal').html(tSubTotal.toFixed(2));
+			$('#tTax')     .html((tSubTotal * taxes).toFixed(2));
+			$('#tTotal')   .html((tSubTotal * (taxes + 1)).toFixed(2));
 		}
 	};
 
@@ -254,7 +254,7 @@ Object Rows: array with custom methods
 		that: this,
 		req: {},
 		request: function(txt, pos){
-			this.req.id = newSID();
+			this.req.id = (new Date()).getMilliseconds() + Math.random();
 			this.req.pos = pos;
 			if( !txt ) this.processList([], this.req.id);
 			else if( this.req.lastSearch != txt ){		/* Dont' repeat search */
@@ -274,17 +274,17 @@ Object Rows: array with custom methods
 		showList: function(){
 			var that = this;
 			var pos = this.req.pos;
-			J.each(this.req.list, function(line, i){
+			$.each(this.req.list, function(line, i){
 				var fn = (function(i){ return function(){
 					Table.showSuggest(line, pos).acceptInput(pos);
 				}})(i);
-				J('<a />', {'href': 'javascript:void(0);'})
+				$('<a />', {'href': 'javascript:void(0);'})
 					.click(fn)
-					.append(J('<div />').html(line.name))
-					.appendTo(J('#suggestList'));
+					.append($('<div />').html(line.name))
+					.appendTo($('#suggestList'));
 			});
 			var coords = Rows[pos].map.name.position();
-			J('#listBox').css({'top':coords.top+22, 'left':coords.left-1}).show();
+			$('#listBox').css({'top':coords.top+22, 'left':coords.left-1}).show();
 		},
 		pickOneResult: function(){	/* Keeps current result if it's in the list */
 			var req = this.req;
@@ -294,8 +294,8 @@ Object Rows: array with custom methods
 			return req.list[i] || {};
 		},
 		hideList: function(){
-			J('#listBox').hide();
-			J('#suggestList').html('');	/* Clear results */
+			$('#listBox').hide();
+			$('#suggestList').html('');	/* Clear results */
 		},
 		destroyList: function(){
 			this.hideList();
@@ -310,8 +310,8 @@ Object Rows: array with custom methods
 		selectInList: function(){
 			var req = this.req;
 			req.product = req.list[req.selected].id;
-			J('#listBox a.selected').removeClass('selected');
-			var currSelected = J('#listBox a')[req.selected];
+			$('#listBox a.selected').removeClass('selected');
+			var currSelected = $('#listBox a')[req.selected];
 			currSelected.addClass('selected');
 			if (currSelected.parent().scrollTop() < currSelected.get(0).offsetTop){
 				currSelected.get(0).scrollIntoView(false);
@@ -325,10 +325,10 @@ Object Rows: array with custom methods
 /* Outside the table ( buttons ) */
 
 	// id_estimate will be empty if we're creating a new estimate/quote
-	var id_estimate = J('#hdn_id_estimate').val() || '';
+	var id_estimate = $('#hdn_id_estimate').val() || '';
 
-	J('#btn_save').click(function(){
-		if (!J('#param_estimate').val()) {
+	$('#btn_save').click(function(){
+		if (!$('#param_estimate').val()) {
 			return say('Debe escribir un nombre válido para guardar un presupuesto o cotización.');
 		}
 
@@ -336,11 +336,11 @@ Object Rows: array with custom methods
 		var Data = Rows.getData();
 		var Params = {
 			'id_estimate': id_estimate,
-			'estimate': J('#param_estimate').val(),
-			'orderNumber': J('#param_orderNumber').val() || '',
-			'id_customer': J('#param_id_customer').val() || '',
-			'id_system': J('#param_id_system').val() || '',
-			'pack': J('#hdn_pack').val() || ''
+			'estimate': $('#param_estimate').val(),
+			'orderNumber': $('#param_orderNumber').val() || '',
+			'id_customer': $('#param_id_customer').val() || '',
+			'id_system': $('#param_id_system').val() || '',
+			'pack': $('#hdn_pack').val() || ''
 		};
 
 		// Ask for confirmation if table is empty
@@ -356,8 +356,8 @@ Object Rows: array with custom methods
 		xajax_saveEstimate(Params, Data, id_estimate);
 	});
 
-	J('#param_id_system').change(function(){
-		this.val() && J('#img_system')._src('app/images/systems/'+this.val()+'.png');
+	$('#param_id_system').change(function(){
+		this.val() && $('#img_system')._src('app/images/systems/'+this.val()+'.png');
 	});
 };
 
@@ -366,12 +366,12 @@ function ini_editEstimates(){
 };
 
 function ini_estimatesInfo(){
-	var id = J('#hdn_id_estimate').val();
+	var id = $('#hdn_id_estimate').val();
 
-	J('#btn_edit').click(function(e){ getPage(e, 'editEstimates', [id]); });
-	J('#btn_print').click(function(){ xajax_printQuote(id); });
-	J('#btn_design').click(function(e){ getPage(e, 'installPlan', [id]); });
-	J('#btn_exportPDF').click(function(e){
+	$('#btn_edit').click(function(e){ getPage(e, 'editEstimates', [id]); });
+	$('#btn_print').click(function(){ xajax_printQuote(id); });
+	$('#btn_design').click(function(e){ getPage(e, 'installPlan', [id]); });
+	$('#btn_exportPDF').click(function(e){
 		return getPage(e, 'estimatePDF', [id]); // TODO
 		var height = (parseInt(screen.availHeight) * .90) + 'px';
 		var width = (parseInt(screen.availWidth) * .90) + 'px';
@@ -383,8 +383,8 @@ function ini_estimatesInfo(){
 };
 
 function printQuote(){
-	var content = J('#tmpDivToPrint').html();
-	J('#tmpDivToPrint').html('');
+	var content = $('#tmpDivToPrint').html();
+	$('#tmpDivToPrint').html('');
 	var ref = window.open('', 'printQuotePopup', 'height=500px, width=800px,left=10px,top=10px');
 
 	ref.document.open();
@@ -398,45 +398,45 @@ function printQuote(){
 };
 
 function ini_installPlan(id) {
-	J.forms('plan').submit(function(){
+	$.forms('plan').submit(function(){
 		return xajax_addEntryToPlan(xajax.getFormValues(this)) & false;
 	});
-	J('#installPlan img').parent().click(function(){
-		xajax_removeEntryFromPlan(J(this)._for());
+	$('#installPlan img').parent().click(function(){
+		xajax_removeEntryFromPlan($(this)._for());
 	});
-	J('#backToEstimateInfo').click(function(){
+	$('#backToEstimateInfo').click(function(){
 		getPage('estimatesInfo', [id]);
 	});
 };
 
 function ini_estimatePDF(id) {
-	J('#backToEstimateInfo').click(function(){
+	$('#backToEstimateInfo').click(function(){
 		getPage('estimatesInfo', [id]);
 	});
 	// When clicking on Print button, a temporary iframe is created
-	J('#printEstimatePDF').click(function(){
-		var src = J('#estimatePDF')._src + '&printer&validated';
+	$('#printEstimatePDF').click(function(){
+		var src = $('#estimatePDF')._src + '&printer&validated';
 
-		J('#printFra').remove();
-		J('<iframe />', {'id'  : 'printFra',
+		$('#printFra').remove();
+		$('<iframe />', {'id'  : 'printFra',
 		                 'name': 'printFra',
 		                 'src' : src})
-			.load(function(){ J('#printFra').get(0).print(); })
+			.load(function(){ $('#printFra').get(0).print(); })
 			.hide()
 			.appendTo('body');
 	});
 	// Show Print button only when the estimate is finally shown (after validation)
-	J('#estimatePDF').load(function(){
+	$('#estimatePDF').load(function(){
 		if( window.frames.estimatePDF.location.href.indexOf('validated') !== -1 ){
-			J('#printEstimatePDF').hide();
+			$('#printEstimatePDF').hide();
 		};
 	});
 }
 
 function ini_createEstimates_pack() {
-	J('#createEstimatesPack').click(function(){
-		var name = J('#createEstimatesPack_name').val();
-		var cust = J('#createEstimatesPack_id_customer').val();
+	$('#createEstimatesPack').click(function(){
+		var name = $('#createEstimatesPack_name').val();
+		var cust = $('#createEstimatesPack_id_customer').val();
 
 		if (!name || !cust) {
 			return alert('Debe llenar todos los campos para continuar.');
@@ -451,12 +451,12 @@ function ini_editEstimates_pack(id) {
 }
 
 function ini_estimates_packInfo(id) {
-	var pack = J('#estimates_pack_tools_add')._for();
-	J('#estimates_pack_tools_add').change(function(){
-		var estimate = J('#estimates_pack_tools_add').val();
+	var pack = $('#estimates_pack_tools_add')._for();
+	$('#estimates_pack_tools_add').change(function(){
+		var estimate = $('#estimates_pack_tools_add').val();
 		estimate && xajax_addEstimate2Pack({pack: pack, id_estimate: estimate});
 	});
-	J('#createEstimate').click(function(){
+	$('#createEstimate').click(function(){
 		getPage('createEstimates', ['', id]);
 	});
 }

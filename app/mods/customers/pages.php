@@ -112,7 +112,7 @@
 
 		# Add commands and actions to Xajax response object
 		$prefix = $id ? 'editCust' : 'newCust';
-		addScript("J('#{$prefix}_number').focus();");
+		addScript("\$('#{$prefix}_number').focus();");
 	}
 
 	function page_sales()

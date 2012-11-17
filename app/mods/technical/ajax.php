@@ -37,7 +37,7 @@ function tchFormSuggest($key, $val){
 		);
 	}
 
-	return addScript("J('#technicalForm').get(0).handler.suggest(".toJson($data).');');
+	return addScript("\$('#technicalForm').get(0).handler.suggest(".toJson($data).');');
 
 }
 
@@ -70,7 +70,7 @@ function tchFormAcceptSale($id, $cust=NULL){	/* `id_sale` from `sales`, `id_cust
 		'custNumber', 'warranty', 'subscribed', 'id_system', 'system', 'installDay', 'installMonth', 'installYear');
 	foreach( $data as $k => $v ) if( !in_array($k, $toKeep) ) unset( $data[$k] );
 
-	return addScript("J('#technicalForm').get(0).handler.fillForm(".toJson($data).');');
+	return addScript("\$('#technicalForm').get(0).handler.fillForm(".toJson($data).');');
 
 }
 
@@ -107,7 +107,7 @@ function createTechVisit($data)
 
 	if ($res !== true)
 	{
-		addScript("J('#technicalForm').handler.select('{$res['field']}');");
+		addScript("\$('#technicalForm').handler.select('{$res['field']}');");
 		$tip = strtolower($res['tip'] ? $res['tip'] : '');
 		return say("Hay un error en los datos ingresados: {$tip}");
 	}

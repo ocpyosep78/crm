@@ -720,9 +720,9 @@ snippet{ position:relative; }
 /**
  * SNIPPETS : LISTS : TITLES
  */
-.listTitles{ height:18px; position:relative; width:auto; margin:0px -6px 5px -6px; padding:8px 0px 9px 5px; text-align:left; font-size:14px; font-weight:bold; font-family:"Times New Roman", Times, serif; border-radius:12px;   box-shadow:#000000 2px 1px 5px;   white-space:nowrap; overflow:hidden; z-index:50; background-image:linear-gradient(#203050, #e4e5e8); }
-.listTitles > div{ position:absolute; margin:0px 5px; padding:0px; text-indent:6px; color:#ffffff; overflow:hidden; }
-.listTitles > div:hover{ color:#ffffe0; }
+.listTitles{ height:18px; position:relative; width:auto; margin:0px -6px 5px -6px; padding:8px 0px 9px 5px; text-align:left; border-radius:12px; box-shadow:#000000 2px 1px 5px; white-space:nowrap; overflow:hidden; z-index:50; background-image:linear-gradient(#203050, #e4e5e8); }
+.listTitles > div{ position:absolute; margin:0px 5px; padding:0px; text-indent:6px; color:#ffffff; text-shadow:2px 2px 2px #000; overflow:hidden; font-size:18px; font-weight:bold; font-family:"Times New Roman", Times, serif; }
+.listTitles > div:hover{ color:#ffffe0; text-shadow:1px 1px 1px #000; }
 .listTitles .tablesearch{ text-align:right; }
 .listTitles .tablesearch input{ height:1.1em; width:120px; padding-left:20px; background:#fff url(../images/snippet/buttons/search.png) no-repeat 2px 1px; }
 
