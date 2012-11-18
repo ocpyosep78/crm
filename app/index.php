@@ -1,73 +1,5 @@
 <?php
 
-/**********************************************************************************
-**
-** The app has only one entry point: this file. All calls, ajax or direct, start
-** and end in this script. If a user is logged, module's engine handles the logic
-** related to pages and modules: CORE_PRIVATE.'pageMgr.php'.
-**
-** What follows is a short summary of what index.php does.
-**
-**
-** INITIALIZE.PHP
-**
-** - It sets PHP config parameters like error_reporting, time limit, etc.
-** - It sends headers
-** - It loads main files like config.cfg.php (constants), local.cfg.php (devel
-**   constants).
-** - It autoloads general functions (folder app/libs/functions/)
-**
-**
-** BUILDER CLASS
-**
-** - It initializes Builder object, that in turn is capable of initializing and
-**	 returning most global objects, on demand. These objects can then be called
-**	 later (acting somehow like singletons) with $Builder->get(objectName) or
-**	 through handy shortcuts (functions) o{objectName}():
-**
-**		- oSQL()						Communication with mySQL database
-**		- oSmarty()						Templates
-**		- oXajax & oXajaxResp()			Ajax
-**		- oPageCfg()					Page layout, menu and other basic elements
-**		- oValidate()					Input validation
-**		- oFT() (FormTable)				Simple Forms in basic Table format
-**
-**
-** PAGEMGR.PHP
-**
-** - The application is composed of atomic pages. In general, no page depends
-** on other pages (though disencouraged, there might be a few exceptions). So,
-** pages are also loaded in the most automatized way possible. See doc header in
-** CORE_PRIVATE.'pageMgr.php' for more information on pages, modules and the way
-** they are handled.
-**
-** - If conditions are met, debugging mode is turned on, adding a debug messages
-** box to the main template (CORE_TEMPLATES.'main.tpl') and setting error_reporting value
-** to E_ALL. A user-defined error-handling function prepares the output to be sent
-** to this box for developpers to see.
-**
-** - Finally, this script's in charge again after returning from pageMgr, and it
-** either displays the page (through Smarty) or answers the requests (through Xajax)
-** if there is one.
-**
-** - Some particular Xajax calls are handled right after creating Builder, because
-**	 they don't need pageMgr and it saves time not to call it needlessly. These calls
-**	 still have access to main objects through Builder, anyway. Mostly, these are
-**	 sync calls and getPage (first step to request a new page, see Nav class for more
-**	 info on the navigation system). To add more, see section URGENT AJAX CALLS.
-**
-**
-***********************************************************************************
-**
-** O T H E R   I M P O R T A N T   D O C U M E N T A T I O N   (OUT OF DATE INFO)
-**
-**
-** For more information on basic objects, procedures, functions and concepts see:
-**
-** - dev.info.php			Links to most important doc headers, briefly explained
-**
-**********************************************************************************/
-
 function db($var, $die=true)
 {
 	headers_sent() || header('Content-Type: application/json');
@@ -87,19 +19,64 @@ function db($var, $die=true)
 require_once('initialize.php');
 
 
-									// TESTING
-									if (isset($_GET['t']))
+									try
 									{
-										require_once('core/private/lib/Snippet/layers/connect/mysql.layer.php');
-
-										try
+										if (isset($_GET['t6']))
 										{
-											$t = new snp_Layer_mysql('_users');
+											db(SNP::getSnippet('viewItem', 'Customer', array('filters' => 1)));
 
-											$filters['blocked'] = array(0, '!=');
+											die();
+										}
+
+										if (isset($_GET['t5']))
+										{
+											db(SNP::getSnippet('commonList', 'Customer'));
+
+											die();
+										}
+
+										if (isset($_GET['t4']))
+										{
+											db(SNP::getSnippet('viewItem', 'user', array('filters' => 'dbarreiro')));
+
+											die();
+										}
+
+										if (isset($_GET['t3']))
+										{
+											db(SNP::getSnippet('commonList', 'User'));
+
+											die();
+										}
+
+										// TESTING
+										if (isset($_GET['t2']))
+										{
+											$filters[] = 'user IS NOT NULL';
+											$filters[] = array('user IS NOT NULL');
+											$filters[] = "user IN ('dbarreiro', 'Dios')";
+											$filters[] = "user LIKE '%d%'";
+
+											foreach ($filters as $filter)
+											{
+												echo "Filter: ";
+												db($filter, false);
+												echo "\n";
+												db(Model::get('user')->find($filter, 'user, name', 3)->get(), false);
+												echo "\n\n";
+											}
+
+											die();
+										}
+
+										if (isset($_GET['t']))
+										{
+											$t = Model::get('user');
+
+											$filters = array('NOT blocked', 'user' => 'Dios');
 											$fields = array('user', "CONCAT(name, ' ', lastName) AS fullName", 'phone', 'email', 'profile');
 
-											echo "\n" . '$q = $t->find($filters, $fields, "0, 3")'."\n";
+											echo "\n" . '$q = $t->find($filters, $fields, 2)'."\n";
 											$q = $t->find($filters, $fields, '2');
 											db($q->get(), false);
 
@@ -127,16 +104,16 @@ require_once('initialize.php');
 											$q->flat();
 											db($q->get(), false);
 
-											echo "\n" . '$q->flat($q->convert("res");)'."\n";
+											echo "\n" . '$q->convert("res")'."\n";
 											$q->convert('res');
 											db($q->get(), false);
-										}
-										catch (Exception $e)
-										{
-											db($e->getMessage());
-										}
 
-										die();
+											die();
+										}
+									}
+									catch (Exception $e)
+									{
+										db($e->getMessage());
 									}
 
 
@@ -150,9 +127,14 @@ $urgentAjax = array(
 	'showPage'	=> array('showPage', oNav(), 'showPage'),
 );
 
-foreach( $urgentAjax as $key => $code ){
-	oXajax()->registerFunction( $code );
-	if( isXajax($key) ) oXajax()->processRequests();
+foreach ($urgentAjax as $key => $code)
+{
+	oXajax()->registerFunction($code);
+
+	if (isXajax($key))
+	{
+		oXajax()->processRequests();
+	}
 }
 
 
@@ -172,15 +154,15 @@ loadMainSmartyVars();
 # Start Debugging if conditions are met (developer mode)
 define('APP_PATH', win2unix(dirname($_SERVER['SCRIPT_FILENAME'])).'/');
 
-oPageCfg()->set_debugger(DEVELOPER_MODE || (getSes('id_profile') == 1));
+oPageCfg()->set_debugger(DEVMODE || (getSes('id_profile') == 1));
 
 # Call for showing debug stats frame
-if (isset($_GET['stats']) && (DEVELOPER_MODE || (getSes('id_profile') == 1)))
+if (isset($_GET['stats']) && (DEVMODE || (getSes('id_profile') == 1)))
 {
 	require_once('debug/stats.php');
 }
 
-addScript( 'window.DEVELOPER_MODE = '.((int)DEVELOPER_MODE).';' );
+addScript( 'window.DEVMODE = '.((int)DEVMODE).';' );
 
 
 /***************
@@ -195,7 +177,7 @@ if (loggedIn())
 	oXajax()->registerFunction('logout');
 	oXajax()->registerFunction('takeCall');
 	oXajax()->registerFunction(array('switchTab', oTabs(), 'switchTab'));
-	oXajax()->registerFunction(array('addSnippet', oSnippet(), 'addSnippet'));
+	oXajax()->registerFunction(array('getSnippet', 'SNP', 'getSnippet'));
 }
 
 

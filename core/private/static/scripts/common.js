@@ -127,7 +127,7 @@ function raise( msg ){
 	var caller = (arguments.callee.caller && arguments.callee.caller.name)
 		? arguments.callee.caller.name + ' '
 		: '';
-	return DEVELOPER_MODE ? !!alert( caller + 'error: ' + (msg||'') ) : false;
+	return DEVMODE ? !!alert( caller + 'error: ' + (msg||'') ) : false;
 };
 
 
@@ -226,7 +226,7 @@ function iniPage(name) {
 	try {
 		fn && fn.apply(fn, IniParams.get());
 	} catch(e) {
-		return DEVELOPER_MODE ? test(e) : false;
+		return DEVMODE ? test(e) : false;
 	}
 
 	$('body').trigger('contentload');
@@ -441,15 +441,15 @@ var Snippets = {
  */
 function Snippet(el){
 	var params = $.parseJSON(el.attr('params')),
-	    code = params.code,
-	    type = params.type,
+	    model = params.model,
+	    type = params.snippet,
 	    groupId = params.groupId;
 
 	/**
 	 * Public methods (getters)
 	 */
 	this.getType    = function(){ return type;    };
-	this.getCode    = function(){ return code;    };
+	this.getModel    = function(){ return model;    };
 	this.getGroupId = function(){ return groupId; };
 
 	/**
@@ -470,8 +470,8 @@ function Snippet(el){
 	/**
 	 * Load a new snippet
 	 */
-	function addSnippet(snippet, opts) {
-		xajax_addSnippet(snippet, code, $.extend({}, params, opts));
+	function getSnippet(snippet, opts) {
+		xajax_getSnippet(snippet, model, $.extend({}, params, opts));
 	}
 
 	/**
@@ -481,7 +481,7 @@ function Snippet(el){
 		var ask = {deleteItem: '¿Realmente desea eliminar este elemento?',
 		           blockItem: '¿Realmente desea bloquear este elemento?'};
 		if (!ask[snippet] || confirm(ask[snippet])) {
-			addSnippet(snippet, {filters: filters, writeTo: ''});
+			getSnippet(snippet, {filters: filters, writeTo: ''});
 		}
 	}
 
@@ -541,17 +541,12 @@ function Snippet(el){
 				});
 			});
 
-			// Append set filters, and tgt ID to parent's atts
-			addSnippet('innerCommonList', {writeTo: 'lw_'+groupId, page: 1});
-		},
-
-		innerCommonList: function() {
-			el.parents('.listWrapper').trigger('fill');
-
 			my('.innerListRow').click(function(){
 				my('.selectedListRow').removeClass('selectedListRow');
 				$(this).addClass('selectedListRow');
-				linked('bigTools').enable().id($(this)._for());
+				if (linked('bigTools')) {
+					linked('bigTools').enable().id($(this)._for());
+				}
 			});
 
 			my('.innerListRow').dblclick(function(){
@@ -568,15 +563,17 @@ function Snippet(el){
 					}).appendTo($('<tr />').insertAfter(this));
 
 					// Request the embeddedView content
-					addSnippet('snp_viewItem', {filters: $(this)._for(),
+					getSnippet('snp_viewItem', {filters: {modifier: $(this)._for()},
 					                            writeTo: 'embed_' + groupId});
 				}
 			});
 
-			my('.innerListTools').on('click', '[btn]', function(){
+			my('.innerListTools').on('click', '[alt]', function(){
 				var uid = $(this).parents('.innerListRow')._for();
-				request($(this).attr('btn') + 'Item', uid);
+				request($(this)._alt() + 'Item', uid);
 			});
+
+			my('.listWrapper').trigger('fill');
 		},
 
 		simpleList: function() {
@@ -679,12 +676,12 @@ function closeAgendaEvent(id, msg, resched){
     }
 }
 
-function initializeList(code, modifier, src){
+function initializeList(model, modifier, src){
 	$('#listWrapper').prop('update', function(){
 		$('#listTable').trigger('modified');
 
 		$('.listRows').click(function(e){
-			$(this)._for() && getPage(e, code + 'Info', [$(this)._for()]);
+			$(this)._for() && getPage(e, model + 'Info', [$(this)._for()]);
 		});
 
 		$('.tblTools').click(function(e){
@@ -694,16 +691,16 @@ function initializeList(code, modifier, src){
 			switch (axn) {
 				case 'delete':
 					if( confirm('¿Realmente desea eliminar este elemento?') ){
-						window['xajax_delete' + $.capitalize(code)](id, modifier);
+						window['xajax_delete' + $.capitalize(model)](id, modifier);
 					};
 					break;
 				case 'block':
 					if( confirm('¿Realmente desea bloquear este elemento?') ){
-						window['xajax_block' + $.capitalize(code)](id, modifier);
+						window['xajax_block' + $.capitalize(model)](id, modifier);
 					};
 					break;
 				default:
-					getPage(e, axn + $.capitalize(code), [id, modifier]);
+					getPage(e, axn + $.capitalize(model), [id, modifier]);
 					break;
 			};
 
@@ -713,7 +710,7 @@ function initializeList(code, modifier, src){
 }
 
 function initializeSimpleList() {
-	function SimpleList(list, code, modifier) {     // Simple List Constructor
+	function SimpleList(list, model, modifier) {     // Simple List Constructor
 		var my = function(sel) {
 			return list.find(sel);
 		}
@@ -724,7 +721,7 @@ function initializeSimpleList() {
 			this.inputs.each(function(){
 				data[this._name()] = this.val();
 			}, true);
-			var func = 'xajax_create' + $.capitalize(code);
+			var func = 'xajax_create' + $.capitalize(model);
 			window[func] && window[func](data, modifier);
 		};
 
@@ -749,9 +746,9 @@ function initializeSimpleList() {
 			return false;
 		}
         var params = this._for().split('|'),
-		    code = params[0],
+		    model = params[0],
 		    modifier = params[1],
-		    SL = new SimpleList(this, code, modifier);
+		    SL = new SimpleList(this, model, modifier);
 
 		SL.inputs.enter(function(){
 			this.find('.SLcreateItem').click();
@@ -783,7 +780,7 @@ function initializeSimpleList() {
 					break;
 			};
 
-			var func = 'xajax_' + $(this).attr('axn') + $.capitalize(code);
+			var func = 'xajax_' + $(this).attr('axn') + $.capitalize(model);
 			if( !window[func] ) {
 				throw('Function ' + func + ' is not registered!');
 			}

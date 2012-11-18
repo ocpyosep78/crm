@@ -3,7 +3,7 @@
 
 function page_users()
 {
-	return oSnippet()->addSnippet('commonList', 'users');
+	return SNP::getSnippet('commonList', 'User');
 }
 
 function page_usersInfo($acc)

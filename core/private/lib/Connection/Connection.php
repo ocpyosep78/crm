@@ -8,16 +8,16 @@
  */
 
 
-	require_once( dirname(__FILE__).'/ErrorSQL.class.php' );
-	require_once( dirname(__FILE__).'/AnswerSQL.class.php' );
+	require_once( dirname(__FILE__).'/ErrorSQL.php' );
+	require_once( dirname(__FILE__).'/AnswerSQL.php' );
 
 
 	function getConnectionParams(){
 		return array(
-			'host'	=> CRM_HOST,
-			'user'	=> CRM_USER,
-			'pass'	=> CRM_PASS,
-			'db'	=> CRM_DB,
+			'host'	=> DS_HOST,
+			'user'	=> DS_USER,
+			'pass'	=> DS_PASS,
+			'db'	=> DS_SCHEMA,
 		);
 	}
 
@@ -46,7 +46,7 @@
 
 		public function __construct($params=NULL)
 		{
-			$this->isDevel = (getSes('id_profile') == 1) || DEVELOPER_MODE;
+			$this->isDevel = (getSes('id_profile') == 1) || DEVMODE;
 
 			!is_null($params) || ($params = getConnectionParams());
 			$this->params = $params;
@@ -75,14 +75,14 @@
 
 				<p>	Si cree que puede haber un error en la configuraci?n, revise los archivos<br />
 					app/cfg/config.cfg.php y app/cfg/local.cfg.php, aseg?rese que el valor de<br />
-					la constante CRM_DB sea el correcto y recargue la p?gina.</p>
+					la constante DS_SCHEMA sea el correcto y recargue la p?gina.</p>
 
 				<input type='button' value='Crear Base de Datos' onclick="location.href = 'createDB.php';">
 
 			</div>
 EOF;
 
-			$HTML .= '<p>La base de datos actual es `'.CRM_DB.'`</p>';
+			$HTML .= '<p>La base de datos actual es `'.DS_SCHEMA.'`</p>';
 
 			echo $HTML;
 			die();

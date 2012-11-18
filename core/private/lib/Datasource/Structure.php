@@ -1,19 +1,29 @@
 <?php
 
-require_once(CONNECTION_PATH);
 
-
-class snp_Database_mysql extends Connection
+class DS_Structure extends DS_Connect
 {
 
 	protected $schema;
 	protected $table;
 
 
-	final protected function getPk()
+	/**
+	 * final protected array getPk()
+	 *      Returns the main table's primary key, as an array of properties.
+	 *
+	 * @return array
+	 */
+	final public function getPk()
 	{
-		$structure = $this->read();
-		return $structure['keys']['pri'];
+		extract($this->read());
+
+		foreach ($keys['pri'] as &$pri)
+		{
+			$pri = "{$pri['sch1']}.{$pri['tbl1']}.{$pri['col1']}";
+		}
+
+		return $keys['pri'];
 	}
 
 	final protected function read()
@@ -23,7 +33,6 @@ class snp_Database_mysql extends Connection
 		if (!$structure)
 		{
 			$keys    = $this->getKeys($this->schema, $this->table);
-
 			$tables  = $this->getTables($keys['all']);
 			$columns = $this->getColumns($tables['all']);
 
@@ -47,7 +56,12 @@ class snp_Database_mysql extends Connection
 		        FROM `information_schema`.`key_column_usage`
 		        WHERE (`TABLE_SCHEMA` = '{$schema}' AND `TABLE_NAME` = '{$table}')
 		           OR (`REFERENCED_TABLE_SCHEMA` = '{$schema}' AND `REFERENCED_TABLE_NAME` = '{$table}')";
-		$all = $this->query($sql, 'array');
+		($res = $this->query($sql)) || ($all = array());
+
+		while ($data=mysql_fetch_assoc($res))
+		{
+			$all[] = $data;
+		}
 
 		foreach ($all as &$k)
 		{
@@ -146,7 +160,12 @@ class snp_Database_mysql extends Connection
 		$sql = "SELECT *
 				FROM `information_schema`.`columns`
 				WHERE {$condition}";
-		$raw = $this->query($sql, 'array');
+		($res = $this->query($sql)) || ($raw = array());
+
+		while ($data=mysql_fetch_assoc($res))
+		{
+			$raw[] = $data;
+		}
 
 		foreach ($raw as $c)
 		{
@@ -174,181 +193,19 @@ class snp_Database_mysql extends Connection
 		return $columns;
 	}
 
-}
 
 
 
+/******************************************************************************/
+/********************************* T E M P ************************************/
+/******************************************************************************/
 
-class snp_Result
-{
-
-	private $__search;          // Query parameters (filters, limit, order, etc.)
-	private $__query;           // The sql query
-	private $__datatype;        // Result format (array, named, row, col, res, ...)
-
-	private $__orig_dataset;    // Original result set (unformatted)
-	private $__dataset;         // Result (migth be formatted)
-	private $__namespace;      // Full namespace (2), partial (1) or none (0)
-
-	private $caller;            // Sql Layer who initialized this object
-
-
-	public function __construct($search, $query, $dataset, $caller)
-	{
-		$this->caller = $caller;
-
-		$this->__search = $search;
-		$this->__query = $query;
-		$this->__orig_dataset = $dataset;
-
-		$this->__dataset = $dataset;
-		$this->__datatype = 'res';
-		$this->__namespace = 2;
-
-		// Results are flat by default (will be converted to 'array' as well)
-		$this->flat();
-	}
-
-	public function get()
-	{
-		return $this->__dataset;
-	}
-
-	/**
-	 * snp_Result flat()
-	 *      Remove fields namespace dataset. This might mean that some fields
-	 * will be overwritten, if called the same but in different tables.
-	 *
-	 * @return snp_Result
-	 */
-	public function flat()
-	{
-		return $this->ns(0);
-	}
-
-	/**
-	 * snp_Snippet ns([boolean $full = false])
-	 *      Add/Remove field namespace from dataset
-	 *
-	 * @param boolean $full
-	 * @return snp_Result
-	 */
-	public function ns($ns=1)
-	{
-		list($oldNs, $this->__namespace) = array($this->__namespace, (int)$ns);
-
-		$nsRemove = $oldNs - $ns;
-
-		// If we're extending the namespace, we need to restore it full first
-		if ($nsRemove < 0)
-		{
-			$this->convert($this->__datatype);
-			$nsRemove = 2 - $ns;
-		}
-		// Same namespace level, nothing to do
-		elseif ($nsRemove === 0)
-		{
-			return $this;
-		}
-
-		switch ($this->datatype)
-		{
-			case 'res':
-				$this->convert('named');
-
-			case 'array':
-			case 'named':
-				$rows = array();
-
-				foreach ($this->__dataset as $k => $row)
-				{
-					foreach ($row as $field => $val)
-					{
-						$rows[$k][end(explode('.', $field, $nsRemove+1))] = $val;
-					}
-				}
-
-				$this->__dataset = $rows;
-				break;
-
-			case 'row':
-				foreach ($this->__dataset as $field => $val)
-				{
-					$row[end(explode('.', $field, $nsRemove+1))] = $val;
-				}
-
-				$this->__dataset = $row;
-				break;
-
-			// Other types are originally flat
-			default:
-			case 'col':
-				break;
-		}
-
-		return $this;
-	}
-
-	public function convert($to, $atts=NULL)
-	{
-		if (($to !== 'res') && !is_callable(array($this->caller, "res2{$to}")))
-		{
-			throw new Exception("Cannot convert resultset to {$to}");
-		}
-
-		$this->__datatype = $to;
-
-		if ($to === 'res')
-		{
-			$this->__dataset = $this->__orig_dataset;
-		}
-		else
-		{
-			$method = "res2{$to}";
-
-			if (mysql_num_rows($this->__orig_dataset))
-			{
-				mysql_data_seek($this->__orig_dataset, 0);
-			}
-			$this->caller->$method($this->__orig_dataset);
-			$this->__dataset = $this->caller->formattedRes;
-
-			// Restore namespace status
-			list($this->__namespace, $ns) = array(2, $this->__namespace);
-			$this->ns($ns);
-		}
-
-		return $this;
-	}
-
-	/**
-	 * Magic method __get()
-	 *      Together with __set() makes all properties visible but readonly.
-	 *
-	 * @param string $prop
-	 * @return mixed
-	 */
-	public function __get($prop)
-	{
-		if (property_exists($this, "__{$prop}"))
-		{
-			return $this->{"__{$prop}"};
-		}
-	}
-
-	/**
-	 * Magic method __set()
-	 *      Deny creation of undeclared properties.
-	 *
-	 * @param string $prop
-	 * @param mixed $value
-	 */
-	public function __set($prop, $value)
-	{
-		if (property_exists($this, "__{$prop}"))
-		{
-			trigger_error("Attempting to modify readonly property $prop", E_USER_WARNING);
-		}
+	private function enumDefinition($table, $column){
+		$sql = "SHOW COLUMNS
+				FROM `{$table}`
+				WHERE `Field` = '{$column}'";
+		$ret = $this->query($sql, 'field', 'Type');
+		return explode("','", preg_replace("/^enum\('|'\)$/", '', $ret));
 	}
 
 }

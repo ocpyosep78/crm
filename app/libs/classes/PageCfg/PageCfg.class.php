@@ -164,7 +164,7 @@
 
 		public function set_debugger( $activate=true ){
 			$this->set('debugger', $activate);
-			$this->add_jsCode('DEVELOPER_MODE = '.((int)$activate).';');
+			$this->add_jsCode('DEVMODE = '.((int)$activate).';');
 			if( !$activate ) return error_reporting( E_ERROR );
 			error_reporting( E_ALL & ~E_DEPRECATED );
 			set_error_handler( array(&$this, 'error_handler') );

@@ -1,9 +1,12 @@
 <?php
 
-require_once(dirname(__FILE__) . '/mysql.database.php');
+require_once(DATASOURCE . '/Connect.php');
+require_once(DATASOURCE . '/Result.php');
+require_once(DATASOURCE . '/Structure.php');
 
 
-class snp_Layer_mysql extends snp_Database_mysql
+
+abstract class DS_Model extends DS_Structure
 {
 
 	private $tables;
@@ -16,12 +19,22 @@ class snp_Layer_mysql extends snp_Database_mysql
 	private $lastSearch;
 
 
-	public function __construct($table=NULL)
+	public function __construct()
 	{
-		parent::__construct();
+		// Test integrity of object definitions
+		if (empty($this->table) || empty($this->schema))
+		{
+			$msg = "A Model is required to have a @table and a @schema";
+			throw new Exception($msg);
+		}
 
-		$this->schema = $this->params['db'];
-		$table && ($this->table = $table);
+		extract($this->read());
+
+		if (empty($columns))
+		{
+			$msg = "DataSource failed to initialize with table {$this->table} and schema {$this->schema}";
+			throw new Exception($msg);
+		}
 
 		$this->initSearchObj();
 	}
@@ -30,16 +43,26 @@ class snp_Layer_mysql extends snp_Database_mysql
 	/**
 	 *
 	 * @param mixed $fields
-	 * @return snp_Layer_mysql
+	 * @return DS_Model
 	 */
 	public function select($fields)
 	{
 		if (!$this->seems('fields', $fields))
 		{
-			throw new Exception('Invalid parameter passed to filter()');
+			throw new Exception('Invalid parameter passed to select()');
 		}
 
-		is_array($fields) || ($fields = func_get_args());
+		if (!is_array($fields))
+		{
+			if ((count(func_get_args()) === 1) && strpos($fields, ','))
+			{
+				$fields = preg_split('/ *, */', $fields);
+			}
+			else
+			{
+				$fields = func_get_args();
+			}
+		}
 
 		foreach ($fields as $k => $v)
 		{
@@ -82,10 +105,10 @@ class snp_Layer_mysql extends snp_Database_mysql
 	{
 		if (!$this->seems('filter', $filter))
 		{
-			throw new Exception('Invalid parameter passed to filter()');
+			throw new Exception('Invalid parameter passed to where()');
 		}
 
-		$this->search->where = array_merge($this->search->where, $filter);
+		$this->search->where = array_merge($this->search->where, (array)$filter);
 
 		return $this;
 	}
@@ -123,18 +146,17 @@ class snp_Layer_mysql extends snp_Database_mysql
 			throw new Exception('Method setId can only be used with single primary keys');
 		}
 
-		$pk = array_shift($key);
-
-		$field = "{$pk['sch1']}.{$pk['tbl1']}.{$pk['col1']}";
+		$field = end(explode('.', array_shift($key)));
 
 		// ::setId() resets filters, if any was set before
-		$this->search->where = array($field => $id);
+		$primary = "`{$this->schema}`.`{$this->table}`.`{$field}`";
+		$this->search->where = array($primary => $id);
 
 		return $this;
 	}
 
 	/**
-	 * snp_Result find([mixed $filter][, array $fields][, string $order][, string $limit])
+	 * Model find([mixed $filter][, array $fields][, string $order][, string $limit])
 	 *
 	 * @param mixed $filter     Id (int or string), or filter (see ::where)
 	 * @param array $fields     List of fields for the query to include (select)
@@ -144,7 +166,6 @@ class snp_Layer_mysql extends snp_Database_mysql
 	 */
 	public function find()
 	{
-
 		// Apply received arguments (filters, listing fields, order, limit)
 		$args = func_get_args();
 
@@ -190,23 +211,18 @@ class snp_Layer_mysql extends snp_Database_mysql
 			}
 		}
 
-		// After applying args, call internal _find method
-		return $this->_find();
-	}
-
-	private function _find()
-	{
+		// Now import @search keys to this scope, and let's execute the query
 		extract(get_object_vars($this->search));
 
 		$sql = "SELECT {$this->fields()}\n" .
 		       "FROM {$this->tables()}\n" .
-		       "WHERE {$this->array2filter($where, 'AND', 'LIKE')}\n" .
+		       "WHERE {$this->whereSql()}\n" .
 		       ($order ? "ORDER BY {$order}\n" : '') .
 		       ($limit ? "LIMIT {$limit}" : '');
 		$res = $this->query($sql);
 
-		// Create a new Result
-		$Result = new snp_Result($this->search, $sql, $res, $this);
+		// Create a new DS_Result
+		$Result = new DS_Result($this->search, $sql, $res, $this);
 
 		// Reset @search object
 		$this->initSearchObj();
@@ -222,33 +238,73 @@ class snp_Layer_mysql extends snp_Database_mysql
 	 * @param mixed $arg
 	 * @return boolean
 	 */
-	private function seems($type, $arg)
+	protected function seems($type, $arg)
 	{
 		switch ($type)
 		{
 			case 'id':
-				return (is_string($arg) || is_numeric($arg));
+				return is_numeric($arg);
 
 			case 'filter':
-				return (is_array($arg) && !is_numeric(key($arg)));
+				// Valid strings: X <compare> Y, X IN(list), X BETWEEN Y AND Z
+				$operators = '[<>]|[<>!]*=|<>|IS( +NOT)?|(NOT +)?LIKE';
+				$regex1 = "^(`\w+`|\w+) +({$operators}) +(['\"].+['\"]|(\d|NULL)+)\$";
+				$regex2 = '.+ (BETWEEN .+ AND .+|IN *\(.+\))$';
+				$regex = "_({$regex1})|({$regex2})_i";
+				return (is_string($arg) && (preg_match($regex, trim($arg)) !== false))
+					|| (is_array($arg));
 
 			case 'fields':
-				$regex = '_^(\*|(`\w+`|\w+)( +as [\'"]?\w+[\'"]?)?)$_i';
-				return (is_string($arg) && !is_numeric($arg) && preg_match($regex, $arg))
-				    || is_array($arg);
+				$regex = '_^(\*|[\w ]+(, *[\w ]+)+|(`\w+`|\w+)( +as [\'"]?\w+[\'"]?)?)$_i';
+				return (is_string($arg) && !is_numeric($arg) && (preg_match($regex, trim($arg)) !== false))
+				    || (is_array($arg));
 
 			case 'order':
 				$regex = '_[^\w](asc|desc)$_i';
-				return (is_string($arg) && preg_match($regex, $arg));
+				return (is_string($arg) && (preg_match($regex, $arg) !== false));
 
 			case 'limit':
 				$regex = '_^\d+( *, *\d+)?$_';
 				return (is_numeric($arg))
-				    || (is_string($arg) && preg_match($regex, trim($arg)));
+				    || (is_string($arg) && (preg_match($regex, trim($arg)) !== false));
 
 			default:
 				return false;
 		}
+	}
+
+	private function whereSql()
+	{
+		// Process filters to build the SQL filter string, and return it
+		foreach ($this->search->where as $k => $v)
+		{
+			// Accept both NULL and string 'null' (case insensitive)
+			if (is_null($v) || (is_string($v) && strtolower($v) === 'null'))
+			{
+				$cond[] = "ISNULL(`{$k}`)";
+			}
+			// Lists of values (IN)
+			elseif (!is_numeric($k) && (is_array($v) || strpos($v, ',')))
+			{
+				$list = is_array($v) ? join(', ', $v) : $v;
+				$cond[] = "{$k} IN ({$list})";
+			}
+			// Literal
+			elseif (is_numeric($k) && is_string($v) && !is_numeric($v) && trim($v))
+			{
+				$cond[] = trim($v);
+			}
+			elseif ((is_string($v) || is_numeric($v)) && trim($v))
+			{
+				$cond[] = "{$k} = '" . trim($v, " '") . "'";
+			}
+			else
+			{
+				throw new Exception("Invalid parameter passed to where(): {$k} => {$v}");
+			}
+		}
+
+		return isset($cond) ? join(" AND ", $cond) : '1';
 	}
 
 	// Create an empty @search object
@@ -302,9 +358,10 @@ class snp_Layer_mysql extends snp_Database_mysql
 				$sch = $columns['all'][$fqn]['TABLE_SCHEMA'];
 				$tbl = $columns['all'][$fqn]['TABLE_NAME'];
 
-				$ord = $tables['ordinals']["{$sch}.{$tbl}"];
+				($alias != $col) || ($alias = $fqn);
 
-				$fieldsSql[] = "`t{$ord}`.`{$col}` AS '{$fqn}'";
+				$properFqn = '`' . str_replace('.', '`.`', $fqn) . '`';
+				$fieldsSql[] =  "{$properFqn} AS '{$alias}'";
 			}
 			else
 			{
@@ -312,7 +369,7 @@ class snp_Layer_mysql extends snp_Database_mysql
 			}
 		}
 
-		$sql = empty($fieldsSql) ? array('*') : join(",\n       ", $fieldsSql);
+		$sql = empty($fieldsSql) ? '*' : join(",\n       ", $fieldsSql);
 
 		return $sql;
 	}
@@ -329,53 +386,15 @@ class snp_Layer_mysql extends snp_Database_mysql
 
 		foreach ($keys['src'] as $k)
 		{
-			$ord = $tables['ordinals']["{$k['sch2']}.{$k['tbl2']}"];
+			$f1 = "`{$this->schema}`.`{$this->table}`.`{$k['col1']}`";
+			$f2 = "`{$k['sch2']}`.`{$k['tbl2']}`.`{$k['col2']}`";
 
-			$f1 = "`t0`.`{$k['col1']}`";
-			$f2 = "`t{$ord}`.`{$k['col2']}`";
-
-			$joins[] = "JOIN `{$k['sch2']}`.`{$k['tbl2']}` `t{$ord}` ON ({$f2} = {$f1})";
+			$joins[] = "LEFT JOIN `{$k['sch2']}`.`{$k['tbl2']}` ON ({$f2} = {$f1})";
 		}
 
-		$sql = "`{$this->schema}`.`{$this->table}` `t0`\n" . join("\n", $joins);
+		$sql = "`{$this->schema}`.`{$this->table}`\n" . join("\n", $joins);
 
 		return $sql;
-	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	public function feed($summary)
-	{
-		# We assume Source sends the right keys,
-		# for this is internal and wouldn't be abused
-		foreach ($summary as $k => $v)
-		{
-			$this->$k = $v;
-		}
-
-		// TEMP
-		if (isset($summary['mainTable']))
-		{
-			$this->table = array_shift($summary['mainTable']);
-		}
-
-		return $this;
 	}
 
 }

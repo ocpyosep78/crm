@@ -20,15 +20,21 @@
 	define('CORE_MEDIA', CORE_STATIC.'media/');
 	define('CORE_TEMPLATES', CORE_PRIVATE.'templates/');
 
+	// Model & View basics
+	define('CORE_MODEL', CORE_LIB . 'Model/Model.php');
+	define('CORE_VIEW', CORE_LIB . 'View/View.php');
+	define('DATASOURCE', CORE_LIB . 'Datasource');
+	define('DATASOURCE_ERROR_LOG', 'logs/logSQL.txt');
+
 	# Core shortcut to library paths
-	define('CONNECTION_PATH', CORE_LIB.'Connection/Connection.class.php');
+	define('CONNECTION_PATH', CORE_LIB.'Connection/Connection.php');
 	define('SNIPPET_PATH', CORE_LIB.'Snippet');
 
 	# Agenda
 	define('AGENDA_DAYS_TO_SHOW', 7);
 
 	# Debugging
-	define('DEVELOPER_MODE', false, true);
+	define('DEVMODE', false, true);
 
 	# General
 	define('MAIN_TPL_PATH', realpath(CORE_TEMPLATES.'main.tpl'));

@@ -20,9 +20,9 @@
 	}
 
 	function oSnippet( $code=NULL )		{	return getBuilderObject('Snippet', $code);		}
-	function oLists( $code=NULL )		{	return getBuilderObject('Lists', $code);		}		/* TEMP untill Modules is ready */
-	function oStats( $code=NULL )		{	return getBuilderObject('Stats', $code);		}		/* TEMP untill Modules is ready */
-	function oFormTable( $code=NULL )	{	return getBuilderObject('FormTable', $code);	}		/* TEMP untill Modules is ready */
+	function oLists( $code=NULL )		{	return getBuilderObject('Lists', $code);		}
+	function oStats( $code=NULL )		{	return getBuilderObject('Stats', $code);		}
+	function oFormTable( $code=NULL )	{	return getBuilderObject('FormTable', $code);	}
 
 	function oXajax()					{	return getBuilderObject( 'Xajax' );				}
 	function oXajaxResp()				{	return getBuilderObject( 'XajaxResp' );			}
@@ -124,12 +124,10 @@
 					$Smarty->setConfigDir(SMARTY_DIR.'configs');
 				break;
 				case 'SQL':
-					$SQL = new SQL();
-//					$SQL->setTimeZone(TIME_ZONE);
+					$SQL = new SQL;
 				break;
 				case 'Stats':
-					$Stats = new Stats();
-//					$Stats->setTimeZone(TIME_ZONE);
+					$Stats = new Stats;
 				break;
 				case 'Tabs':
 					$Tabs = new Tabs;

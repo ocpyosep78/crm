@@ -218,12 +218,14 @@ class Snippets_Handler_Source extends Snippets_Handler_Defaults{
 		# Read and validate db definition, on failure leave it empty
 		$db = $this->getDatabaseDefinition();
 
-		if( !is_array($db) ){
+		if (!is_array($db))
+		{
 			# Keep defaults when definition fails
 			$db = array();
 			Snippet_Tools::issueWarning('db structure definition is invalid');
 		}
-		else{
+		else
+		{
 			$correct = true;
 			foreach( $db as $table => $content ){
 				$db[$table] = $content;

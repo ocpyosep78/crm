@@ -7,7 +7,7 @@ function doActionsAtLogin(){
 }
 
 function devMode(){
-	return defined('DEVELOPER_MODE') && DEVELOPER_MODE;
+	return defined('DEVMODE') && DEVMODE;
 }
 
 /* Debugging and devel tools */

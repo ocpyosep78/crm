@@ -1,18 +1,10 @@
-/**
- * AppTemplate - PHP Framework for building CRM-like applications
- * GitHub https://github.com/dbarreiro/crm_template/
- * Copyright (C) 2011 Diego Barreiro <diego.bindart@gmail.com>
- * Licence: GNU GENERAL PUBLIC LICENSE <http://www.gnu.org/licenses/gpl.txt>
- */
-
-
 @ Created: 2011-02-25
-@ Author: Diego Barreiro <dbarreiro@gmail.com>
+@ Author: Diego Barreiro <diego.bindart@gmail.com>
 
 
 IMPORTANT
 
-This project is still just a CRM for a particular company I'm working for. I did code it with the intention to provide some kind of framework for building web applications (in particular, CRMs) and it needs a little tuning to set that clear (separate what's the core of the application from what belongs to this particular implementation, mainly). You might see things that belong to the core in the app folder and viceversa. That's because I just started the task of isolating the core part, and there's still a long way to go. Meanwhile, I still have to extend the CRM and update many libraries to fit the new schema. So, saying it is a framework right now is sort of an overstatement.
+This project is still just a CRM for a particular company I'm working for. I did code it with the intention to provide some kind of framework for building web applications (in particular, CRMs) and it needs a little tuning to set that clear (separate what's the core of the application from what belongs to this particular implementation, mainly). You might see things that belong to the core in the app folder and viceversa. That's because I just started the task of isolating the core part, and there's still a long way to go. Meanwhile, I still have to extend the CRM and update many libraries to fit the new schema. So, saying it is a framework right now is a real overstatement.
 
 
 
@@ -29,14 +21,12 @@ At this point, no other folder is required to be granted write access.
 The database should be working with /sql/crm_minimal.sql.gz imported, once you set connection parameters in /app/cfg/config.cfg.php
 
 	# Database access
-	define('CRM_HOST', 'localhost', true);
-	define('CRM_USER', 'root', true);
-	define('CRM_PASS', YOUR_PASS, true);
-	define('CRM_DB', YOUR_DATABASE, true);
+	define('DS_HOST', 'localhost', true);
+	define('DS_USER', 'root', true);
+	define('DS_PASS', YOUR_PASS, true);
+	define('DS_SCHEMA', YOUR_DATABASE, true);
 
-UPDATE apr 5th 2011: added a little script to automatically create the Database provided DB constants are set and DEVELOPER_MODE is set to true. There's 4 example users created, each with a different profile. Try admin/1234 for a start.
-
-The reason why there's a third parameter set to true is that we want to re-define these constants in ./app/cfg/local.cfg.php (among other constants in this config script) for local settings like DEVELOPER_MODE, DB params, or debug flags. The file local.cfg.php is not included in the repository, nor is it required. Add it to your local working copy to add developer tools and full access, or to personalize other values without having to worry about committing or pushing the wrong config.cfg.php version. I'll probably document it better when I have time to.
+The reason why there's a third parameter set to true is that we want to re-define these constants in ./app/cfg/local.cfg.php (among other constants in this config script) for local settings like DEVMODE, DB params, or debug flags. The file local.cfg.php is not included in the repository, nor is it required. Add it to your local working copy to add developer tools and full access, or to personalize other values without having to worry about committing or pushing the wrong config.cfg.php version. I'll probably document it better when I have time to.
 
 
 CONTACT

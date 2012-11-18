@@ -48,10 +48,14 @@
  	define('CORE_PUBLIC', 'core/public/');
 
 	# Database access
-	define('CRM_HOST', 'localhost', true);
-	define('CRM_USER', 'root', true);
-	define('CRM_PASS', 'it707', true);
-	define('CRM_DB', 'crm_ingetec', true);
+	define('DS_HOST', 'localhost', true);
+	define('DS_USER', 'root', true);
+	define('DS_PASS', 'it707', true);
+	define('DS_SCHEMA', 'crm_ingetec', true);
+
+	# Data abstraction layer
+	define('APP_MODELS', 'app/Models');
+	define('APP_VIEWS', 'app/Views');
 
 	# fPDF
 	define('PDF_PAGE', 'A4');

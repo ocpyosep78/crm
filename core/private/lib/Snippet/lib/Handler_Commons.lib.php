@@ -162,7 +162,7 @@ abstract class Snippets_Handler_Commons{
 		$this->assign('cycleValues', '#eaeaf5,#e0e0e3,#e5e6eb');
 		$this->assign('SNIPPET_TEMPLATES', SNIPPET_TEMPLATES);
 		$this->assign('SNIPPET_IMAGES', SNIPPET_IMAGES);
-		$this->assign('DEVELOPER_MODE', defined('DEVELOPER_MODE') ? DEVELOPER_MODE : false);
+		$this->assign('DEVMODE', devMode());
 
 		# Internal attributes
 		$this->assign('snippet', $this->snippet);

@@ -26,7 +26,7 @@
 
 			$atts = array('snippet' => $snippet, 'mod' => $mod, 'params' => $params);
 
-			$detail = DEVELOPER_MODE ? " (snippet: {$snippet})" : '';
+			$detail = DEVMODE ? " (snippet: {$snippet})" : '';
 
 			switch( $snippet ){
 				case 'commonList':

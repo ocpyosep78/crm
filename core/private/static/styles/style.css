@@ -667,7 +667,7 @@ snippet{ position:relative; }
 .snippet_item > span:hover{ color:#ffffe0; }
 .snippet_item > span > strong{ color:#302050; }	/* Debugging */
 .snippet_item > div{ display:inline-block; vertical-align:middle; margin:10px; margin-top:20px; padding:10px; border-top:solid 1px #c0c0d0; border-left:solid 1px #c0c0d0; border-radius:6px;   box-shadow:#404045 4px 4px 6px;   text-align:left; background:#ffffff; }
-.snippet_item table{ margin:20px 30px; }
+.snippet_item table{ margin:20px 15px; }
 .snippet_item th{ height:1.5em; padding-left:30px; padding-right:5px; white-space:nowrap; text-indent:0px !important; text-align:right !important; color:#606090 !important; }
 .snippet_item td{ min-width:200px; text-indent:0px !important; color:#000060 !important; }
 

@@ -1,6 +1,6 @@
 <div class='snippet_item infoData'>
 
-  <span>Detalle de {$name}{if $DEVELOPER_MODE} <strong>(objectID: {$objectID}){/if}</strong></span>
+  <span>Detalle de {$name}{if $DEVMODE} <strong>(objectID: {$objectID}){/if}</strong></span>
 
   {if $data}
 

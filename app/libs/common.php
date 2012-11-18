@@ -101,7 +101,16 @@ function returnXajax( $resp=NULL ){
 
 }
 
-function toJson($arr=array(), $forceObj=false)
+/**
+ * function toJson(array $arr[, boolean $forceObj = false])
+ *      Converts an array to a JSON string. If not $forceObj, numeric arrays are
+ * returned as JS arrays (i.e. with [] delimiters instead of {}).
+ *
+ * @param array $arr
+ * @param boolean $forceObj
+ * @return string
+ */
+function toJson($arr, $forceObj=false)
 {
 	if( !is_array($arr) || !count($arr) )
 	{
