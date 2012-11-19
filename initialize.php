@@ -1,5 +1,8 @@
 <?php
 
+class PublicException extends Exception {}
+
+
 # This script is meant to be included in another script, not called directly
 if( count(get_included_files()) == 1 ) die();
 

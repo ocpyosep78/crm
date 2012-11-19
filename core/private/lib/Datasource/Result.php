@@ -45,7 +45,7 @@ class DS_Result
 	 */
 	public function flat()
 	{
-		return $this->ns(0);
+		return $this->ns(-1);
 	}
 
 	/**
@@ -86,7 +86,8 @@ class DS_Result
 				{
 					foreach ($row as $field => $val)
 					{
-						$rows[$k][end(explode('.', $field, $nsRemove+1))] = $val;
+						$key = trim(end(explode('`.`', $field, $nsRemove+1)), '`');
+						$rows[$k][($ns == -1) ? $key : "`{$key}`"] = $val;
 					}
 				}
 
@@ -95,10 +96,11 @@ class DS_Result
 
 			case 'row':
 				$row = array();
-				
+
 				foreach ($this->__dataset as $field => $val)
 				{
-					$row[end(explode('.', $field, $nsRemove+1))] = $val;
+					$key = trim(end(explode('`.`', $field, $nsRemove+1)), '`');
+					$row[($ns == -1) ? $key : "`{$key}`"] = $val;
 				}
 
 				$this->__dataset = $row;

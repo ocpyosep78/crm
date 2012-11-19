@@ -7,15 +7,22 @@ abstract class View
 	private static $cached_views;
 
 	protected $Model;
+	private $TplEngine;
+
+	protected $__descr_field;
 
 	protected $__screen_names = array();
+	protected $__extended_fields = array();
+
+	protected $__tabular_fields = array();
+	protected $__fullinfo_fields = array();
 
 
 /******************************************************************************/
 /********************************* S T A T I C ********************************/
 /******************************************************************************/
 
-	final public static function get($viewname)
+	final public static function get($viewname, $namespace='global')
 	{
 		if (!$viewname)
 		{
@@ -31,7 +38,7 @@ abstract class View
 			throw new Exception($msg);
 		}
 
-		if (empty(self::$cached_views[$ucview]))
+		if (empty(self::$cached_views[$namespace][$ucview]))
 		{
 			$path = APP_VIEWS . "/{$ucview}.php";
 
@@ -54,10 +61,10 @@ abstract class View
 				$View = new AbstractView($viewname);
 			}
 
-			self::$cached_views[$viewname] = $View;
+			self::$cached_views[$namespace][$viewname] = $View;
 		}
 
-		return self::$cached_views[$viewname];
+		return self::$cached_views[$namespace][$viewname];
 	}
 
 
@@ -71,6 +78,8 @@ abstract class View
 	final public function __construct($view)
 	{
 		$this->Model = Model::get($view);
+
+		$this->TplEngine = oSmarty()->createData();
 
 		// Register common attributes for the view
 		$this->assign('name',   $this->name);
@@ -126,7 +135,7 @@ abstract class View
 	 */
 	public function assign($var, $val)
 	{
-		return oSmarty()->assign($var, $val);
+		return $this->TplEngine->assign($var, $val);
 	}
 
 	/**
@@ -138,7 +147,7 @@ abstract class View
 	 */
 	public function fetch($tpl)
 	{
-		return oSmarty()->fetch($tpl);
+		return oSmarty()->createTemplate($tpl, $this->TplEngine)->fetch();
 	}
 
 	/**
@@ -173,16 +182,60 @@ abstract class View
 	 * @param mixed $limit      A valid LIMIT value (e.g. 4, '0, 30', etc.).
 	 * @return array
 	 */
-	abstract public function getTabularData($limit=30);
+	public function getTabularData($limit=30)
+	{
+		$fields = $this->__tabular_fields
+			? $this->mapnames($this->__tabular_fields)
+			: $this->__screen_names;
+
+		$fieldinfo = $this->Model->columns(array_keys($fields));
+
+		$data = $this->Model->find(NULL, $fields, $limit)->get();
+
+		$primary = $this->getPkAlias();
+
+		return compact('fields', 'fieldinfo', 'data', 'primary');
+
+	}
 
 	/**
-	 * array getItemData(mixed $id)
+	 * array getItemData([mixed $id = NULL])
 	 *      Generate relevant information to build a single item's page.
 	 *
 	 * @param mixed $id         The id of this element (primary key value)
 	 * @return array
 	 */
-	abstract public function getItemData($id);
+	public function getItemData($id=NULL)
+	{
+		$fields = $this->fullinfo_fields
+			? $this->mapnames($this->fullinfo_fields)
+			: $this->__screen_names;
+
+		$fieldinfo = $this->Model->columns(array_keys($fields));
+
+		if ($id)
+		{
+			$this->Model->setId($id)->select($fields);
+			$data = $this->Model->find()->convert('row')->get();
+		}
+		else
+		{
+			$data = array();
+		}
+
+		$primary = $this->getPkAlias();
+
+		return compact('fields', 'fieldinfo', 'data', 'primary');
+	}
+
+	public function getPkAlias()
+	{
+		$scr = $this->__screen_names;
+		$pk = trim(end(explode('`.`', array_shift($this->Model->getPk()))), '`');
+		$primary = isset($scr[$pk]) ? $scr[$pk] : $pk;
+
+		return $primary;
+	}
 
 
 /******************************************************************************/

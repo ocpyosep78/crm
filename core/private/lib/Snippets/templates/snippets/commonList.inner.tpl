@@ -7,16 +7,14 @@
 	  {foreach from=$data item=row}
 		<tr bgcolor='{cycle values=$cycleValues}' class='innerListRow highlight' for='{$row.$primary}'{if isset($row.$toolTip)} title='{$row.$toolTip}'{/if}>
 		  {foreach from=$row key=field item=value}
-			{if !in_array($field, $hidden)}
+			{if $field != $primary}
 			  <td><div>{$value|wordwrap:30:"<br />\n"|truncate:120:"...":true}</div></td>
 			{/if}
 		  {/foreach}
 		  <td class='innerListTools'>
 			<div>
-			  {foreach from=$tools key=code item=tool}
-				{if not $tool.disabled}
-				  <img src='{$SNP_IMAGES}/buttons/{$code}.png' alt='{$code}' title='{$tool.name} {$name|lower}' />
-				{/if}
+			  {foreach from=$listButtons key=code item=button}
+				<img src='{$SNP_IMAGES}/buttons/{$code}.png' alt='{$code}' title='{$button} {$name|lower}' />
 			  {/foreach}
 			</div>
 		  </td>

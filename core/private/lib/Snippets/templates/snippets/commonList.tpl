@@ -1,7 +1,9 @@
+{$bigTools}
+
 <div class='commonListWrapper'>
   <div class='listTitles'>
 	{foreach from=$titles item=title}
-	  {if !in_array($title, $hidden)}
+	  {if $title != $primary}
 		<div for='{$title}' title='{$title}'>{$title|truncate:20:'...'}</div>
 	  {/if}
 	{/foreach}

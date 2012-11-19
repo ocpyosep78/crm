@@ -29,16 +29,6 @@ class SNP
 
 	protected $html;
 
-	protected $tools = array(
-		'list'		=> 'listado',
-		'create'	=> 'agregar',
-		'view'		=> 'ver información de',
-		'edit'		=> 'editar',
-		'block'		=> 'bloquear',
-		'unblock'	=> 'desbloquear',
-		'delete'	=> 'eliminar',
-	);
-
 
 	/**
 	 * string getSnippet(string $snippet, string $code[, array $params = array()])
@@ -54,8 +44,18 @@ class SNP
 		// Having $snipet and $model appart was just to show they were required
 		$params['snippet'] = $snippet;
 		$params['model'] = $model;
+
+		// By default, snippets are to be inserted in the main box (#main_box)
 		!empty($params['writeTo']) || ($params['writeTo'] = 'main_box');
 
+		// All snippets must have a unique groupId, in case they group eachother
+		$groupId = microtime() . rand(0, time());
+		!empty($params['groupId']) || ($params['groupId'] = $groupId);
+
+		// Now fill some more keys just to avoid warnings if polled
+		$params += array('filters' => '');
+
+		// Call the handler, for non-common tasks of this particular Snippet
 		$path = SNP_BUILDERS . '/' . ucfirst($snippet) . '.php';
 		$class = 'snp_' . ucfirst($snippet);
 
@@ -69,7 +69,7 @@ class SNP
 
 		$Snippet = (new $class($params));
 
-		return $Snippet->html()->lateTasks();
+		return $Snippet->html()->snippetReturn();
 	}
 
 
@@ -84,9 +84,15 @@ class SNP
 		$this->params = $params;
 
 		$this->Model = Model::get($params['model']);
-		$this->View = View::get($params['model']);
+		$this->View = View::get($params['model'], $params['snippet']);
 	}
 
+	/**
+	 * protected SNP html()
+	 *      Generate the output of this snippet.
+	 *
+	 * @return SNP
+	 */
 	protected function html()
 	{
 		$this->assignCommonVars()->assignSnippetVars();
@@ -97,7 +103,16 @@ class SNP
 		return $this;
 	}
 
-	protected function lateTasks()
+	/**
+	 * protected mixed snippetReturn()
+	 *      After generating the html (stored in @html) perform final tasks,
+	 * which might be ajax tasks, edition of the generate html, etc. The return
+	 * of this method will be the return of getSnippet() as well; this should be
+	 * a XajaxResponse object ideally, unless this snippet handles it specially.
+	 *
+	 * @return mixed
+	 */
+	protected function snippetReturn()
 	{
 		// Print the HTML inside the given element (by default, #main_box).
 		addAssign($this->params['writeTo'], 'innerHTML', $this->html);
@@ -131,24 +146,11 @@ class SNP
 		return $this;
 	}
 
-	protected function getTools()
-	{
-		$tools = array();
-
-		foreach (func_get_args() as $tool)
-		{
-			$tools[$tool]['name'] = $this->tools[$tool];
-			$tools[$tool]['disabled'] = !isset($this->tools[$tool]);
-		}
-
-		return $tools;
-	}
-
 	/**
-	 * void SNP assignSnippetVars()
+	 * void void assignSnippetVars()
 	 *      Vars that might be required by the view, besides the common ones.
 	 *
-	 * @return SNP
+	 * @return void
 	 */
 	protected function assignSnippetVars() { return $this; }
 

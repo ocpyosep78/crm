@@ -563,7 +563,6 @@ table.simpleList .simpleListCreate{ white-space:nowrap; }
 .eventUnit{ position:relative; clear:both; min-height:40px; margin:1px 3px 5px 1px; padding:1px 2px; cursor:pointer; background-image:linear-gradient(#e0f0ff, #d0d0ef); box-shadow:#606065 2px 2px 3px; }
 .eventUnit:hover{ background:#e0e0e0; color:#600000; }
 .agenda_eventInfo{ color:#003300; font-weight:bold !important; }
-#eventInfo_dialog{ width:300px; color:#fff; }
 .eventClosed{ background:#f0ffc0; background-image:linear-gradient(#f0ffe8, #f0ffa0); }
 .eventClosed .agenda_eventText{ color:#000000; }
 img.agenda_eventUser{ float:left; height:40px; width:30px; margin-bottom:2px; margin-right:3px; }
@@ -651,7 +650,8 @@ snippet{ position:relative; }
  * SNIPPETS : BIGTOOLS
  */
 .bigTools{ position:relative; left:5px; text-align:center; }
-.bigTools > div{ display:inline-block; zoom:1 /* IE */; *display: inline /* IE */; margin:0px 3px; padding:2px; border:solid 1px #808080; border-bottom-width:2px; border-right-width:2px; border-radius:6px; background-image:linear-gradient(#c0d0df, #7090af); box-shadow:#000000 2px 2px 6px; opacity:0.3; }
+.snp_commonList .bigTools{ margin-bottom:30px; }
+.bigTools > div{ display:inline-block; margin:0px 3px; padding:2px; border:solid 1px #808080; border-bottom-width:2px; border-right-width:2px; border-radius:6px; background-image:linear-gradient(#c0d0df, #7090af); box-shadow:#000000 2px 2px 6px; opacity:0.3; }
 .bigTools > div.btOn{ opacity:1; cursor:pointer; }
 .bigTools > div.btOn:hover{ margin:0px 4px; padding-bottom:3px; background:#7090af; border-width:1px; border-color:#303030; box-shadow:#000000 1px 1px 4px;   }
 .bigTools > div.btOn:hover > img{ height:35px; width:35px; }
@@ -661,36 +661,26 @@ snippet{ position:relative; }
 /**
  * SNIPPETS : ITEMS : GENERAL
  */
-
-.snippet_item{ clear:both; margin:10px; padding:10px; text-align:center; opacity:0.8; }
-.snippet_item > span{ display:block; position:relative; height:18px; padding:8px 10px; border-radius:12px;   box-shadow:#000000 2px 1px 5px;   white-space:nowrap; overflow:hidden; z-index:50; background-image:linear-gradient(#203050, #e4e5e8); font-size:16px; font-weight:bold; font-family:"Times New Roman", Times, serif; color:#ffffff; }
-.snippet_item > span:hover{ color:#ffffe0; }
-.snippet_item > span > strong{ color:#302050; }	/* Debugging */
-.snippet_item > div{ display:inline-block; vertical-align:middle; margin:10px; margin-top:20px; padding:10px; border-top:solid 1px #c0c0d0; border-left:solid 1px #c0c0d0; border-radius:6px;   box-shadow:#404045 4px 4px 6px;   text-align:left; background:#ffffff; }
-.snippet_item table{ margin:20px 15px; }
-.snippet_item th{ height:1.5em; padding-left:30px; padding-right:5px; white-space:nowrap; text-indent:0px !important; text-align:right !important; color:#606090 !important; }
-.snippet_item td{ min-width:200px; text-indent:0px !important; color:#000060 !important; }
+.snp_item{ clear:both; margin:10px; padding:10px; min-width:800px; text-align:center; font-size:1.1em; }
+.snp_item > div{ display:inline-block; vertical-align:middle; margin:10px; margin-top:20px; padding:10px; border-top:solid 1px #c0c0d0; border-left:solid 1px #c0c0d0; border-radius:6px;   box-shadow:#404045 4px 4px 6px;   text-align:left; background:#ffffff; }
+.snp_item table{ margin:10px 0px; }
+.snp_item th{ height:1.5em; padding-left:30px; padding-right:5px; white-space:nowrap; text-indent:0px !important; text-align:right !important; color:#606090 !important; }
+.snp_item td{ min-width:200px; text-indent:0px !important; color:#000060 !important; }
 
 
 /**
- * SNIPPETS : CREATE PAGE
+ * SNIPPETS : CREATE / EDIT
  */
-.createForm div{ display:block; }
-.createForm textarea{ height:100px; width:350px; }
-.createForm input[type=text]{ width:200px; }
-.createForm input.calendar{ width:80px; }
-.createForm input.time_input{ width:60px; }
-.createForm select{ width:205px; }
-.snippet_submitRow{ padding-top:20px; }
+.snp_editItem table div{ display:block; }
+.snp_editItem table textarea{ height:100px; width:350px; }
+.snp_editItem table input[type=text]{ width:220px; }
+.snp_editItem table input.calendar{ width:80px; }
+.snp_editItem table input.time_input{ width:60px; }
+.snp_editItem table select{ width:225px; }
 
 /**
- * SNIPPETS : VIEW PAGE
+ * SNIPPETS : VIEW
  */
-.embeddedView .infoData{ background:none; border:none; }
-.embeddedView .infoData > span{ display:none; }
-.embeddedView .infoData > div{ margin:0px 10px; }
-.embeddedView .infoData > div > table{ margin:10px 20px; }
-.embeddedView .infoData > div > table td{ max-width:180px; }
 .viewItemEditable{ position:relative; overflow:visible; cursor:pointer; }
 .viewItemEditable > input{ position:absolute; top:-2px; left:-2px; right:38px; height:100%; }
 .viewItemEditable > img{ float:right; height:16px; width:16px; margin-left:3px; cursor:pointer; }

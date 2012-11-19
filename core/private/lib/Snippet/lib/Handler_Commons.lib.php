@@ -252,12 +252,12 @@ abstract class Snippets_Handler_Commons{
 
 	}
 
-	protected function disableBtns( $tools ){
-
-		foreach( (array)$tools as $tool ){
+	protected function disableBtns( $tools )
+	{
+		foreach ((array)$tools as $tool)
+		{
 			$this->tplVars['tools'][$tool]['disabled'] = true;
 		}
-
 	}
 
 }

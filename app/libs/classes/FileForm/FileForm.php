@@ -46,9 +46,16 @@ class FileForm
 			$cb = $_POST['ffcb'];
 			unset($_POST['ffcb'], $_POST['MAX_FILE_SIZE']);
 
-			(empty($cb) || !function_exists($cb))
-				? self::addResponse("alert('FileForm: Handler does not exist')")
-				: call_user_func($cb, array_merge($_POST, $_FILES));
+			try
+			{
+				(empty($cb) || !function_exists($cb))
+					? self::addResponse("alert('FileForm: Handler does not exist')")
+					: call_user_func($cb, array_merge($_POST, $_FILES));
+			}
+			catch (Exception $e)
+			{
+				self::addResponse("say('{$e->getMessage()}');");
+			}
 
 			if (!headers_sent())
 			{

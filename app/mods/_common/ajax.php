@@ -54,9 +54,8 @@ function editUsers($data) {
 		return FileForm::addResponse("showTip('editUsers_{$valid['field']}', '{$valid['tip']}');");
 }
 
-function eventInfo() {
-	$id = $_GET['id'];
-
+function eventInfo($id)
+{
 	$types = oLists()->agendaEventTypes();
 	$users = oLists()->users();
 
@@ -69,7 +68,10 @@ function eventInfo() {
 	oSmarty()->assign('event', $event);
 	oSmarty()->assign('editions', oSQL()->getEventEditions($id));
 
-	die(utf8_encode(oSmarty()->fetch('home/eventInfo.tpl')));
+	$dialogAtts = array('width' => 600,
+	                    'title' => 'Información de Evento');
+
+	return dialog('home/eventInfo.tpl', '#eventInfo', $dialogAtts);
 }
 
 function closeAgendaEvent($id, $msg, $rescheduled = false) {

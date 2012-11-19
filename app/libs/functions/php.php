@@ -7,7 +7,7 @@ function doActionsAtLogin(){
 }
 
 function devMode(){
-	return defined('DEVMODE') && DEVMODE;
+	return (defined('DEVMODE') && DEVMODE) || (getSes('id_profile') == 1);
 }
 
 /* Debugging and devel tools */

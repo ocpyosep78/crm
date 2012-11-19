@@ -18,25 +18,55 @@ class DS_Structure extends DS_Connect
 	{
 		extract($this->read());
 
-		foreach ($keys['pri'] as &$pri)
+		foreach ($keys['pri'] as $k)
 		{
-			$pri = "{$pri['sch1']}.{$pri['tbl1']}.{$pri['col1']}";
+			$pri[] = "`{$k['sch1']}`.`{$k['tbl1']}`.`{$k['col1']}`";
 		}
 
-		return $keys['pri'];
+		return $pri;
 	}
 
 	final protected function read()
 	{
 		static $structure;
 
+		$id = "{$this->schema}.{$this->table}";
+
+		// First attempt to read it from database cache
+		if (!$structure)
+		{
+			$sql = "SELECT `keys`, `tables`, `columns`
+			        FROM `ds_cache_structure`
+			        WHERE `id` = '{$id}'
+			        AND `stored` > NOW() - 30";
+			$structure = @mysql_fetch_assoc($this->query($sql));
+
+			if ($structure)
+			{
+				foreach ($structure as &$elem)
+				{
+					$elem = unserialize($elem);
+				}
+			}
+		}
+
 		if (!$structure)
 		{
 			$keys    = $this->getKeys($this->schema, $this->table);
 			$tables  = $this->getTables($keys['all']);
-			$columns = $this->getColumns($tables['all']);
+			$columns = $this->getColumns($tables['all'], $keys['all']);
 
 			$structure = compact('keys', 'tables', 'columns');
+
+			$s_keys = addslashes(serialize($keys));
+			$s_tables = addslashes(serialize($tables));
+			$s_columns = addslashes(serialize($columns));
+
+			$sql = "REPLACE INTO `ds_cache_structure`
+			        (`id`, `keys`, `tables`, `columns`)
+			        VALUES
+					('{$id}', '{$s_keys}', '{$s_tables}', '{$s_columns}')";
+			@$this->query($sql);
 		}
 
 		return $structure;
@@ -99,7 +129,7 @@ class DS_Structure extends DS_Connect
 		// Find out which tables are involved, to get their columns
 		$all = $own = $src = $tgt = array();
 
-		$ownKey = "{$this->schema}.{$this->table}";
+		$ownKey = "`{$this->schema}`.`{$this->table}`";
 		$all[$ownKey] = array('schema'  => $this->schema,
 		                      'table'   => $this->table,
 		                      'type' => array('own' => 'own'));
@@ -109,8 +139,8 @@ class DS_Structure extends DS_Connect
 		foreach ($keys as $k)
 		{
 			// Fully qualified name and entry skeleton structure
-			$fqn1 = "{$k['sch1']}.{$k['tbl1']}";
-			$fqn2 = "{$k['sch2']}.{$k['tbl2']}";
+			$fqn1 = "`{$k['sch1']}`.`{$k['tbl1']}`";
+			$fqn2 = "`{$k['sch2']}`.`{$k['tbl2']}`";
 
 			$t1 = array('schema' => $k['sch1'], 'table' => $k['tbl1'], 'type' => array());
 			$t2 = array('schema' => $k['sch2'], 'table' => $k['tbl2'], 'type' => array());
@@ -146,7 +176,7 @@ class DS_Structure extends DS_Connect
 		return $tables;
 	}
 
-	private function getColumns($tables)
+	private function getColumns($tables, $keys)
 	{
 		// Prepare sql to filter query in search of all relevant columns
 		foreach ($tables as $t)
@@ -157,24 +187,44 @@ class DS_Structure extends DS_Connect
 		$condition = empty($cond) ? 0 : join(' OR ', $cond);
 
 		// Get the structure and candidate columns of each listed table
-		$sql = "SELECT *
+		$sql = "SELECT `ORDINAL_POSITION` AS 'position',
+		               `TABLE_SCHEMA` AS 'schema',
+		               `TABLE_NAME` AS 'table',
+		               `COLUMN_NAME` AS 'column',
+		               `DATA_TYPE` AS 'datatype',
+		               `COLUMN_TYPE` AS 'str_datatype',
+		               `CHARACTER_SET_NAME` AS 'charset',
+		               `COLLATION_NAME` AS 'collation',
+		               (`IS_NULLABLE` = 'YES') AS 'null',
+		               `COLUMN_DEFAULT` AS 'default',
+		               `COLUMN_KEY` AS 'key'/*,
+		               `PRIVILEGES` AS 'privileges',
+		               `COLUMN_COMMENT` AS 'comment',
+		               `TABLE_CATALOG` AS 'table_catalog',
+		               `CHARACTER_MAXIMUM_LENGTH` AS 'length',
+		               `CHARACTER_OCTET_LENGTH` AS 'octet_length',
+		               `NUMERIC_PRECISION` AS 'numeric_precision',
+		               `NUMERIC_SCALE` AS 'numeric_scale',
+		               `EXTRA` AS 'extra',*/
 				FROM `information_schema`.`columns`
 				WHERE {$condition}";
 		($res = $this->query($sql)) || ($raw = array());
 
-		while ($data=mysql_fetch_assoc($res))
+		while ($c=mysql_fetch_assoc($res))
 		{
-			$raw[] = $data;
-		}
+			$tbl_fqn = "`{$c['schema']}`.`{$c['table']}`";
+			$col_fqn = "{$tbl_fqn}.`{$c['column']}`";
 
-		foreach ($raw as $c)
-		{
-			$schema = $c['TABLE_SCHEMA'];
-			$table = $c['TABLE_NAME'];
-			$field = $c['COLUMN_NAME'];
+			$c['null'] = !!$c['null'];
 
-			$tbl_fqn = "{$schema}.{$table}";
-			$col_fqn = "{$schema}.{$table}.{$field}";
+			$c['key']= array('index'   => !!$c['key'],
+			                 'unique'  => ($c['key'] == 'UNI'),
+			                 'primary' => ($c['key'] == 'PRI'));
+
+			$c['references'] = array();
+			$c['referenced'] = array();
+
+			$c['fqn'] = $col_fqn;
 
 			$all[$col_fqn] = $c;
 
@@ -182,15 +232,89 @@ class DS_Structure extends DS_Connect
 			{
 				if (in_array($type, $tables[$tbl_fqn]['type']))
 				{
-					$all[$col_fqn]['tbl_type'][$type] = $type;
 					${$type}[$col_fqn] =& $all[$col_fqn];
 				}
 			}
 		}
 
+		foreach ($keys as $k)
+		{
+			$fqn1 = "`{$k['sch1']}`.`{$k['tbl1']}`.`{$k['col1']}`";
+			$fqn2 = "`{$k['sch2']}`.`{$k['tbl2']}`.`{$k['col2']}`";
+
+			if ($k['sch2'])
+			{
+				$all[$fqn1]['references'][] =& $all[$fqn2];
+				$all[$fqn2]['referenced'][] =& $all[$fqn1];
+			}
+		}
+
+		foreach ($all as &$c)
+		{
+			$this->fixDatatype($c);
+		}
+
 		$columns = compact('all', 'own', 'src', 'tgt');
 
 		return $columns;
+	}
+
+	/**
+	 * array columns([array $fields = NULL])
+	 *      Given a list of field names, returns an array with the field name as
+	 * key and the Column extended info as value. Note that the field name is
+	 * preserved as received (i.e. it will nto be extended to match the fully
+	 * qualified name of the field).
+	 *
+	 * @param type $fields
+	 * @return type
+	 */
+	public function columns($fields=NULL)
+	{
+		extract($this->read());
+
+		if (is_null($fields))
+		{
+			return $columns['all'];
+		}
+
+		$search = array_combine($fields, $fields);
+
+		// Translate each short fieldname to its fully qualified name
+		// If there is a conflict, fields from the main table will have priority
+		foreach (($columns['own'] + $columns['src']) as $fqn => $c)
+		{
+			$col = $c['column'];
+			$tbl = "`{$c['table']}`.`{$c['column']}`";
+
+			// Find matches with decreasing specificity
+			if (($inc = array_search($fqn, $search)) !== false
+			 || ($inc = array_search($tbl, $search)) !== false
+			 || ($inc = array_search($col, $search)) !== false)
+			{
+				$search[$inc] = $c;
+			}
+		}
+
+		// Fields without a match retain the field name instead of an empty list
+		foreach ($search as &$v)
+		{
+			is_array($v) || ($v = array());
+		}
+
+		return $search;
+	}
+
+	public function tables()
+	{
+		extract($this->read());
+		return $tables['all'];
+	}
+
+	public function keys()
+	{
+		extract($this->read());
+		return $keys['all'];
 	}
 
 
@@ -199,6 +323,137 @@ class DS_Structure extends DS_Connect
 /******************************************************************************/
 /********************************* T E M P ************************************/
 /******************************************************************************/
+
+	/**
+	 * private void fixDatatype(array &$col)
+	 *      From the real MySQL datatype, get the general type: integer, string,
+	 * boolean, time, date, datetime, list.
+	 *
+	 * @param array &$col
+	 * @return void
+	 */
+	private function fixDatatype(&$col)
+	{
+		$regex = '_^([^\( ]*) *\(([^\(]*)\) *(.*)$_';
+		preg_match($regex, $col['str_datatype'], $matches);
+
+		if (!$matches)
+		{
+			$matches = array(NULL, $col['datatype'], 0, '');
+		}
+
+		array_shift($matches);
+		list($type, $len, $extra) = $matches;
+
+		// Correct len to be an integer, set max possible length where missing
+		$len = min((int)$len, $this->getTypeMaxLen($type));
+
+		switch (strtoupper($type))
+		{
+			case 'CHAR':
+			case 'VARCHAR':
+			case 'BINARY':
+			case 'VARBINARY':
+			case 'TINYTEXT':
+			case 'TEXT':
+			case 'MEDIUMTEXT':
+			case 'LONGTEXT':
+			case 'TINYBLOB':
+			case 'BLOB':
+			case 'MEDIUMBLOB':
+			case 'LONGBLOB':
+				$raw = 'string';
+				break;
+
+			case 'ENUM':
+			case 'SET':
+				$raw = 'list';
+				break;
+
+			case 'TINYINT':
+				$raw = ($len == 1) ? 'boolean' : 'integer';
+				break;
+
+			case 'SMALLINT':
+			case 'MEDIUMINT':
+			case 'INT':
+			case 'BIGINT':
+				$raw = 'integer';
+				break;
+
+			// For these there is no point in trying to give a "max length"
+			case 'FLOAT':
+			case 'DOUBLE':
+			case 'DOUBLEPRECISION':
+			case 'DECIMAL':
+			case 'NUMERIC':
+				$raw = 'float';
+				break;
+
+			// These have a max length as strings, but it's not meaningful
+			case 'TIME':
+			case 'DATE':
+			case 'DATETIME':
+			case 'TIMESTAMP':
+			case 'YEAR':
+				$raw = 'date';
+				break;
+		}
+
+		$col['datatype'] = compact('type', 'len', 'extra', 'raw');
+
+		$col['datatype']['charset'] = $col['charset'];
+		$col['datatype']['collation'] = $col['collation'];
+
+		unset($col['str_datatype'], $col['charset'], $col['collation']);
+	}
+
+	private function getTypeMaxLen($datatype)
+	{
+		switch (strtoupper($datatype))
+		{
+			case 'CHAR':
+			case 'BINARY':     return 255;
+			case 'VARCHAR':
+			case 'VARBINARY':  return 65535;
+
+			case 'TINYTEXT':
+			case 'TINYBLOB':   return 255;
+			case 'TEXT':
+			case 'BLOB':       return 65535;
+			case 'MEDIUMTEXT':
+			case 'MEDIUMBLOB': return 16777215;
+			case 'LONGTEXT':
+			case 'LONGBLOB':   return 4294967295;
+
+			case 'ENUM':
+			case 'SET':        return 65535;
+
+			case 'TINYINT':    return 255;
+			case 'SMALLINT':   return 65535;
+			case 'MEDIUMINT':  return 16777215;
+			case 'INT':
+			case 'INTEGER':    return 4294967295;
+			case 'BIGINT':     return 18446744073709551615;
+
+			// For these there is no point in trying to give a "max length"
+			case 'FLOAT':
+			case 'DOUBLE':
+			case 'DOUBLEPRECISION':
+			case 'DECIMAL':
+			case 'NUMERIC':
+
+			// These have a max length as strings, but it's not meaningful
+			case 'TIME':
+			case 'DATE':
+			case 'DATETIME':
+			case 'TIMESTAMP':
+			case 'YEAR':
+
+			default:
+				return NULL;
+		}
+	}
 
 	private function enumDefinition($table, $column){
 		$sql = "SHOW COLUMNS

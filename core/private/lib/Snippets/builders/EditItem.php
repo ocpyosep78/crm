@@ -1,6 +1,6 @@
 <?php
 
-class snp_ViewItem extends SNP
+class snp_EditItem extends SNP
 {
 
 	/**
@@ -12,23 +12,31 @@ class snp_ViewItem extends SNP
 	protected function assignSnippetVars()
 	{
 		// Expected: $fields, $data, $toolTip, $hidden
-		extract($this->View->getItemData($this->params['filters']));
+		extract($this->View->getItemData($this->params['filters'], true));
+
+		// Let's put some more info on each entry
+		$rFields = array_flip($fields);
+
+		foreach ($data as $scrname => $value)
+		{
+			$key = $rFields[$scrname];
+
+			$props = $fieldinfo[$key];
+
+			$myData[$key] = array('name'  => $scrname,
+			                      'value' => $value,
+			                      'props' => $fieldinfo[$key]);
+		}
 
 		# Form data blocks (for presentational purposes)
-		$chunks = array_chunk($data, ceil(count($data)/2), true);
+		$chunks = array_chunk($myData, ceil(count($myData)/2), true);
 
 		$this->View->assign('chunks', $chunks);
+		$this->View->assign('fieldinfo', $fieldinfo);
+
 		$this->View->assign('objectID', $this->params['filters']);
-		$this->View->assign('editable', $this->can('edit'));
 
 		$this->View->assign('inDialog', true);
-
-		// Value of the most descriptive field of this model?
-		$description = isset($data[$this->View->descr_field])
-			? $data[$this->View->descr_field]
-			: "con id {$this->params['filters']}";
-
-		$this->description_string = "{$this->View->name} {$description}";
 	}
 
 	/**
@@ -42,7 +50,7 @@ class snp_ViewItem extends SNP
 	 */
 	public function snippetReturn()
 	{
-		$title = "Detalle de {$this->description_string}";
+		$title = "Detalle de {$this->View->name}";
 
 		if (devMode())
 		{
@@ -51,7 +59,7 @@ class snp_ViewItem extends SNP
 
 		$dialogAtts = array('title' => $title);
 
-		return dialog($this->html, '#viewItem', $dialogAtts);
+		return dialog($this->html, '#editItem', $dialogAtts);
 	}
 
 }

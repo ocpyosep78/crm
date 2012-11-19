@@ -13,7 +13,7 @@ abstract class Model extends DS_Model
 /********************************* S T A T I C ********************************/
 /******************************************************************************/
 
-	final public static function get($modelname)
+	final public static function get($modelname, $namespace='global')
 	{
 		if (!$modelname)
 		{
@@ -29,7 +29,7 @@ abstract class Model extends DS_Model
 			throw new Exception($msg);
 		}
 
-		if (empty(self::$cached_models[$ucmodel]))
+		if (empty(self::$cached_models[$namespace][$ucmodel]))
 		{
 			$path = APP_MODELS . "/{$ucmodel}.php";
 
@@ -52,10 +52,10 @@ abstract class Model extends DS_Model
 				$Model = new AbstractModel($modelname);
 			}
 
-			self::$cached_models[$modelname] = $Model;
+			self::$cached_models[$namespace][$modelname] = $Model;
 		}
 
-		return self::$cached_models[$modelname];
+		return self::$cached_models[$namespace][$modelname];
 	}
 
 

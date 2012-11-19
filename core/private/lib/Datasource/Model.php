@@ -146,7 +146,7 @@ abstract class DS_Model extends DS_Structure
 			throw new Exception('Method setId can only be used with single primary keys');
 		}
 
-		$field = end(explode('.', array_shift($key)));
+		$field = trim(end(explode('`.`', array_shift($key))), '`');
 
 		// ::setId() resets filters, if any was set before
 		$primary = "`{$this->schema}`.`{$this->table}`.`{$field}`";
@@ -214,12 +214,17 @@ abstract class DS_Model extends DS_Structure
 		// Now import @search keys to this scope, and let's execute the query
 		extract(get_object_vars($this->search));
 
-		$sql = "SELECT {$this->fields()}\n" .
-		       "FROM {$this->tables()}\n" .
+		$sql = "SELECT {$this->selectSql()}\n" .
+		       "FROM {$this->joinSql()}\n" .
 		       "WHERE {$this->whereSql()}\n" .
 		       ($order ? "ORDER BY {$order}\n" : '') .
 		       ($limit ? "LIMIT {$limit}" : '');
 		$res = $this->query($sql);
+
+		if ($res === false)
+		{
+			throw new Exception($sql . "\n" . mysql_error());
+		}
 
 		// Create a new DS_Result
 		$Result = new DS_Result($this->search, $sql, $res, $this);
@@ -273,6 +278,76 @@ abstract class DS_Model extends DS_Structure
 		}
 	}
 
+	// Create an empty @search object
+	private function initSearchObj()
+	{
+		// Initialize @search
+		$this->search = new stdClass;
+		$this->search->select = array();
+		$this->search->where = array();
+		$this->search->order = '';
+		$this->search->limit = 30;
+	}
+
+	/**
+	 * private string selectSql()
+	 *      From the pool of all available fields, create a valid sql for the
+	 * SELECT part, with only the ones hat were picked (all if none was picked).
+	 *
+	 * @return string
+	 */
+	private function selectSql()
+	{
+
+		$resolved = $this->columns(array_keys($this->search->select));
+
+		foreach ($resolved as $k => $c)
+		{
+			$key = isset($c['fqn']) ? $c['fqn'] : $k;
+			$fields[$key] = $this->search->select[$k];
+		}
+
+		extract($this->read());
+
+		foreach ($fields as $fqn => $alias)
+		{
+			if (isset($columns['all'][$fqn]))
+			{
+				$col = $columns['all'][$fqn]['column'];
+				($alias != $col) || ($alias = $fqn);
+			}
+
+			$fieldsSql[] =  "{$fqn} AS '{$alias}'";
+		}
+
+		$sql = empty($fieldsSql) ? '*' : join(",\n       ", $fieldsSql);
+
+		return $sql;
+	}
+
+	/**
+	 * private string joinSql()
+	 *       Builds (and returns) the FROM part of the SELECT queries.
+	 *
+	 * @return string
+	 */
+	private function joinSql()
+	{
+		extract($this->read());
+
+		foreach ($keys['src'] as $k)
+		{
+			$f1 = "`{$this->schema}`.`{$this->table}`.`{$k['col1']}`";
+			$f2 = "`{$k['sch2']}`.`{$k['tbl2']}`.`{$k['col2']}`";
+
+			$joins[] = "LEFT JOIN `{$k['sch2']}`.`{$k['tbl2']}` ON ({$f2} = {$f1})";
+		}
+
+		$sql = "`{$this->schema}`.`{$this->table}`\n" . join("\n", $joins);
+
+		return $sql;
+	}
+
 	private function whereSql()
 	{
 		// Process filters to build the SQL filter string, and return it
@@ -281,7 +356,7 @@ abstract class DS_Model extends DS_Structure
 			// Accept both NULL and string 'null' (case insensitive)
 			if (is_null($v) || (is_string($v) && strtolower($v) === 'null'))
 			{
-				$cond[] = "ISNULL(`{$k}`)";
+				$cond[] = "ISNULL({$k})";
 			}
 			// Lists of values (IN)
 			elseif (!is_numeric($k) && (is_array($v) || strpos($v, ',')))
@@ -300,101 +375,11 @@ abstract class DS_Model extends DS_Structure
 			}
 			else
 			{
-				throw new Exception("Invalid parameter passed to where(): {$k} => {$v}");
+				throw new Exception("Invalid parameter passed to whereSql(): {$k} => {$v}");
 			}
 		}
 
 		return isset($cond) ? join(" AND ", $cond) : '1';
-	}
-
-	// Create an empty @search object
-	private function initSearchObj()
-	{
-		// Initialize @search
-		$this->search = new stdClass;
-		$this->search->select = array();
-		$this->search->where = array();
-		$this->search->order = '';
-		$this->search->limit = 30;
-	}
-
-	/**
-	 * private string fields()
-	 *      From the pool of all available fields, create a valid sql for the
-	 * SELECT part, with only the ones hat were picked (all if none was picked).
-	 *
-	 * @return string
-	 */
-	private function fields()
-	{
-		extract($this->read());
-
-		$select = array_flip($this->search->select);
-
-		// Translate each short fieldname to its fully qualified name
-		// If there is a conflict, fields from the main table will have priority
-		foreach (($columns['own'] + $columns['src']) as $fqn => $c)
-		{
-			$col = $c['COLUMN_NAME'];
-			$tbl = "{$c['TABLE_NAME']}.{$col}";
-
-			// Find matches with decreasing specificity
-			if (($inc = array_search($fqn, $select))
-			 || ($inc = array_search($tbl, $select))
-			 || ($inc = array_search($col, $select)))
-			{
-				$select[$inc] = $fqn;
-			}
-		}
-
-		// Update fqns in the real select list
-		$this->search->select = array_flip($select);
-
-		foreach ($this->search->select as $fqn => $alias)
-		{
-			if (isset($columns['all'][$fqn]))
-			{
-				$col = $columns['all'][$fqn]['COLUMN_NAME'];
-				$sch = $columns['all'][$fqn]['TABLE_SCHEMA'];
-				$tbl = $columns['all'][$fqn]['TABLE_NAME'];
-
-				($alias != $col) || ($alias = $fqn);
-
-				$properFqn = '`' . str_replace('.', '`.`', $fqn) . '`';
-				$fieldsSql[] =  "{$properFqn} AS '{$alias}'";
-			}
-			else
-			{
-				$fieldsSql[] = "{$fqn} AS '{$alias}'";
-			}
-		}
-
-		$sql = empty($fieldsSql) ? '*' : join(",\n       ", $fieldsSql);
-
-		return $sql;
-	}
-
-	/**
-	 * private string tables()
-	 *       Builds (and returns) the FROM part of the SELECT queries.
-	 *
-	 * @return string
-	 */
-	private function tables()
-	{
-		extract($this->read());
-
-		foreach ($keys['src'] as $k)
-		{
-			$f1 = "`{$this->schema}`.`{$this->table}`.`{$k['col1']}`";
-			$f2 = "`{$k['sch2']}`.`{$k['tbl2']}`.`{$k['col2']}`";
-
-			$joins[] = "LEFT JOIN `{$k['sch2']}`.`{$k['tbl2']}` ON ({$f2} = {$f1})";
-		}
-
-		$sql = "`{$this->schema}`.`{$this->table}`\n" . join("\n", $joins);
-
-		return $sql;
 	}
 
 }

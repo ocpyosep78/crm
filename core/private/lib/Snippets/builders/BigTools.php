@@ -1,9 +1,11 @@
 <?php
 
-class snp_CommonList extends SNP
+class snp_BigTools extends SNP
 {
 
 	private $buttons = array(
+		'list'		=> 'listado',
+		'create'	=> 'agregar',
 		'view'		=> 'ver información de',
 		'edit'		=> 'editar',
 		'delete'	=> 'eliminar',
@@ -17,31 +19,24 @@ class snp_CommonList extends SNP
 	 */
 	protected function assignSnippetVars()
 	{
-		// Expected: $fields, $data, $hidden
-		extract($this->View->getTabularData(30));
+		$parent = $this->params['parent'];
 
-		foreach ($fields as $field)
+		# Disable certain buttons depending on which snippet is using this one
+		switch ($parent)
 		{
-			$titles[] = addslashes($field);
+			case 'commonList':
+			case 'simpleList':
+				unset($this->buttons['list']);
+				break;
+
+			case 'createItem':
+			case 'viewItem':
+			case 'editItem':
+				unset($this->buttons[str_replace('Item', '', $parent)]);
+				break;
 		}
 
-		$this->View->assign('titles' , $titles);
-		$this->View->assign('data'   , $data);
-
-		$this->View->assign('listButtons', $this->buttons);
-
-		$this->View->assign('primary', $primary);
-		$this->View->assign('toolTip', $this->View->descr_field);
-
-		$params = array('parent' => 'commonList') + $this->params;
-		$bigTools = self::getSnippet('bigTools', $params['model'], $params);
-
-		$this->View->assign('bigTools', $bigTools);
-	}
-
-	public function updateContent()
-	{
-
+		$this->View->assign('bigButtons', $this->buttons);
 	}
 
 	/**
@@ -55,7 +50,7 @@ class snp_CommonList extends SNP
 	 */
 	public function snippetReturn()
 	{
-		return parent::snippetReturn();
+		return $this->html;
 	}
 
 }

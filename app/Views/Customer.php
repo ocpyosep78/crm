@@ -24,45 +24,13 @@ class View_Customer extends View
 		'email'          => 'Email',
 		'since'          => 'Fecha Ingreso',
 		'subscribed'     => 'Subscripción',
-		'location'       => 'Ciudad/Localidad');
+		'location'       => 'Ciudad/Localidad',
+		"CONCAT(`_users`.`name`, ' ', `_users`.`lastName`)" => 'Vendedor');
 
-
-	/**
-	 * array getTabularData([mixed $limit = 30])
-	 *      Generate relevant information to build a tabular list.
-	 *
-	 * @param mixed $limit      A valid LIMIT value (e.g. 4, '0, 30', etc.).
-	 * @return array
-	 */
-	public function getTabularData($limit=30)
-	{
-		$fieldlist = array('id_customer', 'number', 'customer', 'legal_name', 'address', 'phone');
-
-		$fields = $this->mapnames($fieldlist);
-		$fields["CONCAT(`_users`.`name`, ' ', `_users`.`lastName`)"] = 'Vendedor';
-
-		$data = $this->Model->find(NULL, $fields, $limit)->get();
-
-		$hidden = array('id_customer'); // No retrieved field is to be hidden
-
-		return compact('fields', 'data', 'hidden');
-	}
-
-	/**
-	 * array getItemData(mixed $id)
-	 *      Generate relevant information to build a single item's page.
-	 *
-	 * @param mixed $id         The id of this element (primary key value)
-	 * @return array
-	 */
-	public function getItemData($id)
-	{
-		$fields = $this->__screen_names;
-
-		$this->Model->setId($id)->select($fields);
-		$data = $this->Model->find()->convert('row')->get();
-
-		return compact('fields', 'data');
-	}
+	protected $__tabular_fields = array(
+		'id_customer', 'number', 'customer',
+		'legal_name', 'address', 'phone',
+		"CONCAT(`_users`.`name`, ' ', `_users`.`lastName`)"
+	);
 
 }

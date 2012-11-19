@@ -1,7 +1,7 @@
 <div class='bigTools'>
-  {foreach from=$tools key=code item=tool}
-	<div btn='{$code}' title='{$tool.name} {$name|lower}'{if $tool.disabled} class='btOff'{/if}>
-	  <img src='{$SNIPPET_IMAGES}/buttons/{$code}.png' alt='{$tool.name}' />
+  {foreach from=$bigButtons key=code item=button}
+	<div btn='{$code}' title='{$button} {$name|lower}'>
+	  <img src='{$SNP_IMAGES}/buttons/{$code}.png' alt='{$button}' />
 	</div>
   {/foreach}
 </div>

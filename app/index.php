@@ -21,6 +21,21 @@ require_once('initialize.php');
 
 									try
 									{
+
+										if (isset($_GET['t8']))
+										{
+											db(Model::get('Customer')->columns());
+
+											die();
+										}
+
+										if (isset($_GET['t7']))
+										{
+											db(SNP::getSnippet('editItem', 'Customer', array('filters' => 1)));
+
+											die();
+										}
+
 										if (isset($_GET['t6']))
 										{
 											db(SNP::getSnippet('viewItem', 'Customer', array('filters' => 1)));
@@ -69,7 +84,7 @@ require_once('initialize.php');
 											die();
 										}
 
-										if (isset($_GET['t']))
+										if (isset($_GET['t1']))
 										{
 											$t = Model::get('user');
 
@@ -186,8 +201,21 @@ if (loggedIn())
 ** P A G E C F G
 ***************/
 
-//oSmarty()->assign('jQueryUiTheme', 'dot-luv');
-oSmarty()->assign('jQueryUiTheme', 'start');
+if (!empty($_GET['theme']))
+{
+	oSmarty()->assign('jQueryUiTheme', $_GET['theme']);
+}
+else
+{
+//	oSmarty()->assign('jQueryUiTheme', 'dot-luv');
+//	oSmarty()->assign('jQueryUiTheme', 'start');
+//	oSmarty()->assign('jQueryUiTheme', 'dark-hive');
+//	oSmarty()->assign('jQueryUiTheme', 'ui-lightness');
+//	oSmarty()->assign('jQueryUiTheme', 'ui-darkness');
+//	oSmarty()->assign('jQueryUiTheme', 'smoothness');
+	oSmarty()->assign('jQueryUiTheme', 'redmond');
+}
+
 oSmarty()->assign('core_scripts', CORE_SCRIPTS);
 
 oPageCfg()->set_appTitle( loggedIn() );
@@ -228,9 +256,27 @@ elseif (!isXajax())
 ** P R O C E S S   A J A X   C A L L S
 ***************/
 
-oXajax()->processRequests();
-FileForm::processRequests();
+try
+{
+	oXajax()->processRequests();
+}
+catch (PublicException $e)
+{
+	header('Content-type: text/xml');
+	echo say(addslashes($e->getMessage()))->getXML();
 
+	exit;
+}
+catch (Exception $e)
+{
+	header('Content-type: text/xml');
+	$error = devMode() ? $e->getMessage() : 'Ocurrió un error inesperado';
+	echo say(addslashes($error))->getXML();
+
+	exit;
+}
+
+FileForm::processRequests();
 
 
 /***************

@@ -4,6 +4,10 @@
 abstract class DS_Connect
 {
 
+	private $Error;
+
+	protected $Answer;
+
 	public static $messages = array(
 		'success'   => 'Su consulta finalizó correctamente.',
 		'error'     => 'Ocurrió un error desconocido al procesar su consulta. Se ha guardado un registro del error.',
@@ -11,8 +15,6 @@ abstract class DS_Connect
 		'fk_parent' => 'La base de datos ha bloqueado la modificación de este elemento (FK constraint).<br />Otros elementos de la base de datos dependen o derivan de él.',
 		'fk_child'  => 'La base de datos ha bloqueado la modificación de este elemento (FK constraint).<br />Este elemento depende o deriva de otros elementos en la base de datos.',
 	);
-
-	private $Error;
 
 
 	public function get_last_error()
@@ -40,7 +42,9 @@ abstract class DS_Connect
 		// Find out if this was a select-like query or not
 		$selects = preg_match('_^(SELECT|SHOW|DESCRIBE)\b_i', $sql);
 
-		return $selects ? $res : $this->answer($sql, $res);
+		$this->Answer = $this->answer($sql, $res);
+
+		return $selects ? $res : $this->Answer;
 	}
 
 	private function connect()
@@ -61,37 +65,37 @@ abstract class DS_Connect
 
 	private function error($sql)
 	{
-		$error = new stdClass;
+		$Error = new stdClass;
 
-		$error->sql = $sql;
-		$error->table = $this->table;
+		$Error->sql = $sql;
+		$Error->table = $this->table;
 
-		$error->errno = mysql_errno();
-		$error->error = mysql_error();
+		$Error->errno = mysql_errno();
+		$Error->error = mysql_error();
 
 		// Get failing field for constraint errors
-		switch ($error->errno)
+		switch ($Error->errno)
 		{
 			case 1062:  // Duplicate
 				$regex = "_for key '(\w+)'_";
-				@preg_match($regex, $error->error, $match);
-				$sql = "SHOW KEYS FROM `{$error->table}` WHERE `Key_name` = '{$match[1]}'";
+				@preg_match($regex, $Error->error, $match);
+				$sql = "SHOW KEYS FROM `{$Error->table}` WHERE `Key_name` = '{$match[1]}'";
 				$res = @mysql_fetch_assoc(@mysql_query($sql));
-				$error->column = $res ? $res['Column_name'] : 'Unknown';
+				$Error->column = $res ? $res['Column_name'] : 'Unknown';
 				break;
 
 			case 1452:
 				$regex = "_FOREIGN KEY \(`(\w+)`\) REFERENCES_";
-				@preg_match($regex, $error->error, $match);
-				$error->column = $match ? $match[1] : 'Unknown';
+				@preg_match($regex, $Error->error, $match);
+				$Error->column = $match ? $match[1] : 'Unknown';
 				break;
 
 			default:
-				$error->column = 'Unknown';
+				$Error->column = 'Unknown';
 		}
 
-		$log = "\r\n" . date('Y-m-d H:i:s') . " [{$error->errno}]: {$error->error})\r\n" .
-		       "SQL: {$error->sql}\r\n";
+		$log = "\r\n" . date('Y-m-d H:i:s') . " [{$Error->errno}]: {$Error->error})\r\n" .
+		       "SQL: {$Error->sql}\r\n";
 
 		if (defined('DATASOURCE_ERROR_LOG') && DATASOURCE_ERROR_LOG)
 		{
@@ -101,6 +105,8 @@ abstract class DS_Connect
 				fclose($fp);
 			}
 		}
+
+		return $Error;
 	}
 
 	private function answer($sql, $res)
@@ -113,10 +119,10 @@ abstract class DS_Connect
 		$Answer->rows = mysql_affected_rows();
 		$Answer->id = mysql_insert_id();
 
-		$Answer->error = $this->Error;
-		$Answer->failed = $this->Error->number;   // Shortcut
+		$Answer->Error = $this->Error;
+		$Answer->failed = !!$this->Error->errno;   // Shortcut
 
-		switch ($this->Error->number)
+		switch ($this->Error->errno)
 		{
 			case 0:
 				$Answer->msg = self::$messages['success'];
@@ -138,6 +144,8 @@ abstract class DS_Connect
 				$Answer->msg = self::$messages['error'];
 				break;
 		}
+
+		return $Answer;
 	}
 
 }

@@ -99,9 +99,23 @@ $.fn.print = function() {
 	return this;
 }
 
+// jQuery doesn't have a capitalize method, for some reason
 $.capitalize = function(txt) {
 	return txt.replace(/\b[a-z]/g, function(x){ return x.toUpperCase(); });
 }
+
+// Set defaults for jQuery UI Dialog widget
+$.extend($.ui.dialog.prototype.options, {
+	modal: true,
+	stack: false,
+	resizable: false,
+	position: { my:'center', at:'center', of:window },
+	width: 'auto',
+	closeText: 'Cerrar',
+	close: function() {
+		$(this).dialog('destroy').remove();
+	}
+});
 
 
 /******************************************************************************/
@@ -114,7 +128,7 @@ String.prototype.fill = function(i , s , r){	/* times, fillStr, reverse */
 	return r ? a+this.toString() : this.toString()+a;
 };
 
-function test(x) {
+function db(x) {
 	console.log(x);
 	alert('Debug log generated for: ' + x);
 }
@@ -226,7 +240,7 @@ function iniPage(name) {
 	try {
 		fn && fn.apply(fn, IniParams.get());
 	} catch(e) {
-		return DEVMODE ? test(e) : false;
+		return DEVMODE ? db(e) : false;
 	}
 
 	$('body').trigger('contentload');
@@ -317,10 +331,7 @@ $(function(){
 
 	// Activate agenda eventUnits
 	$('body').on('click', '.eventUnit', function(){
-		var id = $(this).find('input[type="hidden"]').val();
-		$('<div />').load('index.php?load=eventInfo&id='+id, function(){
-			this.dialog({width:650, modal:true});
-		}).appendTo('body');
+		xajax_eventInfo($(this).find('input[type="hidden"]').val());
 	});
 
 	// FileForm: add pseudo-ajax submit to forms with File inputs
@@ -372,6 +383,8 @@ $(function(){
 			this.attr('initialized', 'true');
 			Snippets.add(new Snippet(this));
 		}, true);
+
+		showLoading(false);
 	});
 });
 
@@ -463,14 +476,12 @@ function Snippet(el){
 		return Snippets.get(groupId, type);
 	}
 
-	function resetBigToolsState(btns) {
-		linked('bigTools') && linked('bigTools').disable().enable(btns||true);
-	}
-
 	/**
 	 * Load a new snippet
 	 */
 	function getSnippet(snippet, opts) {
+		showLoading();
+
 		xajax_getSnippet(snippet, model, $.extend({}, params, opts));
 	}
 
@@ -506,9 +517,8 @@ function Snippet(el){
 					return set;
 				}
 			}).click(function(){
-				var axn = $(this).attr('btn'),
-				    uid = my('[btn]').attr('uid') || '';
-				$(this).hasClass('btOn') && request(axn + 'Item', uid);
+				var axn = $(this).attr('btn');
+				$(this).hasClass('btOn') && request(axn + 'Item', btns.uid||0);
 			});
 
 			this.disable = function(code) {
@@ -522,15 +532,20 @@ function Snippet(el){
 				return this;
 			};
 
+			this.enable.ss = $();
+
 			this.id = function(uid) {
-				return uid ? (this.uid = uid) && this : this.uid;
+				return uid ? (btns.uid = uid) && this : btns.uid;
 			};
 
-			this.enable.ss = $();
+			if (params.parent && linked(params.parent)) {
+				var enabled = linked(params.parent).bigTools;
+				enabled && this.disable().enable(enabled);
+			}
 		},
 
 		commonList: function() {
-			resetBigToolsState(['create']);
+			this.bigTools = ['list', 'create'];
 
 			my('.listWrapper').on('fill', function(){
 				// Store horizontal position and width of each cell...
@@ -550,22 +565,7 @@ function Snippet(el){
 			});
 
 			my('.innerListRow').dblclick(function(){
-				// Create new embeddedView if there was none in current row
-				if (!$(this).next().find('.embeddedView').remove().length) {
-					my('.embeddedView').parents('tr').remove();
-
-					$('<td />', {
-						'id': 'embed_' + groupId,
-						'class': 'embeddedView',
-						'colspan': $(this).find('td').length
-					}).on('embed', function(){
-//						this.scrollIntoView();
-					}).appendTo($('<tr />').insertAfter(this));
-
-					// Request the embeddedView content
-					getSnippet('snp_viewItem', {filters: {modifier: $(this)._for()},
-					                            writeTo: 'embed_' + groupId});
-				}
+				$(this).find('img[alt="view"]').click();
 			});
 
 			my('.innerListTools').on('click', '[alt]', function(){
@@ -581,13 +581,13 @@ function Snippet(el){
 		},
 
 		viewItem: function() {
-			resetBigToolsState(['list', 'create', 'edit', 'delete']);
+			this.bigTools = ['list', 'create', 'edit', 'delete'];
 			$('#embed_'+groupId).trigger('embed');
 		},
 
 		createItem: function(editing){
 			// BigTools buttons
-			editing && resetBigToolsState(['create', 'view']);
+			editing && (this.bigTools = ['create', 'view']);
 			linked('bigTools').enable('list'); // Enabled either way
 
 			// Form submitting

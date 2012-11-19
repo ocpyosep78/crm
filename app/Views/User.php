@@ -18,15 +18,20 @@ class View_User extends View
 		'pass'        => 'Contraseña',
 		'name'        => 'Nombre',
 		'lastName'    => 'Apellido',
+		"CONCAT(`name`, ' ', `lastName`)" => 'Nombre',
 		'address'     => 'Dirección',
 		'phone'       => 'Teléfono',
 		'email'       => 'Email',
-		'employeeNum' => 'Número',
+		'department'  => 'Departamento',
 		'position'    => 'Cargo',
-		'last_access' => 'Último Login',
-		'blocked'     => 'Bloqueado',
+		'employeeNum' => 'Nº de Empleado',
 		'profile'     => 'Perfil',
-		'department'  => 'Departamento');
+		'blocked'     => 'Bloqueado',
+		'last_access' => 'Último Login');
+
+	protected $__tabular_fields = array(
+		"CONCAT(`name`, ' ', `lastName`)",
+		'user', 'phone', 'email', 'profile');
 
 
 	/**
@@ -38,35 +43,22 @@ class View_User extends View
 	 */
 	public function getTabularData($limit=30)
 	{
-		$fieldlist = array("CONCAT(`name`, ' ', `lastName`)",
-		                   'user', 'phone', 'email', 'profile');
-
-		$fields = $this->mapnames($fieldlist);
-		$fields["CONCAT(`name`, ' ', `lastName`)"] = 'Nombre';
-
-		$data = $this->Model->find('NOT blocked', $fields, $limit)->get();
-
-		$hidden = array(); // No retrieved field is to be hidden
-
-		return compact('fields', 'data', 'hidden');
+		$this->Model->where('NOT blocked');
+		return parent::getTabularData($limit);
 	}
 
 	/**
-	 * array getItemData(mixed $id)
-	 *      Generate relevant information to build a single item's page.
+	 * protected array fullinfo_fields()
+	 *      Dynamically override @__fullinfo_fields.
 	 *
-	 * @param mixed $id         The id of this element (primary key value)
 	 * @return array
 	 */
-	public function getItemData($id)
+	protected function fullinfo_fields()
 	{
-		$fields = $this->__screen_names;
-		unset($fields['pass']);
+		$all = $this->__screen_names;
+		unset($all["CONCAT(`name`, ' ', `lastName`)"], $all['pass']);
 
-		$this->Model->setId($id)->select($fields);
-		$data = $this->Model->find()->convert('row')->get();
-
-		return compact('fields', 'data');
+		return array_keys($all);
 	}
 
 }
