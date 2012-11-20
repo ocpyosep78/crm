@@ -9,7 +9,8 @@ abstract class View
 	protected $Model;
 	private $TplEngine;
 
-	protected $__descr_field;
+	protected $__descr_field;   // The most descriptive field of the model
+	protected $__hash_field;    // Field representing the model (often composed)
 
 	protected $__screen_names = array();
 	protected $__extended_fields = array();
@@ -88,44 +89,6 @@ abstract class View
 	}
 
 	/**
-	 * protected string name()
-	 *      Called when no @name was defined (or ::name in sub-class), returns
-	 * a default name for the view, based on the Model's table name.
-	 *
-	 * @return string
-	 */
-	protected function name()
-	{
-		return $this->__name ? $this->__name : ucfirst($this->Model->table);
-	}
-
-	/**
-	 * protected string plural()
-	 *      Called when no @plural's defined (or ::plural in sub-class), returns
-	 * a default name in plural for the view, based on the name's singular form.
-	 *
-	 * @return string
-	 */
-	protected function plural()
-	{
-		$s = preg_match('/s$/', $this->name) ? 'es' : 's';
-		return $this->__plural ? $this->__plural : ucfirst($this->name) . $s;
-	}
-
-	/**
-	 * protected string gender()
-	 *      Called when no @gender's defined (or ::gender in sub-class), returns
-	 * a best guess of gender, based on last letter of the name.
-	 *
-	 * @return string
-	 */
-	protected function gender()
-	{
-		$default_gender = preg_match('/a$/', $this->name) ? 'f' : 'm';
-		return $this->__gender ? $this->__gender : $default_gender;
-	}
-
-	/**
 	 * protected boolean assign(string $var, $mixed $val)
 	 *      Register variables by name and value, for the view to use.
 	 *
@@ -136,6 +99,11 @@ abstract class View
 	public function assign($var, $val)
 	{
 		return $this->TplEngine->assign($var, $val);
+	}
+
+	public function retrieve($var)
+	{
+		return $this->TplEngine->getTemplateVars($var);
 	}
 
 	/**
@@ -172,7 +140,7 @@ abstract class View
 
 
 /******************************************************************************/
-/********************** A B S T R A C T   M E T H O D S ***********************/
+/********************* L I N K   T O   T H E   M O D E L **********************/
 /******************************************************************************/
 
 	/**
@@ -228,19 +196,74 @@ abstract class View
 		return compact('fields', 'fieldinfo', 'data', 'primary');
 	}
 
+	/**
+	 * array getHashData()
+	 *      Generate relevant information to build a single item's page.
+	 *
+	 * @param mixed $id         The id of this element (primary key value)
+	 * @return array
+	 */
+	public function getHashData()
+	{
+		($field = $this->hash_field) || ($field = $this->descr_field);
+
+		return $this->Model
+			->select('__id__', "{$field} AS 'val'")->order('val')
+			->find()->convert('col')->get();
+	}
+
 	public function getPkAlias()
 	{
-		$scr = $this->__screen_names;
-		$pk = trim(end(explode('`.`', array_shift($this->Model->getPk()))), '`');
-		$primary = isset($scr[$pk]) ? $scr[$pk] : $pk;
+		$scr = $this->screen_names;
+		$pk = $this->Model->getPk();
 
-		return $primary;
+		return isset($scr[$pk]) ? $scr[$pk] : $pk;
 	}
 
 
 /******************************************************************************/
 /************************* M A G I C   M E T H O D S **************************/
 /******************************************************************************/
+
+
+	/**
+	 * protected string name()
+	 *      Called when no @name was defined (or ::name in sub-class), returns
+	 * a default name for the view, based on the Model's table name.
+	 *
+	 * @return string
+	 */
+	protected function name()
+	{
+		return $this->__name ? $this->__name : ucfirst($this->Model->table);
+	}
+
+	/**
+	 * protected string plural()
+	 *      Called when no @plural's defined (or ::plural in sub-class), returns
+	 * a default name in plural for the view, based on the name's singular form.
+	 *
+	 * @return string
+	 */
+	protected function plural()
+	{
+		$s = preg_match('/s$/', $this->name) ? 'es' : 's';
+		return $this->__plural ? $this->__plural : ucfirst($this->name) . $s;
+	}
+
+	/**
+	 * protected string gender()
+	 *      Called when no @gender's defined (or ::gender in sub-class), returns
+	 * a best guess of gender, based on last letter of the name.
+	 *
+	 * @return string
+	 */
+	protected function gender()
+	{
+		$default_gender = preg_match('/a$/', $this->name) ? 'f' : 'm';
+		return $this->__gender ? $this->__gender : $default_gender;
+	}
+
 
 	/**
 	 * mixed __get()

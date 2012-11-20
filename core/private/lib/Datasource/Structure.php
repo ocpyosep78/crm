@@ -20,10 +20,13 @@ class DS_Structure extends DS_Connect
 
 		foreach ($keys['pri'] as $k)
 		{
-			$pri[] = "`{$k['sch1']}`.`{$k['tbl1']}`.`{$k['col1']}`";
+			if (($k['sch1'] == $this->schema && $k['tbl1'] == $this->table))
+			{
+				return $k['col1'];
+			}
 		}
 
-		return $pri;
+		return NULL;
 	}
 
 	final protected function read()

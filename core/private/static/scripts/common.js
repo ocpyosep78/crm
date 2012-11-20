@@ -438,12 +438,12 @@ var Snippets = {
 		if (groupId)
 		{
 			this.members[groupId] || (this.members[groupId] = {});
-			this.members[groupId][Snippet.getType()] = Snippet;
+			this.members[groupId][Snippet.getKind()] = Snippet;
 		}
 	},
 
-	get: function(groupId, type) {
-		return (this.members[groupId]||{})[type];
+	get: function(groupId, kind) {
+		return (this.members[groupId]||{})[kind];
 	}
 }
 
@@ -454,14 +454,14 @@ var Snippets = {
  */
 function Snippet(el){
 	var params = $.parseJSON(el.attr('params')),
-	    model = params.model,
-	    type = params.snippet,
+	    model   = params.model,
+	    kind    = params.kind,
 	    groupId = params.groupId;
 
 	/**
 	 * Public methods (getters)
 	 */
-	this.getType    = function(){ return type;    };
+	this.getKind    = function(){ return kind;    };
 	this.getModel    = function(){ return model;    };
 	this.getGroupId = function(){ return groupId; };
 
@@ -472,27 +472,21 @@ function Snippet(el){
 		return el.find(sel);
 	}
 
-	function linked(type) {
-		return Snippets.get(groupId, type);
+	function linked(kind) {
+		return Snippets.get(groupId, kind);
 	}
 
-	/**
-	 * Load a new snippet
-	 */
-	function getSnippet(snippet, opts) {
-		showLoading();
+	function _do(action, opts) {
+		switch (action) {
+			case 'delete':
+				var ask = '¿Realmente desea eliminar este elemento?';
+				break;
+		}
 
-		xajax_getSnippet(snippet, model, $.extend({}, params, opts));
-	}
-
-	/**
-	 * Request a new Snippet from the server, or perform an action
-	 */
-	function request(snippet, filters) {
-		var ask = {deleteItem: '¿Realmente desea eliminar este elemento?',
-		           blockItem: '¿Realmente desea bloquear este elemento?'};
-		if (!ask[snippet] || confirm(ask[snippet])) {
-			getSnippet(snippet, {filters: filters, writeTo: ''});
+		if (!ask || confirm(ask))
+		{
+			var args = $.extend({}, params, opts||{}, {action: action});
+			action && xajax_snippet(kind, model, args);
 		}
 	}
 
@@ -502,7 +496,7 @@ function Snippet(el){
 	var methods = {
 		comboList: function() {
 			my('.comboList').change(function(){
-				$(this).val() && request('viewItem', $(this).val());
+				$(this).val() && _do('viewItem', {'id': $(this).val()});
 			});
 		},
 
@@ -517,8 +511,8 @@ function Snippet(el){
 					return set;
 				}
 			}).click(function(){
-				var axn = $(this).attr('btn');
-				$(this).hasClass('btOn') && request(axn + 'Item', btns.uid||0);
+				var btn = $(this).attr('btn');
+				$(this).hasClass('btOn') && _do(btn, {'id': btns.uid||0});
 			});
 
 			this.disable = function(code) {
@@ -565,12 +559,12 @@ function Snippet(el){
 			});
 
 			my('.innerListRow').dblclick(function(){
-				$(this).find('img[alt="view"]').click();
+				_do('dialogView', {'id': $(this)._for()});
 			});
 
 			my('.innerListTools').on('click', '[alt]', function(){
 				var uid = $(this).parents('.innerListRow')._for();
-				request($(this)._alt() + 'Item', uid);
+				_do($(this)._alt(), {'id': uid});
 			});
 
 			my('.listWrapper').trigger('fill');
@@ -608,7 +602,7 @@ function Snippet(el){
 	}
 
 	// Call the handler method of this Snippet
-	methods[type] && methods[type].call(this);
+	methods[kind] && methods[kind].call(this);
 }
 
 

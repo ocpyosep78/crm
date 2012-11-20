@@ -12,12 +12,15 @@ class snp_BigTools extends SNP
 	);
 
 	/**
-	 * void void assignSnippetVars()
-	 *      Vars that might be required by the view, besides the common ones.
+	 * protected void assignVars()
+	 *      This method is required. It will be called by final method ::html()
+	 * right before interpreting the Snippet's template. Central vars are
+	 * assigned after this method is called, on purpose, so you cannot overwrite
+	 * them. Changing those assignments might break the library, so just: don't.
 	 *
 	 * @return void
 	 */
-	protected function assignSnippetVars()
+	protected function assignVars()
 	{
 		$parent = $this->params['parent'];
 
@@ -39,18 +42,24 @@ class snp_BigTools extends SNP
 		$this->View->assign('bigButtons', $this->buttons);
 	}
 
-	/**
-	 * protected mixed snippetReturn()
-	 *      After generating the html (stored in @html) perform final tasks,
-	 * which might be ajax tasks, edition of the generate html, etc. The return
-	 * of this method will be the return of getSnippet() as well; this should be
-	 * a XajaxResponse object ideally, unless this snippet handles it specially.
-	 *
-	 * @return mixed
-	 */
-	public function snippetReturn()
-	{
-		return $this->html;
+	protected function _list(){
+		return say('BigTools::list Under Construction');
+	}
+
+	protected function _create(){
+		return say('BigTools::create Under Construction');
+	}
+
+	protected function _view(){
+		return say('BigTools::view Under Construction');
+	}
+
+	protected function _edit(){
+		return say('BigTools::edit Under Construction');
+	}
+
+	protected function _delete(){
+		return say('BigTools::delete Under Construction');
 	}
 
 }

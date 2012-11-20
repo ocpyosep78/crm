@@ -1,6 +1,6 @@
 <?php
 
-class snp_EditItem extends SNP
+class snp_SimpleItem extends SNP
 {
 
 	/**
@@ -17,35 +17,21 @@ class snp_EditItem extends SNP
 		$id = $this->params['id'];
 
 		// Expected: $fields, $data, $toolTip, $hidden
-		extract($this->View->getItemData($id, true));
-
-		// Let's put some more info on each entry
-		$rFields = array_flip($fields);
-
-		foreach ($data as $scrname => $value)
-		{
-			$key = $rFields[$scrname];
-
-			$props = $fieldinfo[$key];
-
-			$myData[$key] = array('name'  => $scrname,
-			                      'value' => $value,
-			                      'props' => $fieldinfo[$key]);
-		}
+		extract($this->View->getItemData($id));
 
 		# Form data blocks (for presentational purposes)
-		$chunks = array_chunk($myData, ceil(count($myData)/2), true);
-
-		$this->View->assign('data', $data);
-		$this->View->assign('chunks', $chunks);
-		$this->View->assign('fieldinfo', $fieldinfo);
+		$chunks = array_chunk($data, ceil(count($data)/2), true);
 
 		$this->View->assign('objectID', $id);
+		$this->View->assign('data', $data);
+		$this->View->assign('chunks', $chunks);
 
-		$this->View->assign('inDialog', true);
+		$this->View->assign('editable', $this->can('edit'));
+
+		$this->View->assign('inDialog', ($this->params['action'] == 'dialog'));
 	}
 
-	public function _dialog()
+	protected function _dialog()
 	{
 		$html = $this->html();
 
@@ -57,10 +43,10 @@ class snp_EditItem extends SNP
 		$description = isset($data[$field]) ? $data[$field] : "con id {$id}";
 
 		// Build Dialog title
-		$title = "Editar {$this->View->name} {$description}";
+		$title = "Detalle de {$this->View->name} {$description}";
 		devMode() && ($title .= " <b>(objectID: {$id})</b>");
 
-		return dialog($html, '#EditItem', array('title' => $title));
+		return dialog($html, '#SimpleItem', array('title' => $title));
 	}
 
 }

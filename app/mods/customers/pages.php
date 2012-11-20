@@ -2,7 +2,7 @@
 
 function page_customers($modifier='customers')
 {
-	return SNP::getSnippet('commonList', 'Customer', $modifier);
+	return SNP::snp('commonList', 'Customer', $modifier);
 }
 
 function page_potentialCustomers(){					/* Status: 'customers', 'potential', 'all' */

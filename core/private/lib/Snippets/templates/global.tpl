@@ -1,3 +1,3 @@
-<snippet class='snp_{$snippet}' params='{$json_params}'>
+<snippet class='snp_{$kind}' params='{$json_params}'>
   {include file=$snp_template}
 </snippet>

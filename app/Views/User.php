@@ -10,7 +10,7 @@ class View_User extends View
 	protected $__gender = 'm';
 
 	// A field often used to describe an instance of this model
-	protected $__descr_field = 'Nombre';
+	protected $__descr_field = "CONCAT(`name`, ' ', `lastName`)";
 
 	// Screen name of each field (real or aliased)
 	protected $__screen_names = array(

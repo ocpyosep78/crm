@@ -219,10 +219,19 @@
 			# Call page generation function with cached atts
 			$res = call_user_func_array("page_{$page}", $atts);
 
-			if( !$res ){
+			if (!$res)
+			{
 				$tpl = oPermits()->getModuleFromPage($page)."/{$page}.tpl";
-				if( is_file(TEMPLATES_PATH.$tpl) ) $this->updateContent( $tpl );
-				else trigger_error("No se pudo encontrar la plantilla de la página ({$tpl})");
+
+				if (is_file(TEMPLATES_PATH . $tpl))
+				{
+					$this->updateContent($tpl);
+				}
+				else
+				{
+					$msg = "No se pudo encontrar la plantilla de la página ({$tpl})";
+					throw new Exception($msg);
+				}
 			}
 
 			addScriptCall('iniPage', $page);

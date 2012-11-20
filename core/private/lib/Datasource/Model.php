@@ -96,7 +96,20 @@ abstract class DS_Model extends DS_Structure
 			}
 		}
 
-		$this->search->select = ($cols + $this->search->select);
+		// Keywords to replace for the real field they represent
+		$keywords = array('__id__' => $this->getPk());
+
+		// Do it this way to preserve fields order
+		foreach ($cols as $col => $alias)
+		{
+			isset($keywords[$col]) && ($col = $keywords[$col]);
+			$select[$col] = $alias;
+		}
+
+		if (isset($select))
+		{
+			$this->search->select = ($select + $this->search->select);
+		}
 
 		return $this;
 	}
@@ -139,17 +152,17 @@ abstract class DS_Model extends DS_Structure
 
 	public function setId($id)
 	{
-		$key = $this->getPk();
+		$pk = $this->getPk();
 
-		if (count($key) !== 1)
+		if (!$pk)
 		{
-			throw new Exception('Method setId can only be used with single primary keys');
+			$msg = "Method setId failed because it could not find a primary " .
+			       "key for the Model's main table";
+			throw new Exception($msg);
 		}
 
-		$field = trim(end(explode('`.`', array_shift($key))), '`');
-
 		// ::setId() resets filters, if any was set before
-		$primary = "`{$this->schema}`.`{$this->table}`.`{$field}`";
+		$primary = "`{$this->schema}`.`{$this->table}`.`{$pk}`";
 		$this->search->where = array($primary => $id);
 
 		return $this;
@@ -298,7 +311,6 @@ abstract class DS_Model extends DS_Structure
 	 */
 	private function selectSql()
 	{
-
 		$resolved = $this->columns(array_keys($this->search->select));
 
 		foreach ($resolved as $k => $c)

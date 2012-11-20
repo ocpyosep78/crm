@@ -31,35 +31,35 @@ require_once('initialize.php');
 
 										if (isset($_GET['t7']))
 										{
-											db(SNP::getSnippet('editItem', 'Customer', array('filters' => 1)));
+											db(SNP::snp('editItem', 'Customer', array('filters' => 1)));
 
 											die();
 										}
 
 										if (isset($_GET['t6']))
 										{
-											db(SNP::getSnippet('viewItem', 'Customer', array('filters' => 1)));
+											db(SNP::snp('viewItem', 'Customer', array('filters' => 1)));
 
 											die();
 										}
 
 										if (isset($_GET['t5']))
 										{
-											db(SNP::getSnippet('commonList', 'Customer'));
+											db(SNP::snp('commonList', 'Customer'));
 
 											die();
 										}
 
 										if (isset($_GET['t4']))
 										{
-											db(SNP::getSnippet('viewItem', 'user', array('filters' => 'dbarreiro')));
+											db(SNP::snp('viewItem', 'user', array('filters' => 'dbarreiro')));
 
 											die();
 										}
 
 										if (isset($_GET['t3']))
 										{
-											db(SNP::getSnippet('commonList', 'User'));
+											db(SNP::snp('commonList', 'User'));
 
 											die();
 										}
@@ -192,7 +192,7 @@ if (loggedIn())
 	oXajax()->registerFunction('logout');
 	oXajax()->registerFunction('takeCall');
 	oXajax()->registerFunction(array('switchTab', oTabs(), 'switchTab'));
-	oXajax()->registerFunction(array('getSnippet', 'SNP', 'getSnippet'));
+	oXajax()->registerFunction(array('snippet', 'SNP', 'snp'));
 }
 
 

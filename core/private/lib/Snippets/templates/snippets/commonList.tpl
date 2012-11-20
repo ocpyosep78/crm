@@ -1,5 +1,7 @@
 {$bigTools}
 
+{$comboList}
+
 <div class='commonListWrapper'>
   <div class='listTitles'>
 	{foreach from=$titles item=title}

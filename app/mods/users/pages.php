@@ -3,7 +3,7 @@
 
 function page_users()
 {
-	return SNP::getSnippet('commonList', 'User');
+	return SNP::snp('commonList', 'User');
 }
 
 function page_usersInfo($acc)
