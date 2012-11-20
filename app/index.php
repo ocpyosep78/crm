@@ -4,6 +4,7 @@ function db($var, $die=true)
 {
 	headers_sent() || header('Content-Type: application/json');
 	$var ? print_r($var) : var_dump($var);
+	echo "\n";
 	$die && die();
 }
 
@@ -31,14 +32,14 @@ require_once('initialize.php');
 
 										if (isset($_GET['t7']))
 										{
-											db(SNP::snp('editItem', 'Customer', array('filters' => 1)));
+											db(SNP::snp('editItem', 'Customer', array('id' => 1)));
 
 											die();
 										}
 
 										if (isset($_GET['t6']))
 										{
-											db(SNP::snp('viewItem', 'Customer', array('filters' => 1)));
+											db(SNP::snp('viewItem', 'Customer', array('id' => 1)));
 
 											die();
 										}

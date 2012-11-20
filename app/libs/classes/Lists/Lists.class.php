@@ -230,8 +230,10 @@
 			}
 
 			# Sort defined fields as defined (w/ user-defined function array_sort_keys)
-			foreach( $data as $k => &$v ){
+			foreach ($data as $k => &$v)
+			{
 				array_sort_keys($data[$k], $static['fields']);
+
 				$v['tip'] = isset($v[$tipField]) ? $v[$tipField] : '';
 				$v['tools'] = $static['tools'];
 			}

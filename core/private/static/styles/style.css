@@ -25,6 +25,15 @@ body{
 	background-image:linear-gradient(135deg, #eeeed0, #fff);
 }
 
+.transparent-grad{
+	position:absolute;
+	bottom:-9px;
+	left:0px;
+	right:0px;
+	height:9px;
+	background:transparent url(../images/transparent_grad.png) repeat-x scroll 0 100%;
+}
+
 
 /**
  * NAVBAR
@@ -150,7 +159,7 @@ body{
  */
 #main_menu{
 	position:fixed;
-	top:33px;
+	top:32px;
 	bottom:2px;
 	margin-left:2px;
 	padding:5px 5px 20px 0px;

@@ -23,6 +23,14 @@ abstract class View
 /********************************* S T A T I C ********************************/
 /******************************************************************************/
 
+	/**
+	 * final static View get(string $viewname[, string $namespace = 'global'])
+	 *      Get from cache, or instantiate, a View for given $viewname (model).
+	 *
+	 * @param string $viewname
+	 * @param string $namespace
+	 * @return View subclass
+	 */
 	final public static function get($viewname, $namespace='global')
 	{
 		if (!$viewname)
@@ -54,18 +62,16 @@ abstract class View
 					throw new Exception($msg);
 				}
 
-				$View = new $class($viewname);
+				$View = new $class($viewname, $namespace);
 			}
 			else
 			{
 				require_once dirname(__FILE__) . '/AbstractView.php';
-				$View = new AbstractView($viewname);
+				$View = new AbstractView($ucview, $namespace);
 			}
-
-			self::$cached_views[$namespace][$viewname] = $View;
 		}
 
-		return self::$cached_views[$namespace][$viewname];
+		return self::$cached_views[$namespace][$ucview];
 	}
 
 
@@ -76,9 +82,11 @@ abstract class View
 	/**
 	 * Block descendants from being directly initialized, using final keyword.
 	 */
-	final public function __construct($view)
+	final public function __construct($viewname, $namespace)
 	{
-		$this->Model = Model::get($view);
+		self::$cached_views[$namespace][$viewname] = $this;
+
+		$this->Model = Model::get($viewname, $namespace);
 
 		$this->TplEngine = oSmarty()->createData();
 
@@ -86,6 +94,8 @@ abstract class View
 		$this->assign('name',   $this->name);
 		$this->assign('plural', $this->plural);
 		$this->assign('gender', $this->gender);
+
+		$this->assign('DEVMODE', devMode());
 	}
 
 	/**
@@ -144,13 +154,12 @@ abstract class View
 /******************************************************************************/
 
 	/**
-	 * array getTabularData([mixed $limit = 30])
+	 * array getTabularParams()
 	 *      Generate relevant information to build a tabular list.
 	 *
-	 * @param mixed $limit      A valid LIMIT value (e.g. 4, '0, 30', etc.).
 	 * @return array
 	 */
-	public function getTabularData($limit=30)
+	public function getTabularParams()
 	{
 		$fields = $this->__tabular_fields
 			? $this->mapnames($this->__tabular_fields)
@@ -158,11 +167,9 @@ abstract class View
 
 		$fieldinfo = $this->Model->columns(array_keys($fields));
 
-		$data = $this->Model->find(NULL, $fields, $limit)->get();
-
 		$primary = $this->getPkAlias();
 
-		return compact('fields', 'fieldinfo', 'data', 'primary');
+		return compact('fields', 'fieldinfo', 'primary');
 
 	}
 
@@ -208,7 +215,7 @@ abstract class View
 		($field = $this->hash_field) || ($field = $this->descr_field);
 
 		return $this->Model
-			->select('__id__', "{$field} AS 'val'")->order('val')
+			->select('__id__', "{$field} AS 'val'")->order('val DESC')
 			->find()->convert('col')->get();
 	}
 

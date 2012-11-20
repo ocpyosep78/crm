@@ -11,18 +11,18 @@
 
 /*
 	Methods that use Connection's modify() method, return an AnswerSQL object.
-	
+
 	This object contains the following public attributes (note to self: outdated list):
 		* msg	/> A string personalized message (defaults to '')
 		* code	/> Either true or false
 		* rows	/> mysql_affected_rows() returned by the query
-		
+
 	The personalized msg is set by assigning a string to each property, using:
 		* ->setErrMsg( 'error message to print if query fails' );
 		* ->setOkMsg( 'success message to print if query succeeds' );
-		
+
 */
-	
+
 	require_once( CONNECTION_PATH );
 
 
@@ -54,14 +54,14 @@
 					ORDER BY `name`";
 			return $this->query($sql, 'array');
 		}
-	
+
 		public function addProfilePermission($id, $code){
 			$sql = "INSERT IGNORE INTO `_permissions_by_profile`
 					(`code`, `id_profile`)
 					VALUES('{$code}', '{$id}')";
 			return $this->modify( $sql );
 		}
-		
+
 		public function removeProfilePermission($id, $code){
 			$sql = "DELETE FROM `_permissions_by_profile`
 					WHERE `code` = '{$code}'
@@ -69,22 +69,26 @@
 					LIMIT 1";
 			return $this->modify( $sql );
 		}
-		
-		public function addUserPermission($id, $code){
-test('Not implemented yet');
+
+		public function addUserPermission($id, $code)
+		{
+			throw new Exception('Not implemented yet');
+
 			$sql = "INSERT IGNORE INTO `_permissions_by_user`
 					(`code`, `user`, `type`)
 					VALUES('{$code}', '{$id}', 'add')";
 			return $this->modify( $sql );
 		}
-		
-		public function removeUserPermission($id, $code){
-test('Not implemented yet');
+
+		public function removeUserPermission($id, $code)
+		{
+			throw new Exception('Not implemented yet');
+
 			$sql = "DELETE FROM `_permissions_by_user`
 					WHERE `code` = '{$code}'
 					AND `id_profile` = '{$id}'
 					LIMIT 1";
 			return $this->modify( $sql );
 		}
-		
+
 	}

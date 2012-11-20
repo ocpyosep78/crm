@@ -9,14 +9,7 @@ require_once(DATASOURCE . '/Structure.php');
 abstract class DS_Model extends DS_Structure
 {
 
-	private $tables;
-	private $fields;
-	private $shown;
-	private $keys;
-	private $FKs;
-
-	private $search;            // Object containing filters, order, limit, etc.
-	private $lastSearch;
+	private $search;    // Object storing current select, where, order and limit
 
 
 	public function __construct()
@@ -41,30 +34,34 @@ abstract class DS_Model extends DS_Structure
 
 
 	/**
+	 * DS_Model select(mixed $select)
+	 *      Choose which fields to retrieve in next query.
 	 *
-	 * @param mixed $fields
+	 * @param mixed $select
 	 * @return DS_Model
 	 */
-	public function select($fields)
+	public function select($select)
 	{
-		if (!$this->seems('fields', $fields))
+		if (!$this->seems('select', $select))
 		{
+			$msg = 'Invalid parameter passed to select(): ' . var_export($select, true);
+			throw new Exception($msg);
 			throw new Exception('Invalid parameter passed to select()');
 		}
 
-		if (!is_array($fields))
+		if (!is_array($select))
 		{
-			if ((count(func_get_args()) === 1) && strpos($fields, ','))
+			if ((count(func_get_args()) === 1) && strpos($select, ','))
 			{
-				$fields = preg_split('/ *, */', $fields);
+				$select = preg_split('/ *, */', $select);
 			}
 			else
 			{
-				$fields = func_get_args();
+				$select = func_get_args();
 			}
 		}
 
-		foreach ($fields as $k => $v)
+		foreach ($select as $k => $v)
 		{
 			if (is_numeric($k))
 			{
@@ -99,7 +96,7 @@ abstract class DS_Model extends DS_Structure
 		// Keywords to replace for the real field they represent
 		$keywords = array('__id__' => $this->getPk());
 
-		// Do it this way to preserve fields order
+		// Do it this way to preserve select order
 		foreach ($cols as $col => $alias)
 		{
 			isset($keywords[$col]) && ($col = $keywords[$col]);
@@ -114,14 +111,15 @@ abstract class DS_Model extends DS_Structure
 		return $this;
 	}
 
-	public function where($filter)
+	public function where($where)
 	{
-		if (!$this->seems('filter', $filter))
+		if (!$this->seems('where', $where))
 		{
-			throw new Exception('Invalid parameter passed to where()');
+			$msg = 'Invalid parameter passed to where(): ' . var_export($where, true);
+			throw new Exception($msg);
 		}
 
-		$this->search->where = array_merge($this->search->where, (array)$filter);
+		$this->search->where = array_merge($this->search->where, (array)$where);
 
 		return $this;
 	}
@@ -130,7 +128,8 @@ abstract class DS_Model extends DS_Structure
 	{
 		if (!$this->seems('order', $order))
 		{
-			throw new Exception('Invalid parameter passed to order()');
+			$msg = 'Invalid parameter passed to order(): ' . var_export($order, true);
+			throw new Exception($msg);
 		}
 
 		$this->search->order = $order;
@@ -142,7 +141,8 @@ abstract class DS_Model extends DS_Structure
 	{
 		if (!$this->seems('limit', $limit))
 		{
-			throw new Exception('Invalid parameter passed to limit()');
+			$msg = 'Invalid parameter passed to limit(): ' . var_export($limit, true);
+			throw new Exception($msg);
 		}
 
 		$this->search->limit = $limit;
@@ -156,8 +156,7 @@ abstract class DS_Model extends DS_Structure
 
 		if (!$pk)
 		{
-			$msg = "Method setId failed because it could not find a primary " .
-			       "key for the Model's main table";
+			$msg = "setId() failed: cannot find a PK for Model's main table";
 			throw new Exception($msg);
 		}
 
@@ -169,31 +168,31 @@ abstract class DS_Model extends DS_Structure
 	}
 
 	/**
-	 * Model find([mixed $filter][, array $fields][, string $order][, string $limit])
+	 * Model find([mixed $where][, array $select][, string $order][, string $limit])
 	 *
-	 * @param mixed $filter     Id (int or string), or filter (see ::where)
-	 * @param array $fields     List of fields for the query to include (select)
+	 * @param mixed $where      Id (int or string), or where (see ::where)
+	 * @param array $select     Select for the query to include (see ::select)
 	 * @param string $order     Valid sql order, at least matching \b(asc|desc)$
 	 * @param mixed $limit      Number or string, valid limit, e.g. 4 or '0, 20'
 	 * @return snp_Result
 	 */
 	public function find()
 	{
-		// Apply received arguments (filters, listing fields, order, limit)
+		// Apply received arguments (where, select, order, limit)
 		$args = func_get_args();
 
 		// Filters (id or dictionary filter)
-		$filter = array_shift($args);
+		$where = array_shift($args);
 
-		if ($filter)
+		if ($where)
 		{
-			if ($this->seems('id', $filter))
+			if ($this->seems('id', $where))
 			{
-				$this->setId($filter);
+				$this->setId($where);
 			}
-			elseif ($this->seems('filter', $filter))
+			elseif ($this->seems('where', $where))
 			{
-				$this->where($filter);
+				$this->where($where);
 			}
 			else
 			{
@@ -202,10 +201,10 @@ abstract class DS_Model extends DS_Structure
 			}
 		}
 
-		// Remaining arguments can be fields, order or limit
+		// Remaining arguments can be select, order or limit
 		foreach ($args as $i => $arg)
 		{
-			if ($this->seems('fields', $arg))
+			if ($this->seems('select', $arg))
 			{
 				$this->select($arg);
 			}
@@ -217,7 +216,7 @@ abstract class DS_Model extends DS_Structure
 			{
 				$this->limit($arg);
 			}
-			elseif (!is_null($arg))
+			elseif (!is_null($arg) && ($arg !== ''))
 			{
 				$msg = 'Cannot interpret parameter #' . ($i+2) . ' passed to find(): ' . var_export($arg, true);
 				throw new Exception($msg);
@@ -263,28 +262,28 @@ abstract class DS_Model extends DS_Structure
 			case 'id':
 				return is_numeric($arg);
 
-			case 'filter':
-				// Valid strings: X <compare> Y, X IN(list), X BETWEEN Y AND Z
-				$operators = '[<>]|[<>!]*=|<>|IS( +NOT)?|(NOT +)?LIKE';
-				$regex1 = "^(`\w+`|\w+) +({$operators}) +(['\"].+['\"]|(\d|NULL)+)\$";
+			case 'where':
+				// Valid strings: field1 <compare> field2 ...
+				$regex1 = "^(`\w+`|\w+) +([<>]|[<>!]*=|<>|IS( +NOT)?|(NOT +)?LIKE) +(['\"].+['\"]|(\d|NULL)+)\$";
+				// ... field IN(list), field BETWEEN X AND Y ...
 				$regex2 = '.+ (BETWEEN .+ AND .+|IN *\(.+\))$';
-				$regex = "_({$regex1})|({$regex2})_i";
-				return (is_string($arg) && (preg_match($regex, trim($arg)) !== false))
-					|| (is_array($arg));
+				// ... field, NOT field, IS NULL field, IS NOT NULL field
+				$regex3 = '^((NOT|IS NULL|IS NOT NULL) )?(\w+\.|`\w+`\.){0,2}(\w+|`\w+`)$';
+				$regex3 = '^((NOT|IS NULL|IS NOT NULL)( +| *\())? *(\w+\.|`\w+`\.){0,2}(\w+|`\w+`) *\)?$';
 
-			case 'fields':
+				return (is_string($arg) && preg_match("_({$regex1})|({$regex2})|({$regex3})_i", trim($arg))) || (is_array($arg));
+
+			case 'select':
 				$regex = '_^(\*|[\w ]+(, *[\w ]+)+|(`\w+`|\w+)( +as [\'"]?\w+[\'"]?)?)$_i';
-				return (is_string($arg) && !is_numeric($arg) && (preg_match($regex, trim($arg)) !== false))
-				    || (is_array($arg));
+				return (is_string($arg) && !is_numeric($arg) && preg_match($regex, trim($arg))) || (is_array($arg));
 
 			case 'order':
-				$regex = '_[^\w](asc|desc)$_i';
-				return (is_string($arg) && (preg_match($regex, $arg) !== false));
+				$regex = '_[^\w](?:asc|desc)$_i';
+				return (is_string($arg) && preg_match($regex, $arg));
 
 			case 'limit':
 				$regex = '_^\d+( *, *\d+)?$_';
-				return (is_numeric($arg))
-				    || (is_string($arg) && (preg_match($regex, trim($arg)) !== false));
+				return (is_numeric($arg)) || (is_string($arg) && preg_match($regex, trim($arg)));
 
 			default:
 				return false;
@@ -329,7 +328,7 @@ abstract class DS_Model extends DS_Structure
 				($alias != $col) || ($alias = $fqn);
 			}
 
-			$fieldsSql[] =  "{$fqn} AS '{$alias}'";
+			$fieldsSql[] =  "{$fqn} AS '" . addslashes($alias) . "'";
 		}
 
 		$sql = empty($fieldsSql) ? '*' : join(",\n       ", $fieldsSql);
@@ -371,10 +370,13 @@ abstract class DS_Model extends DS_Structure
 				$cond[] = "ISNULL({$k})";
 			}
 			// Lists of values (IN)
-			elseif (!is_numeric($k) && (is_array($v) || strpos($v, ',')))
+			elseif (!is_numeric($k) && $v && (is_array($v) || strpos($v, ',')))
 			{
-				$list = is_array($v) ? join(', ', $v) : $v;
-				$cond[] = "{$k} IN ({$list})";
+				$list = is_array($v)
+					? join(', ', array_map('addslashes', $v))
+					: addslashes($v);
+
+				$cond[] = "{$k} IN ('{$list}')";
 			}
 			// Literal
 			elseif (is_numeric($k) && is_string($v) && !is_numeric($v) && trim($v))

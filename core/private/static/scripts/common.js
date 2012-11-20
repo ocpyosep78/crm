@@ -84,6 +84,28 @@ $.forms = function(form, addNames) {
 	return frm;
 };
 
+// Create an element if it doesn't exist
+$.fn.touch = function(visible) {
+	if (!/^(#|\.|)\w+$/.test(this.selector)) {
+		throw ('$.touch should only be used for simple selectors ("#sel", ".sel" or "sel")');
+	}
+
+	if (!$(this.selector).length) {
+		var types = {'tag': null, '#': 'id', '.': 'class'};
+		var type = types[(this.selector.match(/^(#|\.)/)||['tag'])[0]];
+
+		if (type) {
+			var attrs = {};
+			attrs[type] = this.selector.replace(/^(#|\.)/, '');
+			var el = $('<div />', attrs);
+		} else {
+			var el = $('<' + this.selector + ' />');
+		}
+
+		el.toggle(!!visible).appendTo('body');
+	}
+}
+
 // Add the most relevant attributes as direct jQuery objects methods
 var jDirectMethods = ['id', 'name', 'class', 'for', 'rel', 'title', 'checked',
                       'src', 'alt', 'type', 'target', 'method'];

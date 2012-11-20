@@ -8,11 +8,21 @@ abstract class Model extends DS_Model
 
 	private static $cached_models;
 
+	protected $View;
+
 
 /******************************************************************************/
 /********************************* S T A T I C ********************************/
 /******************************************************************************/
 
+	/**
+	 * final static Model get(string $modelname[, string $namespace = 'global'])
+	 *      Get from cache, or instantiate, a Model for given $modelname.
+	 *
+	 * @param string $modelname
+	 * @param string $namespace
+	 * @return Model subclass
+	 */
 	final public static function get($modelname, $namespace='global')
 	{
 		if (!$modelname)
@@ -44,18 +54,16 @@ abstract class Model extends DS_Model
 					throw new Exception($msg);
 				}
 
-				$Model = new $class($modelname);
+				$Model = new $class($ucmodel, $namespace);
 			}
 			else
 			{
 				require_once dirname(__FILE__) . '/AbstractModel.php';
-				$Model = new AbstractModel($modelname);
+				$Model = new AbstractModel($ucmodel, $namespace);
 			}
-
-			self::$cached_models[$namespace][$modelname] = $Model;
 		}
 
-		return self::$cached_models[$namespace][$modelname];
+		return self::$cached_models[$namespace][$ucmodel];
 	}
 
 
@@ -66,8 +74,12 @@ abstract class Model extends DS_Model
 	/**
 	 * Block descendants from being directly initialized, using final keyword.
 	 */
-	final public function __construct($table)
+	final public function __construct($modelname, $namespace)
 	{
+		self::$cached_models[$namespace][$modelname] = $this;
+
+		$this->View = View::get($modelname, $namespace);
+
 		$this->schema = DS_SCHEMA;
 		!$this->table && $table && ($this->table = $table);
 

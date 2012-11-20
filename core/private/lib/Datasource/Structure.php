@@ -42,13 +42,23 @@ class DS_Structure extends DS_Connect
 			        FROM `ds_cache_structure`
 			        WHERE `id` = '{$id}'
 			        AND `stored` > NOW() - 30";
-			$structure = @mysql_fetch_assoc($this->query($sql));
+			$res = $this->query($sql);
 
-			if ($structure)
+			if ($this->Answer->Error->error)
 			{
-				foreach ($structure as &$elem)
+				throw new Exception($this->Answer->Error->error);
+			}
+
+			if ($res)
+			{
+				$structure = mysql_fetch_assoc($res);
+
+				if ($structure)
 				{
-					$elem = unserialize($elem);
+					foreach ($structure as &$elem)
+					{
+						$elem = unserialize($elem);
+					}
 				}
 			}
 		}

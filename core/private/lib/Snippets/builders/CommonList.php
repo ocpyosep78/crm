@@ -21,8 +21,18 @@ class snp_CommonList extends SNP
 	 */
 	protected function assignVars()
 	{
-		// Expected: $fields, $data, $hidden
-		extract($this->View->getTabularData(30));
+		// Expected: $fields, $fieldinfo, $data, $primary
+		extract($this->View->getTabularParams());
+
+		// Ask for 20 results, starting at $offset
+		$offset = !empty($this->params['offset']) ? $this->params['offset'] : 0;
+		$limit = "{$offset}, 20";
+
+		// Apply filters (WHERE) and order, if provided
+		$where = $this->params['where'];
+		$order = $this->params['order'];
+
+		$data = $this->Model->find($where, $fields, $order, $limit)->get();
 
 		foreach ($fields as $field)
 		{

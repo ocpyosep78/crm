@@ -95,6 +95,8 @@
 			{/foreach}
 		  {/if}
 		</div>
+
+		<div class='transparent-grad'></div>
 	</div>
 
   {/if}

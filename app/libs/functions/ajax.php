@@ -32,7 +32,7 @@ function addAppend($x, $y, $z){
 	return oXajaxResp();
 }
 
-function addScript( $x ){
+function addScript($x){
 	oXajaxResp()->addScript( $x );
 	return oXajaxResp();
 }
@@ -59,20 +59,15 @@ function addElement($content='', $selector='body', $hidden=true){
  * @param array $atts           List of properties to be passed to dialog()
  * @return XajaxResponse
  */
-function dialog($content, $element, $atts=array())
+function dialog($content, $selector, $atts=array())
 {
-	addScript("\$('{$element}').empty()");
-
 	// Send the html (fetch the template first, if $content's a template name)
 	$isTemplate = preg_match('_\.tpl$_', $content);
 	$html = $isTemplate ? oSmarty()->fetch($content) : $content;
-	addElement($html, $element, true);
 
-	$cfg = toJson((array)$atts, true);
-
-	addScript("\$('{$element}').dialog({$cfg})");
+	jQuery($selector)->touch()->html($html)->dialog($atts);
 
 	return addScript("$('.ui-widget-overlay').click(function(){
-		\$('{$element}').dialog('close');
+		\$('{$selector}').dialog('close');
 	});");
 }

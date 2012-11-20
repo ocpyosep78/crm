@@ -35,16 +35,15 @@ class View_User extends View
 
 
 	/**
-	 * array getTabularData([mixed $limit = 30])
+	 * array getTabularParams()
 	 *      Generate relevant information to build a tabular list.
 	 *
-	 * @param mixed $limit      A valid LIMIT value (e.g. 4, '0, 30', etc.).
 	 * @return array
 	 */
-	public function getTabularData($limit=30)
+	public function getTabularParams()
 	{
 		$this->Model->where('NOT blocked');
-		return parent::getTabularData($limit);
+		return parent::getTabularParams();
 	}
 
 	/**

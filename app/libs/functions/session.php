@@ -24,7 +24,7 @@ function clearSes($key)
 
 function loggedIn()
 {
-	if (false && !getSes('user') && !empty($_COOKIE['crm_user']))
+	if (!getSes('user') && !empty($_COOKIE['crm_user']))
 	{
 		$user = substr($_COOKIE['crm_user'], 0, -40);
 		$cookie = substr($_COOKIE['crm_user'], -40);

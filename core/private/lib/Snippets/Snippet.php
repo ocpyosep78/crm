@@ -44,7 +44,8 @@ abstract class SNP
 		$params['model'] = $model;
 
 		// By default, snippets are to be inserted in the main box (#main_box)
-		!empty($params['writeTo']) || ($params['writeTo'] = 'main_box');
+		!empty($params['writeTo']) || ($params['writeTo'] = '#main_box');
+//		!empty($params['writeTo']) || ($params['writeTo'] = 'body');
 
 		// All snippets must have a unique groupId, in case they group eachother
 		$groupId = microtime() . rand(0, time());
@@ -54,7 +55,7 @@ abstract class SNP
 		!empty($params['action']) || ($params['action'] = 'insert');
 
 		// Now fill some more keys just to avoid warnings if polled
-		$params += array('filters' => '');
+		$params += array('id' => '', 'where' => '', 'order' => '');
 
 		// Call the handler, for non-common tasks of this particular Snippet
 		$path = SNP_BUILDERS . '/' . ucfirst($kind) . '.php';
@@ -82,8 +83,8 @@ abstract class SNP
 	{
 		$this->params = $params;
 
-		$this->Model = Model::get($params['model']);
-		$this->View = View::get($params['model'], $params['kind']);
+		$this->Model = Model::get($params['model'], 'snp');
+		$this->View  = View::get($params['model'], 'snp');
 	}
 
 	final protected function _do()
@@ -110,21 +111,19 @@ abstract class SNP
 	 */
 	final protected function _insert()
 	{
-		$html = $this->html();
-
 		// Print the HTML inside the given element (by default, #main_box).
-		addAssign($this->params['writeTo'], 'innerHTML', $html);
+		jQuery($this->params['writeTo'])->html($this->_html());
 
 		return addScript("\$('body').trigger('snippets');");
 	}
 
 	/**
-	 * final protected string _html()
+	 * protected string _html()
 	 *      Just a valid method name for an action that just returns the html().
 	 *
 	 * @return string
 	 */
-	final protected function _html()
+	protected function _html()
 	{
 		return $this->html();
 	}
@@ -141,7 +140,6 @@ abstract class SNP
 
 		$this->View->assign('SNP_TEMPLATES', SNP_TEMPLATES);
 		$this->View->assign('SNP_IMAGES'   , SNP_IMAGES);
-		$this->View->assign('DEVMODE', devMode());
 
 		$this->View->assign('cycleValues', '#eaeaf5,#e0e0e3,#e5e6eb');
 
