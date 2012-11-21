@@ -3,11 +3,9 @@
 class snp_CommonList extends SNP
 {
 
-	private $buttons = array(
-		'view'		=> 'ver información de',
-		'edit'		=> 'editar',
-		'delete'	=> 'eliminar',
-	);
+	private $buttons = ['view'   => 'ver información de',
+	                    'edit'   => 'editar',
+	                    'delete' => 'eliminar'];
 
 
 	/**
@@ -44,29 +42,24 @@ class snp_CommonList extends SNP
 		$this->View->assign('toolTip', $toolTip);
 
 		// Include two sub-Snippets as well: bigTools and comboList
-		$params = array('parent' => 'commonList',
-		                'action' => 'html') + $this->params;
-
-		$bigTools = self::snp('bigTools', $params['model'], $params);
-		$this->View->assign('bigTools', $bigTools);
-
-		$comboList = self::snp('comboList', $params['model'], $params);
-		$this->View->assign('comboList', $comboList);
+		$params = ['parent' => 'commonList', 'action' => 'html'];
+		$this->View->assign('bigTools', self::delegate('bigTools', $params));
+		$this->View->assign('comboList', self::delegate('comboList', $params));
 	}
 
 	protected function _view()
 	{
-		return self::delegate('viewItem', array('action' => 'insert'));
+		return self::delegate('viewItem', ['action' => 'insert']);
 	}
 
 	protected function _dialogView()
 	{
-		return SNP::delegate('simpleItem', array('action' => 'dialog'));
+		return SNP::delegate('simpleItem', ['action' => 'dialog']);
 	}
 
 	protected function _edit()
 	{
-		return SNP::delegate('editItem', array('action' => 'dialog'));
+		return SNP::delegate('editItem', ['action' => 'dialog']);
 	}
 
 	protected function _delete()

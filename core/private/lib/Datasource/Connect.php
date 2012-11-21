@@ -8,13 +8,13 @@ abstract class DS_Connect
 
 	protected $Answer;
 
-	public static $messages = array(
+	public static $messages = [
 		'success'   => 'Su consulta finalizó correctamente.',
 		'error'     => 'Ocurrió un error desconocido al procesar su consulta. Se ha guardado un registro del error.',
 		'duplicate' => 'Ocurrió un error (clave duplicada). Se ha guardado un registro del error.',
 		'fk_parent' => 'La base de datos ha bloqueado la modificación de este elemento (FK constraint).<br />Otros elementos de la base de datos dependen o derivan de él.',
 		'fk_child'  => 'La base de datos ha bloqueado la modificación de este elemento (FK constraint).<br />Este elemento depende o deriva de otros elementos en la base de datos.',
-	);
+	];
 
 
 	public function get_last_error()

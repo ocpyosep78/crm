@@ -13,10 +13,25 @@
  *	L I S T S
  */
 
-	function page_products(){ 	return oLists()->printList('products', 'products');		}
-	function page_materials(){	return oLists()->printList('products', 'materials');	}
-	function page_services(){	return oLists()->printList('products', 'services');		}
-	function page_others(){		return oLists()->printList('products', 'others');		}
+	function page_products()
+	{
+		return SNP::snp('commonList', 'Product');
+	}
+
+	function page_materials()
+	{
+		return SNP::snp('commonList', 'Product.Material');
+	}
+
+	function page_services()
+	{
+		return SNP::snp('commonList', 'Product.Service');
+	}
+
+	function page_others()
+	{
+		return SNP::snp('commonList', 'Product.Others');
+	}
 
 
 /**

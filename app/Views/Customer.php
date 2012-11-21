@@ -4,7 +4,6 @@
 class View_Customer extends View
 {
 
-	// Basic properties (for the view, usually)
 	protected $__name   = 'Cliente';
 	protected $__plural = 'Clientes';
 	protected $__gender = 'm';

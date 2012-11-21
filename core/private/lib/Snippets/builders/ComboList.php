@@ -16,13 +16,14 @@ class snp_ComboList extends SNP
 	{
 		$this->View->assign('list', $this->View->getHashData());
 
+
 		$selected = !empty($this->params['id']) ? $this->params['id'] : NULL;
 		$this->View->assign('selected', $selected);
 	}
 
 	protected function _viewItem()
 	{
-		return say('ComboList::viewItem Under Construction');
+		return self::delegate('viewItem', ['action' => 'insert']);
 	}
 
 }

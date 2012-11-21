@@ -43,11 +43,6 @@ class snp_SimpleItem extends SNP
 		$this->View->assign('disabled', $disabled);
 	}
 
-	protected function _html()
-	{
-		return 'hola';
-	}
-
 	protected function _dialog()
 	{
 		$html = $this->html();
@@ -55,7 +50,7 @@ class snp_SimpleItem extends SNP
 		$id = $this->params['id'];
 		$title = $this->View->retrieve('title');
 
-		return dialog($html, '#SimpleItem', array('title' => $title));
+		return dialog($html, '#SimpleItem', ['title' => $title]);
 	}
 
 }

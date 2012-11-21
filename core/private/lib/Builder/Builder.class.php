@@ -19,7 +19,6 @@
 
 	}
 
-	function oSnippet( $code=NULL )		{	return getBuilderObject('Snippet', $code);		}
 	function oLists( $code=NULL )		{	return getBuilderObject('Lists', $code);		}
 	function oStats( $code=NULL )		{	return getBuilderObject('Stats', $code);		}
 	function oFormTable( $code=NULL )	{	return getBuilderObject('FormTable', $code);	}
@@ -92,60 +91,70 @@
 			# Initiate the object of class $obj
 			switch( $obj ){
 				case 'Alerts':
-					$Alerts = new Alerts( getSes('user') );
-				break;
+					$Alerts = new Alerts(getSes('user'));
+					break;
+
 				case 'FormTable':
 					$FormTable = new FormTable;
-				break;
+					break;
+
 				case 'Lists':
 					$Lists = new Lists;	/* TEMP */
-				break;
-				case 'Snippet':
-					$Snippet = new Snippet();
-				break;
+					break;
+
 				case 'Nav':
 					$Nav = new Nav;
-				break;
+					break;
+
 				case 'PageCfg':
 					$PageCfg = new PageCfg;
-				break;
+					break;
+
 				case 'Permits':
 					$Permits = new Permits();
-					$Permits->setUser( getSes('user') );
-					$Permits->setProfile( getSes('id_profile') );
-					$Permits->setTimeOut( PERMITS_CACHE_TIMEOUT );		/* Keep cached lists up to 30 minutes */
-					$Permits->setSuperProfile( 1 );						/* Master (profile 1) has access to everything (devel) */
-				break;
+					$Permits->setUser(getSes('user'));
+					$Permits->setProfile(getSes('id_profile'));
+					$Permits->setTimeOut(PERMITS_CACHE_TIMEOUT);		/* Keep cached lists up to 30 minutes */
+					$Permits->setSuperProfile(1);						/* Master (profile 1) has access to everything (devel) */
+					break;
+
 				case 'Smarty':
 					$Smarty = new Smarty;
 					$Smarty->setTemplateDir(TEMPLATES_PATH);
 					$Smarty->setCompileDir('temp');
 					$Smarty->setCacheDir(SMARTY_DIR.'cache');
 					$Smarty->setConfigDir(SMARTY_DIR.'configs');
-				break;
+					break;
+
 				case 'SQL':
 					$SQL = new SQL;
-				break;
+					break;
+
 				case 'Stats':
 					$Stats = new Stats;
-				break;
+					break;
+
 				case 'Tabs':
 					$Tabs = new Tabs;
-				break;
+					break;
+
 				case 'Xajax':
 					$Xajax = new xajax("", "xajax_", 'ISO-8859-1');
 					$Xajax->outputEntitiesOn();
 					$Xajax->decodeUTF8InputOn();
+					// break; ommitted on purpose
 				case 'XajaxResp':
 					$XajaxResp = new xajaxResponse;
-				break;
+					break;
+
 				case 'Validate':
 					$Validate = new Validate;
-				break;
+					break;
+
 				default:
 					${$obj} = NULL;			/* Class is not expected by Builder */
 					trigger_error("BUILDER ERROR: Object {$obj} is not registered in this class");
-				break;
+					break;
 
 			}
 

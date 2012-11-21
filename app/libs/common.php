@@ -211,7 +211,7 @@ function toJS($mixed)
 		}
 		else
 		{
-			return "'" . preg_replace('_\s+_', ' ', addslashes($mixed)) . "'";
+			return '"' . preg_replace('_\s+_', ' ', addslashes($mixed)) . '"';
 		}
 	}
 	else

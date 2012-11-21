@@ -35,9 +35,9 @@ abstract class SNP
 	 *
 	 * @returns: Snippet subclass
 	 */
-	public static function snp($kind, $model, $params=array())
+	public static function snp($kind, $model, $params=[])
 	{
-		is_array($params) || $params = array('modifier' => $params);
+		is_array($params) || $params = ['modifier' => $params];
 
 		// Having $snipet and $model appart was just to show they were required
 		$params['kind'] = $kind;
@@ -54,7 +54,7 @@ abstract class SNP
 		!empty($params['action']) || ($params['action'] = 'insert');
 
 		// Now fill some more keys just to avoid warnings if polled
-		$params += array('id' => '', 'where' => '', 'order' => '');
+		$params += ['id' => '', 'where' => '', 'order' => ''];
 
 		// Call the handler, for non-common tasks of this particular Snippet
 		$path = SNP_BUILDERS . '/' . ucfirst($kind) . '.php';
@@ -69,20 +69,6 @@ abstract class SNP
 		}
 
 		return (new $class($params))->_do();
-	}
-
-	/**
-	 * protected SNP delegate(string $kind[, array $params])
-	 *      Just a handy shortcut to loading other snippets with same model and
-	 * same params (save for the $kind and whatever keys come with $params).
-	 *
-	 * @param array $kind
-	 * @param array $params
-	 * @return SNP
-	 */
-	protected function delegate($kind, $params=array())
-	{
-		return self::snp($kind, $this->params['model'], $params + $this->params);
 	}
 
 
@@ -100,11 +86,25 @@ abstract class SNP
 		$this->View  = View::get($params['model'], 'snp');
 	}
 
+	/**
+	 * protected SNP delegate(string $kind[, array $params])
+	 *      Just a handy shortcut to loading other snippets with same model and
+	 * same params (save for the $kind and whatever keys come with $params).
+	 *
+	 * @param array $kind
+	 * @param array $params
+	 * @return SNP
+	 */
+	protected function delegate($kind, $params=[])
+	{
+		return self::snp($kind, $this->params['model'], $params + $this->params);
+	}
+
 	final protected function _do()
 	{
 		$action = "_{$this->params['action']}";
 
-		if (($action !== 'do') && !is_callable(array($this, $action)))
+		if (($action !== 'do') && !is_callable([$this, $action]))
 		{
 			$action = $this->params['action'];
 			$kind = $this->params['kind'];

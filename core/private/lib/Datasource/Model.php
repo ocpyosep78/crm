@@ -15,7 +15,7 @@ abstract class DS_Model extends DS_Structure
 	public function __construct()
 	{
 		// Test integrity of object definitions
-		if (empty($this->table) || empty($this->schema))
+		if (!$this->__table || !$this->__schema)
 		{
 			$msg = "A Model is required to have a @table and a @schema";
 			throw new Exception($msg);
@@ -65,7 +65,7 @@ abstract class DS_Model extends DS_Structure
 		{
 			if (is_numeric($k))
 			{
-				// E.g. ::select('c1 as col1'), select(array("`c2` as 'col2'"))
+				// E.g. ::select('c1 as col1'), select(["`c2` as 'col2'"])
 				if (preg_match('_(.+) +as +([\'"][^\'"]+[\'"]|[^\'"]+)_i', trim($v), $matches))
 				{
 					$cols[trim($matches[1], '\'" ')] = trim($matches[2], '\'" ');
@@ -94,18 +94,18 @@ abstract class DS_Model extends DS_Structure
 		}
 
 		// Keywords to replace for the real field they represent
-		$keywords = array('__id__' => $this->getPk());
+		$keywords = ['__id__' => $this->getPk()];
 
 		// Do it this way to preserve select order
 		foreach ($cols as $col => $alias)
 		{
 			isset($keywords[$col]) && ($col = $keywords[$col]);
-			$newselect[$col] = $alias;
+			$new[$col] = $alias;
 		}
 
-		if (isset($newselect))
+		if (isset($new))
 		{
-			$this->search->select = ($newselect + $this->search->select);
+			$this->search->select = array_merge($this->search->select, $new);
 		}
 
 		return $this;
@@ -162,7 +162,7 @@ abstract class DS_Model extends DS_Structure
 
 		// ::setId() resets filters, if any was set before
 		$primary = "`{$this->schema}`.`{$this->table}`.`{$pk}`";
-		$this->search->where = array($primary => $id);
+		$this->search->where = [$primary => $id];
 
 		return $this;
 	}
@@ -216,7 +216,7 @@ abstract class DS_Model extends DS_Structure
 			{
 				$this->select($arg);
 			}
-			elseif (!is_null($arg) && ($arg !== ''))
+			elseif (!is_null($arg) && ($arg !== '') && ($arg !== []))
 			{
 				$msg = 'Cannot interpret parameter #' . ($i+2) . ' passed to find(): ' . var_export($arg, true);
 				throw new Exception($msg);
@@ -226,6 +226,13 @@ abstract class DS_Model extends DS_Structure
 		// Now import @search keys to this scope, and let's execute the query
 		extract(get_object_vars($this->search));
 
+		if (empty($select))
+		{
+			db(debug_print_backtrace());
+			$msg = "Cannot execute a query without elements to select";
+			throw new Exception($msg);
+		}
+
 		$sql = "SELECT {$this->selectSql()}\n" .
 		       "FROM {$this->joinSql()}\n" .
 		       "WHERE {$this->whereSql()}\n" .
@@ -233,13 +240,14 @@ abstract class DS_Model extends DS_Structure
 		       ($limit ? "LIMIT {$limit}" : '');
 		$res = $this->query($sql);
 
+
 		if ($res === false)
 		{
 			throw new Exception($sql . "\n" . mysql_error());
 		}
 
 		// Create a new DS_Result
-		$Result = new DS_Result($this->search, $sql, $res, $this);
+		$Result = new DS_Result($this->Answer, $this->search, $sql, $res, $this);
 
 		// Reset @search object
 		$this->initSearchObj();
@@ -322,6 +330,11 @@ abstract class DS_Model extends DS_Structure
 	 */
 	protected function seems($type, $arg)
 	{
+		if (($arg === []) || ($arg === ''))
+		{
+			return false;
+		}
+
 		switch ($type)
 		{
 			case 'id':
@@ -331,10 +344,9 @@ abstract class DS_Model extends DS_Structure
 				// Valid strings: field1 <compare> field2 ...
 				$regex1 = "^(`\w+`|\w+) +([<>]|[<>!]*=|<>|IS( +NOT)?|(NOT +)?LIKE) +(['\"].+['\"]|(\d|NULL)+)\$";
 				// ... field IN(list), field BETWEEN X AND Y ...
-				$regex2 = '.+ (BETWEEN .+ AND .+|IN *\(.+\))$';
+				$regex2 = '.+ (BETWEEN .+ AND .+|(NOT +)?IN *\(.+\))$';
 				// ... field, NOT field, IS NULL field, IS NOT NULL field
-				$regex3 = '^((NOT|IS NULL|IS NOT NULL) )?(\w+\.|`\w+`\.){0,2}(\w+|`\w+`)$';
-				$regex3 = '^((NOT|IS NULL|IS NOT NULL)( +| *\())? *(\w+\.|`\w+`\.){0,2}(\w+|`\w+`) *\)?$';
+				$regex3 = '^((NOT|IS ?NULL|IS NOT NULL)( +| *\())? *(\w+\.|`\w+`\.){0,2}(\w+|`\w+`) *\)?$';
 
 				return (is_string($arg) && preg_match("_({$regex1})|({$regex2})|({$regex3})_i", trim($arg))) || (is_array($arg));
 
@@ -343,8 +355,8 @@ abstract class DS_Model extends DS_Structure
 				return (is_string($arg) && !is_numeric($arg) && preg_match($regex, trim($arg))) || (is_array($arg));
 
 			case 'order':
-				$regex = '_[^\w](?:asc|desc)$_i';
-				return (is_string($arg) && preg_match($regex, $arg));
+				$regex = '_\b(asc|desc)$_i';
+				return ($arg && is_string($arg) && preg_match($regex, $arg));
 
 			case 'limit':
 				$regex = '_^\d+( *, *\d+)?$_';
@@ -360,8 +372,8 @@ abstract class DS_Model extends DS_Structure
 	{
 		// Initialize @search
 		$this->search = new stdClass;
-		$this->search->select = array();
-		$this->search->where = array();
+		$this->search->select = [];
+		$this->search->where = [];
 		$this->search->order = '';
 		$this->search->limit = 30;
 	}

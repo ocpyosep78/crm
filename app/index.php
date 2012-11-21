@@ -23,6 +23,14 @@ require_once('initialize.php');
 									try
 									{
 
+										if (isset($_GET['t9']))
+										{
+											header('Content-type: text/xml');
+											echo SNP::snp('viewItem', 'Customer')->getXML();
+
+											die();
+										}
+
 										if (isset($_GET['t8']))
 										{
 											db(Model::get('Customer')->columns());

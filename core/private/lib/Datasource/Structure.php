@@ -4,9 +4,10 @@
 class DS_Structure extends DS_Connect
 {
 
-	protected $schema;
-	protected $table;
-	protected $model_cols;
+	protected $__schema;
+	protected $__table;
+
+	protected $__model_cols;
 
 
 	/**
@@ -17,17 +18,22 @@ class DS_Structure extends DS_Connect
 	 */
 	final public function getPk()
 	{
-		extract($this->read());
+		static $pk = NULL;
 
-		foreach ($keys['pri'] as $k)
+		if (is_null($pk))
 		{
-			if (($k['sch1'] == $this->schema && $k['tbl1'] == $this->table))
+			extract($this->read());
+
+			foreach ($keys['pri'] as $k)
 			{
-				return $k['col1'];
+				if (($k['sch1'] == $this->schema && $k['tbl1'] == $this->table))
+				{
+					$pk = $k['col1'];
+				}
 			}
 		}
 
-		return NULL;
+		return $pk;
 	}
 
 	final protected function read()
@@ -42,7 +48,7 @@ class DS_Structure extends DS_Connect
 			$sql = "SELECT `keys`, `tables`, `columns`
 			        FROM `ds_cache_structure`
 			        WHERE `id` = '{$id}'
-			        AND `stored` > NOW() - 30";
+			        AND `stored` > NOW() - 2";
 			$res = $this->query($sql);
 
 			if ($this->Answer->Error->error)
@@ -86,7 +92,8 @@ class DS_Structure extends DS_Connect
 		// Store appart, and just by column name, the main table's columns
 		foreach ($structure['columns']['own'] as $col => $atts)
 		{
-			$this->model_cols[] = end(explode('`.`', trim($col, '` ')));
+			$col = end(explode('`.`', trim($col, '` ')));
+			$this->__model_cols[$col] = $col;
 		}
 
 		return $structure;
@@ -94,7 +101,7 @@ class DS_Structure extends DS_Connect
 
 	private function getKeys($schema, $table)
 	{
-		$all = $pri = $own = $src = $tgt = array();
+		$all = $pri = $own = $src = $tgt = [];
 
 		$sql = "SELECT `CONSTRAINT_NAME` AS 'name',
 		               `TABLE_SCHEMA` AS 'sch1',
@@ -106,7 +113,7 @@ class DS_Structure extends DS_Connect
 		        FROM `information_schema`.`key_column_usage`
 		        WHERE (`TABLE_SCHEMA` = '{$schema}' AND `TABLE_NAME` = '{$table}')
 		           OR (`REFERENCED_TABLE_SCHEMA` = '{$schema}' AND `REFERENCED_TABLE_NAME` = '{$table}')";
-		($res = $this->query($sql)) || ($all = array());
+		($res = $this->query($sql)) || ($all = []);
 
 		while ($data=mysql_fetch_assoc($res))
 		{
@@ -147,12 +154,12 @@ class DS_Structure extends DS_Connect
 	private function getTables($keys)
 	{
 		// Find out which tables are involved, to get their columns
-		$all = $own = $src = $tgt = array();
+		$all = $own = $src = $tgt = [];
 
 		$ownKey = "`{$this->schema}`.`{$this->table}`";
-		$all[$ownKey] = array('schema'  => $this->schema,
-		                      'table'   => $this->table,
-		                      'type' => array('own' => 'own'));
+		$all[$ownKey] = ['schema' => $this->schema,
+		                 'table'  => $this->table,
+		                 'type'   => ['own' => 'own']];
 
 		$own[$ownKey] =& $all[$ownKey];
 
@@ -162,8 +169,8 @@ class DS_Structure extends DS_Connect
 			$fqn1 = "`{$k['sch1']}`.`{$k['tbl1']}`";
 			$fqn2 = "`{$k['sch2']}`.`{$k['tbl2']}`";
 
-			$t1 = array('schema' => $k['sch1'], 'table' => $k['tbl1'], 'type' => array());
-			$t2 = array('schema' => $k['sch2'], 'table' => $k['tbl2'], 'type' => array());
+			$t1 = ['schema' => $k['sch1'], 'table' => $k['tbl1'], 'type' => []];
+			$t2 = ['schema' => $k['sch2'], 'table' => $k['tbl2'], 'type' => []];
 
 			$k['tbl1'] && !isset($all[$fqn1]) && ($all[$fqn1] = $t1);
 			$k['tbl2'] && !isset($all[$fqn2]) && ($all[$fqn2] = $t2);
@@ -228,7 +235,7 @@ class DS_Structure extends DS_Connect
 		               `EXTRA` AS 'extra',*/
 				FROM `information_schema`.`columns`
 				WHERE {$condition}";
-		($res = $this->query($sql)) || ($raw = array());
+		($res = $this->query($sql)) || ($raw = []);
 
 		while ($c=mysql_fetch_assoc($res))
 		{
@@ -237,24 +244,31 @@ class DS_Structure extends DS_Connect
 
 			$c['null'] = !!$c['null'];
 
-			$c['key']= array('index'   => !!$c['key'],
-			                 'unique'  => ($c['key'] == 'UNI'),
-			                 'primary' => ($c['key'] == 'PRI'));
+			$c['key']= ['index'   => !!$c['key'],
+			            'unique'  => ($c['key'] == 'UNI'),
+			            'primary' => ($c['key'] == 'PRI')];
 
-			$c['references'] = array();
-			$c['referenced'] = array();
+			$c['references'] = [];
+			$c['referenced'] = [];
 
 			$c['fqn'] = $col_fqn;
 
 			$all[$col_fqn] = $c;
 
-			foreach (array('own', 'src', 'tgt') as $type)
+			foreach (['own', 'src', 'tgt'] as $type)
 			{
 				if (in_array($type, $tables[$tbl_fqn]['type']))
 				{
 					${$type}[$col_fqn] =& $all[$col_fqn];
 				}
 			}
+		}
+
+		if (empty($keys))
+		{
+			$msg = "Failed to retrieve Keys list from database " .
+			       "(table: `{$this->schema}`.`{$this->table}`)";
+			throw new Exception($msg);
 		}
 
 		foreach ($keys as $k)
@@ -319,7 +333,7 @@ class DS_Structure extends DS_Connect
 		// Fields without a match retain the field name instead of an empty list
 		foreach ($search as &$v)
 		{
-			is_array($v) || ($v = array());
+			is_array($v) || ($v = []);
 		}
 
 		return $search;
@@ -359,7 +373,7 @@ class DS_Structure extends DS_Connect
 
 		if (!$matches)
 		{
-			$matches = array(NULL, $col['datatype'], 0, '');
+			$matches = [NULL, $col['datatype'], 0, ''];
 		}
 
 		array_shift($matches);
@@ -481,6 +495,52 @@ class DS_Structure extends DS_Connect
 				WHERE `Field` = '{$column}'";
 		$ret = $this->query($sql, 'field', 'Type');
 		return explode("','", preg_replace("/^enum\('|'\)$/", '', $ret));
+	}
+
+
+/******************************************************************************/
+/************************* M A G I C   M E T H O D S **************************/
+/******************************************************************************/
+
+	/**
+	 * mixed __get()
+	 *      Together with __set() makes all properties visible but readonly. For
+	 * defined properties starting with "__", it will first attempt to call a
+	 * method by that name but without the __ prefix. Only if that method does
+	 * not exist (or is not callable), then it returns the property's value.
+	 *
+	 * @param string $prop
+	 * @return mixed
+	 */
+	public function __get($prop)
+	{
+		if (property_exists($this, "__{$prop}"))
+		{
+			if (is_callable(array($this, $prop)))
+			{
+				return $this->$prop();
+			}
+			else
+			{
+				return $this->{"__{$prop}"};
+			}
+		}
+	}
+
+	/**
+	 * void __set()
+	 *      Deny creation of undeclared properties.
+	 *
+	 * @param string $prop
+	 * @param mixed $value
+	 * @return void
+	 */
+	public function __set($prop, $value)
+	{
+		if (property_exists($this, "__{$prop}"))
+		{
+			trigger_error("Attempting to modify readonly property $prop", E_USER_WARNING);
+		}
 	}
 
 }

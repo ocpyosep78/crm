@@ -1,15 +1,17 @@
 <?php
 
-function page_customers($modifier='customers')
+function page_customers()
 {
-	return SNP::snp('commonList', 'Customer', $modifier);
+	return SNP::snp('commonList', 'Customer');
 }
 
-function page_potentialCustomers(){					/* Status: 'customers', 'potential', 'all' */
-	return page_customers( 'potential' );
+function page_potentialCustomers()
+{
+	return SNP::snp('commonList', 'Customer.Potential');
 }
 
-function page_customersInfo( $id ){
+function page_customersInfo($id)
+{
 	$permits = array('createCustomerContacts', 'editCustomerContacts', 'deleteCustomerContacts');
 	oPermits()->setAlias('editCustomers', $permits);
 	$contactsList = oLists()->simpleListHTML('customerContacts', $id);

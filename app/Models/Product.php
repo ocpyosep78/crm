@@ -1,11 +1,11 @@
 <?php
 
 
-class Model_Customer extends Model
+class Model_Product extends Model
 {
 
 	// Main database table for this model
-	protected $__table = 'customers';
+	protected $__table = '_products';
 
 	/**
 	 * attempt (default)
@@ -30,7 +30,7 @@ class Model_Customer extends Model
 	 * All fail silently if constraints prevent deletion (returns Answer), but
 	 *
 	 */
-	protected $delete_strategy = 'delete';
-	protected $delete_flag_field = 'disabled';
+//	protected $delete_strategy = 'delete';
+//	protected $delete_flag_field = 'disabled';
 
 }

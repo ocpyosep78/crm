@@ -8,7 +8,7 @@ class snp_ViewItem extends SNP
 
 	protected function _html()
 	{
-		return self::delegate('simpleItem');
+		return self::delegate('simpleItem', ['action' => 'html']);
 	}
 
 }

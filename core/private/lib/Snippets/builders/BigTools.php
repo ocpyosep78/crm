@@ -3,13 +3,11 @@
 class snp_BigTools extends SNP
 {
 
-	private $buttons = array(
-		'list'		=> 'listado',
-		'create'	=> 'agregar',
-		'view'		=> 'ver información de',
-		'edit'		=> 'editar',
-		'delete'	=> 'eliminar',
-	);
+	private $buttons = ['list'   => 'listado',
+	                    'create' => 'agregar',
+	                    'view'   => 'ver información de',
+	                    'edit'   => 'editar',
+	                    'delete' => 'eliminar'];
 
 	/**
 	 * protected void assignVars()

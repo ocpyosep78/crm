@@ -4,7 +4,7 @@
 abstract class View
 {
 
-	private static $cached_views;
+	private static $cache;
 
 	protected $Model;
 	private $TplEngine;
@@ -24,54 +24,69 @@ abstract class View
 /******************************************************************************/
 
 	/**
-	 * final static View get(string $viewname[, string $namespace = 'global'])
-	 *      Get from cache, or instantiate, a View for given $viewname (model).
+	 * final static View get(string $name[, string $namespace = 'global'])
+	 *      Get from cache, or instantiate, a View for given $name (model).
 	 *
-	 * @param string $viewname
+	 * @param string $name
 	 * @param string $namespace
 	 * @return View subclass
 	 */
-	final public static function get($viewname, $namespace='global')
+	final public static function get($name, $namespace='global')
 	{
-		if (!$viewname)
+		if (!$name)
 		{
 			$msg = "Trying to initialize a view without a view name";
 			throw new Exception($msg);
 		}
 
-		$ucview = ucfirst($viewname);
-
-		if (!preg_match('/\w+/', $viewname))
+		if (!preg_match('/\w+/', $name))
 		{
-			$msg = "Illegal character in View name: {$ucview}";
+			$msg = "Illegal character in View name: {$name}";
 			throw new Exception($msg);
 		}
 
-		if (empty(self::$cached_views[$namespace][$ucview]))
+		$ucname = ucfirst($name);
+
+		if (empty(self::$cache[$namespace][$ucname]))
 		{
-			$path = APP_VIEWS . "/{$ucview}.php";
+			$hierarchy = [];
+			$class = 'View';
 
-			if (is_file($path))
+			foreach (explode('.', $name) as $file)
 			{
-				require_once $path;
-				$class = "View_{$ucview}";
+				$parent = $class;
+				$hierarchy[] = ucfirst($file);
 
-				if (!class_exists($class))
+				$path = APP_VIEWS . '/' . join('.', $hierarchy) . '.php';
+				$class = 'View_' . join('', $hierarchy);
+
+				if (!is_file($path))
 				{
-					$msg = "View class for {$ucview} not found";
+					eval("class {$class} extends {$parent}{}");
+				}
+				elseif (!@include $path)
+				{
+					$msg = "Failed to load class {$class} for View {$ucname}";
 					throw new Exception($msg);
 				}
+				elseif (!class_exists($class))
+				{
+					$msg = "View class {$class} for {$ucname} was not found";
+					throw new Exception($msg);
+				}
+			}
 
-				$View = new $class($viewname, $namespace);
-			}
-			else
-			{
-				require_once dirname(__FILE__) . '/AbstractView.php';
-				$View = new AbstractView($ucview, $namespace);
-			}
+			// Create
+			$View = new $class;
+
+			// Cache
+			self::$cache[$namespace][$ucname] = $View;
+
+			// Link corresponding View
+			$View->Model = Model::get($ucname, $namespace);
 		}
 
-		return self::$cached_views[$namespace][$ucview];
+		return self::$cache[$namespace][$ucname];
 	}
 
 
@@ -82,12 +97,8 @@ abstract class View
 	/**
 	 * Block descendants from being directly initialized, using final keyword.
 	 */
-	final public function __construct($viewname, $namespace)
+	final public function __construct()
 	{
-		self::$cached_views[$namespace][$viewname] = $this;
-
-		$this->Model = Model::get($viewname, $namespace);
-
 		$this->TplEngine = oSmarty()->createData();
 
 		// Register common attributes for the view
@@ -165,6 +176,12 @@ abstract class View
 			? $this->mapnames($this->__tabular_fields)
 			: $this->__screen_names;
 
+		if (empty($fields))
+		{
+			$msg = "Cannot get tabular params without fields to select";
+			throw new Exception($msg);
+		}
+
 		$fieldinfo = $this->Model->columns(array_keys($fields));
 
 		$primary = $this->getPkAlias();
@@ -185,6 +202,12 @@ abstract class View
 		$fields = $this->fullinfo_fields
 			? $this->mapnames($this->fullinfo_fields)
 			: $this->__screen_names;
+
+		if (empty($fields))
+		{
+			$msg = "Cannot get item data without fields to select";
+			throw new Exception($msg);
+		}
 
 		$fieldinfo = $this->Model->columns(array_keys($fields));
 
@@ -213,6 +236,12 @@ abstract class View
 	public function getHashData()
 	{
 		($field = $this->hash_field) || ($field = $this->descr_field);
+
+		if (empty($field))
+		{
+			$msg = "Cannot get hash data without a field to select";
+			throw new Exception($msg);
+		}
 
 		return $this->Model
 			->select('__id__', "{$field} AS 'val'")->order('val DESC')

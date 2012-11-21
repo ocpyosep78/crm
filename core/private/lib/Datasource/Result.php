@@ -10,14 +10,16 @@ class DS_Result
 
 	private $__orig_dataset;    // Original result set (unformatted)
 	private $__dataset;         // Result (migth be formatted)
-	private $__namespace;      // Full namespace (2), partial (1) or none (0)
+	private $__namespace;       // Full namespace (2), partial (1) or none (0)
 
 	private $caller;            // Sql Layer who initialized this object
+	private $Answer;
 
 
-	public function __construct($search, $query, $dataset, $caller)
+	public function __construct($Answer, $search, $query, $dataset, $caller)
 	{
 		$this->caller = $caller;
+		$this->Answer = $Answer;
 
 		$this->__search = $search;
 		$this->__query = $query;
@@ -57,7 +59,7 @@ class DS_Result
 	 */
 	public function ns($ns=1)
 	{
-		list($oldNs, $this->__namespace) = array($this->__namespace, (int)$ns);
+		list($oldNs, $this->__namespace) = [$this->__namespace, (int)$ns];
 
 		$nsRemove = $oldNs - $ns;
 
@@ -80,7 +82,7 @@ class DS_Result
 
 			case 'array':
 			case 'named':
-				$rows = array();
+				$rows = [];
 
 				foreach ($this->__dataset as $k => $row)
 				{
@@ -95,7 +97,7 @@ class DS_Result
 				break;
 
 			case 'row':
-				$row = array();
+				$row = [];
 
 				foreach ($this->__dataset as $field => $val)
 				{
@@ -143,41 +145,51 @@ class DS_Result
 
 			case 'array':
 			case 'named':
-				$set = array();
+				$set = [];
 
 				while ($data=mysql_fetch_assoc($orig))
 				{
 					$set[] = $data;
 				}
 
+				$key = NULL;
+
 				if ($set && (($to === 'named') || ($atts && is_string($atts))))
 				{
-					if ($atts && is_string($atts) && isset($set[0][$atts]))
+					if ($atts && is_string($atts))
 					{
-						$key = $atts;
-					}
-					elseif ($this->__primary && isset($set[0][$this->__primary]))
-					{
-						$key = $this->__primary;
+						if (is_string($atts) && isset($set[0][$atts]))
+						{
+							$key = $atts;
+						}
 					}
 					else
 					{
-						$key = current(array_keys($set[0]));
-					}
+						$sch = $this->caller->schema;
+						$tbl = $this->caller->table;
 
-					foreach ($set as $row)
-					{
-						$dataset[$row[$key]] = $row;
+						$pk = "`{$sch}`.`{$tbl}`.`{$this->caller->getPk()}`";
+
+						$columns = $this->caller->columns($this->search->select);
+
+						foreach (array_values($columns) as $pos => $col)
+						{
+							if (isset($col['fqn']) && ($col['fqn'] == $pk))
+							{
+								$key = array_keys($set[0])[$pos];
+							}
+						}
 					}
 				}
-				else
+
+				foreach ($set as $row)
 				{
-					$dataset = $set;
+					$key ? ($dataset[$row[$key]] = $row) : ($dataset[] = $row);
 				}
 				break;
 
 			case 'col':
-				$dataset = array();
+				$dataset = [];
 
 				while ($data=mysql_fetch_row($orig))
 				{
@@ -186,11 +198,11 @@ class DS_Result
 				break;
 
 			case 'row':
-				($dataset = mysql_fetch_assoc($orig)) || ($dataset = array());
+				($dataset = mysql_fetch_assoc($orig)) || ($dataset = []);
 				break;
 
 			case 'field':
-				($row = mysql_fetch_array($orig)) || ($row = array());
+				($row = mysql_fetch_array($orig)) || ($row = []);
 				$key = ($atts && is_string($atts)) ? $atts : 0;
 				$dataset = isset($row[$key]) ? $row[$key] : NULL;
 				break;
@@ -213,7 +225,7 @@ class DS_Result
 		// Restore namespace status
 		if ($to !== 'res')
 		{
-			list($this->__namespace, $ns) = array(2, $this->__namespace);
+			list($this->__namespace, $ns) = [2, $this->__namespace];
 			$this->ns($ns);
 		}
 

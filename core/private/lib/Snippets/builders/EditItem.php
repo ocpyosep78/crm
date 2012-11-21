@@ -32,9 +32,9 @@ class snp_EditItem extends SNP
 
 			$props = $fieldinfo[$key];
 
-			$myData[$key] = array('name'  => $scrname,
-			                      'value' => $value,
-			                      'props' => $fieldinfo[$key]);
+			$myData[$key] = ['name'  => $scrname,
+			                 'value' => $value,
+			                 'props' => $fieldinfo[$key]];
 		}
 
 		# Form data blocks (for presentational purposes)
@@ -73,7 +73,7 @@ class snp_EditItem extends SNP
 		$id = $this->params['id'];
 		$title = $this->View->retrieve('title');
 
-		return dialog($html, '#EditItem', array('title' => $title));
+		return dialog($html, '#EditItem', ['title' => $title]);
 	}
 
 }

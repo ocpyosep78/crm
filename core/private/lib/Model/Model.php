@@ -6,7 +6,7 @@ require_once DATASOURCE . '/Model.php';
 abstract class Model extends DS_Model
 {
 
-	private static $cached_models;
+	private static $cache;
 
 	protected $View;
 
@@ -42,54 +42,69 @@ abstract class Model extends DS_Model
 /******************************************************************************/
 
 	/**
-	 * final static Model get(string $modelname[, string $namespace = 'global'])
-	 *      Get from cache, or instantiate, a Model for given $modelname.
+	 * final static Model get(string $name[, string $namespace = 'global'])
+	 *      Get from cache, or instantiate, a Model for given $name.
 	 *
-	 * @param string $modelname
+	 * @param string $name
 	 * @param string $namespace
 	 * @return Model subclass
 	 */
-	final public static function get($modelname, $namespace='global')
+	final public static function get($name, $namespace='global')
 	{
-		if (!$modelname)
+		if (!$name)
 		{
 			$msg = "Trying to initialize a model without a model name";
 			throw new Exception($msg);
 		}
 
-		$ucmodel = ucfirst($modelname);
-
-		if (!preg_match('/\w+/', $modelname))
+		if (!preg_match('/\w+/', $name))
 		{
-			$msg = "Illegal character in Model name: {$ucmodel}";
+			$msg = "Illegal character in Model name: {$name}";
 			throw new Exception($msg);
 		}
 
-		if (empty(self::$cached_models[$namespace][$ucmodel]))
+		$ucname = ucfirst($name);
+
+		if (empty(self::$cache[$namespace][$ucname]))
 		{
-			$path = APP_MODELS . "/{$ucmodel}.php";
+			$hierarchy = [];
+			$class = 'Model';
 
-			if (is_file($path))
+			foreach (explode('.', $name) as $file)
 			{
-				require_once $path;
-				$class = "Model_{$ucmodel}";
+				$parent = $class;
+				$hierarchy[] = ucfirst($file);
 
-				if (!class_exists($class))
+				$path = APP_MODELS . '/' . join('.', $hierarchy) . '.php';
+				$class = 'Model_' . join('', $hierarchy);
+
+				if (!is_file($path))
 				{
-					$msg = "Model class for {$ucmodel} not found";
+					eval("class {$class} extends {$parent}{}");
+				}
+				elseif (!@include $path)
+				{
+					$msg = "Failed to load class {$class} for Model {$ucname}";
 					throw new Exception($msg);
 				}
+				elseif (!class_exists($class))
+				{
+					$msg = "Model class {$class} for {$ucname} was not found";
+					throw new Exception($msg);
+				}
+			}
 
-				$Model = new $class($ucmodel, $namespace);
-			}
-			else
-			{
-				require_once dirname(__FILE__) . '/AbstractModel.php';
-				$Model = new AbstractModel($ucmodel, $namespace);
-			}
+			// Create
+			$Model = new $class($name);
+
+			// Cache
+			self::$cache[$namespace][$ucname] = $Model;
+
+			// Link corresponding View
+			$Model->View = View::get($ucname, $namespace);
 		}
 
-		return self::$cached_models[$namespace][$ucmodel];
+		return self::$cache[$namespace][$ucname];
 	}
 
 
@@ -100,14 +115,10 @@ abstract class Model extends DS_Model
 	/**
 	 * Block descendants from being directly initialized, using final keyword.
 	 */
-	final public function __construct($modelname, $namespace)
+	final public function __construct($name)
 	{
-		self::$cached_models[$namespace][$modelname] = $this;
-
-		$this->View = View::get($modelname, $namespace);
-
-		$this->schema = DS_SCHEMA;
-		!$this->table && $table && ($this->table = $table);
+		$this->__schema = DS_SCHEMA;
+		$this->__table || ($this->__table = explode('.', $name)[0]);
 
 		parent::__construct();
 	}
@@ -197,52 +208,6 @@ abstract class Model extends DS_Model
 				return $Delete->failed
 					? parent::update(array($flagField => 1), $id)
 					: $Delete;
-		}
-	}
-
-
-/******************************************************************************/
-/************************* M A G I C   M E T H O D S **************************/
-/******************************************************************************/
-
-	/**
-	 * mixed __get()
-	 *      Together with __set() makes all properties visible but readonly. For
-	 * defined properties starting with "__", it will first attempt to call a
-	 * method by that name but without the __ prefix. Only if that method does
-	 * not exist (or is not callable), then it returns the property's value.
-	 *
-	 * @param string $prop
-	 * @return mixed
-	 */
-	public function __get($prop)
-	{
-		if (property_exists($this, "__{$prop}"))
-		{
-			if (is_callable(array($this, $prop)))
-			{
-				return $this->$prop();
-			}
-			else
-			{
-				return $this->{"__{$prop}"};
-			}
-		}
-	}
-
-	/**
-	 * void __set()
-	 *      Deny creation of undeclared properties.
-	 *
-	 * @param string $prop
-	 * @param mixed $value
-	 * @return void
-	 */
-	public function __set($prop, $value)
-	{
-		if (property_exists($this, "__{$prop}"))
-		{
-			trigger_error("Attempting to modify readonly property $prop", E_USER_WARNING);
 		}
 	}
 
