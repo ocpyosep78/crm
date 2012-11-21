@@ -1,20 +1,16 @@
 <div class='snp_item'>
-  {if !$inDialog}
-	{if $objectID}
-	  <span>Editar {$name}{if $DEVMODE} <strong>(objectID: {$objectID})</strong>{/if}</span>
-	{else}
-	  <span>Ingresar nuev{if $gender == 'm'}o{else}a{/if} {$name}</span>
-	{/if}
-  {/if}
+  {if !$inDialog}<div>{$title}</div>{/if}
+
+  {if $disabled}<h3>ELIMINADO</h3>{/if}
 
   {foreach from=$chunks item=chunk}
-	<div>
+	<div class='snp_chunk{if $disabled} snp_item_removed{/if}'>
 	  <table>
-		{foreach from=$chunk key=field item=data}
+		{foreach from=$chunk key=field item=item}
 		  <tr>
-			<th>{$data.name}</th>
+			<th>{$item.name}</th>
 			<td>
-			  <input type='text' value='{$data.value}' />
+			  <input type='text' value='{$item.value}' />
 			</td>
 		  </tr>
 		{/foreach}

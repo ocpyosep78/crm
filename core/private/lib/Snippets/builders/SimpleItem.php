@@ -19,24 +19,12 @@ class snp_SimpleItem extends SNP
 		// Expected: $fields, $data, $toolTip, $hidden
 		extract($this->View->getItemData($id));
 
+		// On devMode(), there's an extra field __disabled__ ('deleted' flag)
+		$disabled = !empty($data['__disabled__']);
+		unset($data['__disabled__']);
+
 		# Form data blocks (for presentational purposes)
 		$chunks = array_chunk($data, ceil(count($data)/2), true);
-
-		$this->View->assign('objectID', $id);
-		$this->View->assign('data', $data);
-		$this->View->assign('chunks', $chunks);
-
-		$this->View->assign('editable', $this->can('edit'));
-
-		$this->View->assign('inDialog', ($this->params['action'] == 'dialog'));
-	}
-
-	protected function _dialog()
-	{
-		$html = $this->html();
-
-		$id = $this->params['id'];
-		$data = $this->View->retrieve('data');
 
 		// Value of the most descriptive field of this model?
 		$field = $this->View->screen_names[$this->View->descr_field];
@@ -45,6 +33,27 @@ class snp_SimpleItem extends SNP
 		// Build Dialog title
 		$title = "Detalle de {$this->View->name} {$description}";
 		devMode() && ($title .= " <b>(objectID: {$id})</b>");
+
+		$this->View->assign('title', $title);
+		$this->View->assign('data', $data);
+		$this->View->assign('chunks', $chunks);
+
+		$this->View->assign('inDialog', ($this->params['action'] == 'dialog'));
+		$this->View->assign('editable', $this->can('edit'));
+		$this->View->assign('disabled', $disabled);
+	}
+
+	protected function _html()
+	{
+		return 'hola';
+	}
+
+	protected function _dialog()
+	{
+		$html = $this->html();
+
+		$id = $this->params['id'];
+		$title = $this->View->retrieve('title');
 
 		return dialog($html, '#SimpleItem', array('title' => $title));
 	}

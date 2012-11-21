@@ -45,10 +45,9 @@ abstract class SNP
 
 		// By default, snippets are to be inserted in the main box (#main_box)
 		!empty($params['writeTo']) || ($params['writeTo'] = '#main_box');
-//		!empty($params['writeTo']) || ($params['writeTo'] = 'body');
 
 		// All snippets must have a unique groupId, in case they group eachother
-		$groupId = microtime() . rand(0, time());
+		$groupId = str_replace(' ', '', microtime() . rand(0, time()));
 		!empty($params['groupId']) || ($params['groupId'] = $groupId);
 
 		// The action is by default is ::insert(), but it can be overridden
@@ -72,6 +71,20 @@ abstract class SNP
 		return (new $class($params))->_do();
 	}
 
+	/**
+	 * protected SNP delegate(string $kind[, array $params])
+	 *      Just a handy shortcut to loading other snippets with same model and
+	 * same params (save for the $kind and whatever keys come with $params).
+	 *
+	 * @param array $kind
+	 * @param array $params
+	 * @return SNP
+	 */
+	protected function delegate($kind, $params=array())
+	{
+		return self::snp($kind, $this->params['model'], $params + $this->params);
+	}
+
 
 	/**
 	 * void __construct(array $params)
@@ -93,8 +106,9 @@ abstract class SNP
 
 		if (($action !== 'do') && !is_callable(array($this, $action)))
 		{
+			$action = $this->params['action'];
 			$kind = $this->params['kind'];
-			$msg = "Trying to call an invalid action on Snippet {$kind}";
+			$msg = "Attempted to call action {$action} on {$kind} failed";
 			throw new Exception($msg);
 		}
 
@@ -145,7 +159,8 @@ abstract class SNP
 
 		// Internal attributes
 		$this->View->assign('params', $this->params);
-		$this->View->assign('kind', $this->params['kind']);
+		$this->View->assign('snp_id', $this->params['id']);
+		$this->View->assign('snp_kind', $this->params['kind']);
 		$this->View->assign('json_params', toJson($this->params, true));
 
 		// The actual Snippet template (embedded in the common frame)

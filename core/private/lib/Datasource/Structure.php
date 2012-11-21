@@ -6,6 +6,7 @@ class DS_Structure extends DS_Connect
 
 	protected $schema;
 	protected $table;
+	protected $model_cols;
 
 
 	/**
@@ -80,6 +81,12 @@ class DS_Structure extends DS_Connect
 			        VALUES
 					('{$id}', '{$s_keys}', '{$s_tables}', '{$s_columns}')";
 			@$this->query($sql);
+		}
+
+		// Store appart, and just by column name, the main table's columns
+		foreach ($structure['columns']['own'] as $col => $atts)
+		{
+			$this->model_cols[] = end(explode('`.`', trim($col, '` ')));
 		}
 
 		return $structure;
@@ -286,9 +293,9 @@ class DS_Structure extends DS_Connect
 	{
 		extract($this->read());
 
-		if (is_null($fields))
+		if (is_null($fields) || is_string($fields))
 		{
-			return $columns['all'];
+			return $columns[$fields ? $fields : 'all'];
 		}
 
 		$search = array_combine($fields, $fields);

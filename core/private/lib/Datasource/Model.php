@@ -100,12 +100,12 @@ abstract class DS_Model extends DS_Structure
 		foreach ($cols as $col => $alias)
 		{
 			isset($keywords[$col]) && ($col = $keywords[$col]);
-			$select[$col] = $alias;
+			$newselect[$col] = $alias;
 		}
 
-		if (isset($select))
+		if (isset($newselect))
 		{
-			$this->search->select = ($select + $this->search->select);
+			$this->search->select = ($newselect + $this->search->select);
 		}
 
 		return $this;
@@ -204,17 +204,17 @@ abstract class DS_Model extends DS_Structure
 		// Remaining arguments can be select, order or limit
 		foreach ($args as $i => $arg)
 		{
-			if ($this->seems('select', $arg))
+			if ($this->seems('limit', $arg))
 			{
-				$this->select($arg);
+				$this->limit($arg);
 			}
 			elseif ($this->seems('order', $arg))
 			{
 				$this->order($arg);
 			}
-			elseif ($this->seems('limit', $arg))
+			elseif ($this->seems('select', $arg))
 			{
-				$this->limit($arg);
+				$this->select($arg);
 			}
 			elseif (!is_null($arg) && ($arg !== ''))
 			{
@@ -245,6 +245,71 @@ abstract class DS_Model extends DS_Structure
 		$this->initSearchObj();
 
 		return $Result;
+	}
+
+	/**
+	 * object update(array $set, mixed $filter)
+	 *      Update elements from the main table, where $filter applies.
+	 *
+	 * TODO : for now it just accepts IDs as filter. It should accept any filter
+	 *        that where() accepts.
+	 *
+	 * @param array $set            Array of "field => newValue" pairs
+	 * @param mixed $filter
+	 * @return object               Answer object (stdClass)
+	 */
+	public function update($set, $filter)
+	{
+		if (!is_array($set))
+		{
+			$msg = 'Call to update() failed: $set must be an array';
+			throw new Exception($msg);
+		}
+
+		if (is_array($filter))
+		{
+			$msg = "Call to update() failed: only IDs are accepted as filters";
+			throw new Exception($msg);
+		}
+
+		foreach ($set as $k => $v)
+		{
+			$sets[] = "`{$k}` = '{$v}'";
+		}
+
+		$id = $filter;
+		$assignments = join(', ', $sets);
+
+		$sql = "UPDATE `{$this->schema}`.`{$this->table}`
+		        SET {$assignments}
+		        WHERE `{$this->getPk()}` = '{$id}'";
+
+		return $this->query($sql);
+	}
+
+	/**
+	 * object delete(mixed $filter)
+	 *      Delete elements from the main table, where $filter applies.
+	 *
+	 * TODO : for now it just accepts IDs as filter. It should accept any filter
+	 *        that where() accepts.
+	 *
+	 * @param mixed $filter
+	 * @return object               Answer object (stdClass)
+	 */
+	public function delete($filter)
+	{
+		if (is_array($filter))
+		{
+			$msg = "Call to delete() failed: only IDs are accepted as filters";
+			throw new Exception($msg);
+		}
+
+		$id = $filter;
+
+		$sql = "DELETE FROM `{$this->schema}`.`{$this->table}`
+		        WHERE `{$this->getPk()}` = '{$id}'";
+		return $this->query($sql);
 	}
 
 	/**

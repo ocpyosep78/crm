@@ -33,18 +33,12 @@ class snp_CommonList extends SNP
 		$order = $this->params['order'];
 
 		$data = $this->Model->find($where, $fields, $order, $limit)->get();
-
-		foreach ($fields as $field)
-		{
-			$titles[] = addslashes($field);
-		}
-
+		$titles = array_map('addslashes', $fields);
 		$toolTip = $this->View->screen_names[$this->View->descr_field];
-
-		$this->View->assign('primary', $primary);
 
 		$this->View->assign('titles', $titles);
 		$this->View->assign('data', $data);
+		$this->View->assign('primary', $primary);
 
 		$this->View->assign('listButtons', $this->buttons);
 		$this->View->assign('toolTip', $toolTip);
@@ -62,28 +56,29 @@ class snp_CommonList extends SNP
 
 	protected function _view()
 	{
-		return say('CommonList::view Under Construction');
+		return self::delegate('viewItem', array('action' => 'insert'));
 	}
 
 	protected function _dialogView()
 	{
-		$params = $this->params;
-		$params['action'] = 'dialog';
-
-		return SNP::snp('simpleItem', $params['model'], $params);
+		return SNP::delegate('simpleItem', array('action' => 'dialog'));
 	}
 
 	protected function _edit()
 	{
-		$params = $this->params;
-		$params['action'] = 'dialog';
-
-		return SNP::snp('editItem', $params['model'], $params);
+		return SNP::delegate('editItem', array('action' => 'dialog'));
 	}
 
 	protected function _delete()
 	{
-		return say('CommonList::delete Under Construction');
+		$Answer = $this->Model->delete($this->params['id']);
+
+		if ($Answer->failed)
+		{
+			return say(devMode() ? $Answer->Error->error : $Answer->msg);
+		}
+
+		return $this->_insert();
 	}
 
 	protected function _update()

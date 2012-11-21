@@ -201,7 +201,7 @@ function toJS($mixed)
 	}
 	elseif (is_array($mixed) || is_object($mixed))
 	{
-		return toJson($mixed);
+		return toJson($mixed, true);
 	}
 	elseif (is_string($mixed))
 	{

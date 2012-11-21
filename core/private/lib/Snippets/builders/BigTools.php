@@ -59,7 +59,8 @@ class snp_BigTools extends SNP
 	}
 
 	protected function _delete(){
-		return say('BigTools::delete Under Construction');
+		$deleted = $this->Model->delete($this->params['id']);
+		db($deleted);
 	}
 
 }

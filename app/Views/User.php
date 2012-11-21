@@ -35,18 +35,6 @@ class View_User extends View
 
 
 	/**
-	 * array getTabularParams()
-	 *      Generate relevant information to build a tabular list.
-	 *
-	 * @return array
-	 */
-	public function getTabularParams()
-	{
-		$this->Model->where('NOT blocked');
-		return parent::getTabularParams();
-	}
-
-	/**
 	 * protected array fullinfo_fields()
 	 *      Dynamically override @__fullinfo_fields.
 	 *

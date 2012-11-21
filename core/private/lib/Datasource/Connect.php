@@ -67,7 +67,6 @@ abstract class DS_Connect
 	{
 		$Error = new stdClass;
 
-		$Error->sql = $sql;
 		$Error->table = $this->table;
 
 		$Error->errno = mysql_errno();
@@ -95,7 +94,7 @@ abstract class DS_Connect
 		}
 
 		$log = "\r\n" . date('Y-m-d H:i:s') . " [{$Error->errno}]: {$Error->error})\r\n" .
-		       "SQL: {$Error->sql}\r\n";
+		       "SQL: {$sql}\r\n";
 
 		if (defined('DATASOURCE_ERROR_LOG') && DATASOURCE_ERROR_LOG)
 		{

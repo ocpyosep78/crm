@@ -19,6 +19,10 @@ class snp_EditItem extends SNP
 		// Expected: $fields, $data, $toolTip, $hidden
 		extract($this->View->getItemData($id, true));
 
+		// On devMode(), there's an extra field __disabled__ ('deleted' flag)
+		$disabled = !empty($data['__disabled__']);
+		unset($data['__disabled__']);
+
 		// Let's put some more info on each entry
 		$rFields = array_flip($fields);
 
@@ -36,13 +40,30 @@ class snp_EditItem extends SNP
 		# Form data blocks (for presentational purposes)
 		$chunks = array_chunk($myData, ceil(count($myData)/2), true);
 
+		if ($id)
+		{
+			// Value of the most descriptive field of this model?
+			$field = $this->View->screen_names[$this->View->descr_field];
+			$description = isset($data[$field]) ? $data[$field] : "con id {$id}";
+
+			// Build Dialog title
+			$title = "Editar {$this->View->name} {$description}";
+		}
+		else
+		{
+			$gender = ($this->View->gender == 'm') ? 'o' : 'a';
+			$title = "Ingresar nuev{$gender} {$this->View->name}";
+		}
+
+		devMode() && ($title .= " <b>(objectID: {$id})</b>");
+
+		$this->View->assign('title', $title);
 		$this->View->assign('data', $data);
 		$this->View->assign('chunks', $chunks);
 		$this->View->assign('fieldinfo', $fieldinfo);
 
-		$this->View->assign('objectID', $id);
-
 		$this->View->assign('inDialog', true);
+		$this->View->assign('disabled', $disabled);
 	}
 
 	public function _dialog()
@@ -50,15 +71,7 @@ class snp_EditItem extends SNP
 		$html = $this->html();
 
 		$id = $this->params['id'];
-		$data = $this->View->retrieve('data');
-
-		// Value of the most descriptive field of this model?
-		$field = $this->View->screen_names[$this->View->descr_field];
-		$description = isset($data[$field]) ? $data[$field] : "con id {$id}";
-
-		// Build Dialog title
-		$title = "Editar {$this->View->name} {$description}";
-		devMode() && ($title .= " <b>(objectID: {$id})</b>");
+		$title = $this->View->retrieve('title');
 
 		return dialog($html, '#EditItem', array('title' => $title));
 	}

@@ -1,16 +1,18 @@
 <div class='snp_item'>
-  {if !$inDialog}
-	<span>Detalle de {$name}{if $DEVMODE} <strong>(objectID: {$objectID})</strong>{/if}</span>
-  {/if}
+  {if !$inDialog}<div>{$title}</div>{/if}
+
+  {if $disabled}<h3>ELIMINADO</h3>{/if}
 
   {foreach from=$chunks item=chunk}
-	<div>
+	<div class='snp_chunk'>
 	  <table>
 		{foreach from=$chunk key=field item=value}
-		  <tr>
-			<th>{$field}</th>
-			<td><div>{$value}</div></td>
-		  </tr>
+		  {if $field != '__disabled__'}
+			<tr>
+			  <th>{$field}</th>
+			  <td><div>{$value}</div></td>
+			</tr>
+		  {/if}
 		{/foreach}
 	  </table>
 	</div>

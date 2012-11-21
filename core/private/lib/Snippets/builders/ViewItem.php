@@ -8,8 +8,7 @@ class snp_ViewItem extends SNP
 
 	protected function _html()
 	{
-		$params = array('action' => 'html') + $this->params;
-		return self::snp('simpleItem', $params['model'], $params);
+		return self::delegate('simpleItem');
 	}
 
 }
