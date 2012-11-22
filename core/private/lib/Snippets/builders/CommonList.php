@@ -19,7 +19,7 @@ class snp_CommonList extends SNP
 	 */
 	protected function assignVars()
 	{
-		// Expected: $fields, $fieldinfo, $data, $primary
+		// Expected: $fields, $fieldinfo
 		extract($this->View->getTabularParams());
 
 		// Ask for 20 results, starting at $offset
@@ -36,14 +36,11 @@ class snp_CommonList extends SNP
 
 		$this->View->assign('titles', $titles);
 		$this->View->assign('data', $data);
-		$this->View->assign('primary', $primary);
 
 		$this->View->assign('listButtons', $this->buttons);
 		$this->View->assign('toolTip', $toolTip);
 
 		// Include two sub-Snippets as well: bigTools and comboList
-		$params = ['parent' => 'commonList', 'action' => 'html'];
-
 		$this->View->assign('bigTools', self::read('bigTools'));
 		$this->View->assign('comboList', self::read('comboList'));
 	}

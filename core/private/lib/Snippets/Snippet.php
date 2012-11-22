@@ -37,7 +37,11 @@ abstract class SNP
 	 */
 	public static function snp($kind, $model, $params=[])
 	{
-		is_array($params) || $params = ['modifier' => $params];
+		// If $params is a string, interpret it as the action to execute
+		is_array($params) || ($params = $params ? ['action' => $params] : []);
+
+		// The action is by default is ::insert(), but it can be overridden
+		!empty($params['action']) || ($params['action'] = 'insert');
 
 		// Having $snipet and $model appart was just to show they were required
 		$params['kind'] = $kind;
@@ -49,9 +53,6 @@ abstract class SNP
 		// All snippets must have a unique groupId, in case they group eachother
 		$groupId = str_replace(' ', '', microtime() . rand(0, time()));
 		!empty($params['groupId']) || ($params['groupId'] = $groupId);
-
-		// The action is by default is ::insert(), but it can be overridden
-		!empty($params['action']) || ($params['action'] = 'insert');
 
 		// Now fill some more keys just to avoid warnings if polled
 		$params += ['id' => '', 'where' => '', 'order' => ''];
@@ -97,6 +98,7 @@ abstract class SNP
 	 */
 	protected function delegate($kind, $params=[])
 	{
+		is_array($params) || ($params = $params ? ['action' => $params] : []);
 		return self::snp($kind, $this->params['model'], $params + $this->params);
 	}
 
@@ -124,7 +126,7 @@ abstract class SNP
 			$action = $this->params['action'];
 			$kind = $this->params['kind'];
 
-			$msg = "Attempted to call action {$action} on {$kind} failed";
+			$msg = "Attempt to call action {$action} on {$kind} failed";
 			throw new Exception($msg);
 		}
 

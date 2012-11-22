@@ -11,25 +11,25 @@ class View_Customer extends View
 	protected $__descr_field = 'customer';// The most descriptive field of the model
 
 	// Screen name of each field (real or aliased)
-	protected $__screen_names = array(
-		'number'         => 'Número',
-		'customer'       => 'Empresa',
+	protected $__screen_names = [
+		'customer'       => 'Nombre Comercial',
 		'legal_name'     => 'Razón Social',
 		'rut'            => 'RUT',
-		'address'        => 'Dirección',
-		'billingaddress' => 'Dir. de Facturación',
+
+		'number'         => 'Nº de Cliente',
+		'since'          => 'Fecha de Ingreso',
+		"CONCAT(`_users`.`name`, ' ', `_users`.`lastName`)" => 'Vendedor',
+
 		'phone'          => 'Teléfono',
 		'email'          => 'Email',
-		'since'          => 'Fecha Ingreso',
-		'subscribed'     => 'Subscripción',
+		'address'        => 'Dirección',
+		'billingaddress' => 'Dir. de Facturación',
 		'location'       => 'Ciudad/Localidad',
-		"CONCAT(`_users`.`name`, ' ', `_users`.`lastName`)" => 'Vendedor');
+		'subscribed'     => 'Subscripción'];
 
-	protected $__tabular_fields = array(
-		'id_customer', 'number', 'customer',
-		'legal_name', 'address', 'phone',
-		"CONCAT(`_users`.`name`, ' ', `_users`.`lastName`)"
-	);
+	protected $__tabular_fields = [
+		'number', 'customer', 'legal_name', 'address', 'phone',
+		"CONCAT(`_users`.`name`, ' ', `_users`.`lastName`)"];
 
 
 	protected function hash_field()

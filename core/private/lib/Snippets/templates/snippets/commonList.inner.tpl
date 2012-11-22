@@ -5,9 +5,9 @@
 {else}
 	<table class='innerList'>
 	  {foreach from=$data item=row}
-		<tr bgcolor='{cycle values=$cycleValues}' class='innerListRow highlight{if !empty($row.__disabled__)} snp_item_removed{/if}' for='{$row.$primary}'{if isset($row.$toolTip)} title='{$row.$toolTip}'{/if}>
+		<tr bgcolor='{cycle values=$cycleValues}' class='innerListRow highlight{if !empty($row.__disabled__)} snp_removed{/if}' for='{$row.__id__}'{if isset($row.$toolTip)} title='{$row.$toolTip}'{/if}>
 		  {foreach from=$row key=field item=value}
-			{if ($field != $primary) && ($field != '__disabled__')}
+			{if ($field != '__id__') && ($field != '__disabled__')}
 			  <td><div>{$value|wordwrap:30:"<br />\n"|truncate:120:"...":true}</div></td>
 			{/if}
 		  {/foreach}

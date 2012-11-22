@@ -2,7 +2,7 @@
 
 function say($msg, $type='', $img=''){
 	$msg = preg_replace('_\s+_', ' ', addslashes($msg));
-	return addScript("say('{$msg}', '{$type}', '{$img}');");
+	return addScript("say(\"{$msg}\", \"{$type}\", \"{$img}\");");
 }
 
 function showMenu(){

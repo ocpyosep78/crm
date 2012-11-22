@@ -184,9 +184,7 @@ abstract class View
 
 		$fieldinfo = $this->Model->columns(array_keys($fields));
 
-		$primary = $this->getPkAlias();
-
-		return compact('fields', 'fieldinfo', 'primary');
+		return compact('fields', 'fieldinfo');
 
 	}
 
@@ -213,24 +211,21 @@ abstract class View
 
 		if ($id)
 		{
-			$this->Model->setId($id)->select($fields);
-			$data = $this->Model->find()->convert('row')->get();
+			$data = $this->Model->setId($id)->select($fields)
+			             ->find()->convert('row')->get();
 		}
 		else
 		{
-			$data = array();
+			$data = array_combine($fields, array_fill(0, count($fields), ''));
 		}
 
-		$primary = $this->getPkAlias();
-
-		return compact('fields', 'fieldinfo', 'data', 'primary');
+		return compact('fields', 'fieldinfo', 'data');
 	}
 
 	/**
 	 * array getHashData()
 	 *      Generate relevant information to build a single item's page.
 	 *
-	 * @param mixed $id         The id of this element (primary key value)
 	 * @return array
 	 */
 	public function getHashData()
@@ -246,14 +241,6 @@ abstract class View
 		return $this->Model
 			->select('__id__', "{$field} AS 'val'")->order('val DESC')
 			->find()->convert('col')->get();
-	}
-
-	public function getPkAlias()
-	{
-		$scr = $this->screen_names;
-		$pk = $this->Model->getPk();
-
-		return isset($scr[$pk]) ? $scr[$pk] : $pk;
 	}
 
 	/**

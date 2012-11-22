@@ -1,10 +1,15 @@
+{if !$inDialog}
+  {$bigTools}
+  {$comboList}
+{/if}
+
 <div class='snp_item'>
   {if !$inDialog}<div>{$title}</div>{/if}
 
-  {if $disabled}<h3>ELIMINADO</h3>{/if}
+  {if $disabled}<h3>eliminado</h3>{/if}
 
   {foreach from=$chunks item=chunk}
-	<div class='snp_chunk{if $disabled} snp_item_removed{/if}'>
+	<div class='snp_chunk{if $disabled} snp_removed{/if}'>
 	  <table>
 		{foreach from=$chunk key=field item=item}
 		  <tr>

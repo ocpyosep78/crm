@@ -228,7 +228,6 @@ abstract class DS_Model extends DS_Structure
 
 		if (empty($select))
 		{
-			db(debug_print_backtrace());
 			$msg = "Cannot execute a query without elements to select";
 			throw new Exception($msg);
 		}
@@ -335,24 +334,30 @@ abstract class DS_Model extends DS_Structure
 			return false;
 		}
 
+		$field = "( *\(? *([a-z]\w*\.|`[a-z]\w*`\.){0,2}([a-z]\w*|`[a-z]\w*`) *\)? *)";
+
 		switch ($type)
 		{
 			case 'id':
 				return is_numeric($arg);
 
 			case 'where':
-				// Valid strings: field1 <compare> field2 ...
-				$regex1 = "^(`\w+`|\w+) +([<>]|[<>!]*=|<>|IS( +NOT)?|(NOT +)?LIKE) +(['\"].+['\"]|(\d|NULL)+)\$";
-				// ... field IN(list), field BETWEEN X AND Y ...
-				$regex2 = '.+ (BETWEEN .+ AND .+|(NOT +)?IN *\(.+\))$';
-				// ... field, NOT field, IS NULL field, IS NOT NULL field
-				$regex3 = '^((NOT|IS ?NULL|IS NOT NULL)( +| *\())? *(\w+\.|`\w+`\.){0,2}(\w+|`\w+`) *\)?$';
+				// [NOT] Field1 (=|!=|<>|<|>|<=|>=|IS|IS NOT|LIKE|NOT LIKE) (Field2|value|NULL)) | [NOT] Field
+				$regex1 = "(NOT +)?{$field}(([<>]|[<>!]*=|<>| IS( +NOT)?| (NOT +)?LIKE)( +| *\( *)(['\"].+['\"]|({$field}|\d+|NULL)) *\)?)?";
+				// ... Field [NOT] IN(list), Field [NOT] BETWEEN X AND Y
+				$regex2 = "{$field} (BETWEEN .+ AND .+|(NOT +)?IN *\(.+\))";
+				// ... [NOT] ISNULL(Field)
+				$regex3 = "(NOT +)?ISNULL *\({$field}\)";
+				// All together now
+				$regex = "_^({$regex1})|({$regex2})|({$regex3})\$_i";
 
-				return (is_string($arg) && preg_match("_({$regex1})|({$regex2})|({$regex3})_i", trim($arg))) || (is_array($arg));
+				return is_array($arg)
+				   || (is_string($arg) && preg_match($regex, trim($arg)));
 
 			case 'select':
-				$regex = '_^(\*|[\w ]+(, *[\w ]+)+|(`\w+`|\w+)( +as [\'"]?\w+[\'"]?)?)$_i';
-				return (is_string($arg) && !is_numeric($arg) && preg_match($regex, trim($arg))) || (is_array($arg));
+				$regex = "_^\*|{$field}(,{$field})*|{$field} +as (['\"].+['\"]|\w+)\$_i";
+				return is_array($arg)
+				   || (is_string($arg) && !is_numeric($arg) && preg_match($regex, trim($arg)));
 
 			case 'order':
 				$regex = '_\b(asc|desc)$_i';
@@ -360,7 +365,8 @@ abstract class DS_Model extends DS_Structure
 
 			case 'limit':
 				$regex = '_^\d+( *, *\d+)?$_';
-				return (is_numeric($arg)) || (is_string($arg) && preg_match($regex, trim($arg)));
+				return is_numeric($arg)
+				   || (is_string($arg) && preg_match($regex, trim($arg)));
 
 			default:
 				return false;

@@ -1,6 +1,6 @@
 <?php
 
-class snp_ComboList extends SNP
+class snp_CreateItem extends SNP
 {
 
 	/**
@@ -12,18 +12,16 @@ class snp_ComboList extends SNP
 	 *
 	 * @return void
 	 */
-	protected function assignVars()
+	protected function assignVars() {}
+
+	protected function _html()
 	{
-		$this->View->assign('list', $this->View->getHashData());
-
-
-		$selected = !empty($this->params['id']) ? $this->params['id'] : NULL;
-		$this->View->assign('selected', $selected);
+		return $this->delegate('editItem', ['id' => NULL, 'action' => 'html']);
 	}
 
-	protected function _viewItem()
+	protected function _dialog()
 	{
-		return self::delegate('viewItem', ['action' => 'insert']);
+		return $this->delegate('editItem', ['id' => NULL]);
 	}
 
 }

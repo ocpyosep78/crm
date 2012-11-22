@@ -173,10 +173,9 @@ function raise( msg ){
 
 // Notifications
 function say(txt, type, stay) {
-	var mt = txt.split(/<br ?\/>./, 3).length * 1.4;
 	var cl = ($.isNumeric(type||0) ? (type ? 'success' : 'error') : type);
 	$('#notifications').hide(1)._class(cl + 'Status')
-		.find('div:last').html(txt).css('margin-top', -(mt/2) + 'em').end()
+		.find('div:last').html(txt).end()
 		.show('drop', {direction:'up'}, 500, function(){
 			// Cancel pending hiding and queue a new one (0 == don't hide)
 			clearTimeout($(this).data('hto'));
@@ -397,6 +396,9 @@ $(function(){
 				btn.parents('browse_box').find('.browse_txt').val(file);
 			});
 		}, true);
+
+		// Style tooltips
+		$(document).qtip();
 	});
 
 	// Activate Snippets

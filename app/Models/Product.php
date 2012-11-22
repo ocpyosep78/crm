@@ -30,7 +30,7 @@ class Model_Product extends Model
 	 * All fail silently if constraints prevent deletion (returns Answer), but
 	 *
 	 */
-//	protected $delete_strategy = 'delete';
-//	protected $delete_flag_field = 'disabled';
+	protected $delete_strategy = 'delete';
+	protected $delete_flag_field = 'disabled';
 
 }

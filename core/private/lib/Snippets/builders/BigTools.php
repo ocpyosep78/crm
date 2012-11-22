@@ -31,6 +31,8 @@ class snp_BigTools extends SNP
 				break;
 
 			case 'createItem':
+				unset($this->buttons['delete']);
+				// no break; on purpose
 			case 'viewItem':
 			case 'editItem':
 				unset($this->buttons[str_replace('Item', '', $parent)]);
@@ -45,20 +47,26 @@ class snp_BigTools extends SNP
 	}
 
 	protected function _create(){
-		return say('BigTools::create Under Construction');
-	}
-
-	protected function _view(){
-		return say('BigTools::view Under Construction');
+		return self::delegate('createItem', ['action' => 'dialog']);
 	}
 
 	protected function _edit(){
 		return self::delegate('editItem', ['action' => 'dialog']);
 	}
 
+	protected function _view(){
+		return self::delegate('viewItem', ['action' => 'insert']);
+	}
+
 	protected function _delete(){
-		$deleted = $this->Model->delete($this->params['id']);
-		db($deleted);
+		$Answer = $this->Model->delete($this->params['id']);
+
+		if ($Answer->failed)
+		{
+			return say(devMode() ? $Answer->Error->error : $Answer->msg);
+		}
+
+		return $this->delegate('commonList', ['action', 'insert']);
 	}
 
 }

@@ -9,34 +9,21 @@ class View_Product extends View
 	protected $__plural = 'Productos';
 	protected $__gender = 'm';
 
-	protected $__descr_field = 'product';// The most descriptive field of the model
+	protected $__hash_field = 'name';
+	protected $__descr_field = 'name';  // Most descriptive field of the model
 
-//	// Screen name of each field (real or aliased)
-//	protected $__screen_names = array(
-//		'number'         => 'Número',
-//		'customer'       => 'Empresa',
-//		'legal_name'     => 'Razón Social',
-//		'rut'            => 'RUT',
-//		'address'        => 'Dirección',
-//		'billingaddress' => 'Dir. de Facturación',
-//		'phone'          => 'Teléfono',
-//		'email'          => 'Email',
-//		'since'          => 'Fecha Ingreso',
-//		'subscribed'     => 'Subscripción',
-//		'location'       => 'Ciudad/Localidad',
-//		"CONCAT(`_users`.`name`, ' ', `_users`.`lastName`)" => 'Vendedor');
-//
-//	protected $__tabular_fields = array(
-//		'id_customer', 'number', 'customer',
-//		'legal_name', 'address', 'phone',
-//		"CONCAT(`_users`.`name`, ' ', `_users`.`lastName`)"
-//	);
-//
-//
-//	protected function hash_field()
-//	{
-//		return "CONCAT(customer," .
-//		              "IF(legal_name = '', '', CONCAT(' (', legal_name, ')')))";
-//	}
+	// Screen name of each field (real or aliased)
+	protected $__screen_names = [
+//		'id_product' => '',
+//		'id_category' => '',
+		'category' => 'Categoría',
+		'type' => 'Tipo',
+		'name' => 'Nombre',
+		'cost' => 'Costo',
+		'price' => 'Precio',
+		'description' => 'Descripción'];
+
+	protected $__tabular_fields = [
+		'category', 'type', 'name', 'price', 'description'];
 
 }

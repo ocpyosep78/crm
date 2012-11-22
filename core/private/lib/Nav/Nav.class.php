@@ -111,21 +111,28 @@
 				.(getSkinName() ? "&skin=".getSkinName() : '')
 				.($inFrame || $this->inFrame ? '&iframe' : '');
 
-			if( $code === true ){
+			if ($code === true)
+			{
 				loadMainSmartyVars();
 				require_once(CORE_PRIVATE.'pageMgr.php');
 				return $this->loadContent();
 			}
-			elseif( $code === NULL ){
+			elseif (is_null($code))
+			{
 				return say("La página solicitada no está disponible.");
 			}
-			elseif( !$code ){
+			elseif (!$code)
+			{
 				return say("No es posible cargar la página solicitada.");
 			}
-			elseif( !$inFrame ){
+			elseif (!$inFrame)
+			{
 				return addScript("location.href = '{$href}'");
 			}
-			else return $href;	/* Just for self#showPage */
+			else
+			{
+				return $href;	/* Just for self#showPage */
+			}
 
 		}
 

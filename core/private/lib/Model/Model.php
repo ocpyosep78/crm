@@ -10,6 +10,9 @@ abstract class Model extends DS_Model
 
 	protected $View;
 
+	protected $__implicit_select = ['__id__', '__disabled__'];
+	protected $__implicit_where = NULL;
+
 	/**
 	 * attempt (default)
 	 *    Attempts to remove entry
@@ -132,21 +135,44 @@ abstract class Model extends DS_Model
 	 */
 	public function find()
 	{
-		if ($this->delete_flag_field)
+		$args = func_get_args() + [NULL, NULL, NULL, NULL];
+
+		// First param is reserved for filters
+		$where = array_shift($args);
+
+		// Add defined implicit SELECT fields
+		if ($implicit_select = $this->implicit_select) # assignment
 		{
-			if (!devMode())
+			foreach ($args as &$arg)
 			{
-				$this->where("NOT {$this->delete_flag_field}");
+				if ($arg && $this->seems('select', $arg))
+				{
+					$this->select($arg);
+				}
 			}
-			else
+
+			foreach ((array)$implicit_select as $is)
 			{
-				$this->select("{$this->delete_flag_field} AS __disabled__");
+				$this->select($this->resolveAlias($is));
 			}
 		}
 
-		$args = func_get_args() + array(NULL, NULL, NULL, NULL);
+		// Add defined implicit WHERE conditions
+		if ($implicit_where = $this->implicit_where) # assignment
+		{
+			foreach ((array)$implicit_where as $iw)
+			{
+				$this->where($this->resolveAlias($iw));
+			}
+		}
 
-		return parent::find($args[0], $args[1], $args[2], $args[3]);
+		// Hide "deleted" fields (those somehow flagged as removed)
+		if ($this->delete_flag_field && !devMode())
+		{
+			$this->where("NOT {$this->delete_flag_field}");
+		}
+
+		return parent::find($where, $args[0], $args[1], $args[2]);
 	}
 
 	/**
@@ -209,6 +235,14 @@ abstract class Model extends DS_Model
 					? parent::update(array($flagField => 1), $id)
 					: $Delete;
 		}
+	}
+
+	protected function resolveAlias($item)
+	{
+		$map = ['__id__' => $this->getPk(),
+		        '__disabled__' => $this->delete_flag_field];
+
+		return isset($map[$item]) ? "{$map[$item]} AS {$item}" : $item;
 	}
 
 }

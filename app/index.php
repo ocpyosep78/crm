@@ -23,10 +23,10 @@ require_once('initialize.php');
 									try
 									{
 
-										if (isset($_GET['t9']))
+										if (isset($_GET['t']) && $_GET['t'] == 'create')
 										{
 											header('Content-type: text/xml');
-											echo SNP::snp('viewItem', 'Customer')->getXML();
+											echo SNP::snp('createItem', 'Customer', ['action' => 'dialog'])->getXML();
 
 											die();
 										}
@@ -38,21 +38,21 @@ require_once('initialize.php');
 											die();
 										}
 
-										if (isset($_GET['t7']))
+										if (isset($_GET['t']) && $_GET['t'] == 'edit')
 										{
 											db(SNP::snp('editItem', 'Customer', array('id' => 1)));
 
 											die();
 										}
 
-										if (isset($_GET['t6']))
+										if (isset($_GET['t']) && $_GET['t'] == 'view')
 										{
 											db(SNP::snp('viewItem', 'Customer', array('id' => 1)));
 
 											die();
 										}
 
-										if (isset($_GET['t5']))
+										if (isset($_GET['t']) && $_GET['t'] == 'list')
 										{
 											db(SNP::snp('commonList', 'Customer'));
 
@@ -157,7 +157,26 @@ foreach ($urgentAjax as $key => $code)
 
 	if (isXajax($key))
 	{
-		oXajax()->processRequests();
+
+		try
+		{
+			oXajax()->processRequests();
+		}
+		catch (PublicException $e)
+		{
+			header('Content-type: text/xml');
+			echo say(addslashes($e->getMessage()))->getXML();
+
+			exit;
+		}
+		catch (Exception $e)
+		{
+			header('Content-type: text/xml');
+			$error = devMode() ? $e->getMessage() : 'Ocurrió un error inesperado';
+			echo say($error)->getXML();
+
+			exit;
+		}
 	}
 }
 
@@ -272,7 +291,7 @@ try
 catch (PublicException $e)
 {
 	header('Content-type: text/xml');
-	echo say(addslashes($e->getMessage()))->getXML();
+	echo say($e->getMessage())->getXML();
 
 	exit;
 }
@@ -280,7 +299,7 @@ catch (Exception $e)
 {
 	header('Content-type: text/xml');
 	$error = devMode() ? $e->getMessage() : 'Ocurrió un error inesperado';
-	echo say(addslashes($error))->getXML();
+	echo say($error)->getXML();
 
 	exit;
 }

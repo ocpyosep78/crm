@@ -1,11 +1,10 @@
 {$bigTools}
-
 {$comboList}
 
 <div class='commonListWrapper'>
   <div class='listTitles'>
 	{foreach from=$titles item=title}
-	  {if $title != $primary}
+	  {if $title != '__id__'}
 		<div for='{$title}' title='{$title}'>{$title|truncate:20:'...'}</div>
 	  {/if}
 	{/foreach}

@@ -104,7 +104,7 @@ body{
 	top:30px;
 	right:0px;
 	left:0px;
-	height:55px;
+	min-height:30px;
 	padding:0px;
 	margin:0px;
 	border-bottom:1px solid #8080a0;
@@ -129,9 +129,8 @@ body{
 	text-shadow:#003366 2px 2px 1px !important;
 }
 #notifications > div{
-	display:inline-block;
 	position:relative;
-	top:50%;
+	margin:18px 240px 18px 50px;
 	font-weight:bold;
 	text-align:center;
 	font-family:Verdana, Geneva, sans-serif;
@@ -145,7 +144,7 @@ body{
 	float:left;
 	height:45px;
 	width:45px;
-	margin:6px 8px;
+	margin:5px;
 }
 #notifications.errorStatus   > img.errorStatus,
 #notifications.successStatus > img.successStatus,
@@ -656,6 +655,7 @@ img.agenda_eventType{ float:right; height:30px; width:30px; margin:3px; }
 
 snippet{ position:relative; }
 .snp_loading{ clear:both; text-align:center; }
+.snp_removed{ color:#600; font-weight:normal; }
 
 .snp_commonList{ position:relative; clear:both; margin:20px 0px 30px 0px; }
 .snp_comboList{ float:right; margin:20px 10px; z-index:195; }
@@ -688,7 +688,7 @@ snippet{ position:relative; }
 /**
  * SNIPPETS : ITEMS : GENERAL
  */
-.snp_item{ clear:both; margin:10px; padding:10px; min-width:800px; text-align:center; font-size:1.1em; }
+.snp_item{ clear:both; margin:10px; padding:10px; text-align:center; font-size:1.1em; }
 .snp_item .snp_chunk{ display:inline-block; vertical-align:middle; margin:10px; margin-top:20px; padding:10px; border-top:solid 1px #c0c0d0; border-left:solid 1px #c0c0d0; border-radius:6px;   box-shadow:#404045 4px 4px 6px;   text-align:left; background:#ffffff; }
 .snp_item table{ margin:10px 0px; }
 .snp_item th{ height:1.5em; padding-left:30px; padding-right:5px; white-space:nowrap; text-indent:0px !important; text-align:right !important; color:#606090 !important; }
@@ -726,7 +726,6 @@ snippet{ position:relative; }
 .innerList td > div{ min-width:70px; }
 .innerListRow{ border-top: solid 1px #ffffff; }
 .selectedListRow{ border-top: solid 1px #ffffa0; border-bottom: solid 1px #ffffa0; padding-bottom:1px; background:#cfcfca; }
-.snp_item_removed{ background: #fcc !important; }
 
 /**
  * SNIPPETS : LISTS : TOOLS
