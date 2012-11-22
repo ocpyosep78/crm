@@ -256,6 +256,29 @@ abstract class View
 		return isset($scr[$pk]) ? $scr[$pk] : $pk;
 	}
 
+	/**
+	 * array getRelated([string $id = NULL])
+	 *      Get elements related to the current Model but not direct part of it.
+	 * If $id is provided, return full info on that particular related element.
+	 *
+	 * @param string $id
+	 * @return array
+	 */
+	public function getRelated($id=NULL)
+	{
+
+
+		$tabs = [
+			['id' => 'id1', 'content' => 'content1', 'title' => 'Title 1'],
+			['id' => 'id2', 'content' => 'content2', 'title' => 'Title 2'],
+			['id' => 'id3', 'content' => 'content3', 'title' => 'Title 3'],
+			['id' => 'id4', 'content' => 'content4', 'title' => 'Title 4'],
+			['id' => 'id5', 'content' => 'content5', 'title' => 'Title 5'],
+		];
+
+		return $tabs;
+	}
+
 
 /******************************************************************************/
 /************************* M A G I C   M E T H O D S **************************/

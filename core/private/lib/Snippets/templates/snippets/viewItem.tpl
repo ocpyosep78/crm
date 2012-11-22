@@ -1,0 +1,7 @@
+{$bigTools}
+
+{$comboList}
+
+{$simpleItem}
+
+{$tabs}

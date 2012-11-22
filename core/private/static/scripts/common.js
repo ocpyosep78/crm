@@ -401,6 +401,8 @@ $(function(){
 
 	// Activate Snippets
 	$('body').on('snippets', function(){
+		$('body').trigger('contentload');
+
 		$('snippet[initialized!="true"]').each(function(){
 			this.attr('initialized', 'true');
 			Snippets.add(new Snippet(this));
@@ -558,6 +560,8 @@ function Snippet(el){
 				var enabled = linked(params.parent).bigTools;
 				enabled && this.disable().enable(enabled);
 			}
+
+			this.id(params.id||0);
 		},
 
 		commonList: function() {
@@ -599,6 +603,20 @@ function Snippet(el){
 		viewItem: function() {
 			this.bigTools = ['list', 'create', 'edit', 'delete'];
 			$('#embed_'+groupId).trigger('embed');
+		},
+
+		tabs: function() {
+			var load = function(tab)
+			{
+				tab.attr('loaded', true);
+				_do('load', {'tab': tab._rel()});
+			}
+
+			my('.tabs').tabs({beforeActivate: function(event, ui) {
+				ui.newPanel.attr('loaded') || load(ui.newPanel);
+			}}).show();
+
+			load(my('.tabs div:first'));
 		},
 
 		createItem: function(editing){

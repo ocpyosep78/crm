@@ -41,7 +41,7 @@ class snp_BigTools extends SNP
 	}
 
 	protected function _list(){
-		return say('BigTools::list Under Construction');
+		return self::delegate('commonList', ['action' => 'insert']);
 	}
 
 	protected function _create(){
@@ -53,7 +53,7 @@ class snp_BigTools extends SNP
 	}
 
 	protected function _edit(){
-		return say('BigTools::edit Under Construction');
+		return self::delegate('editItem', ['action' => 'dialog']);
 	}
 
 	protected function _delete(){

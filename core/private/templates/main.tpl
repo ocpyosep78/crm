@@ -161,7 +161,7 @@
 		<div>
 		  <div id="openDebug"></div>
 		  <img id='debugStats' src='app/images/stats.gif' alt='extended info' />
-		  <div id="debuggerbox" style='float:left; width:600px;'>
+		  <div id="debuggerbox" style='float:left; width:400px;'>
 			Debugger <span style="color:#0000a0; cursor:pointer;">(click para minimizar)</span>
 			<br />
 			{foreach from=$Page->develMsgs item=develMsg}{$develMsg}<br />{/foreach}

@@ -43,8 +43,9 @@ class snp_CommonList extends SNP
 
 		// Include two sub-Snippets as well: bigTools and comboList
 		$params = ['parent' => 'commonList', 'action' => 'html'];
-		$this->View->assign('bigTools', self::delegate('bigTools', $params));
-		$this->View->assign('comboList', self::delegate('comboList', $params));
+
+		$this->View->assign('bigTools', self::read('bigTools'));
+		$this->View->assign('comboList', self::read('comboList'));
 	}
 
 	protected function _view()

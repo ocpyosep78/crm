@@ -37,7 +37,7 @@
 		  {if $Permits->can($permit)}
 			<div class='tblTools' for='{$id}' axn='{$axn}'>
 			  <img src='{$SNP_IMAGES}/buttons/{$axn}.png' alt='{$axns[$axn]}'
-				title='{$axns[$axn]} {$params.name|lower}' />
+				title='{$axns[$axn]} {$snp_params.name|lower}' />
 			</div>
 		  {/if}
 		{/foreach}

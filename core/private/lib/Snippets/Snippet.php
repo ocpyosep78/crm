@@ -87,17 +87,32 @@ abstract class SNP
 	}
 
 	/**
-	 * protected SNP delegate(string $kind[, array $params])
+	 * protected mixed delegate(string $kind[, array $params])
 	 *      Just a handy shortcut to loading other snippets with same model and
-	 * same params (save for the $kind and whatever keys come with $params).
+	 * same params, save for the $kind and whatever keys come with arr $params.
 	 *
-	 * @param array $kind
+	 * @param string $kind
 	 * @param array $params
-	 * @return SNP
+	 * @return mixed
 	 */
 	protected function delegate($kind, $params=[])
 	{
 		return self::snp($kind, $this->params['model'], $params + $this->params);
+	}
+
+	/**
+	 * protected string read(string $kind)
+	 *      Get the generated HTML of another snippet (usually to be integrated
+	 * within this one). The requested snippet will receive a param 'parent',
+	 * indicating who's carrying the request.
+	 *
+	 * @param string $kind
+	 * @return mixed
+	 */
+	protected function read($kind)
+	{
+		$params = ['parent' => $this->params['kind'], 'action' => 'html'];
+		return self::delegate($kind, $params);
 	}
 
 	final protected function _do()
@@ -108,6 +123,7 @@ abstract class SNP
 		{
 			$action = $this->params['action'];
 			$kind = $this->params['kind'];
+
 			$msg = "Attempted to call action {$action} on {$kind} failed";
 			throw new Exception($msg);
 		}
@@ -158,14 +174,28 @@ abstract class SNP
 		$this->View->assign('cycleValues', '#eaeaf5,#e0e0e3,#e5e6eb');
 
 		// Internal attributes
-		$this->View->assign('params', $this->params);
+		$this->View->assign('snp_params', $this->params);
 		$this->View->assign('snp_id', $this->params['id']);
 		$this->View->assign('snp_kind', $this->params['kind']);
-		$this->View->assign('json_params', toJson($this->params, true));
+		$this->View->assign('snp_json_params', toJson($this->params, true));
 
 		// The actual Snippet template (embedded in the common frame)
 		$tpl = "/snippets/{$this->params['kind']}.tpl";
 		$this->View->assign('snp_template', SNP_TEMPLATES . $tpl);
+
+		// What if the Snippet doesn't have a template yet?
+		if (!is_file(SNP_TEMPLATES . $tpl))
+		{
+			// No need to abort if this is just a part of a larger Snippet
+			if (!empty($this->params['parent']) && !devMode())
+			{
+				return '';
+			}
+
+			$kind = ucfirst($this->params['kind']);
+			$msg = "Snippet {$kind} is missing its template";
+			throw new Exception($msg);
+		}
 
 		$html = $this->View->fetch(SNP_TEMPLATES . "/global.tpl");
 
