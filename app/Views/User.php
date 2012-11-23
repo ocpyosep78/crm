@@ -26,7 +26,6 @@ class View_User extends View
 		'position'    => 'Cargo',
 		'employeeNum' => 'Nº de Empleado',
 		'profile'     => 'Perfil',
-		'blocked'     => 'Bloqueado',
 		'last_access' => 'Último Login');
 
 	protected $__tabular_fields = array(
