@@ -239,7 +239,8 @@ abstract class View
 		}
 
 		return $this->Model
-			->select('__id__', "{$field} AS 'val'")->order('val DESC')
+			->select("{$this->Model->getPk()} AS '__id__'",
+			         "{$field} AS 'val'")->order('val DESC')
 			->find()->convert('col')->get();
 	}
 
