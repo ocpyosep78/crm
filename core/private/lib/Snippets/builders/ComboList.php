@@ -15,10 +15,7 @@ class snp_ComboList extends SNP
 	protected function assignVars()
 	{
 		$this->View->assign('list', $this->View->getHashData());
-
-
-		$selected = !empty($this->params['id']) ? $this->params['id'] : NULL;
-		$this->View->assign('selected', $selected);
+		$this->View->assign('selected', $this->params['id']);
 	}
 
 	protected function _viewItem()

@@ -9,7 +9,6 @@ class View_Product extends View
 	protected $__plural = 'Productos';
 	protected $__gender = 'm';
 
-	protected $__hash_field = 'name';
 	protected $__descr_field = 'name';  // Most descriptive field of the model
 
 	// Screen name of each field (real or aliased)

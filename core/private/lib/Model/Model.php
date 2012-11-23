@@ -167,9 +167,9 @@ abstract class Model extends DS_Model
 			}
 		}
 
-		foreach (['__id__', '__disabled__', '__description__'] as $iis)
+		foreach (['__id__', '__description__', '__disabled__'] as $iis)
 		{
-			$this->select($this->resolveAlias($iis));
+			$this->select([$this->resolveAlias($iis)]);
 		}
 
 		// Hide "deleted" fields (those somehow flagged as removed)
@@ -246,11 +246,11 @@ abstract class Model extends DS_Model
 	protected function resolveAlias($item)
 	{
 		$del_flag = $this->delete_flag_field;
-		$description = $this->View->__descr_field;
+		$description = $this->View->descr_field;
 
 		$map = ['__id__'          => $this->getPk(),
-		        '__disabled__'    => $del_flag ? $del_flag : 0,
-		        '__description__' => $description ? $description : "''"];
+		        '__description__' => $description ? $description : "''",
+		        '__disabled__'    => $del_flag ? $del_flag : 0];
 
 		return isset($map[$item]) ? "{$map[$item]} AS {$item}" : $item;
 	}

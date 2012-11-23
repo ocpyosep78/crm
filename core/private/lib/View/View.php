@@ -10,7 +10,6 @@ abstract class View
 	private $TplEngine;
 
 	protected $__descr_field;   // The most descriptive field of the model
-	protected $__hash_field;    // Field representing the model (often composed)
 
 	protected $__screen_names = array();
 	protected $__extended_fields = array();
@@ -230,18 +229,14 @@ abstract class View
 	 */
 	public function getHashData()
 	{
-		($field = $this->hash_field) || ($field = $this->descr_field);
-
-		if (empty($field))
+		if (!$this->descr_field)
 		{
 			$msg = "Cannot get hash data without a field to select";
 			throw new Exception($msg);
 		}
 
-		return $this->Model
-			->select("{$this->Model->getPk()} AS '__id__'",
-			         "{$field} AS 'val'")->order('val DESC')
-			->find()->convert('col')->get();
+		return $this->Model->order('__description__ ASC')->limit(0)
+		            ->find()->convert('col')->get();
 	}
 
 	/**

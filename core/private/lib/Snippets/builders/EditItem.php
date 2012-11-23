@@ -17,36 +17,44 @@ class snp_EditItem extends SNP
 		$id = $this->params['id'];
 		$action = $this->params['action'];
 
-		// Expected: $fields, $data, $toolTip, $hidden
+		// Expected: $fields, $fieldinfo, $data
 		extract($this->View->getItemData($id));
-
-		// On devMode(), there's an extra field __disabled__ ('deleted' flag)
-		$disabled = !empty($data['__disabled__']);
-		unset($data['__disabled__']);
 
 		// Let's put some more info on each entry
 		$rFields = array_flip($fields);
 
+		$realfields = count($data);
+
 		foreach ($data as $scrname => $value)
 		{
-			$key = $rFields[$scrname];
+			if (!preg_match('#^__.+__$#', $scrname))
+			{
+				$key = $rFields[$scrname];
 
-			$props = $fieldinfo[$key];
-
-			$myData[$key] = ['name'  => $scrname,
-			                 'value' => $value,
-			                 'props' => $fieldinfo[$key]];
+				$myData[$key] = ['name'  => $scrname,
+				                 'value' => $value,
+				                 'props' => $fieldinfo[$key]];
+			}
+			else
+			{
+				$realfields -= 1;
+			}
 		}
 
-		# Form data blocks (for presentational purposes)
-		$chunks = array_chunk($myData, ceil(count($myData)/2), true);
+		// "Pad" data if necessary to have an even amount of items
+		($realfields % 2) && array_splice($data, $realfields, 0, ['' => '']);
+
+		// Build two chunks of equal size
+		$chunks = array_chunk($myData, ceil($realfields/2), true);
+		array_splice($chunks, 2);
+
+		// Value of the most descriptive field of this model?
+		$description = empty($data['__description__'])
+			? "con id {$id}"
+			: $data['__description__'];
 
 		if ($id)
 		{
-			// Value of the most descriptive field of this model?
-			$field = $this->View->screen_names[$this->View->descr_field];
-			$description = isset($data[$field]) ? $data[$field] : "con id {$id}";
-
 			// Build Dialog title
 			$title = "Editar {$this->View->name} {$description}";
 			devMode() && ($title .= " <b>(objectID: {$id})</b>");
@@ -63,7 +71,6 @@ class snp_EditItem extends SNP
 		$this->View->assign('fieldinfo', $fieldinfo);
 
 		$this->View->assign('inDialog', ($action == 'dialog'));
-		$this->View->assign('disabled', $disabled);
 
 		// Include two sub-Snippets as well: bigTools and comboList
 		if ($action != 'dialog')

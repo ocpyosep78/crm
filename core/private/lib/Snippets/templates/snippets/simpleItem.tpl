@@ -1,5 +1,5 @@
 <div class='snp_item{if $inDialog} snp_dialog{/if}'>
-  {if $disabled}<h3>ELIMINADO</h3>{/if}
+  {if $data.__disabled__}<h3>eliminado</h3>{/if}
 
   {foreach from=$chunks item=chunk}
 	<div class='snp_chunk'>
@@ -7,7 +7,7 @@
 		{foreach from=$chunk key=field item=value}
 		  {if !preg_match('#^__.+__$#', $field)}
 			<tr>
-			  <th>{$field}</th>
+			  <th>{if $field}{$field}{/if}</th>
 			  <td><div>{$value}</div></td>
 			</tr>
 		  {/if}

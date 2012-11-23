@@ -145,56 +145,35 @@ class DS_Result
 
 			case 'array':
 			case 'named':
-				$set = [];
+			case 'col':
+				$set = $dataset = [];
 
 				while ($data=mysql_fetch_assoc($orig))
 				{
 					$set[] = $data;
 				}
 
-				$key = NULL;
+				$unnamed = (($to === 'array') && !$atts);
 
-				if ($set && (($to === 'named') || ($atts && is_string($atts))))
+				if ($set && !$unnamed)
 				{
-					if ($atts && is_string($atts))
+					$key = $this->datasetIdentifyingKey($set[0], $atts);
+
+					// For 'col' we need to get the key for main value as well
+					do
 					{
-						if (is_string($atts) && isset($set[0][$atts]))
-						{
-							$key = $atts;
-						}
+						$val = key($set[0]);
 					}
-					else
-					{
-						$sch = $this->caller->schema;
-						$tbl = $this->caller->table;
-
-						$pk = "`{$sch}`.`{$tbl}`.`{$this->caller->getPk()}`";
-
-						$columns = $this->search->select;
-
-						foreach (array_values($columns) as $pos => $col)
-						{
-							if (isset($col['fqn']) && ($col['fqn'] == $pk))
-							{
-								$key = array_keys($set[0])[$pos];
-							}
-						}
-					}
+					while (($val === $key) && (next($set[0]) !== false));
 				}
-
 				foreach ($set as $row)
 				{
-					$key ? ($dataset[$row[$key]] = $row) : ($dataset[] = $row);
-				}
-				break;
+					$k = empty($key) ? key($row) : $key;
+					$v = ($to === 'col') ? $row[$val] : $row;
 
-			case 'col':
-				$dataset = [];
-
-				while ($data=mysql_fetch_row($orig))
-				{
-					$dataset[$data[0]] = $data[(count($data) > 1) ? 1 : 0];
+					$unnamed ? ($dataset[] = $v) : ($dataset[$row[$k]] = $v);
 				}
+
 				break;
 
 			case 'row':
@@ -230,6 +209,56 @@ class DS_Result
 		}
 
 		return $this;
+	}
+
+	/**
+	 * private mixed datasetIdentifyingKey(array $row[, mixed $key = NULL])
+	 *      Given a data row and an optional pre-set $key, find out which key of
+	 * the set should be used as identifier. This will be the PK when $key is
+	 * empty, or $key if it's given and valid (will raise an exception if it is
+	 * given but invalid. Returns first key if neither is found.
+	 *
+	 * @param array $row
+	 * @param mixed $key
+	 * @return mixed
+	 */
+	private function datasetIdentifyingKey($row, $given=NULL)
+	{
+		$key = key($row);
+
+		if ($given)
+		{
+			if (is_string($given) && isset($row[$given]))
+			{
+				$key = $given;
+			}
+			else
+			{
+				$msg = 'Invalid key given for convert() (' .
+					   var_export($given, true) . ')';
+				throw new Exception($msg);
+			}
+		}
+		else
+		{
+			$sch = $this->caller->schema;
+			$tbl = $this->caller->table;
+			$pk = "`{$sch}`.`{$tbl}`.`{$this->caller->getPk()}`";
+
+			$columns = $this->search->select;
+
+			foreach ($columns as $c)
+			{
+				list($pos, $col) = [key($c), current($c)];
+
+				if (isset($col['fqn']) && ($col['fqn'] == $pk))
+				{
+					$key = array_keys($row)[$pos];
+				}
+			}
+		}
+
+		return $key;
 	}
 
 

@@ -34,6 +34,7 @@ function loggedIn()
 		if ($info && ($info['cookie'] == $cookie))
 		{
 			acceptLogin($info);
+			header('Refresh:0');
 		}
 	}
 

@@ -37,7 +37,6 @@ class snp_CommonList extends SNP
 		$this->View->assign('data', $data);
 
 		$this->View->assign('listButtons', $this->buttons);
-		$this->View->assign('toolTip', $toolTip);
 
 		// Include two sub-Snippets as well: bigTools and comboList
 		$this->View->assign('bigTools', self::read('bigTools'));

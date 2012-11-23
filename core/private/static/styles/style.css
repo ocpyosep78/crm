@@ -691,7 +691,7 @@ snippet{ display:block; position:relative; }
  * SNIPPETS : ITEMS : GENERAL
  */
 .snp_item{ clear:both; margin:10px; padding:10px; text-align:center; font-size:1.1em; }
-.snp_item .snp_chunk{ display:inline-block; vertical-align:middle; margin:0px 5px; padding:10px; border-top:solid 1px #c0c0d0; border-left:solid 1px #c0c0d0; box-shadow:#404045 4px 4px 6px; text-align:left; background:#ffffff; min-width:350px; }
+.snp_item .snp_chunk{ display:inline-block; vertical-align:middle; margin:0px 5px; padding:10px; border-top:solid 1px #c0c0d0; border-left:solid 1px #c0c0d0; box-shadow:#404045 4px 4px 6px; text-align:left; background:#ffffff; min-width:350px; border-radius:4px; }
 .snp_item.snp_dialog .snp_chunk{ border-radius:6px; }
 .snp_item table{ margin:10px 0px; }
 .snp_item th{ height:1.8em; padding:0px 5px 0px 20px; white-space:nowrap; text-indent:0px !important; text-align:right !important; color:#446 !important; font-weight:normal; }

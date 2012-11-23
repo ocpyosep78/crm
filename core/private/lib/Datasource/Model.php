@@ -66,8 +66,13 @@ abstract class DS_Model extends DS_Structure
 		{
 			if (is_numeric($k))
 			{
+				if (is_array($v))
+				{
+					$msg = "Invalid params for select() (" . var_export($v, true) . ")";
+					throw new Exception($msg);
+				}
 				// E.g. ::select('c1 as col1'), select(["`c2` as 'col2'"])
-				if (preg_match('_(.+) +as +([\'"][^\'"]+[\'"]|[^\'"]+)_i', trim($v), $matches))
+				elseif (preg_match('_(.+) +as +([\'"][^\'"]+[\'"]|[^\'"]+)_i', trim($v), $matches))
 				{
 					$field = [trim($matches[1]) => trim($matches[2], '\'" ')];
 				}

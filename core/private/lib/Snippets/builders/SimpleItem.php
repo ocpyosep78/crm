@@ -16,24 +16,29 @@ class snp_SimpleItem extends SNP
 	{
 		$id = $this->params['id'];
 
-		// Expected: $fields, $data, $toolTip, $hidden
+		// Expected: $fields, $fieldinfo, $data
 		extract($this->View->getItemData($id));
 
-		// On devMode(), there's an extra field __disabled__ ('deleted' flag)
-		$disabled = !empty($data['__disabled__']);
-		unset($data['__disabled__']);
+		// Part data into chunks, for presentational purposes
+		$realfields = count($data);
 
-		// Form data blocks (for presentational purposes)
-		$chunks = array_chunk($data, ceil(count($data)/2) - 1, true);
-		array_pop($chunks); // Last piece just has pseudo-fields (e.g. __id__)
-		// "Pad" second chunk if it's one line short
-		(count($data) % 2) && ($chunks[1][''] = '');
+		foreach ($data as $key => $item)
+		{
+			$realfields -= preg_match('#^__.+__$#', $key);
+		}
+
+		// "Pad" data if necessary to have an even amount of items
+		($realfields % 2) && array_splice($data, $realfields, 0, ['' => '']);
+
+		// Build two chunks of equal size
+		$chunks = array_chunk($data, ceil($realfields/2), true);
+		array_splice($chunks, 2);
 
 		// Value of the most descriptive field of this model?
-		$field = $this->View->screen_names[$this->View->descr_field];
-		$description = isset($data[$field]) ? $data[$field] : "con id {$id}";
+		$description = empty($data['__description__'])
+			? "con id {$id}"
+			: $data['__description__'];
 
-		// Build Dialog title
 		$title = "Detalle de {$this->View->name} {$description}";
 		devMode() && ($title .= " <b>(objectID: {$id})</b>");
 
@@ -43,7 +48,6 @@ class snp_SimpleItem extends SNP
 
 		$this->View->assign('inDialog', ($this->params['action'] == 'dialog'));
 		$this->View->assign('editable', $this->can('edit'));
-		$this->View->assign('disabled', $disabled);
 	}
 
 	protected function _dialog()
