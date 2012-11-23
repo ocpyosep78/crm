@@ -5,7 +5,7 @@
 	<div class='snp_chunk'>
 	  <table>
 		{foreach from=$chunk key=field item=value}
-		  {if $field != '__id__' && $field != '__disabled__'}
+		  {if !preg_match('#^__.+__$#', $field)}
 			<tr>
 			  <th>{$field}</th>
 			  <td><div>{$value}</div></td>

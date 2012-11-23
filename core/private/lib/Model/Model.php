@@ -146,6 +146,7 @@ abstract class Model extends DS_Model
 			if ($arg && $this->seems('select', $arg))
 			{
 				$this->select($arg);
+				$arg = NULL;
 			}
 		}
 
@@ -166,7 +167,7 @@ abstract class Model extends DS_Model
 			}
 		}
 
-		foreach (['__id__', '__disabled__'] as $iis)
+		foreach (['__id__', '__disabled__', '__description__'] as $iis)
 		{
 			$this->select($this->resolveAlias($iis));
 		}
@@ -176,7 +177,7 @@ abstract class Model extends DS_Model
 		{
 			$this->where("NOT {$this->delete_flag_field}");
 		}
-db(parent::find($where, $args[0], $args[1], $args[2]));
+
 		return parent::find($where, $args[0], $args[1], $args[2]);
 	}
 
@@ -201,7 +202,7 @@ db(parent::find($where, $args[0], $args[1], $args[2]));
 				$msg = "Delete strategy '{$strategy}' requires @delete_flag_field to be set";
 				throw new Exception($msg);
 			}
-			elseif (array_search($flagField, $this->model_cols) === false)
+			elseif (array_search($flagField, $this->model_cols, true) === false)
 			{
 				$msg = "Current @delete_flag_field {$flagField} was not found in main table";
 				throw new Exception($msg);
@@ -245,9 +246,11 @@ db(parent::find($where, $args[0], $args[1], $args[2]));
 	protected function resolveAlias($item)
 	{
 		$del_flag = $this->delete_flag_field;
+		$description = $this->View->__descr_field;
 
-		$map = ['__id__' => $this->getPk(),
-		        '__disabled__' => !$del_flag ? $del_flag : 0];
+		$map = ['__id__'          => $this->getPk(),
+		        '__disabled__'    => $del_flag ? $del_flag : 0,
+		        '__description__' => $description ? $description : "''"];
 
 		return isset($map[$item]) ? "{$map[$item]} AS {$item}" : $item;
 	}

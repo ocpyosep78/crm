@@ -32,7 +32,6 @@ class snp_CommonList extends SNP
 
 		$data = $this->Model->find($where, $fields, $order, $limit)->get();
 		$titles = array_map('addslashes', $fields);
-		$toolTip = $this->View->screen_names[$this->View->descr_field];
 
 		$this->View->assign('titles', $titles);
 		$this->View->assign('data', $data);

@@ -4,9 +4,7 @@
 <div class='commonListWrapper'>
   <div class='listTitles'>
 	{foreach from=$titles item=title}
-	  {if $title != '__id__'}
-		<div for='{$title}' title='{$title}'>{$title|truncate:20:'...'}</div>
-	  {/if}
+	  <div for='{$title}' title='{$title}'>{$title|truncate:20:'...'}</div>
 	{/foreach}
 
 	<div class='tablesearch' style='text-align:right;'><input type='text' /></div>

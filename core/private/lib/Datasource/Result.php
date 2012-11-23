@@ -170,7 +170,7 @@ class DS_Result
 
 						$pk = "`{$sch}`.`{$tbl}`.`{$this->caller->getPk()}`";
 
-						$columns = $this->caller->columns($this->search->select);
+						$columns = $this->search->select;
 
 						foreach (array_values($columns) as $pos => $col)
 						{

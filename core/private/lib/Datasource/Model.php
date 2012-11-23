@@ -51,6 +51,7 @@ abstract class DS_Model extends DS_Structure
 
 		if (!is_array($select))
 		{
+			// A literal select string, e.g. 'field1, field2, field3, ...'
 			if ((count(func_get_args()) === 1) && strpos($select, ','))
 			{
 				$select = preg_split('/ *, */', $select);
@@ -68,7 +69,7 @@ abstract class DS_Model extends DS_Structure
 				// E.g. ::select('c1 as col1'), select(["`c2` as 'col2'"])
 				if (preg_match('_(.+) +as +([\'"][^\'"]+[\'"]|[^\'"]+)_i', trim($v), $matches))
 				{
-					$cols[trim($matches[1], '\'" ')] = trim($matches[2], '\'" ');
+					$field = [trim($matches[1]) => trim($matches[2], '\'" ')];
 				}
 				// E.g. ::select('col1', 'col2', ...)
 				elseif (preg_match('_[^\w\.]_', trim($v, ' `\'"')))
@@ -79,24 +80,21 @@ abstract class DS_Model extends DS_Structure
 				}
 				else
 				{
-					$cols[$v] = trim(trim($v, '\'" `'));
+					$field = [$v => trim(trim($v, '\'" `'))];
 				}
 			}
 			// E.g. ::select('c1' => 'col1', 'c2' => 'col2', ...)
 			elseif (preg_match('_\w+_', trim($v, '\'" ')))
 			{
-				$cols[$k] = trim($v, '\'" ');
+				$field = [$k => trim($v, '\'" ')];
 			}
 			else
 			{
 				$msg = "Aliases can only contain alphanumeric characters.";
 				throw new Exception($msg);
 			}
-		}
 
-		if (isset($cols))
-		{
-			$this->search->select = array_merge($this->search->select, $cols);
+			$this->search->select[] = $field;
 		}
 
 		return $this;
@@ -376,6 +374,46 @@ abstract class DS_Model extends DS_Structure
 	}
 
 	/**
+	 * private void resolveSelect()
+	 *      Remove duplicates, interpret short-named fields, etc.
+	 *
+	 * @return void
+	 */
+	private function resolveSelect()
+	{
+		$this->dump_dups($this->search->select);
+
+		foreach ($this->search->select as $s)
+		{
+			$keys[key($s)] = key($s);
+		}
+
+		$info = $this->columns($keys);
+
+		foreach ($this->search->select as &$field)
+		{
+			list($name, $alias) = [key($field), current($field)];
+			$fqn = isset($info[$name]['fqn']) ? $info[$name]['fqn'] : $name;
+
+			$field = [$fqn => $alias];
+		}
+	}
+
+	/**
+	 * private void dump_dups(array &$x)
+	 *      Remove duplicate entries, like array_unique, but works also with
+	 * multidimensional arrays (which array_unique does not).
+	 *
+	 * @param array $x
+	 * @return void
+	 */
+	private function dump_dups(&$x)
+	{
+		$unique = array_unique(array_map('serialize', $x));
+		$x = array_map('unserialize', $unique);
+	}
+
+	/**
 	 * private string selectSql()
 	 *      From the pool of all available fields, create a valid sql for the
 	 * SELECT part, with only the ones hat were picked (all if none was picked).
@@ -384,18 +422,14 @@ abstract class DS_Model extends DS_Structure
 	 */
 	private function selectSql()
 	{
-		$resolved = $this->columns(array_keys($this->search->select));
-
-		foreach ($resolved as $k => $c)
-		{
-			$key = isset($c['fqn']) ? $c['fqn'] : $k;
-			$fields[$key] = $this->search->select[$k];
-		}
+		$this->resolveSelect();
 
 		extract($this->read());
 
-		foreach ($fields as $fqn => $alias)
+		foreach ($this->search->select as $field)
 		{
+			list($fqn, $alias) = [key($field), current($field)];
+
 			if (isset($columns['all'][$fqn]))
 			{
 				$col = $columns['all'][$fqn]['column'];

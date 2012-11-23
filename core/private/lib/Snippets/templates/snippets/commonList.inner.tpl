@@ -5,9 +5,9 @@
 {else}
 	<table class='innerList'>
 	  {foreach from=$data item=row}
-		<tr bgcolor='{cycle values=$cycleValues}' class='innerListRow highlight{if !empty($row.__disabled__)} snp_removed{/if}' for='{$row.__id__}'{if isset($row.$toolTip)} title='{$row.$toolTip}'{/if}>
+		<tr bgcolor='{cycle values=$cycleValues}' class='innerListRow highlight{if $row.__disabled__} snp_removed{/if}' for='{$row.__id__}' title='{$row.__description__}'>
 		  {foreach from=$row key=field item=value}
-			{if ($field != '__id__') && ($field != '__disabled__')}
+			{if !preg_match('#^__.+__$#', $field)}
 			  <td><div>{$value|wordwrap:30:"<br />\n"|truncate:120:"...":true}</div></td>
 			{/if}
 		  {/foreach}

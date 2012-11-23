@@ -322,9 +322,9 @@ class DS_Structure extends DS_Connect
 			$tbl = "`{$c['table']}`.`{$c['column']}`";
 
 			// Find matches with decreasing specificity
-			if (($inc = array_search($fqn, $search)) !== false
-			 || ($inc = array_search($tbl, $search)) !== false
-			 || ($inc = array_search($col, $search)) !== false)
+			if (($inc = array_search($fqn, $search, true)) !== false
+			 || ($inc = array_search($tbl, $search, true)) !== false
+			 || ($inc = array_search($col, $search, true)) !== false)
 			{
 				$search[$inc] = $c;
 			}
