@@ -104,7 +104,10 @@
 		 * different atts), we just deliver content at this first call.
 		 */
 		public function getPage($page, $atts=array(), $msg='', $type=0, $inFrame=false){
-			if( $msg ) $this->queueMsg($msg, $type);
+			if ($msg)
+			{
+				$this->queueMsg($msg, $type);
+			}
 
 			$code = $this->regNav($page, $atts);
 			$href = "?nav={$code}"
@@ -221,7 +224,10 @@
 			else $atts = $this->getSnapshot($code, 'atts');
 
 			# Make sure page exists and user can access it
-			if( !$this->checkPage($page) ) return oPermits()->noAccessMsg();
+			if (!$this->checkPage($page))
+			{
+				return oPermits()->noAccessMsg();
+			}
 
 			# Call page generation function with cached atts
 			$res = call_user_func_array("page_{$page}", $atts);
@@ -284,16 +290,10 @@
 		 * Before registering a new snapshot and redirecting the user to the new page, we
 		 * make sure the page actually exists and is accesible by the current user.
 		 */
-		private function checkPage( $page ){
-
-			if( !$page || !oPermits()->can($page) ) return false;
-
-			$mod = oPermits()->getModuleFromPage( $page );
-			$file = MODS_PATH."{$mod}/pages.php";
-			if( !is_file($file) || !require_once($file) ) return false;
-
-			return function_exists("page_{$page}");
-
+		private function checkPage($page)
+		{
+			require_once(MODS_PATH . 'pages.php');
+			return $page && oPermits()->can($page) && is_callable("page_{$page}");
 		}
 
 		/**

@@ -24,7 +24,7 @@ class snp_Tabs extends SNP
 		$id = $this->params['id'];
 		$tab = $this->params['tab'];
 
-		return say("Object with id {$id}, requires loading tab {$tab}");
+		return say('');
 	}
 
 }

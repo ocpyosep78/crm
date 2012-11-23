@@ -1192,8 +1192,8 @@ function QTip(target, options, id, attr)
 				}
 
 				// Adjust for position.fixed tooltips (and also iOS scroll bug in v3.2-4.0 & v4.3-4.3.2)
-				if((PLUGINS.iOS > 3.1 && PLUGINS.iOS < 4.1) || 
-					(PLUGINS.iOS >= 4.3 && PLUGINS.iOS < 4.33) || 
+				if((PLUGINS.iOS > 3.1 && PLUGINS.iOS < 4.1) ||
+					(PLUGINS.iOS >= 4.3 && PLUGINS.iOS < 4.33) ||
 					(!PLUGINS.iOS && fixed)
 				){
 					win = $(window);
@@ -1610,7 +1610,7 @@ PLUGINS = QTIP.plugins = {
 	/*
 	* iOS version detection
 	*/
-	iOS: parseFloat( 
+	iOS: parseFloat(
 		('' + (/CPU.*OS ([0-9_]{1,5})|(CPU like).*AppleWebKit.*Mobile/i.exec(navigator.userAgent) || [0,''])[1])
 		.replace('undefined', '3_2').replace('_', '.').replace('_', '')
 	) || FALSE,
@@ -1987,7 +1987,7 @@ $.extend(TRUE, QTIP.defaults, {
 
 // Tip coordinates calculator
 function calculateTip(corner, width, height)
-{	
+{
 	var width2 = Math.ceil(width / 2), height2 = Math.ceil(height / 2),
 
 	// Define tip coordinates in terms of height and width values
@@ -2257,11 +2257,11 @@ function Tip(qTip, command)
 		// Ensure tooltip is visible then...
 		whileVisible(function() {
 			// Attempt to detect the background colour from various elements, left-to-right precedance
-			color.fill = css(tip, bgColor) || css(colorElem, bgColor) || css(elems.content, bgColor) || 
+			color.fill = css(tip, bgColor) || css(colorElem, bgColor) || css(elems.content, bgColor) ||
 				css(tooltip, bgColor) || tip.css(bgColor);
 
 			// Attempt to detect the correct border side colour from various elements, left-to-right precedance
-			color.border = css(tip, borderSide, 'color') || css(colorElem, borderSide, 'color') || 
+			color.border = css(tip, borderSide, 'color') || css(colorElem, borderSide, 'color') ||
 				css(elems.content, borderSide, 'color') || css(tooltip, borderSide, 'color') || tooltip.css(borderSide);
 
 			// Reset background and border colours
@@ -2906,7 +2906,7 @@ PLUGINS.modal.initialize = 'render';
 
 // Setup sanitiztion rules
 PLUGINS.modal.sanitize = function(opts) {
-	if(opts.show) { 
+	if(opts.show) {
 		if(typeof opts.show.modal !== 'object') { opts.show.modal = { on: !!opts.show.modal }; }
 		else if(typeof opts.show.modal.on === 'undefined') { opts.show.modal.on = TRUE; }
 	}
@@ -3203,7 +3203,7 @@ PLUGINS.imagemap = function(api, area, corner, adjustMethod)
 };
 
 
-/* 
+/*
  * BGIFrame adaption (http://plugins.jquery.com/project/bgiframe)
  * Special thanks to Brandon Aaron
  */
@@ -3235,7 +3235,7 @@ function IE6(api)
 				elems.bgiframe.appendTo(tooltip);
 
 				// Update BGIFrame on tooltip move
-				tooltip.bind('tooltipmove'+namespace, self.adjustBGIFrame);	
+				tooltip.bind('tooltipmove'+namespace, self.adjustBGIFrame);
 			}
 
 			// redraw() container for width/height calculations

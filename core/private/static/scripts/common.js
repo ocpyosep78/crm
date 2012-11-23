@@ -173,7 +173,12 @@ function raise( msg ){
 
 // Notifications
 function say(txt, type, stay) {
+	if (!txt) {
+		return false;
+	}
+
 	var cl = ($.isNumeric(type||0) ? (type ? 'success' : 'error') : type);
+
 	$('#notifications').hide(1)._class(cl + 'Status')
 		.find('div:last').html(txt).end()
 		.show('drop', {direction:'up'}, 500, function(){
@@ -396,9 +401,6 @@ $(function(){
 				btn.parents('browse_box').find('.browse_txt').val(file);
 			});
 		}, true);
-
-		// Style tooltips
-		$(document).qtip();
 	});
 
 	// Activate Snippets

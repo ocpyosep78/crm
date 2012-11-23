@@ -73,7 +73,8 @@ abstract class DS_Model extends DS_Structure
 				// E.g. ::select('col1', 'col2', ...)
 				elseif (preg_match('_[^\w\.]_', trim($v, ' `\'"')))
 				{
-					$msg = 'Complex fields and non-alphanumeric field names are required to have an alias.';
+					$msg = "Complex fields and non-alphanumeric field names " .
+					       "are required to have an alias ({$v})";
 					throw new Exception($msg);
 				}
 				else
@@ -93,19 +94,9 @@ abstract class DS_Model extends DS_Structure
 			}
 		}
 
-		// Keywords to replace for the real field they represent
-		$keywords = ['__id__' => $this->getPk()];
-
-		// Do it this way to preserve select order
-		foreach ($cols as $col => $alias)
+		if (isset($cols))
 		{
-			isset($keywords[$col]) && ($col = $keywords[$col]);
-			$new[$col] = $alias;
-		}
-
-		if (isset($new))
-		{
-			$this->search->select = array_merge($this->search->select, $new);
+			$this->search->select = array_merge($this->search->select, $cols);
 		}
 
 		return $this;

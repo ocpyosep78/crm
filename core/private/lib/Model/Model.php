@@ -10,7 +10,7 @@ abstract class Model extends DS_Model
 
 	protected $View;
 
-	protected $__implicit_select = ['__id__', '__disabled__'];
+	protected $__implicit_select = NULL;
 	protected $__implicit_where = NULL;
 
 	/**
@@ -141,16 +141,16 @@ abstract class Model extends DS_Model
 		$where = array_shift($args);
 
 		// Add defined implicit SELECT fields
+		foreach ($args as &$arg)
+		{
+			if ($arg && $this->seems('select', $arg))
+			{
+				$this->select($arg);
+			}
+		}
+
 		if ($implicit_select = $this->implicit_select) # assignment
 		{
-			foreach ($args as &$arg)
-			{
-				if ($arg && $this->seems('select', $arg))
-				{
-					$this->select($arg);
-				}
-			}
-
 			foreach ((array)$implicit_select as $is)
 			{
 				$this->select($this->resolveAlias($is));
@@ -166,12 +166,17 @@ abstract class Model extends DS_Model
 			}
 		}
 
+		foreach (['__id__', '__disabled__'] as $iis)
+		{
+			$this->select($this->resolveAlias($iis));
+		}
+
 		// Hide "deleted" fields (those somehow flagged as removed)
 		if ($this->delete_flag_field && !devMode())
 		{
 			$this->where("NOT {$this->delete_flag_field}");
 		}
-
+db(parent::find($where, $args[0], $args[1], $args[2]));
 		return parent::find($where, $args[0], $args[1], $args[2]);
 	}
 
@@ -239,8 +244,10 @@ abstract class Model extends DS_Model
 
 	protected function resolveAlias($item)
 	{
+		$del_flag = $this->delete_flag_field;
+
 		$map = ['__id__' => $this->getPk(),
-		        '__disabled__' => $this->delete_flag_field];
+		        '__disabled__' => !$del_flag ? $del_flag : 0];
 
 		return isset($map[$item]) ? "{$map[$item]} AS {$item}" : $item;
 	}
