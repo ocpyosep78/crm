@@ -23,8 +23,11 @@ class snp_SimpleItem extends SNP
 		$disabled = !empty($data['__disabled__']);
 		unset($data['__disabled__']);
 
-		# Form data blocks (for presentational purposes)
-		$chunks = array_chunk($data, ceil(count($data)/2), true);
+		// Form data blocks (for presentational purposes)
+		$chunks = array_chunk($data, ceil(count($data)/2) - 1, true);
+		array_pop($chunks); // Last piece just has pseudo-fields (e.g. __id__)
+		// "Pad" second chunk if it's one line short
+		(count($data) % 2) && ($chunks[1][''] = '');
 
 		// Value of the most descriptive field of this model?
 		$field = $this->View->screen_names[$this->View->descr_field];
