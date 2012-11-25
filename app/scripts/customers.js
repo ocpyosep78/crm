@@ -1,24 +1,3 @@
-function ini_customers(type) {};
-
-function ini_potentialCustomers() {};
-
-function ini_customersInfo() {
-	$('#editCustomers').click(function(e){
-		getPage(e, 'editCustomers', [$(this)._for()]);
-	});
-};
-
-function ini_createCustomers(isNotNew) {
-	$('#potentialSubmit').click(function(){
-		var action = isNotNew ? 'editCustomers' : 'createCustomers';
-		xajaxSubmit($('#createCustomerForm'), action, true);
-	});
-};
-
-function ini_editCustomers() {
-	ini_createCustomers(true);
-};
-
 function ini_registerSales() {
 	var frm = $.forms('frmOldSales');
 

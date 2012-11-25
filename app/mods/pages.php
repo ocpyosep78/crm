@@ -43,12 +43,6 @@ function page_editAcc()
 
 }
 
-function page_editAccInfo($user='')
-{
-	require_once MODS_PATH . '/users/pages.php';
-	return page_editUsers(getSes('user'));
-}
-
 function page_createEvent($id=NULL, $customerid=NULL)
 {
 	return page_editEvent($id, $customerid);

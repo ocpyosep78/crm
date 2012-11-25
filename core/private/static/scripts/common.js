@@ -719,7 +719,7 @@ Frames = {
 	}
 }
 
-function closeAgendaEvent(id, msg, resched){
+function closeAgendaEvent(id, msg, resched) {
 	(typeof resched === 'undefined') && (resched = $('#showRescheduled').attr('checked'));
 
 	var action = resched ? 'cancelar' : 'cerrar';
@@ -738,7 +738,7 @@ function closeAgendaEvent(id, msg, resched){
     }
 }
 
-function initializeList(model, modifier, src){
+function initializeList(model, modifier, src) {
 	$('#listWrapper').prop('update', function(){
 		$('#listTable').trigger('modified');
 
