@@ -8,7 +8,8 @@ return array('editUsers', # home, users
 	'createNotes',
 	'deleteNotes');
 
-function editUsers($data) {
+function editUsers($data)
+{
 	# Get rid of prefixes in $atts keys (remaining keys match field names in DB)
 	oValidate()->preProcessInput($data, 'editUsers_');
 
@@ -105,8 +106,8 @@ function removeAllAlerts() {
 	return $ans->error ? say('No se pudo eliminar el evento. Inténtelo nuevamente.') : oXajaxResp();
 }
 
-function createNotes($data, $modifier) {
-
+function createNotes($data, $modifier)
+{
 	# Strip prefix from data fields
 	$pfx = 'notes_';
 	oValidate()->preProcessInput($data, $pfx);
@@ -148,8 +149,8 @@ function createNotes($data, $modifier) {
 		return addScript("showTip('{$pfx}{$valid['field']}', '{$valid['tip']}');");
 }
 
-function deleteNotes($id) {
-
+function deleteNotes($id)
+{
 	$ans = oSQL()->delete('_notes', array('id_note' => $id));
 
 	if (!$ans->error)

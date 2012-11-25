@@ -11,7 +11,7 @@
 
 /***************
 ** This class is a variables holder. All logic and methods lie on class PageCfg.
-** It is meant to supply all dynamic info for the frame template (CORE_TEMPLATES.'main.tpl')
+** It is meant to supply all dynamic info for the frame template (main.tpl)
 ***************/
 
 	class Page{

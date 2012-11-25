@@ -103,7 +103,7 @@
 			# If $HTML parameter is NULL, we automatically add the fixed page...
 			if (is_null($HTML))
 			{
-				$path = realpath(TEMPLATES_PATH."{$this->module}/{$this->page}.tpl");
+				$path = realpath(TEMPLATES_PATH . "/{$this->module}/{$this->page}.tpl");
 				$path && addAssign('main_box', 'innerHTML', oSmarty()->fetch($path));
 			}
 			# ...else if it's a string we use it as page content
@@ -114,7 +114,7 @@
 
 			# Display the tabs skeleton below fixed content
 			$content = oSmarty()->fetch(dirname(__FILE__).'/templates/tabs.tpl');
-			addElement($content, '#main_box', false);
+			jQuery('#main_box')->html($content);
 
 			# Now we're ready to load the first tab through regular method switchTab
 			return $this->switchTab($tab);
@@ -160,23 +160,23 @@
 			}
 
 			return oXajaxResp();
-
 		}
 
-		private function includeTabsScript(){
+		private function includeTabsScript()
+		{
+			$path = MODS_PATH . "/{$this->module}/tabs.php";
 
 			# Include tabs script for this module
-			if( !is_file($path=MODS_PATH.$this->module.'/tabs.php') ) return false;
-			else $tabs = require_once( $path );
+			is_file($path) && ($tabs = require_once $path);
 
 			# $tabs === 1 means file was included but returned nothing
-			return is_array($tabs) ? $tabs : false;
+			return (isset($tabs) && is_array($tabs)) ? $tabs : false;
 
 		}
 
-		private function getTpl( $tab ){
-
-			return ($path = realpath(TEMPLATES_PATH."{$this->module}/{$this->page}_{$tab}.tpl"))
+		private function getTpl($tab)
+		{
+			return ($path = realpath(TEMPLATES_PATH . "/{$this->module}/{$this->page}_{$tab}.tpl"))
 				? oSmarty()->fetch( $path )
 				: '';
 

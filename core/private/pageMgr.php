@@ -55,28 +55,28 @@ if (!isXajax())
 /**
 * Include basic module files, shared for both regular and xajax calls
 */
-require_once MODS_PATH . 'pages.php';
+require_once MODS_PATH . '/pages.php';
+require_once MODS_PATH . '/funcs.php';
 
-foreach (array('_common', $cMod) as $code)
+foreach (['_common', $cMod] as $code)
 {
-	if (is_file($modFuncs=MODS_PATH."{$code}/funcs.php") ) require_once( $modFuncs );
+	$path = MODS_PATH . "/{$code}/ajax.php";
 
 	# Include module's xajax script and register all returned functions
-	if (is_file($modAjax=MODS_PATH."{$code}/ajax.php") && is_array($fList=require_once($modAjax)))
+	$fList = is_file($path) ? (require_once $path) : array();
+
+	foreach ((array)$fList as $f)
 	{
-		foreach ($fList as $f)
-		{
-			if (function_exists($f))
-			{
-				oXajax()->registerFunction($f);
-			}
-		}
+		function_exists($f) && oXajax()->registerFunction($f);
 	}
 }
 
 
 # Xajax calls have all scripts they need at hand [back in index it calls processRequests()]
-if( isXajax() ) return;
+if (isXajax())
+{
+	return;
+}
 
 
 /**
@@ -87,13 +87,18 @@ if( isXajax() ) return;
 oPageCfg()->add_pageNav($mods[$cMod]['name'], $cMod);
 oPageCfg()->add_pageNav($pags[$cPag]['name'], $cPag);
 
-# Attempt to load related script and style if they exist
-if( is_file($modsCSS=STYLES_PATH."{$cMod}.css") )	oPageCfg()->add_styleSheets($modsCSS);
-if( is_file($modsJS=SCRIPTS_PATH."{$cMod}.js") )	oPageCfg()->add_jScripts($modsJS);
+$js = SCRIPTS_PATH . "/{$cMod}.js";
+is_file($js) && oPageCfg()->add_jScripts($js);
+
 
 # Build Menu (non-developed pages don't have an ID, and they're grayed out by PageCfg)
-foreach( $pags as $code => $page ){
-	if(!function_exists("page_{$code}") && $page['id_area'] != 'global') $code = NULL;
+foreach ($pags as $code => $page)
+{
+	if (!function_exists("page_{$code}") && $page['id_area'] != 'global')
+	{
+		$code = NULL;
+	}
+
 	oPageCfg()->add_menuItems($page['area'], $page['name'], $code);
 }
 

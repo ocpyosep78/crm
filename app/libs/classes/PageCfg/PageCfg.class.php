@@ -51,8 +51,8 @@
 		}
 
 		public function add_navButtons($code=NULL, $isPage=true, $altName=NULL){
-			if( !is_file($img=IMG_PATH."navButtons/{$code}.gif")
-			  && !is_file($img=IMG_PATH."navButtons/{$code}.png") ){
+			if( !is_file($img=IMG_PATH . "/navButtons/{$code}.gif")
+			  && !is_file($img=IMG_PATH . "/navButtons/{$code}.png") ){
 				trigger_error("No se encontró imagen del módulo {$code} ({$img}).");
 			}
 			$mods = $this->get( 'modules' );

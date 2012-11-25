@@ -1,7 +1,5 @@
 function ini_home(){
-	$('#editAccInfo').click(function(e){
-		getPage(e, 'editAccInfo');
-	});
+	return ini_agenda();
 }
 
 function ini_createEvent(id_event){		/* Agenda */

@@ -1,32 +1,22 @@
 <?php
 
-function db($var, $die=true)
-{
-	headers_sent() || header('Content-Type: application/json');
-	$var ? print_r($var) : var_dump($var);
-	echo "\n";
-	$die && die();
-}
-
-
-/***************
-** I N I T I A L   C O N F I G U R A T I O N
-***************/
-
-# Site constants definitions (cfg/config.cfg.php)
-# PHP configuration (time limit, memory limit, session_start, env & locale, timezone)
-# Developer's local config (cfg/local.cfg.php)
-# PHP common and app-specific functions (libs/common.php and FUNCTIONS_PATH)
 require_once('initialize.php');
 
 
 									try
 									{
+										if (isset($_GET['t']) && $_GET['t'] == 'item')
+										{
+											header('Content-type: text/xml');
+											echo SNP::snp('viewItem', 'Customer', ['id' => 1])->getXML();
+
+											die();
+										}
 
 										if (isset($_GET['t']) && $_GET['t'] == 'create')
 										{
 											header('Content-type: text/xml');
-											echo SNP::snp('createItem', 'Customer', ['action' => 'dialog'])->getXML();
+											echo SNP::snp('createItem', 'Customer', 'dialog')->getXML();
 
 											die();
 										}
@@ -264,7 +254,7 @@ if (oNav()->inFrame)
 # User regularly logged in
 if (loggedIn())
 {
-	require_once(CORE_PRIVATE . 'pageMgr.php');
+	require_once(CORE_PRIVATE . '/pageMgr.php');
 
 	if (isset($_GET['load']) && is_callable($_GET['load']))
 	{
@@ -274,7 +264,7 @@ if (loggedIn())
 elseif (!isXajax())
 {
 	oPageCfg()->set_appTitle('Iniciar sesion');
-	oPageCfg()->set_content(CORE_TEMPLATES . 'login.tpl');
+	oPageCfg()->set_content(CORE_TEMPLATES . '/login.tpl');
 	oNav()->processQueuedMsg();
 }
 

@@ -211,14 +211,6 @@ function xajaxSubmit(oForm, sFunc, showDisabled, atts){
 	window['xajax_'+sFunc]( xajax.getFormValues(oForm, showDisabled), atts||[] );
 }
 
-function importElement(id, hide) {
-	if (!$(id).length) {
-		$('<div />').hide()._id(id.replace(/^#/, '')).appendTo('body');
-	}
-
-	$(id).toggle(!hide).append($('#importedElement').contents());
-}
-
 // Show styled ToolTips (qTip2) near an element
 function showTip(field, tip, position, area){
 	field.qtip({content: {text: tip},
@@ -409,11 +401,20 @@ $(function(){
 
 		$('snippet[initialized!="true"]').each(function(){
 			this.attr('initialized', 'true');
-			Snippets.add(new Snippet(this));
+			var SNP = new Snippet(this);
+			// Register it (to be found by its grouped snippets, if any)
+			Snippets.add(SNP);
+			// Let the other snippets know that this one's ready
+			$('body').trigger('snp.' + SNP.getKind());
 		}, true);
 
 		showLoading(false);
 	});
+
+	$('#loggedAs span[userid]').click(function(){
+		xajax_snippet('simpleItem', 'User', {'id': $(this).attr('userid'),
+		                                     'action': 'dialog'});
+	}).css('cursor', 'pointer');
 });
 
 
@@ -481,16 +482,18 @@ var Snippets = {
  * Snippet Constructor
  */
 function Snippet(el){
-	var params = $.parseJSON(el.attr('params')),
-	    model   = params.model,
+	var I       = this,
+	    params = $.parseJSON(el.attr('params')),
 	    kind    = params.kind,
-	    groupId = params.groupId;
+	    model   = params.model,
+	    groupId = params.groupId,
+	    id      = params.id;
 
 	/**
 	 * Public methods (getters)
 	 */
 	this.getKind    = function(){ return kind;    };
-	this.getModel    = function(){ return model;    };
+	this.getModel   = function(){ return model;    };
 	this.getGroupId = function(){ return groupId; };
 
 	/**
@@ -540,7 +543,7 @@ function Snippet(el){
 				}
 			}).click(function(){
 				var btn = $(this).attr('btn');
-				$(this).hasClass('btOn') && _do(btn, {'id': btns.uid||0});
+				$(this).hasClass('btOn') && _do(btn, {'id': id||0});
 			});
 
 			this.disable = function(code) {
@@ -554,18 +557,25 @@ function Snippet(el){
 				return this;
 			};
 
+			this.get = function(code) {
+				return btns.get(code);
+			}
+
 			this.enable.ss = $();
 
 			this.id = function(uid) {
-				return uid ? (btns.uid = uid) && this : btns.uid;
+				return uid ? (id = uid) && this : id;
 			};
 
 			if (params.parent && linked(params.parent)) {
-				var enabled = linked(params.parent).bigTools;
-				enabled && this.disable().enable(enabled);
+				this.disable().enable(linked(params.parent).bigTools);
+			} else if (params.parent) {
+				$('body').on('snp.' + params.parent, function(){
+					I.disable().enable(this.bigTools);
+				});
 			}
 
-			this.id(params.id||0);
+			this.id(id||0);
 		},
 
 		commonList: function() {
@@ -583,18 +593,29 @@ function Snippet(el){
 			my('.innerListRow').click(function(){
 				my('.selectedListRow').removeClass('selectedListRow');
 				$(this).addClass('selectedListRow');
-				if (linked('bigTools')) {
-					linked('bigTools').enable().id($(this)._for());
+
+				var bigTools = linked('bigTools');
+				var disabled = $(this).hasClass('snp_disabled');
+
+				if (bigTools) {
+					bigTools.enable().id($(this)._for());
+					bigTools.get('restore').toggle(disabled);
+					bigTools.get('delete').toggle(!disabled);
 				}
 			});
 
 			my('.innerListRow').dblclick(function(){
-				_do('dialogView', {'id': $(this)._for()});
+				_do('dialog', {'id': $(this)._for()});
 			});
 
 			my('.innerListTools').on('click', '[alt]', function(){
 				var uid = $(this).parents('.innerListRow')._for();
 				_do($(this)._alt(), {'id': uid});
+			});
+
+			$('body').on('snp.bigTools', function(){
+				linked('bigTools') && linked('bigTools').get('restore').hide();
+				id && my('.innerListRow[for="' + id + '"]').click();
 			});
 
 			my('.listWrapper').trigger('fill');
@@ -604,9 +625,33 @@ function Snippet(el){
 			// TODO
 		},
 
+		createItem: function(){
+			// TODO
+		},
+
+		editItem: function() {
+			$('body').on('snp.bigTools', function(){
+				var bigTools = linked('bigTools');
+				var disabled = !!my('.snp_disabled').length;
+
+				bigTools.get('restore').toggle(disabled);
+				bigTools.get('delete').toggle(!disabled);
+			});
+		},
+
 		viewItem: function() {
-			this.bigTools = ['list', 'create', 'edit', 'delete'];
-			$('#embed_'+groupId).trigger('embed');
+			$('body').on('snp.bigTools', function(){
+				var bigTools = linked('bigTools');
+				var disabled = !!my('.snp_disabled').length;
+
+				bigTools.get('restore').toggle(disabled);
+				bigTools.get('delete').toggle(!disabled);
+			});
+		},
+
+		simpleItem: function() {
+			// Fix image height (if an image is present, that is)
+			my('.snp_item_img').height(my('.snp_chunk').height()+16).show();
 		},
 
 		tabs: function() {
@@ -621,27 +666,6 @@ function Snippet(el){
 			}}).show();
 
 			load(my('.tabs div:first'));
-		},
-
-		createItem: function(editing){
-			// BigTools buttons
-			editing && (this.bigTools = ['create', 'view']);
-			linked('bigTools').enable('list'); // Enabled either way
-
-			// Form submitting
-			my('.snippet_createForm').submit(function(){
-				var filters = $(this).serializeJSON();
-				return request(editing ? 'edit' : 'create', filters) & false;
-			});
-
-			this.tooltip = function(field, msg) {
-				var tgt = my('.snippet_createForm [name="'+field+'"]');
-				showTip(tgt, msg, 'bottom left', '.snippet_createForm');
-			};
-		},
-
-		editItem: function() {
-			this.createItem(true);
 		}
 	}
 

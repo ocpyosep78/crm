@@ -20,8 +20,8 @@
 
 
 	{* Styles *}
-	<link rel="stylesheet" type="text/css" href="{$core_scripts}jquery/themes/{$jQueryUiTheme}/jquery-ui.css" />
-	<link rel="stylesheet" type="text/css" href="{$core_scripts}jquery/jquery.qtip2.css" />
+	<link rel="stylesheet" type="text/css" href="{$core_scripts}/jquery/themes/{$jQueryUiTheme}/jquery-ui.css" />
+	<link rel="stylesheet" type="text/css" href="{$core_scripts}/jquery/jquery.qtip2.css" />
 
 	{foreach from=$Page->styleSheets item=styleSheet}
 		<link rel="stylesheet" type="text/css" href="{$styleSheet}" />
@@ -29,12 +29,12 @@
 
 
 	{* JS files *}
-	<script type="text/javascript" src="{$core_scripts}jquery/jquery-1.8.2.min.js"></script>
-	<script type="text/javascript" src="{$core_scripts}jquery/jquery-ui-1.9.1.min.js"></script>
-	<script type="text/javascript" src="{$core_scripts}jquery/jquery.qtip2.js"></script>
+	<script type="text/javascript" src="{$core_scripts}/jquery/jquery-1.8.2.min.js"></script>
+	<script type="text/javascript" src="{$core_scripts}/jquery/jquery-ui-1.9.1.min.js"></script>
+	<script type="text/javascript" src="{$core_scripts}/jquery/jquery.qtip2.js"></script>
 
 	<script type="text/javascript">window.IN_FRAME = {$IN_FRAME}</script>
-	<script type="text/javascript" src="{$core_scripts}common.js"></script>
+	<script type="text/javascript" src="{$core_scripts}/common.js"></script>
 
 	{foreach from=$Page->jScripts item=jScript}
 		<script type="text/javascript" src="{$jScript}"></script>
@@ -73,25 +73,26 @@
 		  {foreach from=$Page->navButtons key=key item=item}
 			&nbsp;&nbsp;
 			<a href='javascript:void(0);'><img class='{if $key == $Page->module}navCurrMod{else}navMod{/if}'
-				src="{$IMG_PATH}navButtons/{$key}.png" alt="{$item.name}" title="{$item.name}"
+				src="{$IMG_PATH}/navButtons/{$key}.png" alt="{$item.name}" title="{$item.name}"
 				onclick='switchNav(event, this); {if $item.action}{$item.action};{/if}' /></a>
 		  {/foreach}
 		</div>
 
-		<div id='loggedAs'>
-		  {if $USER}
-			<span>usuario:</span> {$USER}
-				&nbsp;&nbsp;|&nbsp;&nbsp;
-			<span>perfil:</span> {$PROFILE}
-		  {/if}
-		</div>
+		{if $USER}
+		  <div id='loggedAs'>
+			<span userid='{$USERID}'>usuario: <em>{$USER}</em></span>
+			&nbsp;&nbsp;|&nbsp;&nbsp;
+			<span>perfil: <em>{$PROFILE}</em></span>
+		  </div>
+		{/if}
 
 		<div id='navSteps'>
 		  {if $USER}
 			<span>ruta</span>
 			{foreach from=$Page->pageNav key=key item=action}
-			  <span>/&gt;</span>
-			  <a href='javascript:void(0)'{if $action} onclick="getPage(event, '{$action}')"{/if}>{$key}</a>
+			  <span>/&gt;
+				<em><a href='javascript:void(0)'{if $action} onclick="getPage(event, '{$action}')"{/if}>{$key}</a></em>
+			  </span>
 			{/foreach}
 		  {/if}
 		</div>
@@ -144,8 +145,6 @@
 	</div>
 
   {/if}
-
-	<div id='importedElement'></div>
 
 	{* Widgets *}
 	{if false && !$IN_FRAME && $USER && $Permits->can('chatActivity')}{include file='widgets/chat.tpl'}{/if}

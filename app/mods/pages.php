@@ -7,7 +7,7 @@
 
 function page_home()
 {
-	return SNP::snp('viewItem', 'User', ['id' => getSes('user')]);
+	return page_agenda();
 }
 
 function page_editAcc()
@@ -45,19 +45,17 @@ function page_editAcc()
 
 function page_editAccInfo($user='')
 {
-
-	require_once(MODS_PATH . 'users/pages.php');
-
+	require_once MODS_PATH . '/users/pages.php';
 	return page_editUsers(getSes('user'));
-
-
 }
 
-function page_createEvent($id=NULL, $customerid=NULL){
+function page_createEvent($id=NULL, $customerid=NULL)
+{
 	return page_editEvent($id, $customerid);
 }
 
-function page_editEvent($id=NULL, $customerid=NULL){		/* When $id is not given, it's a new event */
+function page_editEvent($id=NULL, $customerid=NULL)
+{
 	$event = $id ? oSQL()->getEventsInfo($id) : array();
 	if($id && empty($event)) return oNav()->getPage('agenda', array(), 'Evento no encontrado.');
 
@@ -280,154 +278,19 @@ function page_users()
 	return SNP::snp('commonList', 'User');
 }
 
-function page_usersInfo($acc)
+function page_usersInfo($id)
 {
-	$user = oSQL()->getUser($acc);
-
-	if (empty($user))
-	{
-		$msg = 'No se encontró el usuario buscado.';
-		return oNav()->redirectTo('users', NULL, $msg);
-	}
-
-	$id = $user['user'];
-	$self = ($id == getSes('user'));
-	$lastAccess = $self ? getSes('last_access') : $user['last_access'];
-
-	# Make sure Tabs sees this page as users/usersInfo, even if it comes from home/home
-	oTabs()->setPage( 'usersInfo' );
-
-	# Block 'Personal'
-	oFormTable()->clear();
-	oFormTable()->addRow('Nombre', "{$user['name']} {$user['lastName']}");
-	oFormTable()->addRow('Teléfono', $user['phone']);
-	oFormTable()->addRow('Dirección', $user['address']);
-	oFormTable()->addRow('Email', $user['email']);
-	oFormTable()->addRow($self ? 'Acceso Previo' : 'Último Acceso', $lastAccess
-		? date('d-m-Y H:i:s', strtotime($lastAccess))
-		: "<span id='firstLoginMsg'>".($self ? 'Primer Login' : 'Nunca')."</span>");
-	$blocks[] = oFormTable()->getTemplate();
-
-	# Block 'Interno'
-	oFormTable()->clear();
-	oFormTable()->addRow('Usuario', $user['user']);
-	oFormTable()->addRow('Perfil', $user['profile']);
-	oFormTable()->addRow('Número', $user['employeeNum']);
-	oFormTable()->addRow('Departamento', $user['department']);
-	oFormTable()->addRow('Cargo', $user['position']);
-	$blocks[] = oFormTable()->getTemplate();
-
-	oSmarty()->assign('blocks', $blocks);
-
-	oSmarty()->assign('isSelf', $self);
-	oSmarty()->assign('userID', $id);
-	oSmarty()->assign('userImg', getUserImg($id));
-	oSmarty()->assign('sid', time());
-
-	oSmarty()->assign('userData', oFormTable()->getTemplate());
-
-	if ($self && (oNav()->realPage == 'home'))
-	{
-		oSmarty()->assign('comboList', NULL);
-	}
-	else
-	{
-		oLists()->includeComboList('users', NULL, $user['user']);
-	}
-
-	return oTabs()->start();
+	return SNP::snp('viewItem', 'User', ['id' => $id]);
 }
 
-function page_editUsers($acc=NULL)
+function page_editUsers($id)
 {
-	if ($acc)   // Edit mode
-	{
-		$user = oSQL()->getUser($acc);
-		if (empty($user))
-		{
-			$msg = 'Usuario no encontrado.';
-			return oNav()->loadContent('users', array(), $msg);
-		}
-
-		if ($user['id_profile'] < getSes('id_profile'))
-		{
-			$msg = 'No es posible editar usuarios con perfil más alto que el suyo.';
-			return oNav()->goBack($msg);
-		}
-	}
-
-	# See if we're editing self account
-	$self = ($acc == getSes('user'));
-
-	# Whether we're editing (or creating a new user)
-	$edit = !empty($user);
-
-	oFormTable()->clear();
-	oFormTable()->setPrefix( $edit ? 'editUsers_' : 'createUsers_' );
-
-	# Block 'Cuenta'
-	if( !$edit || !$self ) oFormTable()->addTitle( 'Cuenta' );
-
-	if( !$edit ){
-		oFormTable()->addInput('Usuario', array('id' => 'user'));
-		oFormTable()->addInput('Contraseña', array('id' => 'pass'), 'password');
-	}
-	else{
-		oFormTable()->hiddenRow();
-		oFormTable()->addInput('', array('id' => 'user'), 'hidden');
-	}
-
-	if( !$self ){
-		oFormTable()->addCombo('Perfil',
-			array('' => '(seleccionar)') + oLists()->profiles( getSes('id_profile') ),
-			array('id' => 'id_profile') );
-	}
-
-	# Block 'Personal'
-	oFormTable()->addTitle( 'Personal' );
-	oFormTable()->addInput('Nombre', array('id' => 'name'));
-	oFormTable()->addInput('Apellidos', array('id' => 'lastName'));
-	oFormTable()->addInput('Teléfono', array('id' => 'phone'));
-	oFormTable()->addInput('Dirección', array('id' => 'address'));
-	oFormTable()->addInput('Email', array('id' => 'email'));
-
-	oFormTable()->addTitle( '' );
-	oFormTable()->addFile('Imagen', array('id' => 'img'), $edit ? 'editUsers' : 'createUsers');
-	oFormTable()->addTitle( '' );
-
-	# Block 'Interno'
-	oFormTable()->addTitle( 'Interno' );
-	oFormTable()->addInput('Número', array('id' => 'employeeNum'));
-	oFormTable()->addCombo('Departamento',
-		array('' => '(seleccionar)') + oLists()->departments(),
-		array('id' => 'id_department'));
-	oFormTable()->addInput('Cargo', array('id' => 'position'));
-
-	if ($edit)
-	{
-		# Block 'Información'
-		oFormTable()->addTitle( 'Información' );
-		oFormTable()->addRow('Último Acceso', $user['last_access']
-			? date('d-m-Y H:i:s', strtotime($user['last_access']))
-			: "<span style='color:#600000; font-size:12px; font-weight:bold'>Nunca</span>"
-		);
-
-		oFormTable()->fillValues($user);
-	}
-
-	# Submit line
-	oFormTable()->addSubmit($edit ? 'Guardar Cambios' : 'Guardar');
-
-	# Add commands and actions to Xajax response object
-	oNav()->updateContent(oFormTable()->getTemplate(), true);
-
-	$prefix = $edit ? 'editUsers' : 'createUsers';
-	return addScript("\$('#{$prefix}_user').focus();");
+	return SNP::snp('editItem', 'User', ['id' => $id]);
 }
 
 function page_createUsers()
 {
-	return page_editUsers();
+	return SNP::snp('createItem', 'User');
 }
 
 
@@ -467,226 +330,6 @@ function page_createServices() { return SNP::snp('createItem', 'Product.Service'
 function page_createOthers()   { return SNP::snp('createItem', 'Product.Others'); }
 
 function page_productsInfo($id){ return SNP::snp('viewItem', 'Product', ['id' => $id]); }
-
-
-/**********************************/
-/* E S T I M A T E S
-/**********************************/
-
-function page_createEstimates_pack($modifier=NULL)
-{
-	oSmarty()->assign('customers', oLists()->customers());
-}
-
-function page_estimates_pack($modifier=NULL)
-{
-	return oSnippet()->addSnippet('commonList', 'estimates_pack', $modifier);
-}
-
-function page_editEstimates_pack($id)
-{
-	page_estimates_packInfo($id);
-
-	return oNav()->updateContent('estimates/estimates_packInfo.tpl');
-}
-
-function page_estimates_packInfo($id)
-{
-	oSmarty()->assign('id', $id);
-	oNav()->setJSParams($id);
-
-	$info = oSnippet()->getSnippet('viewItem', 'estimates_pack', array('filters' => $id));
-	oSmarty()->assign('info', $info);
-
-	$data = oSQL()->getEstimatesDetail(array('pack' => array($id, '=')));
-
-	foreach($data as &$v)
-	{
-		$v['utility'] = (float)$v['cost']
-			? number_format(($v['price']/$v['cost'])*100-100, 2)
-			: '--';
-	}
-
-	oSmarty()->assign('data', $data);
-
-	$left = oSQL()->estimatesLeft($id);
-	oSmarty()->assign('left', $left);
-}
-
-/**
- * Serves to generate both estimates and quotes lists
- * depending on $modifier
- */
-function page_estimates($modifier='estimates')
-{
-	return oLists()->printList('estimates', $modifier);
-}
-
-function page_quotes()
-{
-	return oLists()->printList('estimates', 'quotes');
-}
-
-/**
- * Reused for createEstimates and editEstimates pages depending on $id parameter
- */
-function page_createEstimates($estimate=NULL, $packID=NULL)
-{
-	if (empty($estimate))
-	{
-		$estimate = NULL;
-	}
-
-	$id = empty($estimate['id_estimate']) ? NULL : $estimate['id_estimate'];
-	$isNew = !$id;
-	$isQuote = isQuote($estimate);
-	$modifier = $isQuote ? 'quotes' : 'estimates';
-
-	oSmarty()->assign('edit', true);
-	oSmarty()->assign('isNew', $isNew);
-	oSmarty()->assign('isQuote', $isQuote);
-
-	$type = $isNew ? 'Nombre' : ($isQuote ? 'Cotización' : 'Presupuesto');
-	oSmarty()->assign('estimateType', $type);
-
-	$common = estimates_commonData();
-	oSmarty()->assign('data', $common);
-
-	$system = 1;
-	if ($estimate)
-	{
-		foreach ($estimate['detail'] as $row)
-		{
-			if ($row['id_system'])
-			{
-				$system = $row['id_system'];
-			}
-		}
-	}
-
-	oSmarty()->assign('system', $estimate['id_system'] ? $estimate['id_system'] : $system);
-
-	# Get pack info if estimate belongs to a pack
-	if (empty($packID) && $estimate['pack'])
-	{
-		$packID = $estimate['pack'];
-	}
-
-	if ($packID)
-	{
-		$selected = array('id_estimates_pack' => $packID);
-		$pack = oSQL()->doselect('estimates_pack', '*', $selected, 'row');
-	}
-
-	oSmarty()->assign('pack', $packID ? $pack : NULL);
-
-	# Initialize estimate keys in case it comes empty
-	if (empty($estimate))
-	{
-		$estimate = ['orderNumber' => '',
-		             'id_estimate' => '',
-		             'estimate'    => '',
-		             'id_customer' => '',
-		             'customer'    => '',
-		             'id_system'   => '',
-		             'system'      => '',
-		             'pack'        => $packID ? $packID : ''];
-
-		oSmarty()->assign('estimate', $estimate);
-	}
-
-	addScript('window.taxes = 0.22;');
-
-	# Include a comboList
-	oLists()->includeComboList('estimates', $modifier, $id);
-
-	/* Return content so it doesn't fail when called as page_editEstimates */
-	return oNav()->updateContent( 'estimates/createEstimates.tpl' );
-}
-
-function page_estimatesInfo($id, $estimate=NULL)
-{
-	/* Estimate could come prefetched (in the case of on-the-fly estimatesInfo) */
-	if (!$estimate)
-	{
-		$estimate = getEstimate($id);
-	}
-
-	# Get pack info if estimate belongs to a pack
-	$packID = $estimate['pack'];
-	$pack = $packID ? oSQL()->doselect('estimates_pack', '*', array('id_estimates_pack' => $packID), 'row') : NULL;
-	oSmarty()->assign('pack', $pack);
-
-	$isQuote = isQuote( $estimate );
-	$modifier = $isQuote ? 'quotes' : 'estimates';
-
-	oSmarty()->assign('miniHeader', false);
-	oSmarty()->assign('edit', false);
-	oSmarty()->assign('isQuote', $isQuote);
-	oSmarty()->assign('estimateType', $isQuote ? 'Cotización' : 'Presupuesto');
-
-	if( empty($estimate) ){		/* Something's wrong, this array should have all info */
-		return oNav()->getPage('estimates', array(), 'No se encontró el presupuesto pedido.');
-	}
-
-	$system = 1;
-	$taxes = 0.22;
-	$totals = array('subTotal' => 0, 'tax' => 0, 'total' => 0);
-	foreach( $estimate['detail'] as $key => $item ){
-		$estimate['detail'][$key]['subTotal'] = $item['amount'] * $item['price'];
-		$estimate['detail'][$key]['tax'] = $item['amount'] * $item['price'] * $taxes;
-		$estimate['detail'][$key]['total'] = $item['amount'] * $item['price'] * ($taxes + 1);
-		$totals['subTotal'] += $estimate['detail'][$key]['subTotal'];
-		$totals['tax'] += $estimate['detail'][$key]['tax'];
-		$totals['total'] += $estimate['detail'][$key]['total'];
-		if( $item['id_system'] ) $system = $item['id_system'];
-	}
-	oSmarty()->assign('system', $estimate['id_system'] ? $estimate['id_system'] : $system);
-
-	oSmarty()->assign('data', $estimate);
-	oSmarty()->assign('totals', $totals);
-
-	# Include a comboList
-	oLists()->includeComboList('estimates', $modifier, $id);
-}
-
-function page_editEstimates($id)
-{
-	$estimate = getEstimate($id);
-
-	if( empty($estimate) )		/* Something's wrong, this array should have all info */
-	{
-		return oNav()->getPage('estimates', array(), 'No se encontró el presupuesto pedido.');
-	}
-
-	addScript('window.estimateDetail = '.toJson($estimate['detail']));
-
-	return page_createEstimates( $estimate );
-}
-
-/**
- * Design work plan for installing presented estimate
- */
-function page_installPlan($id, $product=NULL)
-{
-	oNav()->setJSParams($id);
-
-	oSmarty()->assign('id_estimate', $id);
-	oSmarty()->assign('data', oSQL()->getInstallPlan($id));
-	oSmarty()->assign('products', oSQL()->estimateProducts($id));
-	oSmarty()->assign('product', $product);
-}
-
-/**
- * Creates a PDF for an estimate (shown within frame)
- * First screen shows the already configured final steps, and those pending,
- * including workPlan (installPlan), pictures, OS (if server included), etc.
- */
-function page_estimatePDF($id, $straightToPDF=false)
-{
-	oNav()->setJSParams( $id );
-	oSmarty()->assign('path', EXPORT_PDF_PATH."estimate.php?id={$id}");
-}
 
 
 /**********************************/

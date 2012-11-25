@@ -17,12 +17,12 @@ defined('SNIPPETS_SQL_ENGINE')
 
 
 # Internal library structure
-define('SNIPPET_LIB_PATH', dirname(__FILE__).'/lib');
-define('SNIPPET_HANDLERS_PATH', dirname(__FILE__).'/handlers');
+define('SNIPPET_LIB_PATH', dirname(__FILE__) . '/lib');
+define('SNIPPET_HANDLERS_PATH', dirname(__FILE__) . '/handlers');
 
 # Paths for output (templates, images, styles, jScripts)
-define('SNIPPET_TEMPLATES', SNIPPET_PATH.'/templates');
-define('SNIPPET_IMAGES', CORE_IMAGES.'snippet');
+define('SNIPPET_TEMPLATES', dirname(__FILE__) . '/templates');
+define('SNIPPET_IMAGES', CORE_IMAGES . '/snippet');
 
 
 # Path to snippet definition files

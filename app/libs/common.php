@@ -1,33 +1,16 @@
 <?php
 
-function loadFunctionFiles()
+function db($var, $die=true)
 {
-	# Auto load functions scripts (all files within FUNCTIONS_PATH directory)
-	if (is_dir(FUNCTIONS_PATH) && ($dir=dir(FUNCTIONS_PATH)))
-	{
-		while ($name=$dir->read())
-		{
-			if ($name == '.' || $name == '..')
-			{
-				continue;
-			}
+	headers_sent() || header('Content-Type: application/json');
+	$var ? print_r($var) : var_dump($var);
+	echo "\n";
+	$die && die();
+}
 
-			$file = FUNCTIONS_PATH . $name;
-
-			if (is_dir($file))
-			{
-				continue;
-			}
-
-			require_once ($functions[]=$file);
-		}
-
-		$dir->close();
-	}
-	else
-	{
-		trigger_error('Error al iniciar aplicación.', E_USER_ERROR);
-	}
+function devMode()
+{
+	return (defined('DEVMODE') && DEVMODE) || (getSes('id_profile') == 1);
 }
 
 function loadMainSmartyVars()
@@ -46,6 +29,7 @@ function loadMainSmartyVars()
 	oSmarty()->assign('NOW', date('Y-m-d H:i:s'));
 	oSmarty()->assign('URL', "http://{$_SERVER['HTTP_HOST']}{$_SERVER['PHP_SELF']}");
 	oSmarty()->assign('USER', getSes('user'));
+	oSmarty()->assign('USERID', getSes('user'));
 	oSmarty()->assign('USER_NAME', getSes('name').' '.getSes('lastName'));
 	oSmarty()->assign('VERSION', VERSION);
 	oSmarty()->assign('VERSION_STATUS', VERSION_STATUS);
@@ -66,14 +50,14 @@ function getSkinName()
 
 function getSkinTpl()
 {
-	$skin = realpath( CORE_SKINS.getSkinName().'.tpl' );
+	$skin = realpath(CORE_SKINS . '/' . getSkinName() . '.tpl');
 	return $skin ? $skin : MAIN_TPL_PATH;
 }
 
 function getSkinCss()
 {
 	$skin = getSkinName();
-	return $skin && is_file($css=CORE_SKINS."{$skin}.css") ? $css : CORE_STYLES.'style.css';
+	return $skin && is_file($css=CORE_SKINS . "/{$skin}.css") ? $css : CORE_STYLES . '/style.css';
 }
 
 function safeDiv($a , $b , $def=0)
@@ -218,4 +202,376 @@ function toJS($mixed)
 	{
 		return $mixed;
 	}
+}
+
+function uploadAnalylize($file, $noFileReturn=NULL)
+{
+	switch ($file['error'])
+	{
+		case UPLOAD_ERR_OK:				# No error
+			return true;
+
+		case UPLOAD_ERR_INI_SIZE:
+		case UPLOAD_ERR_FORM_SIZE:
+			return 'El tamaño del archivo supera el máximo permitido.';
+
+		case UPLOAD_ERR_PARTIAL:
+			return 'No se pudo comprobar la integridad del archivo. Inténtelo nuevamente.';
+
+		case UPLOAD_ERR_NO_FILE:
+			return $noFileReturn;
+
+		case UPLOAD_ERR_NO_TMP_DIR:
+		case UPLOAD_ERR_CANT_WRITE:
+		case UPLOAD_ERR_EXTENSION:
+			return 'La configuración de la aplicación o del servidor no permite subir este archivo.';
+	}
+
+	return 'Ocurrió un error desconocido al intentar subir el archivo.';
+}
+
+
+function saveLog($typeID, $objectID, $extra='', $user=NULL)
+{
+	// Decide whether to save logs in `logs` table or `history` table
+	$data = ['logType'  => $typeID,
+	         'objectID' => $objectID,
+	         'user'     => $user ? $user : getSes('user'),
+	         'extra'    => $extra];
+
+	$ans = oSQL()->registerLog('logs_history', $data);
+
+	if (!$ans->error && isAlertActive($typeID))
+	{
+		$ans = oSQL()->registerLog('logs', $data);
+	}
+
+	if (!$ans->error)
+	{
+		return true;
+	}
+
+	// Error handling, with file logging when DB logging fails
+	$msg = date('Y-m-d H:i:s').
+		" - Error logging '{$typeID}' event, for object '{$objectID}': ".
+		" ({$ans->error}) {$ans->errDesc}\r\n";
+
+	$fh = @fopen(LOGS_PATH . '/loggingErrors.txt', 'a');
+	$fh && (@fwrite($fh, $msg) & @fclose($fh));
+}
+
+function isAlertActive($id)
+{
+	return oSQL()->isAlertActive($id);
+}
+
+function sync($user='', $params=array())
+{
+	// Register session timeouts and reload page to force login
+	$user && checkIfUserStillOnline($user);
+
+	/* Check alerts */
+	seekAlerts($params);
+
+	/* Check reminders */
+	seekReminders($params);
+
+	return oXajaxResp();
+}
+
+function checkIfUserStillOnline($user)
+{
+	if ($user == getSes('user'))
+	{
+		return;
+	}
+
+	if (oSQL()->getLastLoginLogout($user) == 'in')
+	{
+		saveLog('loginLogout', 'out', 'timed out', $user);
+	}
+
+	oNav()->queueMsg('Sesión cerrada correctamente.', 'warning');
+
+	return addScript("location.href = 'index.php';");
+}
+
+function seekAlerts($params=array())
+{
+	$user = getSes('user');
+
+	if ($user)
+	{
+		$logsFrom = empty($params['from']) ? 0 : $params['from'];
+
+		oAlerts()->browseLogs($logsFrom);
+		oAlerts()->processLogs();
+
+		$alerts = oAlerts()->getAlerts();
+
+		addScript('sync.process('.toJson($alerts).');');
+	}
+}
+
+function seekReminders($params=array())
+{
+	$reminders = oSQL()->seekReminders();
+
+	# See which reminders are still active
+	$keep = array();
+
+	foreach ($reminders as $reminder)
+	{
+		# List reminders
+		if (!isset($keep[$reminder['id_reminder']]))
+		{
+			$keep[$reminder['id_reminder']] = false;
+		}
+
+		# Inactive reminders (event already happened) are ignored and removed
+		$active = strtotime($reminder['ini']) > time();
+
+		# Add reminder (open event for current user)
+		if ($active && $reminder['user'] == getSes('user'))
+		{
+			addScript("xajax_eventInfo('{$reminder['id_event']}');");
+			$filter = array('id_reminder_user' => $reminder['id_reminder_user']);
+			oSQL()->delete('reminders_users', $filter);
+		}
+		# Do not delete reminders that have other users left to remind
+		elseif ($active)
+		{
+			$keep[$reminder['id_reminder']] = true;
+		}
+	}
+
+	# Remove reminders that do not have more users to remind
+	foreach ($keep as $id => $keepReminder)
+	{
+		if (!$keepReminder)
+		{
+			oSQL()->delete('reminders', array('id_reminder' => $id));
+		}
+	}
+}
+
+
+/******************************************************************************/
+/********************************** A J A X ***********************************/
+/******************************************************************************/
+
+function say($msg, $type='', $img='')
+{
+	$msg = preg_replace('_\s+_', ' ', addslashes($msg));
+	return addScript("say(\"{$msg}\", \"{$type}\", \"{$img}\");");
+}
+
+function showMenu()
+{
+	return isXajax()
+		? addScriptCall('showMenu')
+		: oPageCfg()->add_jsOnLoad("showMenu();");
+}
+
+function hideMenu()
+{
+	return isXajax()
+		? addScriptCall('hideMenu')
+		: oPageCfg()->add_jsOnLoad("hideMenu();");
+}
+
+function isXajax($call=NULL)
+{
+	$ajax = empty($_POST['xajax']) ? false : $_POST['xajax'];
+	return $ajax ? ($ajax == $call) : false;
+}
+
+function addAlert($x)
+{
+	oXajaxResp()->addAlert($x);
+	return oXajaxResp();
+}
+
+function addAssign($x, $y, $z)
+{
+	oXajaxResp()->addAssign($x, $y, $z);
+	return oXajaxResp();
+}
+
+function addAppend($x, $y, $z)
+{
+	oXajaxResp()->addAppend($x, $y, $z);
+	return oXajaxResp();
+}
+
+function addScript($x)
+{
+	oXajaxResp()->addScript($x);
+	return oXajaxResp();
+}
+
+function addScriptCall()
+{
+	call_user_func_array(array(oXajaxResp(), 'addScriptCall'), func_get_args());
+	return oXajaxResp();
+}
+
+/**
+ * dialog(string $content, string $element[, array $atts])
+ *      Creates $element if it doesn't exist, make $content it's inner html, and
+ * call jQuery-ui dialog() on it.
+ *
+ * @param string $content       Template name (ending on '.tpl') or html
+ * @param string $element       Valid jQuery selector for an id (including #)
+ * @param array $atts           List of properties to be passed to dialog()
+ * @return XajaxResponse
+ */
+function dialog($content, $selector, $atts=array())
+{
+	// Send the html (fetch the template first, if $content's a template name)
+	$isTemplate = preg_match('_\.tpl$_', $content);
+	$html = $isTemplate ? oSmarty()->fetch($content) : $content;
+
+	jQuery($selector)->touch()->html($html)->dialog($atts);
+
+	return addScript("$('.ui-widget-overlay').click(function(){
+		\$('{$selector}').dialog('close');
+	});");
+}
+
+
+/******************************************************************************/
+/******************************** J Q U E R Y *********************************/
+/******************************************************************************/
+
+class jQuery
+{
+
+	private $selector;
+
+	public function __construct($selector)
+	{
+		$this->selector = $selector;
+	}
+
+	public function __call($method, $arguments)
+	{
+		$selector = toJS($this->selector);
+		$args = join(', ', array_map('toJS', $arguments));
+
+		addScript("\$({$selector}).{$method}({$args})");
+
+		return $this;
+	}
+
+}
+
+
+function jQuery($selector='undefined')
+{
+	return new jQuery($selector);
+}
+
+
+/******************************************************************************/
+/******************************* S E S S I O N ********************************/
+/******************************************************************************/
+
+function regSes($key, $val)
+{
+	$_SESSION['crm'][$key] = $val;
+}
+
+function getSes($key)
+{
+	return isset($_SESSION['crm'][$key]) ? $_SESSION['crm'][$key] : NULL;
+}
+
+function clearSes($key)
+{
+	regSes($key, NULL);
+}
+
+function loggedIn()
+{
+	if (!getSes('user') && !empty($_COOKIE['crm_user']))
+	{
+		$user = substr($_COOKIE['crm_user'], 0, -40);
+		$cookie = substr($_COOKIE['crm_user'], -40);
+
+		$info = oSQL()->getUser($user);
+
+		if ($info && ($info['cookie'] == $cookie))
+		{
+			acceptLogin($info);
+			header('Refresh:0');
+		}
+	}
+
+	return getSes('user');
+}
+
+function login($user, $pass)
+{
+	$info = oSQL()->getUser($user);
+
+	if ($info && ($info['pass'] == md5($pass)))
+	{
+		if ($info['blocked'] == '1')
+		{
+			return say('Este usuario se encuentra actualmente bloqueado. '.
+				'Por más información consulte a un administrador.');
+		}
+
+		acceptLogin($info);
+		saveLog('loginLogout', 'in');
+
+		return addScript('setTimeout(function(){location.href = location.href;}, 20);');
+	}
+	else
+	{
+		return say('Nombre de usuario o contraseña incorrectos.');
+	}
+}
+
+function acceptLogin($info)
+{
+	$ip = $_SERVER['REMOTE_ADDR'];
+
+	if (in_array(substr($ip, 0, 3), array('192', '127')))
+	{
+		$cookie = sha1(time() . rand(1, time()));
+		$expire = time() + (3600*24*30);
+		setcookie('crm_user', "{$info['user']}{$cookie}", $expire);
+	}
+	elseif ($fp=fopen(LOGS_PATH . '/remoteAccess.txt', 'a'))
+	{
+		$date = date('d/m/Y H:i:s');
+		$log = "{$date}: Usuario {$info['user']} loguea desde {$ip}\n\n";
+		fwrite($fp, $log) & fclose($fp);
+	}
+
+	oSQL()->saveLastAccess($info['user'], isset($cookie) ? $cookie : NULL);
+
+	foreach ($info as $key => $val)
+	{
+		regSes($key, $val);
+	}
+
+	oSQL()->removeOldAlerts(getSes('user'), MAX_ALERTS_PER_USER);
+	oSQL()->removeOldLogs(MAX_LOGS_GLOBAL);
+}
+
+function logout($msg='Su sesión fue cerrada correctamente.', $type=1)
+{
+	saveLog('loginLogout', 'out');
+
+	setcookie('crm_user', '');
+	$_SESSION['crm'] = array();
+
+	oNav()->clear();
+	oPermits()->clear();
+	oNav()->queueMsg($msg, $type);
+
+	return addScript("location.href = 'index.php';");
 }

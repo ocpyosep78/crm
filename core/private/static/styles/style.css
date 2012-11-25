@@ -61,10 +61,10 @@ body{
 	margin:0px 20px;
 }
 #loggedAs > span, #navSteps > span{
-	color:#999999;
+	color:#fff;
 }
-#navSteps a{
-	color:#ffffff;
+#loggedAs em, #navSteps em, #navSteps a{
+	color:#ff0;
 	text-decoration:none;
 }
 #main_navBar a{
@@ -363,8 +363,6 @@ hr.sep{
 	z-index:1350;
 }
 
-#importedElement{ display:none; }
-
 .input, .inputFocused{
 	color:#100000;
 	border-bottom:solid 1px #800000;
@@ -534,7 +532,6 @@ table.simpleList .simpleListCreate{ white-space:nowrap; }
 .comboListOld{ max-width:500px; }
 .infoPageTools{ float:right; display:block; padding:8px 12px; }
 .infoPageTools:hover{ background:#cccce0; }
-#firstLoginMsg{ color:#600000; font-size:12px; font-weight:bold; }
 
 /**
  * FORMTABLE
@@ -653,12 +650,11 @@ img.agenda_eventType{ float:right; height:30px; width:30px; margin:3px; }
  * SNIPPETS
  */
 
-snippet{ display:block; position:relative; }
+snippet{ display:block; position:relative; margin:10px 0px; }
 
 .snp_loading{ clear:both; text-align:center; }
-.snp_removed{ color:#600; font-weight:normal; }
+.snp_disabled{ color:#f00 !important; font-weight:normal; }
 
-.snp_commonList{ position:relative; clear:both; margin:20px 0px 30px 0px; }
 .snp_comboList{ float:right; margin:20px 10px; z-index:195; }
 .snp_bigTools{ float:left; z-index:200; }
 .snp_viewItem{ position:relative; clear:both; }
@@ -675,11 +671,11 @@ snippet{ display:block; position:relative; }
 .snp_tabs .snp_loading{ margin-top:20px; }
 .snp_tabs .snp_loading img{ height:19px; width: 220px; }
 
+
 /**
  * SNIPPETS : BIGTOOLS
  */
 .bigTools{ position:relative; left:5px; text-align:center; }
-.snp_commonList .bigTools{ margin-bottom:30px; }
 .bigTools > div{ display:inline-block; margin:0px 3px; padding:2px; border:solid 1px #808080; border-bottom-width:2px; border-right-width:2px; border-radius:6px; background-image:linear-gradient(#c0d0df, #7090af); box-shadow:#000000 2px 2px 6px; opacity:0.3; }
 .bigTools > div.btOn{ opacity:1; cursor:pointer; }
 .bigTools > div.btOn:hover{ margin:0px 4px; padding-bottom:3px; background:#7090af; border-width:1px; border-color:#303030; box-shadow:#000000 1px 1px 4px;   }
@@ -691,34 +687,27 @@ snippet{ display:block; position:relative; }
  * SNIPPETS : ITEMS : GENERAL
  */
 .snp_item{ clear:both; margin:10px; padding:10px; text-align:center; font-size:1.1em; }
-.snp_item .snp_chunk{ display:inline-block; vertical-align:middle; margin:0px 5px; padding:10px; border-top:solid 1px #c0c0d0; border-left:solid 1px #c0c0d0; box-shadow:#404045 4px 4px 6px; text-align:left; background:#ffffff; min-width:350px; border-radius:4px; }
+.snp_item .snp_chunk{ display:inline-block; margin:0px 5px; padding:8px 10px; border-top:solid 1px #888; border-left:solid 1px #888; box-shadow:#404045 4px 4px 6px; text-align:left; background:#fff; border-radius:4px; }
 .snp_item.snp_dialog .snp_chunk{ border-radius:6px; }
-.snp_item table{ margin:10px 0px; }
-.snp_item th{ height:1.8em; padding:0px 5px 0px 20px; white-space:nowrap; text-indent:0px !important; text-align:right !important; color:#446 !important; font-weight:normal; }
-.snp_item td{ min-width:100px; text-indent:0px !important; color:#001 !important; padding-right:20px; }
-
-.snp_viewItem .snp_item:not(.snp_dialog){ display:inline-block; margin:40px 0px; background:#fff; border:solid 1px #d0d0e0; border-radius:8px; box-shadow:#909095 3px 3px 5px; }
-.snp_tabs{ clear:both; }
-.snp_tabs .tabs{ clear:both; }
-
-/**
- * SNIPPETS : CREATE / EDIT
- */
-.snp_editItem table div{ display:block; }
-.snp_editItem table textarea{ height:100px; width:350px; }
-.snp_editItem table input[type=text]{ width:220px; }
-.snp_editItem table input.calendar{ width:80px; }
-.snp_editItem table input.time_input{ width:60px; }
-.snp_editItem table select{ width:225px; }
+.snp_item table{ margin:8px 0px; }
+.snp_item th{ height:1.8em; padding:0px 5px 0px 20px; white-space:nowrap; text-indent:0px !important; text-align:right !important; color:#446; font-weight:normal; }
+.snp_item td{ height:26px; min-width:100px; text-indent:0px !important; color:#000; padding:0px; padding-right:20px; }
+.snp_item_img{ display:none; margin:0px 6px; border-top:solid 1px #ccd; border-left:solid 1px #ccd; box-shadow:#404045 4px 4px 6px; border-radius:6px; }
+.snp_item.snp_disabled th, .snp_item.snp_disabled td{ color:#f00; }
+.snp_item .emptyFieldMsg{ position:static; }
 
 /**
  * SNIPPETS : VIEW
  */
-.viewItemEditable{ position:relative; overflow:visible; cursor:pointer; }
-.viewItemEditable > input{ position:absolute; top:-2px; left:-2px; right:38px; height:100%; }
-.viewItemEditable > img{ float:right; height:16px; width:16px; margin-left:3px; cursor:pointer; }
-.snippetFrozenField{ color:#606050; }		/* Non-edittable field */
-.emptyFieldMsg{ position:static; }
+ .snp_item:not(.snp_dialog){ display:inline-block; margin:40px 0px; background:#fff; border:solid 1px #d0d0e0; border-radius:8px; box-shadow:#909095 3px 3px 5px; }
+
+
+/**
+ * SNIPPETS : CREATE / EDIT
+ */
+.snp_editItem table input[type=text]{ width:220px; }
+.snp_editItem table select{ width:225px; }
+.snp_editItem table textarea{ height:100px; width:350px; }
 
 /**
  * SNIPPETS : LISTS : GENERAL
@@ -756,10 +745,228 @@ snippet{ display:block; position:relative; }
 .comboList{ max-width:99%; }
 .infoPageTools{ float:right; display:block; padding:8px 12px; }
 .infoPageTools:hover{ background:#cccce0; }
-#firstLoginMsg{ color:#600000; font-size:12px; font-weight:bold; }
 
 /**
  * SNIPPETS : COMMON LIST
  */
 .commonListWrapper{ clear:both; padding:5px; margin:0px 5px 15px 5px; z-index:190; }
 .commonListInnerWrapper{ width:auto; min-height:100px; padding:2px; margin:0px; border:solid 1px #503030; background:#eaeaf5; border-radius:8px; box-shadow:#000000 2px 2px 5px; }
+
+/**
+ * SNIPPETS : TABS
+ */
+.snp_tabs{ clear:both; }
+.snp_tabs .tabs{ clear:both; }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * HOME
+ */
+.activity_item{
+	margin:10px;
+	padding:2px 4px;
+	opacity:0.8;
+}
+.activity_item:hover{
+	background:#cccce5;
+	opacity:1;
+}
+.activity_item > DIV{
+	margin:3px 0px;
+}
+.closeActivityEntry{
+	float:right;
+	color:#000090;
+	cursor:pointer;
+}
+
+.logs > DIV{
+	margin:15px;
+	padding:10px;
+	border:solid 2px #000030;
+	border-radius:6px;
+	box-shadow:#a0a0a0 6px 6px 6px;
+	background:#e8e8ec;
+	opacity:0.7;
+}
+
+.logs > DIV H3{
+	padding:8px 10px;
+	background:#e0e0e0;
+	color:#000050;
+	opacity:0.7;
+}
+
+
+/**
+ * USER
+ */
+.userPic{
+	display:inline-block;
+	height:135px;
+	margin-right:15px;
+	box-shadow:#a0a0a0 6px 6px 6px;
+}
+
+
+/**
+ * CUSTOMERS
+ */
+#registerSaleTitle{
+	width:400px;
+	margin-bottom:30px;
+	text-align:center;
+}
+#tblNewSales th{
+	padding:5px;
+	text-align:right;
+}
+#btn_Submit{
+	margin-top:20px;
+}
+#saleTypeOptions{
+	float:left;
+	padding:3px;
+	border:solid 1px #600000;
+}
+
+#customerContacts{
+    margin:10px 0px -30px 0px;
+    border:none;
+    background:none;
+    box-shadow:0 0 0;
+    border-radius:0px;
+    text-align:center;
+}
+#customerContacts h3{
+    margin:0px 0px 5px 30px;
+    text-align:left;
+}
+#customerContacts .data.simpleList{
+    display:inline-block;
+    width:95%;
+    margin:0px !important;
+    overflow:hidden;
+}
+
+
+/**
+ * PRODUCTS
+ */
+fieldset{ background:#fff; }
+.productInfoPreview{ float:right; margin-bottom:-40px; right:50px; }
+.productInfoPreview img{ float:right; height:180px; }
+.productDescription{ width:320px; white-space:normal; }
+
+
+
+
+
+
+/**
+ * TECHNICAL
+ */
+/* Form, general */
+#technicalForm{ display:none; position:relative; float:left; height:540px; width:630px; margin-right:20px; border:solid 1px #000030; overflow:hidden; }
+#technicalFormBg{ position:absolute; height:650px; width:700px; margin-left:-70px; }
+#technicalForm > DIV, #technicalForm > INPUT{ position:absolute; }
+#technicalForm > INPUT{ display:block; }
+#technicalForm INPUT[type=text]{ margin:1px; padding:3px; border:none; background:none; color:#000000; font-weight:bold; }
+
+/* Save button */
+#tch_buttons{ display:none; position:absolute; top:-2px; left:215px; height:66px; width:100px; }
+#tch_buttons > DIV{ margin:5px 0px; padding:5px; border:2px solid #fff0d0; background:#204590; text-align:center; font-weight:bold; color:#fff0d0; cursor:pointer;}
+#tch_buttons > DIV:hover{ background:#002570; color:#ffffff; }
+
+
+/* FORM FIELDS: upperheader */
+#tch_number{ position:absolute; top:6px; right:15px; height:12px; width:70px; font-size:14px; background:#f0f0f0 !important; border:2px solid #ffcc66 !important; }
+#tch_extra{ position:absolute; top:30px; right:15px; text-align:right; }
+#tch_date{ position:absolute; top:83px; right:8px; }
+#tch_date INPUT{ height:22px; width:27px; margin:0px; text-align:center; }
+#tch_extra SELECT{ margin-top:0px; width:117px; background:#f0f0f0 !important; border:2px solid #ffcc66 !important; }
+
+/* FORM FIELDS: lowerheader */
+#tch_info_left{ top:123px; left:96px; }
+#tch_info_left INPUT{ display:block; height:20px; width:276px; margin-bottom:0px !important; }
+#tch_custNumber{ top:128px; right:18px; height:12px; width:110px; background:#ffffff !important; color:#600000; font-weight:bold; font-size:14px; }
+.tch_options{ right:33px; }
+.tch_options INPUT{ margin:0px; padding:0px !important; margin-left:41px !important; }
+#tch_subscribed{ top:157px; }
+#tch_warranty{ top:183px; }
+#tch_installDate{ top:205px; right:14px; }
+#tch_installDate INPUT{ height:14px; width:32px; margin-left:5px; text-align:center; }
+
+/* Search buttons (images) */
+.tchSearch{ position:absolute; left:360px; height:16px; width:16px; cursor:pointer; }
+#tchSrch_custNumber{ top:130px; left:592px; }
+#tchSrch_customer{ top:128px; }
+#tchSrch_contact{ top:155px; }
+#tchSrch_address{ top:182px; }
+#tchSrch_phone{ top:208px; }
+
+/* FORM FIELDS: body, first part */
+#tch_body{ top:239px; left:200px; padding:0px; }
+#tch_body > DIV{ height:27px; width:421px; margin-bottom:6px; overflow:visible; }
+#tch_body INPUT{ position:relative; top:0px; }
+#tch_body INPUT[type=text]{ height:19px; width:414px; }
+#tch_body SELECT{ height:25px; width:420px; background:#fffeda; }
+#tch_body #tch_complete{ float:left; }
+#tch_body #tch_complete [type=radio]{ margin:6px 12px 0px 24px; }
+#tch_body #tch_ifIncomplete{ left:55px; top:-1px; width:257px; }
+
+/* FORM FIELDS: body, second part */
+#tch_body .tch_costLine > INPUT{ top:2px; height:13px; }
+#tch_body #tch_cost{ left:24px; width:63px; }
+#tch_body #tch_costDollars{ left:66px; width:58px; }
+#tch_body #tch_invoice{ left:193px; width:72px; }
+#tch_body #tch_order{ top:1px; left:140px; height:13px; width:102px; }
+#tch_body #tch_pendingEstimate{ top:3px; left:278px; }
+#tch_body .tch_quality > INPUT{ margin:6px 31px 0px 65px; }
+#tch_body .tch_quality > #tch_quality_good{ margin-left:53px; }
+#tch_body .tch_quality > #tch_quality_excellent{ margin-left:71px; margin-right:-10px !important; }
+
+/* FORM FIELDS: start/end */
+#tch_period{ position:absolute; top:508px; left:362px; }
+#tch_period > INPUT{ height:14px; width:28px; margin-right:3px; }
+#tch_period > INPUT#tch_startsH, #tch_period > INPUT#tch_endsH{ text-align:right; }
+#tch_period > INPUT#tch_endsH{ margin-left:101px; }
+
+/* Search save button */
+#tch_submit{ display:none; position:absolute; top:610px; left:80px; width:200px; padding:5px 10px; }
+
+/* Suggested results (outside the form itself) */
+#tch_suggest_title{ font-size:12px; color:#000000; font-style:italic; text-align:right; }
+#tch_suggest{ height:507px; margin-top:20px; background:#f8f8ff; overflow:auto; }
+#tch_suggest > DIV{ clear:both; float:right; text-align:right; white-space:nowrap; margin-right:5px; }
+.tch_s_customer{ margin-top:10px; color:#300000; font-size:12px; font-weight:bold; }
+.tch_s_row{ color:#000090; font-size:11px; font-weight:normal; cursor:pointer; }
+.tch_s_noInvoice{ color: #0080a0; margin:3px 5px; font-size:13px; }
+.tch_s_contact{ color:#808080; font-size:12px; }
+.tch_s_row EM{ color:#606060; font-style:italic; white-space:normal; line-height:1.5em; }
+.tch_s_row STRONG{ color:#900000; font-weight:bold; }
+.tch_s_empty{ margin-top:200px; color:#600000; font-size:14px; font-weight:bold; text-align:center; }
+.tch_s_notice{ margin:20px 0px; color:#664; font-size:14px; font-weight:bold; text-align:center; }
+
+/**
+ * TECHVISITSINFO (technical visits/services)
+ */
+#techVisitsInfo{ float:left; height:545px; width:620px; padding:2px; border:solid 2px #000060; background:#ffffff; text-align:center; overflow:hidden; }
+#techVisitsInfo > .button{ margin:8px; }
+#techVisitsPDF{ height:580px; width:100%; border:none; }
+#techVisitsPrintPDF{ height:0px; width:0px; }
+#adminTechNotes{ float:left; padding-left:30px; }
+#adminTechNotes > h3{ text-align:right; }
+#adminTechNotes TEXTAREA{ height:200px; width:300px; padding:5px 10px; }
