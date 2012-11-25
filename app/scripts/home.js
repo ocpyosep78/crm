@@ -126,7 +126,7 @@ function ini_agenda(){
 				break;
 			case 'cancel': closeAgendaEvent(eventID, '', true);
 				break;
-			case 'close' : closeAgendaEvent(eventID);
+			case 'close' : closeAgendaEvent(eventID, '', false);
 				break;
 			default:
 				return;
