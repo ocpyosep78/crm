@@ -351,7 +351,7 @@ class SQL extends Connection
 		foreach ($events as &$event)
 		{
 			$event['canEdit'] = canEditEvent(getSes('user'), $event['creator'], $event['target']);
-			$event['creatorimg'] = getUserImg($event['creator']);
+			$event['creatorimg'] = View::get('User')->image($event['creator']);
 		}
 
 		return (!is_null($id) ? array_shift($events) : $events);

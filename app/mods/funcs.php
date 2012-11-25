@@ -30,12 +30,6 @@ function canEditEvent($user, $creator, $target=NULL)
 	return false;
 }
 
-function getUserImg($userid)
-{
-	$path = "app/images/users/{$userid}.png";
-	return is_file($path) ? $path : 'app/images/users/__missing__.png';
-}
-
 
 /******************************************************************************/
 /********************************** H O M E ***********************************/

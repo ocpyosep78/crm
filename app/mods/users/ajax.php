@@ -15,16 +15,21 @@
 		'deleteUsers',
 	);
 
-	function createUsers( $atts ){
+	function createUsers($atts)
+	{
 		# Get rid of prefixes in $atts keys (remaining keys match field names in DB)
 		oValidate()->preProcessInput($atts, 'createUsers_');
-		if( ($valid=oValidate()->test($atts, 'users')) === true ){
+
+		if (($valid=oValidate()->test($atts, 'users')) === true)
+		{
             $img = $atts['img'];
             unset($atts['img']);
 
             # Check image type and other attributes, if a new image was submitted
-            if( $img['size'] ){
-                if( ($imgAtts=getimagesize($img['tmp_name'])) === false || $imgAtts[2] != IMAGETYPE_PNG ){
+            if ($img['size'])
+			{
+                if (($imgAtts=getimagesize($img['tmp_name'])) === false || $imgAtts[2] != IMAGETYPE_PNG )
+				{
                     $msg = "El archivo subido debe ser una imagen con formato/extensión \'png\'.";
                     return FileForm::addResponse("say('{$msg}');");
                 }
@@ -34,19 +39,28 @@
 			oSQL()->setErrMsg("El usuario {$atts['user']} fue creado con éxito");
 			oSQL()->setErrMsg("Ocurrió un error al intentar crear el usuario {$atts['user']}");
 			oSQL()->setDuplMsg("El usuario {$atts['user']} ya existe. Debe elegir otro nombre de usuario");
+
 			# Request query and catch answer, then return it to the user
 			$ans = oSQL()->createUsers( $atts );
 
-			if( $ans->error ){
+			if ($ans->error)
+			{
 				return FileForm::addResponse("say('{$ans->msg}');");
-			}else{
+			}
+			else
+			{
                 # Save picture if one was chosen and data was stored
-                if( $img['size'] ){
-                    if( !move_uploaded_file($img['tmp_name'], "app/images/users/{$atts['user']}.png") ){
+                if ($img['size'])
+				{
+					$imgpath = View::get('User')->image($atts['user']);
+
+                    if (!move_uploaded_file($img['tmp_name'], $imgpath))
+					{
                         $msg = "No se pudo guardar la imagen. Inténtelo nuevamente.";
                         return FileForm::addResponse("say('{$msg}');");
                     }
                 }
+
 				return FileForm::addResponse("getPage('usersInfo', ['{$atts['user']}'], '{$ans->msg}', 1);");
 			}
 		}

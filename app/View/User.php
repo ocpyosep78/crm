@@ -34,7 +34,7 @@ class View_User extends View
 
 	protected function img_path()
 	{
-		return IMG_PATH . '/users/%id%.png';
+		return IMG_PATH . '/User/%id%.png';
 	}
 
 }

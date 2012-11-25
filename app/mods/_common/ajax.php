@@ -1,12 +1,12 @@
 <?php
 
-return array('editUsers', # home, users
-	'eventInfo', # agenda
-	'closeAgendaEvent',
-	'removeAlert',
-	'removeAllAlerts',
-	'createNotes',
-	'deleteNotes');
+return ['editUsers', # home, users
+        'eventInfo', # agenda
+        'closeAgendaEvent',
+        'removeAlert',
+        'removeAllAlerts',
+        'createNotes',
+        'deleteNotes'];
 
 function editUsers($data)
 {
@@ -35,24 +35,33 @@ function editUsers($data)
 		$page = $isHome ? 'home' : 'usersInfo';
 
 		# Save picture if one was chosen and data was stored
-		if ($img['size']) {
-			if (!move_uploaded_file($img['tmp_name'], "app/images/users/{$data['user']}.png")) {
+		if ($img['size'])
+		{
+			$imgpath = View::get('User')->image($atts['user']);
+
+			if (!move_uploaded_file($img['tmp_name'], $imgpath))
+			{
 				$msg = "No se pudo guardar la imagen. Inténtelo nuevamente.";
 				return FileForm::addResponse("say('{$msg}');");
 			}
 		}
 
-		if ($isHome) {
-			foreach (oSQL()->getUser(getSes('user')) as $k => $v) {
+		if ($isHome)
+		{
+			foreach (oSQL()->getUser(getSes('user')) as $k => $v)
+			{
 				regSes($k, $v);
 			}
 		}
 
 		$atts = $isHome ? '[]' : "['{$data['user']}']";
+
 		return FileForm::addResponse("getPage('{$page}', {$atts}, '{$ans->msg}', '{$ans->successCode}');");
 	}
 	else
+	{
 		return FileForm::addResponse("showTip('editUsers_{$valid['field']}', '{$valid['tip']}');");
+	}
 }
 
 function eventInfo($id)

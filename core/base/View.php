@@ -230,7 +230,7 @@ abstract class View
 		            ->find()->convert('col')->get();
 	}
 
-	public function getItemImage($id)
+	public function image($id)
 	{
 		if (!$this->img_path)
 		{

@@ -46,7 +46,7 @@ class snp_SimpleItem extends SNP
 		$this->assign('data', $data);
 		$this->assign('chunks', $chunks);
 
-		$this->assign('image', $this->View->getItemImage($id));
+		$this->assign('image', $this->View->image($id));
 		$this->assign('img_height', (count($chunks[0]) * 24 + 34) . 'px');
 
 		$this->assign('inDialog', ($this->params['action'] == 'dialog'));
