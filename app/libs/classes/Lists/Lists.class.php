@@ -167,7 +167,7 @@
 		 */
 		public function listHTML($code=NULL, $modifier=NULL)
 		{
-			$this->code = is_null($code) ? oNav()->getCurrentPage() : $code;
+			$this->code = is_null($code) ? oNav()->currentPage() : $code;
 			$this->modifier = $modifier;
 
 			# Import static data
@@ -208,7 +208,7 @@
 
 		public function simpleListHTML($code=NULL, $modifier=NULL, $filters=array()){
 
-			$this->code = is_null($code) ? oNav()->getCurrentPage() : $code;
+			$this->code = is_null($code) ? oNav()->currentPage() : $code;
 			$this->modifier = $modifier;
 
 			# Import static data
@@ -248,7 +248,7 @@
 			oSmarty()->assign('tools', $static['tools']);
 			oSmarty()->assign('axns', $static['actions']);
 			oSmarty()->assign('data', isset($data) ? $data : array());
-			oSmarty()->assign('canCreate', oPermits()->can('create'.ucfirst($this->code)) );
+			oSmarty()->assign('canCreate', Access::can('create' . ucfirst($this->code)) );
 
 			oSmarty()->assign('comboOptions', $this->comboOptions);
 
@@ -265,7 +265,7 @@
 
 		public function comboListHTML($code, $modifier=NULL, $selected=''){
 
-			if( is_null($code) ) $code = oNav()->getCurrentPage();
+			if( is_null($code) ) $code = oNav()->currentPage();
 			$params = array('name' => NULL);
 
 			# Attempt to load config file

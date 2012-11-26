@@ -32,13 +32,13 @@
   <th>&nbsp;</th>
 
   {foreach from=$data key=id item=item}													{* ITEMS *}
-	<tr for='{$id}' bgcolor='{cycle values=$cycleValues}' class='listRows highlight'>
+	<tr for='{$id}' bgcolor='{cycle values='#eaeaf5,#e5e5e5,#e5e5e5'}' class='listRows highlight'>
 	  {foreach from=$fields key=field item=x}                                           {* CELLS *}
 		<td>{$item.$field}</td>
 	  {/foreach}
 	  <td class='simpleListTools'>
 		{foreach from=$item.tools key=axn item=permit}									{* TOOLS *}
-		  {if $Permits->can($permit)}
+		  {if Access::can($permit)}
 			<div class='tblTools' for='{$id}' axn='{$axn}'>
 			  <img src='app/images/buttons/{$axn}.png' alt='{$axns[$axn]}'
 				title='{$axns[$axn]} {$params.name|lower}' />

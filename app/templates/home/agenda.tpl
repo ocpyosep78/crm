@@ -1,9 +1,9 @@
 {include file='widgets/agenda_filters.tpl'}
 
-{if $Permits->can('createEvent')}
+{if Access::can('createEvent')}
 	<input type='button' class='button' id='btn_createEvent' value='Nuevo Evento' />
 {/if}
-  
+
 <div id='agenda_move'>
   <img title='semana anterior' src='app/images/buttons/go-left.gif' alt='' for='{$prev}' />
   <input type='text' id='agenda_calendar' class='calendar' style='display:none;' value='{$data[0].date|date_locale:'Y/m/d'}' />

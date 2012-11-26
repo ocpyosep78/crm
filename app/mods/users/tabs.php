@@ -57,7 +57,7 @@ function tab_usersInfo_customers( $id ){
 function tab_usersInfo_notes( $id ){
 
 	$permits = array('createNotes', 'editNotes', 'deleteNotes');
-	oPermits()->setAlias('home', $permits);
+	Access::setAlias('home', $permits);
 
 	oLists()->hasCombo( false );
 	oLists()->setSource("notesByUser");

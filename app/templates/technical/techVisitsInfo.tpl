@@ -6,7 +6,7 @@
 	<iframe name='fra_techVisitsPrintPDF' id='techVisitsPrintPDF'></iframe>
 </div>
 
-{if $Permits->can('adminTechNotes')}
+{if Access::can('adminTechNotes')}
     <div id='adminTechNotes'>
         <h3>Notas de Admin</h3>
         <textarea>{$adminNote}</textarea>

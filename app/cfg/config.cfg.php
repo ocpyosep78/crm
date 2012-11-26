@@ -17,16 +17,14 @@ define('THIRD_PARTY_PATH', 'app/libs/third-party');
 define('EXPORT_PDF_PATH', 'app/export/pdf');
 define('IMG_PATH', 'app/images');
 define('MODS_PATH', 'app/mods');
-define('SCRIPTS_PATH', 'app/scripts');
 define('TEMPLATES_PATH', 'app/templates');
 
 
 # Application
 define('APP_NAME', 'CRM / INGETEC', true);
-define('DEFAULT_PAGE', 'home');
-define('DEFAULT_PAGE_ATTS', serialize(array()));
 define('SKIN', NULL, true);
 
+define('UI_THEME', empty($_GET['theme']) ? 'redmond' : $_GET['theme']);
 
 # Chat
 define('CHAT_ADDRESS', 'http://www.ingetec.com.uy/chat', true);

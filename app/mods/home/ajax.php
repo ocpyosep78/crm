@@ -70,10 +70,7 @@ function editAcc($atts)
 
 function createEvent($data, $id=NULL)
 {
-	if ($id && !oPermits()->can('editEvent'))
-	{
-		return oPermits()->noAccessMsg();
-	}
+	$id && Access::enforce('editEvent');
 
 	if (!empty($data['remind']) && !empty($data['reminder']))
 	{
@@ -94,17 +91,15 @@ function createEvent($data, $id=NULL)
 
 		if (empty($event))
 		{
-			return say('No se encontró el evento pedido. Inténtelo nuevamente.');
+			$msg = 'No se encontró el evento pedido. Inténtelo nuevamente.';
+			throw new PublicException($msg);
 		}
 
-		if (!canEditEvent(getSes('user'), $event['creator']))
-		{
-			return oPermits()->noAccessMsg();
-		}
+		Access::enforce(canEditEvent(getSes('user'), $event['creator']));
 	}
-	elseif (!oPermits()->can('createEvent'))
+	else
 	{
-		return oPermits()->noAccessMsg();
+		Access::enforce('createEvent');
 	}
 
 	# Pre-format input for comparing timestamps and querying

@@ -4,7 +4,7 @@
 	$filter = array('id_customer' => $id);
 
 	# If user has permit usersNotes, show all. Else, show only his own notes on the customer.
-	$notesFilter = oPermits()->can('usersNotes')
+	$notesFilter = Access::can('usersNotes')
 		? $filter
 		: $filter + array('user' => getSes('user'));
 
@@ -39,7 +39,7 @@
 	function tab_customersInfo_notes( $id ){
 
 		$permits = array('createNotes', 'editNotes', 'deleteNotes');
-		oPermits()->setAlias('customersInfo', $permits);
+		Access::setAlias('customersInfo', $permits);
 
 		oLists()->hasCombo( false );
 		oLists()->setSource("notesByCustomer");
@@ -48,7 +48,7 @@
 		oLists()->addComboOptions('visibility', array(getSes('user') => 'Privado', '' => 'Público'));
 
 		# For users with permit usersNotes, we show all notes. For others, just their own.
-		$ids = oPermits()->can('usersNotes') ? $id : "{$id}__|__".getSes('user');
+		$ids = Access::can('usersNotes') ? $id : "{$id}__|__".getSes('user');
 		oTabs()->useThisHTML( oLists()->simpleListHTML('notes', $ids) );
 
 		return "initializeSimpleList();";
@@ -62,7 +62,7 @@
 	function tab_customersInfo_contacts( $id ){
 
 		$permits = array('createCustomerContacts', 'editCustomerContacts', 'deleteCustomerContacts');
-		oPermits()->setAlias('editCustomers', $permits);
+		Access::setAlias('editCustomers', $permits);
 		oTabs()->useThisHTML( oLists()->simpleListHTML('customerContacts', $id) );
 
 		return "initializeSimpleList('customerContacts', '{$id}');";
@@ -72,7 +72,7 @@
 	function tab_customersInfo_owners( $id ){
 
 		$permits = array('createCustomerOwners', 'editCustomerOwners', 'deleteCustomerOwners');
-		oPermits()->setAlias('editCustomers', $permits);
+		Access::setAlias('editCustomers', $permits);
 		oTabs()->useThisHTML( oLists()->simpleListHTML('customerOwners', $id) );
 
 		return "initializeSimpleList('customerOwners', '{$id}');";

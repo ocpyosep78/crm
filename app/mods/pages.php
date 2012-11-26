@@ -119,55 +119,66 @@ function page_editEvent($id=NULL, $customerid=NULL)
 
 }
 
-function page_agenda($firstDay=NULL, $currFilters=array(), $showRescheduled=1){
-
+function page_agenda($firstDay=NULL, $currFilters=array(), $showRescheduled=1)
+{
 	/* If $firstDay is not given, start on last Monday */
-	if( empty($firstDay) ) $firstDay = 0;
+	empty($firstDay) && ($firstDay = 0);
+
 	/* If it's given as a date, or the format is wrong */
-	elseif( !is_numeric($firstDay) ){
-		if( $dayNum=strtotime($firstDay) ) $firstDay = ceil(($dayNum - time()) / 86400);
-		else $firstDay = 0;
+	if (!is_numeric($firstDay))
+	{
+		$dayNum = strtotime($firstDay);
+		$firstDay = $dayNum ? ceil(($dayNum - time()) / 86400) : 0;
 	}
 
-	while( date('N', strtotime("{$firstDay} days")) != 1 ) $firstDay--;
+	while (date('N', strtotime("{$firstDay} days")) != 1)
+	{
+		$firstDay--;
+	}
 
-	foreach( $currFilters as $key => $filter ) if( empty($filter) ) unset($currFilters[$key]);
-	$range = array(
-		'ini'	=> date('Y-m-d', strtotime("{$firstDay} days")),
-		'end'	=> date('Y-m-d', strtotime(($firstDay + AGENDA_DAYS_TO_SHOW - 1).' days')),
-	);
+	foreach ($currFilters as $key => $filter)
+	{
+		if (empty($filter))
+		{
+			unset($currFilters[$key]);
+		}
+	}
+
+	$range = ['ini' => date('Y-m-d', strtotime("{$firstDay} days")),
+	          'end' => date('Y-m-d', strtotime(($firstDay + AGENDA_DAYS_TO_SHOW - 1).' days'))];
 	$events = oSQL()->getEventsInfo(NULL, $range, $currFilters);
 
 	# Get data and pre-process it
 	$data = array();
-	for( $i=$firstDay ; $i < ($firstDay + AGENDA_DAYS_TO_SHOW) ; $i++ ){
+
+	for ($i=$firstDay; $i < ($firstDay + AGENDA_DAYS_TO_SHOW); $i++)
+	{
 		$date = date('Y-m-d', strtotime("{$i} days"));
-		$data[$date] = array(
-			'date'		=> $date,
-			'isToday'	=> !$i,
-			'events'	=> array(),
-		);
+		$data[$date] = ['date'    => $date,
+		                'isToday' => !$i,
+		                'events'  => []];
 	}
 
 	# Fill days with events
-	foreach( $events as $event ){
+	foreach ($events as $event)
+	{
 		$event['event'] = nl2br($event['event']);
 		$data[substr($event['ini'], 0, 10)]['events'][] = $event;
 	}
-	foreach( $data as $day ) $days[] = $day;
+
+	foreach ($data as $day)
+	{
+		$days[] = $day;
+	}
 
 	# Filters
-	$filters = array();
-	$filters['type'] = array(
-		'name'		=> 'Tipo',
-		'options'	=> array(''=>'(todos)') + oLists()->agendaEventTypes(),
-	);
-	$filters['user'] = array(
-		'name'		=> 'Usuario',
-		'options'	=> array(''=>'(todos)') + oLists()->users(),
-	);
+	$filters = [
+		'type' => ['name'    => 'Tipo',
+		           'options' => ['' => '(todos)'] + oLists()->agendaEventTypes()],
+		'user' => ['name'    => 'Usuario',
+		           'options' => [''=>'(todos)'] + oLists()->users()]
+	];
 
-	# Smarty assignments
 	oSmarty()->assign('data', isset($days) ? $days : array());
 	oSmarty()->assign('currFilters', $currFilters + array_fill_keys(array_keys($filters), ''));
 	oSmarty()->assign('prev', $firstDay - 7);
@@ -178,11 +189,14 @@ function page_agenda($firstDay=NULL, $currFilters=array(), $showRescheduled=1){
 
 	# Hide menu for widescreen presentation
 	hideMenu();
-
 }
 
-function page_agendaDay($date=NULL, $currFilters=array(), $showRescheduled=1){
-	if( !$date ) return oNav()->abortFrame('Faltan datos requeridos para cargar la página.');
+function page_agendaDay($date=NULL, $currFilters=array(), $showRescheduled=1)
+{
+	if (!$date)
+	{
+		return oNav()->abortFrame('Faltan datos requeridos para cargar la página.');
+	}
 
 	# Basic structure of data to be passed
 	$day['date'] = $date;
@@ -212,7 +226,6 @@ function page_agendaDay($date=NULL, $currFilters=array(), $showRescheduled=1){
 	oSmarty()->assign('filters', $filters);
 	oSmarty()->assign('currFilters', $currFilters + array_fill_keys(array_keys($filters), ''));
 	oSmarty()->assign('showRescheduled', $showRescheduled);
-
 }
 
 function page_calls(){
@@ -269,22 +282,22 @@ function page_logs(){
 
 function page_users()
 {
-	return SNP::snp('commonList', 'User');
+	return Snippet::snp('commonList', 'User');
 }
 
 function page_usersInfo($id)
 {
-	return SNP::snp('viewItem', 'User', ['id' => $id]);
+	return Snippet::snp('viewItem', 'User', ['id' => $id]);
 }
 
 function page_editUsers($id)
 {
-	return SNP::snp('editItem', 'User', ['id' => $id]);
+	return Snippet::snp('editItem', 'User', ['id' => $id]);
 }
 
 function page_createUsers()
 {
-	return SNP::snp('createItem', 'User');
+	return Snippet::snp('createItem', 'User');
 }
 
 
@@ -292,10 +305,10 @@ function page_createUsers()
 /* C U S T O M E R S
 /**********************************/
 
-function page_customers()         { return SNP::snp('commonList', 'Customer.Confirmed'); }
-function page_potentialCustomers(){ return SNP::snp('commonList', 'Customer.Potential'); }
-function page_createCustomers()   { return SNP::snp('createItem', 'Customer'); }
-function page_customersInfo($id)  { return SNP::snp('simpleItem', 'Customer', ['id' => $id]); }
+function page_customers()         { return Snippet::snp('commonList', 'Customer.Confirmed'); }
+function page_potentialCustomers(){ return Snippet::snp('commonList', 'Customer.Potential'); }
+function page_createCustomers()   { return Snippet::snp('createItem', 'Customer'); }
+function page_customersInfo($id)  { return Snippet::snp('simpleItem', 'Customer', ['id' => $id]); }
 
 function page_sales()
 {
@@ -313,17 +326,17 @@ function page_registerSales()
 /* P R O D U C T S
 /**********************************/
 
-function page_products() { return SNP::snp('commonList', 'Product.Regular'); }
-function page_materials(){ return SNP::snp('commonList', 'Product.Material'); }
-function page_services() { return SNP::snp('commonList', 'Product.Service'); }
-function page_others()   { return SNP::snp('commonList', 'Product.Others'); }
+function page_products() { return Snippet::snp('commonList', 'Product.Regular'); }
+function page_materials(){ return Snippet::snp('commonList', 'Product.Material'); }
+function page_services() { return Snippet::snp('commonList', 'Product.Service'); }
+function page_others()   { return Snippet::snp('commonList', 'Product.Others'); }
 
-function page_createProducts() { return SNP::snp('createItem', 'Product.Regular'); }
-function page_createMaterials(){ return SNP::snp('createItem', 'Product.Material'); }
-function page_createServices() { return SNP::snp('createItem', 'Product.Service'); }
-function page_createOthers()   { return SNP::snp('createItem', 'Product.Others'); }
+function page_createProducts() { return Snippet::snp('createItem', 'Product.Regular'); }
+function page_createMaterials(){ return Snippet::snp('createItem', 'Product.Material'); }
+function page_createServices() { return Snippet::snp('createItem', 'Product.Service'); }
+function page_createOthers()   { return Snippet::snp('createItem', 'Product.Others'); }
 
-function page_productsInfo($id){ return SNP::snp('viewItem', 'Product', ['id' => $id]); }
+function page_productsInfo($id){ return Snippet::snp('viewItem', 'Product', ['id' => $id]); }
 
 
 /**********************************/
@@ -413,58 +426,10 @@ function page_techVisitsInfo($id)
 {
 	oSmarty()->assign('id', $id);
 
-	if (oPermits()->can('adminTechNotes'))
+	if (Access::can('adminTechNotes'))
 	{
 		oSmarty()->assign('adminNote', oSql()->getAdminTechNote($id));
 	}
 
 	oNav()->setJSParams($id);
-}
-
-
-/**********************************/
-/* C O N F I G
-/**********************************/
-
-/**
- * Config has only one real enter point, page config. There it shows several
- * tabs (depending on user's permissions), and each links to a subpage. Each
- * of these subpages has an associated permission named subCfg{$code}. Default
- * config subpage's code is 'Main' (it has no permission associated, other than
- * 'config', as it's the main page of the module).
- *
- * This function discriminates calls to each tab, and delivers responsability
- * to functions subCfg{$code}, located in mods/config/funcs.php.
- *
- * In general lines, responsible functions will define call methods of class
- * Config [called as oMod()]. Back to page_config, the page will
- * be presented, with chosen tab selected and content defined by subpage's code.
- *
- * Content is found in {TEMPLATES_PATH}/config/tab{$code}.
- */
-function page_config($code='Main')
-{
-	# Clear permissions, modules, pages, areas, from cache (to stay updated always)
-	oPermits()->clear();
-
-	# Get list of available tabs, and make sure it's available (or fall down to default)
-	if (!oConfig()->tabExists($code))
-	{
-		$code = 'Profiles';//Main';
-	}
-
-	# Call responsible function to build subPage (content for this tab, that is)
-	if ($code != 'Main' && oPermits()->can($tab="subCfg{$code}"))
-	{
-		$tab();
-	}
-	else
-	{
-		return oPermits()->noAccessMsg();
-	}
-
-	oSmarty()->assign('tabs', oConfig()->getTabs());
-	oSmarty()->assign('tab', $code);
-
-	addScript("TAB = '{$code}';");
 }

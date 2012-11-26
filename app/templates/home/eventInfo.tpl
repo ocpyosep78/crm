@@ -61,7 +61,7 @@
 		{/if}
 	</table>
 
-	{if $Permits->can('editEvent') && $event.canEdit}
+	{if Access::can('editEvent') && $event.canEdit}
 	  <div class='editEventFromEventInfo'>
 	   {if not $event.closed}
 		<input type='button' class='button' value='Editar Evento'

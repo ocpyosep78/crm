@@ -11,7 +11,7 @@ define('PDF_CELL_BORDER', isset($_GET['debug']) ? 1 : 0);
 require_once('../../../initialize.php');
 
 # Block unauthorized access
-oPermits()->stopIfNoPermission('estimatePDF');
+Object::enforce('estimatePDF');
 
 # Libraries for generating the PDF
 require_once(dirname(__FILE__).'/estimateLib/PDF.Estimates.Drawer.class.php');

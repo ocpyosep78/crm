@@ -13,53 +13,6 @@ function devMode()
 	return (defined('DEVMODE') && DEVMODE) || (getSes('id_profile') == 1);
 }
 
-function loadMainSmartyVars()
-{
-	# Put main objects in Smarty's universe
-	oSmarty()->assign('Builder', $GLOBALS['Builder']);
-	oSmarty()->assign('Permits', oPermits());
-
-	# Global Smarty vars
-	oSmarty()->assign('APP_NAME', APP_NAME);
-	oSmarty()->assign('CHAT_ADDRESS', CHAT_ADDRESS);
-	oSmarty()->assign('IMG_PATH', IMG_PATH);
-	oSmarty()->assign('IN_FRAME', oNav()->inFrame ? 1 : 0);
-	oSmarty()->assign('LAST_UPDATE', strtotime(LAST_UPDATE));
-	oSmarty()->assign('PROFILE', getSes('profile'));
-	oSmarty()->assign('NOW', date('Y-m-d H:i:s'));
-	oSmarty()->assign('URL', "http://{$_SERVER['HTTP_HOST']}{$_SERVER['PHP_SELF']}");
-	oSmarty()->assign('USER', getSes('user'));
-	oSmarty()->assign('USERID', getSes('user'));
-	oSmarty()->assign('USER_NAME', getSes('name').' '.getSes('lastName'));
-	oSmarty()->assign('VERSION', VERSION);
-	oSmarty()->assign('VERSION_STATUS', VERSION_STATUS);
-
-	oSmarty()->assign('cycleValues', '#eaeaf5,#e5e5e5,#e5e5e5');		/* TEMP till Modules & Snippet are ready */
-
-	oSmarty()->assign('DATES', array(
-		'today'		=> date('Y-m-d H:i:s'),
-		'nextWeek'	=> date('Y-m-d H:i:s', strtotime('+ 7 days')),
-		'nextMonth'	=> date('Y-m-d H:i:s', strtotime('+ 1 month')),
-	) );
-}
-
-function getSkinName()
-{
-	return isset($_GET['skin']) ? $_GET['skin'] : (defined('SKIN') && SKIN ? SKIN : '');
-}
-
-function getSkinTpl()
-{
-	$skin = realpath(CORE_SKINS . '/' . getSkinName() . '.tpl');
-	return $skin ? $skin : MAIN_TPL_PATH;
-}
-
-function getSkinCss()
-{
-	$skin = getSkinName();
-	return $skin && is_file($css=CORE_SKINS . "/{$skin}.css") ? $css : CORE_STYLES . '/style.css';
-}
-
 function safeDiv($a , $b , $def=0)
 {
 	return $b ? $a/$b : $def;
@@ -383,7 +336,7 @@ function hideMenu()
 function isXajax($call=NULL)
 {
 	$ajax = empty($_POST['xajax']) ? false : $_POST['xajax'];
-	return $ajax ? ($ajax == $call) : false;
+	return $call ? ($ajax == $call) : $ajax;
 }
 
 function addAlert($x)
@@ -570,8 +523,98 @@ function logout($msg='Su sesión fue cerrada correctamente.', $type=1)
 	$_SESSION['crm'] = array();
 
 	oNav()->clear();
-	oPermits()->clear();
 	oNav()->queueMsg($msg, $type);
 
 	return addScript("location.href = 'index.php';");
+}
+
+function errorName($errno)
+{
+	$errors = ['E_ERROR', 'E_WARNING', 'E_PARSE', 'E_NOTICE', 'E_CORE_ERROR',
+	           'E_CORE_WARNING', 'E_COMPILE_ERROR', 'E_COMPILE_WARNING',
+	           'E_USER_ERROR', 'E_USER_WARNING', 'E_USER_NOTICE', 'E_STRICT',
+	           'E_RECOVERABLE_ERROR', 'E_DEPRECATED', 'E_USER_DEPRECATED'];
+
+	foreach ($errors as $err)
+	{
+		if (constant($err) === $errno)
+		{
+			return $err;
+		}
+	}
+
+	return NULL;
+}
+
+function error_handler($no, $str, $file, $line)
+{
+	if (strstr($file,'temp/es^'))
+	{
+		$line = '0';
+
+		$fp = fopen($file , 'r');
+		$content = file($fp);
+		$regex = "/\s*compiled from ([^\s]+) \*\/ \?\>\s+/";
+
+		$fileName = preg_replace($regex, '$1', $content[1]);
+
+		if (substr($str,0,18) == 'Undefined index:  ')
+		{
+			$file = "{$root}/app/templates/{$fileName}";
+			$smartyVar = substr($str,18);
+			$str = 'Undeclared Smarty Variable \''.substr($str,18).'\'';
+		}
+		else
+		{
+			$file .= ", line {$line})<br />&nbsp;&nbsp;&nbsp;&nbsp;";
+			$file .= "({$root}/app/templates/{$fileName})";
+		}
+	}
+
+	switch ($no)
+	{
+		case E_USER_ERROR:
+			echo "<b>ERROR</b>: [{$no}] {$str}<br />\n";
+			echo "  Fatal error on line {$line} in file {$file}";
+
+			($line !== '0') && print(", line {$line}");
+
+			echo ", PHP " . PHP_VERSION . " (" . PHP_OS . ")<br />\n";
+
+			echo "Aborting...";
+			exit(1);
+			break;
+
+		case E_USER_WARNING:
+			$msg = "<b>WARNING</b>: [{$no}] {$str} in {$file}";
+			($line != '0') && ($msg .= ", line {$line}");
+			$msg .= ")";
+			break;
+
+		case E_USER_NOTICE:
+			$msg = "<b>NOTICE</b>: {$str}";
+
+			if (substr($str,0,3) != 'SQL')
+			{
+				$msg .= " in {$file}.";
+				($line != '0') && ($msg .= ", line {$line}");
+			}
+			else
+			{
+				$msg .= '.';
+			}
+			break;
+
+		default:
+			$name = errorName($no);
+			$msg = "{$name}: {$str} in {$file}";
+			($line != '0') && ($msg .= ", line {$line}");
+			break;
+	}
+
+	// Register error string with the Page
+	$cnt = count(Page::one()->retrieve('errMsgs'));
+	Page::one()->append('errMsgs', ($cnt >= 10) ? '.' : "<div>{$msg}</div>");
+
+	return true;
 }

@@ -6,11 +6,18 @@ return array('tchFormSuggest',
              'saveAdminTechNotes');
 
 
-function saveAdminTechNotes($id, $note){
-	if(oPermits()->can('adminTechNotes')){
+function saveAdminTechNotes($id, $note)
+{
+	if (Access::can('adminTechNotes'))
+	{
 		$note = addslashes($note);
 		$res = oSQL()->saveAdminTechNote($id, $note)->successCode;
-	} else $res = NULL;
+	}
+	else
+	{
+		$res = NULL;
+	}
+
 	return say($res ? 'Nota guardada con éxito' : 'Ocurrió un error al guardar la nota', !!$res);
 }
 

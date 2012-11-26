@@ -67,12 +67,12 @@
 		else return FileForm::addResponse("showTip('createUsers_{$valid['field']}', '{$valid['tip']}');");
 	}
 
-	function blockUsers($user, $unblock=false){
-
+	function blockUsers($user, $unblock=false)
+	{
 		$unblock = !!$unblock; # Cast to boolean values received through xajax
 
-		# Verify that the user can take this action
-		if( !oPermits()->can('blockUsers') ) return oPermits()->noAccessMsg();
+		// Verify that the user can take this action
+		Access::enforce('blockUsers');
 
 		$blockStatus = $unblock ? 'desbloqueado' : 'bloqueado';
 		oSQL()->setOkMsg("El usuario {$user} fue {$blockStatus} correctamente.");
@@ -98,7 +98,7 @@
 		}
 
 		# Handle security issues to the right function (security.php)
-		if( !oPermits()->can('deleteUsers') ) return oPermits()->noAccessMsg();
+		Access::enforce('deleteUsers');
 
 		oSQL()->setOkMsg("El usuario {$user} fue eliminado correctamente.");
 		oSQL()->setErrMsg("No se pudo eliminar el usuario {$user}. ".

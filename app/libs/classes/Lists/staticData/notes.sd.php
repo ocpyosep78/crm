@@ -1,6 +1,6 @@
 <?php
 
-	$page = oNav()->getCurrentPage();
+	$page = oNav()->currentPage();
 
 	$id = 'notes_';	/* Serves as prefix for several fields */
 

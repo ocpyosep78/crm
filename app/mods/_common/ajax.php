@@ -31,8 +31,7 @@ function editUsers($data)
 		oSQL()->setErrMsg("Ocurrió un error. Los cambios no fueron guardados.");
 		# Request query and catch answer, then return it to the user
 		$ans = oSQL()->editUsers($data);
-		$isHome = oNav()->getCurrentModule() == 'home';
-		$page = $isHome ? 'home' : 'usersInfo';
+		$page = 'usersInfo';
 
 		# Save picture if one was chosen and data was stored
 		if ($img['size'])
@@ -46,15 +45,7 @@ function editUsers($data)
 			}
 		}
 
-		if ($isHome)
-		{
-			foreach (oSQL()->getUser(getSes('user')) as $k => $v)
-			{
-				regSes($k, $v);
-			}
-		}
-
-		$atts = $isHome ? '[]' : "['{$data['user']}']";
+		$atts = "['{$data['user']}']";
 
 		return FileForm::addResponse("getPage('{$page}', {$atts}, '{$ans->msg}', '{$ans->successCode}');");
 	}
@@ -122,7 +113,7 @@ function createNotes($data, $modifier)
 	oValidate()->preProcessInput($data, $pfx);
 
 	# A few things depend on where we're using Notes list
-	$page = $for = oNav()->getCurrentPage();
+	$page = $for = oNav()->currentPage();
 	# When on usersInfo page, messages are always for that user only
 	if (strstr($page, 'users'))
 		$data['user'] = $modifier;
