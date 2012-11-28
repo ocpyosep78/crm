@@ -17,10 +17,14 @@
 		if( getSes('id_profile') <= 2 ) return true;
 		
 		# 3. Groups of users who can edit eachother's events
-		$groups[] = array('mantunez', 'rdelossantos', 'gperdomo');
+		$groups[] = array('mantunez', 'rdelossantos', 'gperdomo', 'rferdinand', 'flaborde');
 		foreach( $groups as $group ){
-			if( in_array($user, $group) && in_array($creator, $group) ){
-				return true;
+			if (in_array($user, $group))
+			{
+				if (in_array($creator, $group) || ($target && in_array($target, $group)))
+				{
+					return true;
+				}
 			}
 		}
 		
