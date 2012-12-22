@@ -12,7 +12,7 @@
 	 * BASE_PATH constant is defined before loading this script, and points
 	 * to site's root.
 	 */
-	
+
 	# Version
 	define('VERSION', '0.7');
 	define('VERSION_STATUS', 'beta', true);
@@ -20,7 +20,7 @@
 
 	# General
 	define('TIME_ZONE', 'America/Montevideo');
-	
+
 	# Paths
 	define('CLASSES_PATH', 'app/libs/classes/');
 	define('THIRD_PARTY_PATH', 'app/libs/third-party/');
@@ -38,27 +38,27 @@
 	define('DEFAULT_PAGE_ATTS', serialize(array()));
 	define('PAGE_CONTENT_BOX', 'main_box');
 	define('SKIN', NULL, true);
-	
+
 	# Chat
 	define('CHAT_ADDRESS', 'http://www.ingetec.com.uy/chat', true);
-	
+
 	# Connection Class and subclasses
 	define('SQL_PATH', 'app/libs/classes/SQL/');										# Folder
-	
+
 	# CORE
  	define('CORE_PUBLIC', 'core/public/');
 
 	# Database access
 	define('CRM_HOST', 'localhost', true);
-	define('CRM_USER', 'root', true);
-	define('CRM_PASS', 'it707', true);
-	define('CRM_DB', 'crm_ingetec', true);
-	
+	define('CRM_USER', 'crm', true);
+	define('CRM_PASS', 'crm', true);
+	define('CRM_DB', 'crm', true);
+
 	# fPDF
 	define('PDF_PAGE', 'A4');
 	define('PDF_FONT', 'Arial');
 	define('PDF_FONT_SIZE', 12);
 	define('PDF_CELL_BORDER', 0, true);		/* 1 for designing/testing/debugging, 0 for production */
-	
+
 	# Local
 	define('MAIN_LOCATION', 'Montevideo');
