@@ -32,9 +32,9 @@ define('CHAT_ADDRESS', 'http://www.ingetec.com.uy/chat', true);
 
 # Database access
 define('DS_HOST', 'localhost', true);
-define('DS_USER', 'root', true);
-define('DS_PASS', 'it707', true);
-define('DS_SCHEMA', 'crm_ingetec', true);
+define('DS_USER', 'crm', true);
+define('DS_PASS', 'crm', true);
+define('DS_SCHEMA', 'crm', true);
 
 
 # fPDF
