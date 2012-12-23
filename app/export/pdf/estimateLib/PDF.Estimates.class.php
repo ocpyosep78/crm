@@ -110,11 +110,11 @@
 			
 			if( empty($this->warnings) ) header("Location: {$_SERVER['REQUEST_URI']}&validated");
 			
-			oSmarty()->assign('id', $this->id);
-			oSmarty()->assign('_GET', $_GET);
-			oSmarty()->assign('warnings', $this->warnings);
+			Template::one()->assign('id', $this->id);
+			Template::one()->assign('_GET', $_GET);
+			Template::one()->assign('warnings', $this->warnings);
 			
-			oSmarty()->display('estimates/estimatePDFwarnings.tpl');
+			Template::one()->display('estimates/estimatePDFwarnings.tpl');
 			
 			exit();
 			

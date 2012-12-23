@@ -64,7 +64,7 @@ function page_editEvent($id=NULL, $customerid=NULL)
 	}
 
 	$users = oLists()->users();
-	oSmarty()->assign('users', $users);
+	Template::one()->assign('users', $users);
 
 	# Reminders
 	$remindees = array();
@@ -73,8 +73,8 @@ function page_editEvent($id=NULL, $customerid=NULL)
 		$remindees = oSQL()->doselect('reminders_users', 'user', $filter, 'col');
 	}
 	else $event['reminder'] = $id ? 0 : 30;
-	oSmarty()->assign('reminder', $event['reminder']);
-	oSmarty()->assign('remindees', $remindees);
+	Template::one()->assign('reminder', $event['reminder']);
+	Template::one()->assign('remindees', $remindees);
 
 	# Block Datos Requeridos
 	oFormTable()->clear();
@@ -95,7 +95,7 @@ function page_editEvent($id=NULL, $customerid=NULL)
 		'style'	=> 'height:140px; width:320px;'
 	) );
 	if( $id ) oFormTable()->fillValues( $event );		# Fill table with values (editing)
-	oSmarty()->assign('required', oFormTable()->getTemplate());
+	Template::one()->assign('required', oFormTable()->getTemplate());
 
 	# Block Configuración avanzada
 	oFormTable()->clear();
@@ -111,9 +111,9 @@ function page_editEvent($id=NULL, $customerid=NULL)
 	if( $event ) oFormTable()->fillValues( $event );		# Fill table with values (editing)
 
 
-	oSmarty()->assign('optional', oFormTable()->getTemplate());
+	Template::one()->assign('optional', oFormTable()->getTemplate());
 
-	oSmarty()->assign('id_event', $id ? $id : '');
+	Template::one()->assign('id_event', $id ? $id : '');
 
 	return oNav()->updateContent('home/editEvent.tpl');
 
@@ -179,16 +179,13 @@ function page_agenda($firstDay=NULL, $currFilters=array(), $showRescheduled=1)
 		           'options' => [''=>'(todos)'] + oLists()->users()]
 	];
 
-	oSmarty()->assign('data', isset($days) ? $days : array());
-	oSmarty()->assign('currFilters', $currFilters + array_fill_keys(array_keys($filters), ''));
-	oSmarty()->assign('prev', $firstDay - 7);
-	oSmarty()->assign('next', $firstDay + 7);
-	oSmarty()->assign('types', oLists()->agendaEventTypes());
-	oSmarty()->assign('filters', $filters);
-	oSmarty()->assign('showRescheduled', $showRescheduled);
-
-	# Hide menu for widescreen presentation
-	hideMenu();
+	Template::one()->assign('data', isset($days) ? $days : array());
+	Template::one()->assign('currFilters', $currFilters + array_fill_keys(array_keys($filters), ''));
+	Template::one()->assign('prev', $firstDay - 7);
+	Template::one()->assign('next', $firstDay + 7);
+	Template::one()->assign('types', oLists()->agendaEventTypes());
+	Template::one()->assign('filters', $filters);
+	Template::one()->assign('showRescheduled', $showRescheduled);
 }
 
 function page_agendaDay($date=NULL, $currFilters=array(), $showRescheduled=1)
@@ -220,12 +217,12 @@ function page_agendaDay($date=NULL, $currFilters=array(), $showRescheduled=1)
 		$event['event'] = nl2br($event['event']);
 	}
 
-	oSmarty()->assign('day', $day);
-	oSmarty()->assign('types', oLists()->agendaEventTypes());
-	oSmarty()->assign('data', array(array('date' => $date)));
-	oSmarty()->assign('filters', $filters);
-	oSmarty()->assign('currFilters', $currFilters + array_fill_keys(array_keys($filters), ''));
-	oSmarty()->assign('showRescheduled', $showRescheduled);
+	Template::one()->assign('day', $day);
+	Template::one()->assign('types', oLists()->agendaEventTypes());
+	Template::one()->assign('data', array(array('date' => $date)));
+	Template::one()->assign('filters', $filters);
+	Template::one()->assign('currFilters', $currFilters + array_fill_keys(array_keys($filters), ''));
+	Template::one()->assign('showRescheduled', $showRescheduled);
 }
 
 function page_calls(){
@@ -271,7 +268,7 @@ function page_logs(){
 		'Errores en Consultas SQL'	=> openLogs('logSQL'),
 		'Errores de Logueo'			=> openLogs('loggingErrors'),
 	);
-	oSmarty()->assign('data', $data);
+	Template::one()->assign('data', $data);
 
 }
 
@@ -318,7 +315,7 @@ function page_sales()
 function page_registerSales()
 {
 	/* TEMP: it should always show current date, but for now we're registering OLD sales */
-	oSmarty()->assign('tmpDate', isset($_GET['f']) ? "{$_GET['f']}-01" : date('Y-m-d'));
+	Template::one()->assign('tmpDate', isset($_GET['f']) ? "{$_GET['f']}-01" : date('Y-m-d'));
 }
 
 
@@ -411,8 +408,8 @@ function page_createTechVisits($id=NULL, $customerid=NULL)
 		return oNav()->getPage('techVisits', 'No se encontró la visita pedida.');
 	}
 
-	oSmarty()->assign('systems', oLists()->systems());
-	oSmarty()->assign('technicians', oLists()->technicians());
+	Template::one()->assign('systems', oLists()->systems());
+	Template::one()->assign('technicians', oLists()->technicians());
 
 	hideMenu();
 }
@@ -424,11 +421,11 @@ function page_editTechVisits($id)
 
 function page_techVisitsInfo($id)
 {
-	oSmarty()->assign('id', $id);
+	Template::one()->assign('id', $id);
 
 	if (Access::can('adminTechNotes'))
 	{
-		oSmarty()->assign('adminNote', oSql()->getAdminTechNote($id));
+		Template::one()->assign('adminNote', oSql()->getAdminTechNote($id));
 	}
 
 	oNav()->setJSParams($id);

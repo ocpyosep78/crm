@@ -110,7 +110,7 @@
 			if (is_null($HTML))
 			{
 				$path = realpath(TEMPLATES_PATH . "/{$this->module}/{$this->page}.tpl");
-				$path && addAssign('main_box', 'innerHTML', oSmarty()->fetch($path));
+				$path && addAssign('main_box', 'innerHTML', Template::one()->fetch($path));
 			}
 			# ...else if it's a string we use it as page content
 			elseif(is_string($HTML))
@@ -119,7 +119,7 @@
 			}
 
 			# Display the tabs skeleton below fixed content
-			$content = oSmarty()->fetch(dirname(__FILE__).'/templates/tabs.tpl');
+			$content = Template::one()->fetch(dirname(__FILE__).'/templates/tabs.tpl');
 			jQuery('#main_box')->html($content);
 
 			# Now we're ready to load the first tab through regular method switchTab
@@ -137,8 +137,8 @@
 			$allowed = $tab && (array_search($tab, array_keys($this->getTabs())) !== false);
 
 			# Assign it in Smarty so the right template can be included
-			oSmarty()->assign('tab', $tab);
-			oSmarty()->assign('tabs', $this->getTabs());
+			Template::one()->assign('tab', $tab);
+			Template::one()->assign('tabs', $this->getTabs());
 
 			# Run the tab's function (so it can assign smarty vars)
 			if (!$allowed)
@@ -183,7 +183,7 @@
 		private function getTpl($tab)
 		{
 			return ($path = realpath(TEMPLATES_PATH . "/{$this->module}/{$this->page}_{$tab}.tpl"))
-				? oSmarty()->fetch( $path )
+				? Template::one()->fetch( $path )
 				: '';
 
 		}
@@ -191,7 +191,7 @@
 		private function template( $which ){
 
 			return is_file($path=dirname(__FILE__)."/templates/{$which}.tpl")
-				? oSmarty()->fetch( $path )
+				? Template::one()->fetch( $path )
 				: '';
 
 		}

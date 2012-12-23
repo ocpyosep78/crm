@@ -174,11 +174,11 @@
 			$static = $this->getStaticData();
 
 			# Put it in Smarty's universe
-			oSmarty()->assign('code', $this->code);
-			oSmarty()->assign('modifier', $this->modifier);
-			oSmarty()->assign('fields', $static['fields']);
-			oSmarty()->assign('params', $static['params']);
-			oSmarty()->assign('comboList', NULL);	# Initialize
+			Template::one()->assign('code', $this->code);
+			Template::one()->assign('modifier', $this->modifier);
+			Template::one()->assign('fields', $static['fields']);
+			Template::one()->assign('params', $static['params']);
+			Template::one()->assign('comboList', NULL);	# Initialize
 
 			# Combo list ($code, $modifier)
 			if( $this->combo ) $this->includeComboList($this->code, $this->modifier);
@@ -239,18 +239,18 @@
 			}
 
 			# Put it in Smarty's universe
-			oSmarty()->assign('simpleListID', $static['id']);
-			oSmarty()->assign('code', $this->code);
-			oSmarty()->assign('modifier', $this->modifier);
-			oSmarty()->assign('fields', $static['fields']);
-			oSmarty()->assign('noInput', $static['noInput']);
-			oSmarty()->assign('params', $static['params']);
-			oSmarty()->assign('tools', $static['tools']);
-			oSmarty()->assign('axns', $static['actions']);
-			oSmarty()->assign('data', isset($data) ? $data : array());
-			oSmarty()->assign('canCreate', Access::can('create' . ucfirst($this->code)) );
+			Template::one()->assign('simpleListID', $static['id']);
+			Template::one()->assign('code', $this->code);
+			Template::one()->assign('modifier', $this->modifier);
+			Template::one()->assign('fields', $static['fields']);
+			Template::one()->assign('noInput', $static['noInput']);
+			Template::one()->assign('params', $static['params']);
+			Template::one()->assign('tools', $static['tools']);
+			Template::one()->assign('axns', $static['actions']);
+			Template::one()->assign('data', isset($data) ? $data : array());
+			Template::one()->assign('canCreate', Access::can('create' . ucfirst($this->code)) );
 
-			oSmarty()->assign('comboOptions', $this->comboOptions);
+			Template::one()->assign('comboOptions', $this->comboOptions);
 
 			# Fetch the template and return it
 			return $this->template('simpleList');
@@ -271,7 +271,7 @@
 			# Attempt to load config file
 			if( is_file($path=STATIC_DATA_PATH."{$code}.sd.php") ) require( $path );
 
-			oSmarty()->assign('combo', array(
+			Template::one()->assign('combo', array(
 				'code'		=> $code,
 				'params'	=> array('name' => $params['name']),
 				'list'		=> $this->$code( $modifier ),
@@ -284,7 +284,7 @@
 
 		public function includeComboList($code=NULL, $modifier=NULL, $sel=''){
 
-			oSmarty()->assign('comboList', $this->comboListHTML($code, $modifier, $sel));
+			Template::one()->assign('comboList', $this->comboListHTML($code, $modifier, $sel));
 
 		}
 
@@ -354,7 +354,7 @@
 		private function template( $which ){
 
 			return is_file($path=dirname(__FILE__)."/templates/{$which}.tpl")
-				? oSmarty()->fetch( $path )
+				? Template::one()->fetch( $path )
 				: '';
 
 		}

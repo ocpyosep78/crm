@@ -62,8 +62,8 @@
 		}
 
 		public function __toString(){
-			oSmarty()->assign('FT', $this);
-			return oSmarty()->fetch( $this->getTemplatePath() );
+			Template::one()->assign('FT', $this);
+			return Template::one()->fetch( $this->getTemplatePath() );
 		}
 
 		public function clear()
@@ -179,7 +179,7 @@
 		}
 
 		public function getTemplate(){
-			return is_file($path=dirname(__FILE__).'/FormTable.tpl') ? oSmarty()->fetch($path) : '';
+			return is_file($path=dirname(__FILE__).'/FormTable.tpl') ? Template::one()->fetch($path) : '';
 		}
 
 		private function createRow($type, $field='', $value='', $atts=array()){

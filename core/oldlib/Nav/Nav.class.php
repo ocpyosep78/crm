@@ -127,7 +127,7 @@ class Nav
 			return say('La página que intenta cargar no está disponible.');
 		}
 
-		$HTML = $parsed ? $page : oSmarty()->fetch($page);
+		$HTML = $parsed ? $page : Template::one()->fetch($page);
 
 		return addAssign('main_box', 'innerHTML', $HTML);
 	}

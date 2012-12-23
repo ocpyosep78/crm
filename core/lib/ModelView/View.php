@@ -108,7 +108,7 @@ abstract class View
 	public function fetch($tpl, $namespace='global')
 	{
 		$TplEngine = $this->getTplEngine($namespace);
-		return oSmarty()->createTemplate($tpl, $TplEngine)->fetch();
+		return Template::one()->createTemplate($tpl, $TplEngine)->fetch();
 	}
 
 	/**
@@ -122,7 +122,7 @@ abstract class View
 	{
 		if (empty($this->TplEngine[$namespace]))
 		{
-			$TplEngine = oSmarty()->createData();
+			$TplEngine = Template::one()->createData();
 
 			// Register common attributes for the view
 			$TplEngine->assign('name',   $this->name);

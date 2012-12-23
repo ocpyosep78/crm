@@ -44,8 +44,8 @@ function getActivity($type)
 	require_once CLASSES_PATH . '/Activity/Activity.class.php';
 	$activity = new Activity;
 
-	oSmarty()->assign('events', $activity->events($type));
-	oSmarty()->assign('notes', $activity->notes($type));
+	Template::one()->assign('events', $activity->events($type));
+	Template::one()->assign('notes', $activity->notes($type));
 }
 
 function openLogs($file)

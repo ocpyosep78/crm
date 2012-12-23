@@ -66,8 +66,8 @@ function eventInfo($id)
 	$event['target'] = $event['user'] ? $users[$event['user']] : '';
 	$event['event'] = nl2br($event['event']);
 
-	oSmarty()->assign('event', $event);
-	oSmarty()->assign('editions', oSQL()->getEventEditions($id));
+	Template::one()->assign('event', $event);
+	Template::one()->assign('editions', oSQL()->getEventEditions($id));
 
 	$dialogAtts = array('width' => 600,
 	                    'title' => 'Información de Evento');

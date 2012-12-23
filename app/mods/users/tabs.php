@@ -26,8 +26,8 @@ function tab_usersInfo_agendaBy($id, $src='by')
 	$user = oSQL()->getUser($id);
 	$events = oSQL()->getUserEvents($user['user'], $src);
 
-	oSmarty()->assign('types', oLists()->agendaEventTypes());
-	oSmarty()->assign('events', $events);
+	Template::one()->assign('types', oLists()->agendaEventTypes());
+	Template::one()->assign('events', $events);
 
 	oTabs()->useThisTemplate('agenda');
 }

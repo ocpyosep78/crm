@@ -13,4 +13,9 @@ trait Object
 	{
 		return loggedIn();
 	}
+
+	public static function ajax($id=NULL)
+	{
+		return isset($_GET['ajax']);
+	}
 }

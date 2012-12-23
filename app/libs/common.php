@@ -323,14 +323,14 @@ function showMenu()
 {
 	return isXajax()
 		? addScriptCall('showMenu')
-		: oPageCfg()->add_jsOnLoad("showMenu();");
+		: Controller::js("showMenu();");
 }
 
 function hideMenu()
 {
 	return isXajax()
 		? addScriptCall('hideMenu')
-		: oPageCfg()->add_jsOnLoad("hideMenu();");
+		: Controller::js("hideMenu();");
 }
 
 function isXajax($call=NULL)
@@ -383,7 +383,7 @@ function dialog($content, $selector, $atts=array())
 {
 	// Send the html (fetch the template first, if $content's a template name)
 	$isTemplate = preg_match('_\.tpl$_', $content);
-	$html = $isTemplate ? oSmarty()->fetch($content) : $content;
+	$html = $isTemplate ? Template::one()->fetch($content) : $content;
 
 	jQuery($selector)->touch()->html($html)->dialog($atts);
 
@@ -613,8 +613,8 @@ function error_handler($no, $str, $file, $line)
 	}
 
 	// Register error string with the Page
-	$cnt = count(Page::one()->retrieve('errMsgs'));
-	Page::one()->append('errMsgs', ($cnt >= 10) ? '.' : "<div>{$msg}</div>");
+	$cnt = count(Template::one()->retrieve('errMsgs'));
+	Template::one()->append('errMsgs', ($cnt >= 10) ? '.' : "<div>{$msg}</div>");
 
 	return true;
 }

@@ -31,8 +31,14 @@
 	<script type="text/javascript" src="{$SCRIPTS}/jquery/jquery.qtip2.js"></script>
 	<script type="text/javascript" src="{$SCRIPTS}/common.js"></script>
 
-	{* Ajax *}
-	{$Xajax->printJavascript()}
+	{* JS on domready *}
+	{if isset($js)}
+	  <script type="text/javascript">
+		{foreach from=$js item=code}
+			{$code};
+		{/foreach}
+	  </script>
+	{/if}
 
 </head>
 <body>

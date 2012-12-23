@@ -83,8 +83,8 @@
 	{
 		$events = oSQL()->getCustomerEvents($id);
 
-		oSmarty()->assign('types', oLists()->agendaEventTypes());
-		oSmarty()->assign('events', $events);
+		Template::one()->assign('types', oLists()->agendaEventTypes());
+		Template::one()->assign('events', $events);
 	}
 
 	/**

@@ -17,7 +17,6 @@ function oFormTable( $code=NULL )	{	return getBuilderObject('FormTable', $code);
 
 function oXajax()					{	return getBuilderObject( 'Xajax' );				}
 function oXajaxResp()				{	return getBuilderObject( 'XajaxResp' );			}
-function oSmarty()					{	return getBuilderObject( 'Smarty' );			}
 
 function oSQL()						{	return getBuilderObject( 'SQL' );				}
 function oNav()						{	return getBuilderObject( 'Nav' );				}
