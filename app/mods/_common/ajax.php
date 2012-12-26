@@ -57,8 +57,8 @@ function editUsers($data)
 
 function eventInfo($id)
 {
-	$types = oLists()->agendaEventTypes();
-	$users = oLists()->users();
+	$types = agendaEventTypes();
+	$users = View::get('User')->getHashData();
 
 	$event = oSQL()->getEventsInfo($id);
 	$event['type'] = $types[$event['type']];

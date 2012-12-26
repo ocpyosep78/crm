@@ -86,11 +86,6 @@ class Nav
 		}
 	}
 
-	public function setJSParams()
-	{
-		addScriptCall('IniParams.set', func_get_args());
-	}
-
 	/**
 	 * Reloads the page with the same atts.
 	 * Optionally, it might show a status message after reloading
@@ -129,7 +124,7 @@ class Nav
 
 		$HTML = $parsed ? $page : Template::one()->fetch($page);
 
-		return addAssign('main_box', 'innerHTML', $HTML);
+		return Response::html('#main_box', $HTML);
 	}
 
 	/**
@@ -178,7 +173,7 @@ class Nav
 			}
 		}
 
-		addScriptCall('iniPage', $page);
+		Controller::js('iniPage({$page})');
 		$this->processQueuedMsg();
 
 		return oXajaxResp();

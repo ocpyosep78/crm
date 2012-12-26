@@ -1,6 +1,6 @@
 <div id='main_menu'>
-	<img id='hideMenu' src='app/images/arrow_head_left.gif' title='Ocultar menú' />
-	<img id='showMenu' src='app/images/arrow_head_right.gif' title='Mostrar menú' />
+	<img id='hideMenu' src='{$BBURL}/app/images/arrow_head_left.gif' title='Ocultar menÃº' />
+	<img id='showMenu' src='{$BBURL}/app/images/arrow_head_right.gif' title='Mostrar menÃº' />
 
 	<div id='menuDiv'>
 		<div class='h_filler' style='width:140px;'>&nbsp;</div>
@@ -11,7 +11,7 @@
 			{foreach from=$group.pages key=pageid item=page}
 				{if $page.module == $pagestate.areaid}
 					<div class='menuItem' for='{$pageid}'>
-						<a href='?p={$pageid}'>{$page.name}</a>
+						<a href='{$BBURL}/{$pageid}'>{$page.name}</a>
 					</div>
 				{/if}
 			{/foreach}

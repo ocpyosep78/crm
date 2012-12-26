@@ -57,7 +57,7 @@ class snp_BigTools extends Snippet
 			: $this->delegate($this->params['parent'], 'insert', true);
 	}
 
-	protected function buttons()
+	protected function buttons($list=NULL, $view_btns=true)
 	{
 		switch ($this->params['starter'])
 		{

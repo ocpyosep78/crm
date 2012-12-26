@@ -1,18 +1,18 @@
 <div id='debugHeader'>
   <div>
 	<div id="openDebug"></div>
-	<img id='debugStats' src='app/images/stats.gif' alt='extended info' />
+	<img id='debugStats' src='{$BBURL}/app/images/stats.gif' alt='extended info' />
 	<ul id="debuggerbox">
 	  <li>Debugger <span style="color:#0000a0; cursor:pointer;">(click para minimizar)</span></li>
 
-	  <li>Módulo: {$pagestate.areaid} ({$pagestate.area.name})</li>
-	  <li>Página: {$pagestate.pageid} ({$pagestate.page.name})</li>
+	  <li>MÃ³dulo: {$pagestate.areaid} ({$pagestate.area.name})</li>
+	  <li>PÃ¡gina: {$pagestate.pageid} ({$pagestate.page.name})</li>
 	</ul>
   </div>
 
   {if $errMsgs}<hr style='clear:both;' />{/if}
 
-  {foreach from=$errMsgs item=msg}{$msg}<br />{/foreach}
+  {foreach from=$errMsgs item=msg}{$msg}{/foreach}
 
   <iframe id='debugger'></iframe>
 </div>

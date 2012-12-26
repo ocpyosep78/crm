@@ -1,4 +1,31 @@
 /******************************************************************************/
+/********************************** T E M P ***********************************/
+/******************************************************************************/
+var ajax = {
+	login: function(){
+
+	},
+	logout: function(){
+
+	},
+	loadContent: function(){
+
+	},
+	switchTab: function(){
+
+	},
+	eventInfo: function(){
+
+	},
+	closeAgendaEvent: function(){
+
+	},
+	snippet: function(){
+
+	}
+};
+
+/******************************************************************************/
 /******************************** J Q U E R Y *********************************/
 /******************************************************************************/
 
@@ -190,26 +217,10 @@ function say(txt, type, stay) {
 		});
 }
 
-// Ajax without loading graphics
-function silentXajax(func, params) {
-	var fn = window['xajax_'+func],
-	    loadFn = xajax.loadingFunction;
-	xajax.loadingFunction = $.noop();
-	xajaxWaitCursor = false;
-	fn && fn.apply(window, params||[]);
-	xajaxWaitCursor = true;
-	xajax.loadingFunction = loadFn;
-}
-
 // Loading animation
 function showLoading(show){
 	$('#loadingGif').toggle(show !== false);
 };
-
-// Submit forms through ajax
-function xajaxSubmit(oForm, sFunc, showDisabled, atts){
-	window['xajax_'+sFunc]( xajax.getFormValues(oForm, showDisabled), atts||[] );
-}
 
 // Show styled ToolTips (qTip2) near an element
 function showTip(field, tip, position, area){
@@ -240,9 +251,9 @@ function hideMenu(){ toggleMenu(false); }
 /******************************************************************************/
 
 function getPage() {
-	var args = $.makeArray(arguments);
-	var ctrl = (typeof(args[0]) == 'object') ? (args[0].ctrlKey|args.shift().control) : false;
-	return (ctrl ? xajax_getPage : xajax_getPage).apply(null, args);
+	var args = $.makeArray(arguments),
+	    event = args.shift();
+	$('#main_box').load(BBURL + '/ajax/' + args);
 }
 
 // Initialize loaded page and events associated to new elements in it
@@ -288,18 +299,15 @@ $(function(){
 	});
 
 	$('body').on('click', '.logout', function(){
-		xajax_logout();
+		ajax.logout();
 	});
 
 	// Menu
-	$('#loggedAs span[userid]').attr('userid') && showMenu();
-
 	$('#hideMenu').click(hideMenu);
 	$('#showMenu').click(showMenu);
 
 	$('body').on('click', '.menuItem', function(e){
-		alert('oi');
-		return getPage(e, $(this)._for()) & false;
+		return !getPage(e, $(this)._for()) && false;
 	});
 
 	// Activate closing notifications on click
@@ -326,13 +334,10 @@ $(function(){
 
 	// Activate Loading widget on pageclose/navigation/ajax
 	$(window).on('beforeunload', function(){ showLoading(); });
-	xajax.loadingFunction = function(){ showLoading(); };
-	xajax.doneLoadingFunction = function(){ showLoading(false); };
-	xajax.loadingFailedFunction = function(){ showLoading(false); };
 
 	// Tabs functionality
 	$('body').on('click', '#tabButtons div', function(){
-		return xajax_switchTab($(this)._for()) & false;
+		return ajax.switchTab($(this)._for()) & false;
 	});
 
 	// Styled ToolTips
@@ -352,7 +357,7 @@ $(function(){
 
 	// Activate agenda eventUnits
 	$('body').on('click', '.eventUnit', function(){
-		xajax_eventInfo($(this).find('input[type="hidden"]').val());
+		ajax.eventInfo($(this).find('input[type="hidden"]').val());
 	});
 
 	// FileForm: add pseudo-ajax submit to forms with File inputs
@@ -415,13 +420,13 @@ $(function(){
 	});
 
 	$('#loggedAs span[userid]').click(function(){
-		xajax_snippet('simpleItem', 'User', {'id': $(this).attr('userid'),
+		ajax.snippet('simpleItem', 'User', {'id': $(this).attr('userid'),
 		                                     'action': 'dialog'});
 	}).css('cursor', 'pointer');
 
 	// Load current content
 	var nav = location.href.match(/\?nav=([\d\.]+)/) || ['', ''];
-	xajax_loadContent(nav[1]);
+	ajax.loadContent(nav[1]);
 });
 
 
@@ -446,10 +451,10 @@ $(function(){
 				var msg = 'Debe escribir un nombre de usuario.';
 				return frm.user.focus() & say(msg, 'error', 0) & false;
 			} else if (!frm.pass.val()) {
-				var msg = 'Debe escribir su contraseña.';
+				var msg = 'Debe escribir su contraseÃ±a.';
 				return frm.pass.focus() & say(msg, 'error', 0) & false;
 			} else {
-				xajax_login(frm.user.val(), frm.pass.val());
+				ajax.login(frm.user.val(), frm.pass.val());
 			}
 
 			return false;
@@ -517,14 +522,14 @@ function Snippet(el){
 	function _do(action, opts) {
 		switch (action) {
 			case 'delete':
-				var ask = '¿Realmente desea eliminar este elemento?';
+				var ask = 'Â¿Realmente desea eliminar este elemento?';
 				break;
 		}
 
 		if (!ask || confirm(ask))
 		{
 			var args = $.extend({}, params, opts||{}, {action: action});
-			action && xajax_snippet(kind, model, args);
+			action && ajax.snippet(kind, model, args);
 		}
 	}
 
@@ -697,7 +702,7 @@ function closeAgendaEvent(id, msg, resched) {
         var cfm = "Se dispone a " + action + " el evento con el siguiente mensaje:\n\n" + res +
                   "\n\nPulse Cancelar para editar el mensaje o Aceptar para confirmar.";
         if (confirm(cfm)) {
-            xajax_closeAgendaEvent(id, res, resched ? 1 : 0);
+            ajax.closeAgendaEvent(id, res, resched ? 1 : 0);
         } else {
             closeAgendaEvent(id, res, resched);
         }
@@ -718,13 +723,13 @@ function initializeList(model, modifier, src) {
 
 			switch (axn) {
 				case 'delete':
-					if( confirm('¿Realmente desea eliminar este elemento?') ){
-						window['xajax_delete' + $.capitalize(model)](id, modifier);
+					if( confirm('Â¿Realmente desea eliminar este elemento?') ){
+						window['ajax.delete' + $.capitalize(model)](id, modifier);
 					};
 					break;
 				case 'block':
-					if( confirm('¿Realmente desea bloquear este elemento?') ){
-						window['xajax_block' + $.capitalize(model)](id, modifier);
+					if( confirm('Â¿Realmente desea bloquear este elemento?') ){
+						window['ajax.block' + $.capitalize(model)](id, modifier);
 					};
 					break;
 				default:
@@ -749,7 +754,7 @@ function initializeSimpleList() {
 			this.inputs.each(function(){
 				data[this._name()] = this.val();
 			}, true);
-			var func = 'xajax_create' + $.capitalize(model);
+			var func = 'ajax.create' + $.capitalize(model);
 			window[func] && window[func](data, modifier);
 		};
 
@@ -797,18 +802,18 @@ function initializeSimpleList() {
 				case 'edit':
 					return SL.enableEditItem($(this)._for());
 				case 'delete':
-					if( !confirm('¿Realmente desea eliminar este elemento?') ) {
+					if( !confirm('Â¿Realmente desea eliminar este elemento?') ) {
 						return;
 					}
 					break;
 				case 'block':
-					if( !confirm('¿Realmente desea bloquear este elemento?') ) {
+					if( !confirm('Â¿Realmente desea bloquear este elemento?') ) {
 						return;
 					}
 					break;
 			};
 
-			var func = 'xajax_' + $(this).attr('axn') + $.capitalize(model);
+			var func = 'ajax.' + $(this).attr('axn') + $.capitalize(model);
 			if( !window[func] ) {
 				throw('Function ' + func + ' is not registered!');
 			}
@@ -857,7 +862,7 @@ function ini_registerSales() {
 		silentXajax('setSeller', [this.val()]);
 	});
 	frm.submit(function(){
-		xajax_registerSale(xajax.getFormValues(frm.get(0)));
+		alert('pending migration from xajax');
 	});
 	frm.restart = function(){
 		this.reset().find('[name="saleType"]:first').click();
@@ -902,17 +907,16 @@ function ini_createEvent(id_event){		/* Agenda */
 
 	$('#btn_saveEvent').click(function(){
 		if ($('#evt_iniTime').val() === '' || !validateTimeInput($('#evt_iniTime'))) {
-			return showTip('evt_iniTime', 'Hora de inicio inválida.');
+			return showTip('evt_iniTime', 'Hora de inicio invÃ¡lida.');
 		};	/* Preformat time, validate and apply changes if valid */
 		if ($('#evt_endTime').val() !== '' && !validateTimeInput($('#evt_iniTime'))) {
-			return showTip('evt_endTime', 'Hora de finalización inválida.');
+			return showTip('evt_endTime', 'Hora de finalizaciÃ³n invÃ¡lida.');
 		};
 		if ($.trim($('#evt_event').val()) === '') {
-			return showTip('evt_event', 'Debe proporcionar una descripción del evento.');
+			return showTip('evt_event', 'Debe proporcionar una descripciÃ³n del evento.');
 		};
 
-		var data = xajax.getFormValues($('form[name="frmEditEvent"]').get(0));
-		xajax_createEvent(data, id_event || 0);
+		alert('pending migration from xajax');
 	});
 
 	$('#evt_target').change(function(){
@@ -945,7 +949,7 @@ function ini_agenda(){
 		dateFormat: 'yy/mm/dd',
 		autoSize: true,
 		showAnim: 'slideDown',
-		buttonImage: 'app/images/agendaTools/calendar.gif',
+		buttonImage: BBURL + '/app/images/agendaTools/calendar.gif',
 		buttonImageOnly: true,
 		beforeShow: function(input, inst){
 			var itvl = setInterval(function(){
@@ -1047,12 +1051,12 @@ function ini_agendaDay(){
 }
 
 function ini_activity(){
-	var msg = "¿Está seguro que desea descartar esta entrada?\n" +
-		"Si continúa, el elemento no volverá a aparecer en esta lista.";
+	var msg = "Â¿EstÃ¡ seguro que desea descartar esta entrada?\n" +
+		"Si continÃºa, el elemento no volverÃ¡ a aparecer en esta lista.";
 
 	$('.closeActivityEntry').each(function(i, btn){
 		$(btn)._for() && $(btn).click(function(){
-			confirm(msg) && xajax_closeActivityEntry($(btn)._for());
+			confirm(msg) && ajax.closeActivityEntry($(btn)._for());
 		});
 	});
 }
@@ -1071,7 +1075,7 @@ function ini_createTechVisits( data ){
 	var to = setTimeout(showForm, 2000);		/* Just in case pic loaded already (should not, but...) */
 	$('#technicalFormBg').load(showForm);
 
-	/* Collection of methods, attached to a DOM element (to be called through xajax) */
+	/* Collection of methods, attached to a DOM element (to be called through ajax) */
 	var TechnicalForm = $('#technicalForm').get(0).handler = {
 		frm: {},
 		ss: {},
@@ -1108,14 +1112,14 @@ function ini_createTechVisits( data ){
 			}, true);
 
             if (data.id_customer && !data.id_sale) {
-                xajax_tchFormAcceptSale('', data.id_customer);
+                ajax.tchFormAcceptSale('', data.id_customer);
             } else if(data) {
                 this.fillForm(data, !data.id_sale);
             }
 		},
 		/* data is sent as parameter if provided, otherwise the whole form is sent */
 		search: function(by){
-			this.frm[by] && xajax_tchFormSuggest(by, this.frm[by].val());
+			this.frm[by] && ajax.tchFormSuggest(by, this.frm[by].val());
 		},
 		clearSuggest: function(){
 			$('#tch_suggest').html('');
@@ -1136,7 +1140,7 @@ function ini_createTechVisits( data ){
 			}
 			else if (!data.length)
 			{
-				var msg = 'No hay resultados que coincidan con su búsqueda';
+				var msg = 'No hay resultados que coincidan con su bÃºsqueda';
 				$('#tch_suggest').html("<div class='tch_s_empty'>" + msg + "</div>");
 			}
 
@@ -1152,21 +1156,21 @@ function ini_createTechVisits( data ){
 				(data.contact ? 'Contacto: ' + data.contact + '<br />' : '') +
 				"</div>" +
 				"<div class='tch_s_row tch_s_noInvoice' cust='" + data.id_customer + "'>" +
-				"Servicio Técnico sin factura previa</div>");
+				"Servicio TÃ©cnico sin factura previa</div>");
 
 			$.each(rows, function(){
 				$('#tch_suggest').html($('#tch_suggest').html() +
 					"<div class='tch_s_row' for='" + this.onSale + "'>" +
 					"Factura: " + this.invoice +
 					(this.system ? ' (' + this.system + ")" : '') +
-					' | Garantía vence: ' + this.warrantyVoid +
+					' | GarantÃ­a vence: ' + this.warrantyVoid +
 					(this['void'] ? ' <strong>(vencida)</strong>' : '') +
-					(this.notes ? '<br /><em>&nbsp;&nbsp;Más información: ' + this.notes + '</em>' : '') +
+					(this.notes ? '<br /><em>&nbsp;&nbsp;MÃ¡s informaciÃ³n: ' + this.notes + '</em>' : '') +
 					'</div>');
 			});
 
 			$('#tch_suggest .tch_s_row').click(function(){
-				xajax_tchFormAcceptSale($(this)._for()||'', $(this).attr('cust')||'');
+				ajax.tchFormAcceptSale($(this)._for()||'', $(this).attr('cust')||'');
 			});
 		},
 		fillForm: function(data, auto){	/* 'auto' means a script called, not the user */
@@ -1197,20 +1201,20 @@ function ini_createTechVisits( data ){
 			if (!$('#tch_buttons:visible').length) return;
 
 			if( !this.checkSnapshot() ){
-				var msg = 'ATENCIÓN:\n\n' +
+				var msg = 'ATENCIÃ“N:\n\n' +
 					'Algunos datos del cliente fueron cambiados sin mediar\n' +
-					'confirmación. El contacto puede ser editado libremente, pero\n' +
-					'no así los restantes datos del cliente.\n\n' +
-					'Si desea elegir un cliente diferente, realice la búsqueda por\n' +
+					'confirmaciÃ³n. El contacto puede ser editado libremente, pero\n' +
+					'no asÃ­ los restantes datos del cliente.\n\n' +
+					'Si desea elegir un cliente diferente, realice la bÃºsqueda por\n' +
 					'cualquiera de los campos habilitados y seleccione un elemento\n' +
 					' de la lista de sugerencias.\n\n' +
 					'Pulse Aceptar para recargar los datos correspondientes a su\n' +
-					'última selección, o Cancelar para elegir nuevamente un cliente\n' +
+					'Ãšltima selecciÃ³n, o Cancelar para elegir nuevamente un cliente\n' +
 					'o factura.';
 				return confirm(msg) ? this.restoreFromSnapshot() : null;
 			};
 
-			xajax_createTechVisit(xajax.getFormValues(this.frm.get(0)));
+			alert('pending migration from xajax');
 		},
 		select: function(field){
 			$('#tch_'+field).focus().select();
@@ -1275,6 +1279,6 @@ function ini_techVisitsInfo( id ){
 
     // AdminTechNotes
     $('#saveAdminTechNotes').click(function(){
-		xajax_saveAdminTechNotes(id, $('#adminTechNotes textarea').val()||'');
+		ajax.saveAdminTechNotes(id, $('#adminTechNotes textarea').val()||'');
 	});
 };

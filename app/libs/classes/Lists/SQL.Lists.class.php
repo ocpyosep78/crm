@@ -183,14 +183,6 @@
 			return $this->asHash( $sql );
 		}
 
-		public function users(){
-			$sql = "SELECT	`user`,
-							CONCAT(`name`, ' ', `lastName`) AS 'longName'
-					FROM `_users`
-					ORDER BY `longName`";
-			return $this->asHash( $sql );
-		}
-
 /***************
 ** L I S T S
 ***************/

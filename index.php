@@ -1,7 +1,5 @@
 <?php
 
-isset($_GET['chatCheck']) && die();
-
 define('BASE', dirname(__FILE__));
 define('CORE', BASE . '/core');
 
@@ -10,6 +8,7 @@ define('CORE', BASE . '/core');
 require_once BASE . '/app/cfg/config.cfg.php';
 require_once CORE . '/cfg/core.cfg.php';
 
+// Local config file, if exists
 $devCfg = BASE . '/app/cfg/local.cfg.php';
 is_readable($devCfg) && require_once $devCfg;
 
@@ -50,7 +49,11 @@ require_once CLASSES_PATH . '/FileForm/FileForm.php';
 // Controllers
 require_once CORE . '/Controllers/Controller.php';
 
-// Sugar
+// Response Handler
+require_once LIBS . '/Response/Response.php';
+
+
+// Sugar (user-friendly page names)
 is_file('app/Sugar.php') && (require_once 'app/Sugar.php');
 
 if (!class_exists('Sugar'))
@@ -72,39 +75,10 @@ require_once MODS_PATH . '/funcs.php';
 /*****/
 
 error_reporting(devMode() ? E_ALL : E_ERROR);
-devMode() && oXajax()->statusMessagesOn();
 devMode() && set_error_handler('error_handler');
 
 // Call for showing debug stats frame (will exit without coming back)
 isset($_GET['stats']) && devMode() && require_once 'debug/stats.php';
-
-
-/*******/
-/* Xajax
-/*****/
-
-oXajax()->registerFunction('login');
-oXajax()->registerFunction('sync');
-oXajax()->registerFunction(['getPage', oNav(), 'getPage']);
-oXajax()->registerFunction(['showPage', oNav(), 'showPage']);
-oXajax()->registerFunction(['loadContent', oNav(), 'loadContent']);
-
-if (loggedIn())
-{
-	oXajax()->registerFunction('logout');
-	oXajax()->registerFunction('takeCall');
-	oXajax()->registerFunction(['switchTab', oTabs(), 'switchTab']);
-	oXajax()->registerFunction(['snippet', 'Snippet', 'snp']);
-}
-
-foreach (glob(MODS_PATH . '/*/ajax.php') as $ajax)
-{
-	foreach((require_once $ajax) as $func)
-	{
-		oXajax()->registerFunction($func);
-	}
-
-}
 
 
 /***************
@@ -118,15 +92,15 @@ try
 catch (PublicException $e)
 {
 	header('Content-type: text/xml');
-	echo say($e->getMessage())->getXML();
+	echo $e->getMessage();
 
 	exit;
 }
 catch (Exception $e)
 {
 	header('Content-type: text/xml');
-	$error = devMode() ? $e->getMessage() : 'OcurriÛ un error inesperado';
-	echo say($error)->getXML();
+	$error = devMode() ? $e->getMessage() : 'Ocurri√≥ un error inesperado';
+	echo $error;
 
 	exit;
 }

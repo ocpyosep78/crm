@@ -9,11 +9,11 @@ trait Connect
 	protected $Answer;
 
 	public static $connect_msgs = [
-		'success'   => 'Su consulta finalizó correctamente.',
-		'error'     => 'Ocurrió un error desconocido al procesar su consulta. Se ha guardado un registro del error.',
-		'duplicate' => 'Ocurrió un error (clave duplicada). Se ha guardado un registro del error.',
-		'fk_parent' => 'La base de datos ha bloqueado la modificación de este elemento (FK constraint).<br />Otros elementos de la base de datos dependen o derivan de él.',
-		'fk_child'  => 'La base de datos ha bloqueado la modificación de este elemento (FK constraint).<br />Este elemento depende o deriva de otros elementos en la base de datos.',
+		'success'   => 'Su consulta finalizÃ³ correctamente.',
+		'error'     => 'OcurriÃ³ un error desconocido al procesar su consulta. Se ha guardado un registro del error.',
+		'duplicate' => 'OcurriÃ³ un error (clave duplicada). Se ha guardado un registro del error.',
+		'fk_parent' => 'La base de datos ha bloqueado la modificaciÃ³n de este elemento (FK constraint).<br />Otros elementos de la base de datos dependen o derivan de Ã©l.',
+		'fk_child'  => 'La base de datos ha bloqueado la modificaciÃ³n de este elemento (FK constraint).<br />Este elemento depende o deriva de otros elementos en la base de datos.',
 	];
 
 
@@ -34,6 +34,7 @@ trait Connect
 	 */
 	public function query($sql)
 	{
+		mysql_set_charset('utf8', $this->connect());
 		$res = mysql_query($sql, $this->connect());
 
 		// Save last error's object, for later retrieval

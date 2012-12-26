@@ -21,7 +21,7 @@ abstract class Snippet
 
 	private $actions = ['list'    => 'listar %plural%',
 	                    'create'  => 'crear %name%',
-	                    'view'    => ['title'   => 'ver información de %name%',
+	                    'view'    => ['title'   => 'ver informaciÃ³n de %name%',
 	                                  'depends' => '__id__'],
 	                    'edit'    => 'editar %name%',
 	                    'delete'  => ['title'   => 'eliminar %name%',

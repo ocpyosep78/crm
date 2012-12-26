@@ -11,12 +11,8 @@ function getBuilderObject($obj, $code=NULL){
 
 }
 
-function oLists( $code=NULL )		{	return getBuilderObject('Lists', $code);		}
 function oStats( $code=NULL )		{	return getBuilderObject('Stats', $code);		}
 function oFormTable( $code=NULL )	{	return getBuilderObject('FormTable', $code);	}
-
-function oXajax()					{	return getBuilderObject( 'Xajax' );				}
-function oXajaxResp()				{	return getBuilderObject( 'XajaxResp' );			}
 
 function oSQL()						{	return getBuilderObject( 'SQL' );				}
 function oNav()						{	return getBuilderObject( 'Nav' );				}
@@ -87,24 +83,12 @@ class Builder{
 				$FormTable = new FormTable;
 				break;
 
-			case 'Lists':
-				$Lists = new Lists;	/* TEMP */
-				break;
-
 			case 'Nav':
 				$Nav = new Nav;
 				break;
 
 			case 'PageCfg':
 				$PageCfg = new PageCfg;
-				break;
-
-			case 'Smarty':
-				$Smarty = new Smarty;
-				$Smarty->setTemplateDir(TEMPLATES_PATH);
-				$Smarty->setCompileDir('temp');
-				$Smarty->setCacheDir(SMARTY_DIR.'cache');
-				$Smarty->setConfigDir(SMARTY_DIR.'configs');
 				break;
 
 			case 'SQL':
@@ -117,15 +101,6 @@ class Builder{
 
 			case 'Tabs':
 				$Tabs = new Tabs;
-				break;
-
-			case 'Xajax':
-				$Xajax = new xajax("", "xajax_", 'ISO-8859-1');
-				$Xajax->outputEntitiesOn();
-				$Xajax->decodeUTF8InputOn();
-				// break; ommitted on purpose
-			case 'XajaxResp':
-				$XajaxResp = new xajaxResponse;
 				break;
 
 			case 'Validate':
@@ -148,7 +123,7 @@ class Builder{
 
 	/**
 	 * Some classes might make it hard to keep the right path structure, specially
-	 * if it's a secondary class of a big library (like XajaxResp from Xajax lib)
+	 * if it's a secondary class of a big library.
 	 * Just add those exceptions to the list, in the switch, returning the right
 	 * path as a string (from base directory, above app/).
 	 */
@@ -159,16 +134,10 @@ class Builder{
 				return THIRD_PARTY_PATH . '/fPDF/ExtendedFPDF.class.php';
 			break;
 			case 'FormTable':
-			case 'Lists':
 			case 'PageCfg':
 			case 'SQL':
 			case 'Validate':
 				return CLASSES_PATH . "/{$obj}/{$obj}.class.php";
-			case 'Smarty':
-			case 'Xajax':
-				return THIRD_PARTY . "/{$obj}/{$obj}.class.php";
-			case 'XajaxResp':
-				return THIRD_PARTY . '/Xajax/xajaxResponse.inc.php';
 			break;
 			default:
 				return CORE_LIB . "/{$obj}/{$obj}.class.php";
@@ -182,14 +151,14 @@ class Builder{
 	 * add an entry to the switch under that class, and assign dependencies to
 	 * $list var (always an array, even if it's a single element array).
 	 */
-	private function loadDependencies( $obj ){
-
-		switch( $obj ){
-			case 'XajaxResp': $list = array('Xajax');
-		}
-
-		if( isset($list) && is_array($list) ){
-			foreach( $list as $item ) $this->get($item);
+	private function loadDependencies( $obj )
+	{
+		if (isset($list) && is_array($list))
+		{
+			foreach ($list as $item)
+			{
+				$this->get($item);
+			}
 		}
 
 	}

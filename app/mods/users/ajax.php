@@ -69,7 +69,7 @@
 
 	function blockUsers($user, $unblock=false)
 	{
-		$unblock = !!$unblock; # Cast to boolean values received through xajax
+		$unblock = !!$unblock; # Cast to boolean values received through ajax
 
 		// Verify that the user can take this action
 		Access::enforce('blockUsers');

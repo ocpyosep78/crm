@@ -1,18 +1,17 @@
 <!DOCTYPE html>
 <html language="es">
 <head>
-
 	<meta http-equiv="X-UA-Compatible" content="IE=8" />
 	<!--[if IE 9]>
 	  <meta http-equiv="X-UA-Compatible" content="IE=9" />
 	<![endif]-->
 
-	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-	<meta http-equiv="Pragma" content="no-cache">
-	<meta http-equiv="Expires" content="-1">
-	<meta http-equiv="Last-Modified" content="0">
-	<meta http-equiv="Cache-Control" content="no-cache, mustrevalidate">
-	<meta name="robots" content="none">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf8" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="-1" />
+	<meta http-equiv="Last-Modified" content="0" />
+	<meta http-equiv="Cache-Control" content="no-cache, mustrevalidate" />
+	<meta name="robots" content="none" />
 
 	<link rel="shortcut icon" href="favicon.ico" />
 
@@ -20,26 +19,27 @@
 
 
 	{* Styles *}
-	<link rel="stylesheet" type="text/css" href="{$SCRIPTS}/jquery/themes/{$UI_THEME}/jquery-ui.css" />
-	<link rel="stylesheet" type="text/css" href="{$SCRIPTS}/jquery/jquery.qtip2.css" />
+	<link rel="stylesheet" type="text/css" href="{$SCRIPTS_URL}/jquery/themes/{$UI_THEME}/jquery-ui.css" />
+	<link rel="stylesheet" type="text/css" href="{$SCRIPTS_URL}/jquery/jquery.qtip2.css" />
 	<link rel="stylesheet" type="text/css" href="{$css}" />
 
 
 	{* JS files *}
-	<script type="text/javascript" src="{$SCRIPTS}/jquery/jquery-1.8.2.min.js"></script>
-	<script type="text/javascript" src="{$SCRIPTS}/jquery/jquery-ui-1.9.1.min.js"></script>
-	<script type="text/javascript" src="{$SCRIPTS}/jquery/jquery.qtip2.js"></script>
-	<script type="text/javascript" src="{$SCRIPTS}/common.js"></script>
+	<script type="text/javascript" src="{$SCRIPTS_URL}/jquery/jquery-1.8.2.min.js"></script>
+	<script type="text/javascript" src="{$SCRIPTS_URL}/jquery/jquery-ui-1.9.1.min.js"></script>
+	<script type="text/javascript" src="{$SCRIPTS_URL}/jquery/jquery.qtip2.js"></script>
+	<script type="text/javascript" src="{$SCRIPTS_URL}/common.js?sid={$NOW}"></script>
 
 	{* JS on domready *}
 	{if isset($js)}
 	  <script type="text/javascript">
-		{foreach from=$js item=code}
-			{$code};
-		{/foreach}
+		$(function(){
+		  {foreach from=$js item=code}
+			  {$code};
+		  {/foreach}
+		});
 	  </script>
 	{/if}
-
 </head>
 <body>
 
@@ -47,9 +47,9 @@
 
 	<div id='notifications'>
 		<span>{$APP_NAME}</span>
-		<img class='errorStatus' src='app/images/statusMsg/error.png'>
-		<img class='successStatus' src='app/images/statusMsg/success.png'>
-		<img class='warningStatus' src='app/images/statusMsg/warning.png'>
+		<img class='errorStatus' src='{$BBURL}/app/images/statusMsg/error.png'>
+		<img class='successStatus' src='{$BBURL}/app/images/statusMsg/success.png'>
+		<img class='warningStatus' src='{$BBURL}/app/images/statusMsg/warning.png'>
 		<div></div>
 	</div>
 
@@ -65,7 +65,7 @@
 
 	<div id='loadingGif'>
 		<div>Cargando...</div>
-		<img src="app/images/loading.gif" alt="Cargando..." />
+		<img src="{$BBURL}/app/images/loading.gif" alt="Cargando..." />
 	</div>
 
 	{if devMode()}{include file="$TEMPLATES/debugger.tpl"}{/if}

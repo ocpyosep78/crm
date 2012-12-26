@@ -76,7 +76,7 @@
  *	overwrite it though). In any case, presenting them in the list will
  *	still depend on the user having enough rights to use those actions.
  *
- * On a second phase (through xajax as soon as the 'frame' is loaded), the
+ * On a second phase (through ajax as soon as the 'frame' is loaded), the
  * JS part of this library will request the content of the list. This is
  * where dynamic data retrieved from the database is required. Most of it
  * is automatized, so there's really not much to do to 'make it work'. It
@@ -99,29 +99,7 @@
 /***************
 ** HARDCODED LISTS
 ***************/
-
-		public function agendaEventTypes(){
-
-			return array(
-				''			=> '(seleccionar)',
-				'incomes'   => 'Cobranzas',
-				'delivery'  => 'Expedición',
-				'invoice'   => 'Facturación',
-				'warranty'  => 'Garantía',
-				'travel'    => 'Giras',
-				'install'   => 'Instalaciones',
-				'calls'     => 'Llamadas',
-				'estimate'  => 'Presupuestos',
-				'laststeps' => 'Puesta a punto y curso',
-				'meetings'  => 'Reuniones',
-				'remote'    => 'Servicios remotos',
-				'service'   => 'Servicios técnicos',
-				'sales'     => 'Ventas',
-				'technical' => 'Visitas técnicas',
-			);
-
-		}
-
+		
 		public function salesTypes(){
 
 			return array(

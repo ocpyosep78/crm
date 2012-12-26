@@ -16,6 +16,7 @@ trait Object
 
 	public static function ajax($id=NULL)
 	{
+//		db($_GET);
 		return isset($_GET['ajax']);
 	}
 }

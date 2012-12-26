@@ -1,41 +1,28 @@
 <?php
 
-
-/**********************************/
-/* H O M E
-/**********************************/
-
-function page_home()
-{
-	return page_agenda();
-}
-
 function page_editAcc()
 {
 	$user = oSQL()->getUser(getSes('user'));
 
 	oFormTable()->clear();
 	oFormTable()->setPrefix( 'editAcc_' );
-	oFormTable()->setFrameTitle( 'Cambiar Contraseña' );
+	oFormTable()->setFrameTitle( 'Cambiar ContraseÃ±a' );
 
 	# Block 'Cuenta'
 	oFormTable()->addTitle( "Cuenta ({$user['user']})" );
-	oFormTable()->addInput('Contraseña Actual', array('id' => 'oldPass'), 'password');
-	oFormTable()->addInput('Nueva Contraseña', array('id' => 'newPass1'), 'password');
-	oFormTable()->addInput('Repetir Contraseña', array('id' => 'newPass2'), 'password');
+	oFormTable()->addInput('ContraseÃ±a Actual', array('id' => 'oldPass'), 'password');
+	oFormTable()->addInput('Nueva ContraseÃ±a', array('id' => 'newPass1'), 'password');
+	oFormTable()->addInput('Repetir ContraseÃ±a', array('id' => 'newPass2'), 'password');
 
-	# Block 'Información'
-	oFormTable()->addTitle( 'Información' );
-	oFormTable()->addRow('Último Acceso', $user['last_access']
+	# Block 'InformaciÃ³n'
+	oFormTable()->addTitle( 'InformaciÃ³n' );
+	oFormTable()->addRow('Ãšltimo Acceso', $user['last_access']
 		? date('d-m-Y H:i:s', strtotime($user['last_access']))
 		: "<span style='color:#600000; font-size:12px; font-weight:bold'>Nunca</span>"
 	);
 
 	# Submit line
 	oFormTable()->addSubmit( 'Guardar Cambios' );
-
-	# Set onsubmit action (submitting through xajax)
-	oFormTable()->xajaxSubmit('editAcc');
 
 	# Add commands and actions to Xajax response object
 	oNav()->updateContent( oFormTable()->getTemplate(), true );
@@ -63,7 +50,7 @@ function page_editEvent($id=NULL, $customerid=NULL)
 		$event['id_customer'] = $customerid;
 	}
 
-	$users = oLists()->users();
+	$users = View::get('User')->getHashData();
 	Template::one()->assign('users', $users);
 
 	# Reminders
@@ -79,7 +66,7 @@ function page_editEvent($id=NULL, $customerid=NULL)
 	# Block Datos Requeridos
 	oFormTable()->clear();
 	oFormTable()->setPrefix('evt_');
-	oFormTable()->addTitle('Parámetros del Evento');
+	oFormTable()->addTitle('ParÃ¡metros del Evento');
 	oFormTable()->addInput('Fecha', array(
 		'id' => 'iniDate',
 		'class' => 'input calendar',
@@ -88,19 +75,19 @@ function page_editEvent($id=NULL, $customerid=NULL)
 	oFormTable()->addInput('Hora Inicio', array('id' => 'iniTime'));
 	oFormTable()->addInput('Hora Fin', array('id' => 'endTime'));
 	oFormTable()->addCombo('Tipo',
-		oLists()->agendaEventTypes(),
+		agendaEventTypes(),
 		array('id' => 'type'));
-	oFormTable()->addArea('Descripción', array(
+	oFormTable()->addArea('DescripciÃ³n', array(
 		'id'	=> 'event',
 		'style'	=> 'height:140px; width:320px;'
 	) );
 	if( $id ) oFormTable()->fillValues( $event );		# Fill table with values (editing)
 	Template::one()->assign('required', oFormTable()->getTemplate());
 
-	# Block Configuración avanzada
+	# Block ConfiguraciÃ³n avanzada
 	oFormTable()->clear();
 	oFormTable()->setPrefix('evt_');
-	oFormTable()->addTitle('Parámetros Opcionales');
+	oFormTable()->addTitle('ParÃ¡metros Opcionales');
 	oFormTable()->addCombo('Usuario Asignado',
 		array('(sin especificar)') + $users,
 		array('id' => 'target'));
@@ -174,25 +161,27 @@ function page_agenda($firstDay=NULL, $currFilters=array(), $showRescheduled=1)
 	# Filters
 	$filters = [
 		'type' => ['name'    => 'Tipo',
-		           'options' => ['' => '(todos)'] + oLists()->agendaEventTypes()],
+		           'options' => ['' => '(todos)'] + agendaEventTypes()],
 		'user' => ['name'    => 'Usuario',
-		           'options' => [''=>'(todos)'] + oLists()->users()]
+		           'options' => [''=>'(todos)'] + View::get('User')->getHashData()]
 	];
 
 	Template::one()->assign('data', isset($days) ? $days : array());
 	Template::one()->assign('currFilters', $currFilters + array_fill_keys(array_keys($filters), ''));
 	Template::one()->assign('prev', $firstDay - 7);
 	Template::one()->assign('next', $firstDay + 7);
-	Template::one()->assign('types', oLists()->agendaEventTypes());
+	Template::one()->assign('types', agendaEventTypes());
 	Template::one()->assign('filters', $filters);
 	Template::one()->assign('showRescheduled', $showRescheduled);
+
+	Response::hideMenu();
 }
 
 function page_agendaDay($date=NULL, $currFilters=array(), $showRescheduled=1)
 {
 	if (!$date)
 	{
-		return oNav()->abortFrame('Faltan datos requeridos para cargar la página.');
+		return oNav()->abortFrame('Faltan datos requeridos para cargar la pÃ¡gina.');
 	}
 
 	# Basic structure of data to be passed
@@ -204,11 +193,11 @@ function page_agendaDay($date=NULL, $currFilters=array(), $showRescheduled=1)
 	$filters = array();
 	$filters['type'] = array(
 		'name'		=> 'Tipo',
-		'options'	=> array(''=>'(todos)') + oLists()->agendaEventTypes(),
+		'options'	=> array(''=>'(todos)') + agendaEventTypes(),
 	);
 	$filters['user'] = array(
 		'name'		=> 'Usuario',
-		'options'	=> array(''=>'(todos)') + oLists()->users(),
+		'options'	=> array(''=>'(todos)') + View::get('User')->getHashData(),
 	);
 
 	# Fill day with events
@@ -218,7 +207,7 @@ function page_agendaDay($date=NULL, $currFilters=array(), $showRescheduled=1)
 	}
 
 	Template::one()->assign('day', $day);
-	Template::one()->assign('types', oLists()->agendaEventTypes());
+	Template::one()->assign('types', agendaEventTypes());
 	Template::one()->assign('data', array(array('date' => $date)));
 	Template::one()->assign('filters', $filters);
 	Template::one()->assign('currFilters', $currFilters + array_fill_keys(array_keys($filters), ''));
@@ -309,7 +298,7 @@ function page_customersInfo($id)  { return Snippet::snp('simpleItem', 'Customer'
 
 function page_sales()
 {
-	return oLists()->printList('sales', 'sale');
+	return Response::addAlert('Pending migration to Snippets');
 }
 
 function page_registerSales()
@@ -346,13 +335,12 @@ function page_technical()
 }
 
 function page_techVisits(){
-	/* Include code in case it's called with an alias */
-	return oLists()->printList('techVisits');
+	return Response::addAlert('Pending migration to Snippets');
 }
 
 function page_installs()
 {
-	return oLists()->printList();
+	return Response::addAlert('Pending migration to Snippets');
 }
 
 function page_createTechVisits($id=NULL, $customerid=NULL)
@@ -405,13 +393,13 @@ function page_createTechVisits($id=NULL, $customerid=NULL)
 	}
 	else
 	{
-		return oNav()->getPage('techVisits', 'No se encontró la visita pedida.');
+		return oNav()->getPage('techVisits', 'No se encontrÃ³ la visita pedida.');
 	}
 
 	Template::one()->assign('systems', oLists()->systems());
 	Template::one()->assign('technicians', oLists()->technicians());
 
-	hideMenu();
+	Response::hideMenu();
 }
 
 function page_editTechVisits($id)

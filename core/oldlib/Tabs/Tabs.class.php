@@ -110,12 +110,12 @@
 			if (is_null($HTML))
 			{
 				$path = realpath(TEMPLATES_PATH . "/{$this->module}/{$this->page}.tpl");
-				$path && addAssign('main_box', 'innerHTML', Template::one()->fetch($path));
+				$path && Response::html('#main_box', Template::one()->fetch($path));
 			}
 			# ...else if it's a string we use it as page content
 			elseif(is_string($HTML))
 			{
-				addAssign('main_box', 'innerHTML', $HTML);
+				Response::html('#main_box', $HTML);
 			}
 
 			# Display the tabs skeleton below fixed content
@@ -156,8 +156,8 @@
 				: $this->getTpl( $this->template ? $this->template : $tab );
 
 			# Update tab area content
-			addAssign('tabContent', 'innerHTML', $content);
-			addAssign('tabButtons', 'innerHTML', $this->template('tabButtons'));
+			Response::html('#tabContent', $content);
+			Response::html('#tabButtons', $this->template('tabButtons'));
 
 			# Javascript to be run after building content (one string or an array of strings)
 			if( $postCalls ){

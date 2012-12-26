@@ -40,7 +40,7 @@
 		{foreach from=$item.tools key=axn item=permit}									{* TOOLS *}
 		  {if Access::can($permit)}
 			<div class='tblTools' for='{$id}' axn='{$axn}'>
-			  <img src='app/images/buttons/{$axn}.png' alt='{$axns[$axn]}'
+			  <img src='{$BBURL}/app/images/buttons/{$axn}.png' alt='{$axns[$axn]}'
 				title='{$axns[$axn]} {$params.name|lower}' />
 			</div>
 		  {/if}
@@ -80,7 +80,7 @@
 	  {/foreach}
 	  <td class='simpleListCreate'>
 		<div class='tblTools SLcreateItem' axn='create'>
-		  <img src='app/images/buttons/add.png' alt='agregar' title='agregar' />
+		  <img src='{$BBURL}/app/images/buttons/add.png' alt='agregar' title='agregar' />
 		</div>
 		<span class='createItemText'>Agregar</span>
 	  </td>

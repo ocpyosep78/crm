@@ -68,13 +68,13 @@
 		firstLoad: true,
 		list: {},
 		lastRead: 0,
-		alertRead: "<img src='app/images/buttons/delete.png' alt='quitar' title='quitar de la lista' />",
+		alertRead: "<img src='{$BBURL}/app/images/buttons/delete.png' alt='quitar' title='quitar de la lista' />",
 		request: function(){
 			loggedIn && silentXajax('sync', [loggedIn, {from: sync.lastRead}]);
 		},
 		requestRemoval: function(){
 			var ref = this.parent().attr('ref');
-			ref && xajax_removeAlert(ref);
+			ref && removeAlert(ref);
 			sync.remove(ref);
 		},
 		process: function( alerts ){

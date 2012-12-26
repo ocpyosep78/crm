@@ -92,7 +92,8 @@ class DS_Structure
 		// Store appart, and just by column name, the main table's columns
 		foreach ($structure['columns']['own'] as $col => $atts)
 		{
-			$col = end(explode('`.`', trim($col, '` ')));
+			$fqn_bits = explode('`.`', trim($col, '` '));
+			$col = end($fqn_bits);
 			$this->__model_cols[$col] = $col;
 		}
 

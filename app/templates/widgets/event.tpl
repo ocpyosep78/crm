@@ -11,12 +11,12 @@
 
 	<img class='agenda_eventUser' alt='' title='{$event.creator}' src='{$event.creatorimg}' />
 	<img class='agenda_eventType' alt='' title='{$types[$event.type]}'
-		src='app/images/agendaEvents/{if $event.rescheduled}rescheduled/{/if}{$event.type}.png' />
+		src='{$BBURL}/app/images/agendaEvents/{if $event.rescheduled}rescheduled/{/if}{$event.type}.png' />
 
 	<span class='agenda_eventInfo'>
-		{if $showDays}{$event.ini|date_locale:'d/m/Y, H:i'}
-		{else}{$event.ini|date_locale:'H:i'}{/if}
-		{if $event.end}/ {$event.end|date_locale:'H:i'}{/if}
+		{if $showDays}{$event.ini|date_format:'d/m/Y, H:i'}
+		{else}{$event.ini|date_format:'H:i'}{/if}
+		{if $event.end}/ {$event.end|date_format:'H:i'}{/if}
 	</span>
 
 	{if $event.customer}<span class='agenda_customer'>[ {$event.customer} ]</span>{/if}
@@ -26,9 +26,9 @@
 
 	<span class='eventTools'>
 	  {if Access::can('editEvent') && $event.canEdit && !$event.closed}
-		<img for='edit'   src='app/images/agendaTools/edit.png' title='editar' />
-		<img for='cancel' src='app/images/agendaTools/cancel.png' title='cancelar/posponer' />
-		<img for='close'  src='app/images/agendaTools/close.png' title='cerrar' />
+		<img for='edit'   src='{$BBURL}/app/images/agendaTools/edit.png' title='editar' />
+		<img for='cancel' src='{$BBURL}/app/images/agendaTools/cancel.png' title='cancelar/posponer' />
+		<img for='close'  src='{$BBURL}/app/images/agendaTools/close.png' title='cerrar' />
 	  {/if}
 	</span>
 </p>

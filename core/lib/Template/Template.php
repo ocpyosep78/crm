@@ -1,6 +1,6 @@
 <?php
 
-require_once THIRD_PARTY . '/Smarty/Smarty.class.php';
+require_once THIRD_PARTY . '/Smarty/libs/Smarty.class.php';
 
 
 class Template extends Smarty
@@ -25,16 +25,15 @@ class Template extends Smarty
 		$this->assign('pagestate', Access::currentState());
 
 		// Global vars
+		$this->assign('NOW', microtime(true));
 		$this->assign('USER', getSes('user'));
 		$this->assign('USERID', getSes('user'));
 		$this->assign('USERNAME', getSes('name').' '.getSes('lastName'));
 		$this->assign('PROFILE', getSes('profile'));
+		$this->assign('BBURL', BBURL);
 
 		// Debugger
 		$this->assign('errMsgs', []);
-
-		// PHP objects we might need
-		$this->assign('Xajax', oXajax());
 	}
 
 	/**

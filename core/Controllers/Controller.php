@@ -15,39 +15,19 @@ class Controller
 
 	public static function process()
 	{
-		self::$request_type = 'print';
+		self::$request_type = 'page';
 
 		// Translate params
 		isset($_GET['params']) || ($_GET['params'] = 'home');
 		$params = explode('/', trim($_GET['params'], '/'));
 
-		array_map('urldecode', $params);
-
 		self::$request = Sugar::page(array_shift($params), true);
 		self::$params = $params;
 
-		if (self::ajax())
-		{
-			require_once dirname(__FILE__) . '/Controller.Ajax.php';
-			$Controller = new Controller_Ajax;
-		}
-		else
-		{
-			require_once dirname(__FILE__) . '/Controller.Load.php';
-			$Controller = new Controller_Load;
-		}
-
-		$Controller->req();
-	}
-
-	protected function req()
-	{
-		FileForm::processRequests();
-
 		switch (self::$request_type)
 		{
-			case 'print':
-				echo $this->content();
+			case 'page':
+				echo self::page();
 				exit(0);
 
 			default:
@@ -56,63 +36,93 @@ class Controller
 	}
 
 	/**
-	 * protected string content()
+	 * private string page()
 	 *      Build and return the HTML for #main_box (the actual page content).
 	 *
 	 * @return string
 	 */
-	protected function content()
+	private static function page()
 	{
-		// No content is to be shown for guests, other than the login screen
+		header("Content-Type: text/html; charset=utf8");
+
+		// Import a few constants into the javascript global scope
+		Response::importConst('DEVMODE', 'BBURL');
+
+		// Content
 		if (!self::logged())
 		{
-			return Template::one()->fetch('login.tpl');
+			// No content is to be shown for guests, other than the login screen
+			$content = Template::one()->fetch('login.tpl');
 		}
-
-		$page = self::$request;
-		$fn = "page_{$page}";
-
-		switch (count(self::$params))
+		else
 		{
-			case 0: $fn();
-				break;
-			case 1: $fn(self::$params[0]);
-				break;
-			case 2: $fn(self::$params[0], self::$params[1]);
-				break;
-			case 3: $fn(self::$params[0], self::$params[1], self::$params[2]);
-				break;
-			default: call_user_func_array($fn, self::$params[1]);
-				break;
+			// Show menu for all pages unless explicitely told otherwise
+			Response::showMenu();
+
+			$page = self::$request;
+			$fn = "page_{$page}";
+			$params = self::$params;
+
+			if (!is_callable($fn))
+			{
+				$fn = 'page_' . Sugar::page(Sugar::home(), true);
+				$params = [];
+			}
+
+			switch (count($params))
+			{
+				case 0: $fn();
+					break;
+				case 1: $fn($params[0]);
+					break;
+				case 2: $fn($params[0], $params[1]);
+					break;
+				case 3: $fn($params[0], $params[1], $params[2]);
+					break;
+				default: call_user_func_array($fn, $params);
+					break;
+			}
+
+			$tpl = Access::pageArea($page)."/{$page}.tpl";
+			$path = realpath(TEMPLATES_PATH . "/{$tpl}");
+
+			if (!is_file($path))
+			{
+				$content = "No se ha encontrado la plantilla ({$tpl})";
+			}
+			else
+			{
+				Response::js("iniPage('{$page}')");
+				$content = Template::one()->fetch($path);
+			}
 		}
 
-		$tpl = Access::pageArea($page)."/{$page}.tpl";
-		$path = TEMPLATES_PATH . "/{$tpl}";
+		Template::one()->assign('content', $content);
 
-		if (!is_file($path))
+		// Frame
+		if (self::ajax())
 		{
-			$msg = "No se pudo encontrar la plantilla de la página ({$tpl})";
-			throw new Exception($msg);
+			// Simple wrapper, mainly for javascript plus the content's html
+			$html = Template::one()->fetch(TEMPLATES . '/content.tpl');
 		}
-Template::one()->fetch($path);
-db('ok');
-		return Template::one()->fetch($path);
-	}
-
-	protected function login()
-	{
-		return Template::one()->fetch('login.tpl');
-	}
-
-	public static function js($js)
-	{
-		if (!Template::one())
+		else
 		{
-			$msg = "Cannot call Controller::js before calling Controller::process";
-			throw new Exception($msg);
+			// Logout button (navbar and menu)
+			Template::one()->assign('img_logout', IMG_PATH . '/navButtons/logout.png');
+
+			// Skin chosen from $_GET, constant, or disabled (in that order)
+			$skin = !empty($_GET['skin'])
+				? $_GET['skin']
+				: ((defined('SKIN') && SKIN) ? SKIN : NULL);
+
+			$tpl = $skin ? (CORE_SKINS . "/{$skin}.css") : TEMPLATES . '/main.tpl';
+			$css = $skin ? (CORE_SKINS . "/{$skin}.css") : STYLES_URL . '/style.css';
+
+			Template::one()->assign('css', $css);
+			$html = Template::one()->fetch($tpl);
 		}
 
-		return Template::one()->append('js', $js);
+		return $html;
 	}
 
 }

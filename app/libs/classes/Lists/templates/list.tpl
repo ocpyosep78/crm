@@ -12,7 +12,7 @@
 			{foreach from=$tools key=axn item=permit}
 			  {if Access::can($permit)}
 				<div class='tblTools' for='{$id}' axn='{$axn}'>
-				  <img src='app/images/buttons/{$axn}.png' alt='{$axns[$axn]}'
+				  <img src='{$BBURL}/app/images/buttons/{$axn}.png' alt='{$axns[$axn]}'
 					title='{$axns[$axn]} {$params.name|lower}' />
 				</div>
 			  {/if}

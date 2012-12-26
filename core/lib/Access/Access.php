@@ -93,7 +93,7 @@ class Access
 	 */
 	public static function block()
 	{
-		$msg = 'No posee permisos para realizar esta acción.';
+		$msg = 'No posee permisos para realizar esta acciÃ³n.';
 		throw new PublicException($msg);
 	}
 

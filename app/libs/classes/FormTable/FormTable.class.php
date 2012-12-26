@@ -36,8 +36,6 @@
 	Form/Table attributes:
 		* addFormAtt($att, $val)						To set id, name, class, etc.
 		* addTableAtt($att, $val)						To set id, name, class, etc.
-		* formSubmit( (string)$xajaxFunction )			Sets action property of the form
-		* xajaxSubmit( (string)$xajaxFunction )			Submits form to this php function through xajax
 
 ***************/
 
@@ -108,15 +106,6 @@
 
 		public function addTableAtt($att, $val){
 			$this->tableAtts[$att] = $val;
-		}
-
-		public function formSubmit( $action ){
-			$this->addFormAtt('action', $action);
-		}
-
-		public function xajaxSubmit( $xajaxFunction, $sendDisabled=false ){
-			$params = "this, '{$xajaxFunction}', ".($sendDisabled ? 'true' : 'false');
-			$this->addFormAtt('onsubmit', "xajaxSubmit({$params});");
 		}
 
 		public function getData(){

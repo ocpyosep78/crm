@@ -88,7 +88,8 @@ class DS_Result
 				{
 					foreach ($row as $field => $val)
 					{
-						$key = trim(end(explode('`.`', $field, $nsRemove+1)), '`');
+						$fqn_bits = explode('`.`', $field, $nsRemove+1);
+						$key = trim(end($fqn_bits), '`');
 						$rows[$k][($ns == -1) ? $key : "`{$key}`"] = $val;
 					}
 				}

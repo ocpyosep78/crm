@@ -3,9 +3,9 @@
 	  {if $USER}
 		{foreach from=$pagestate.areas key=area item=btn}
 		  &nbsp;&nbsp;
-		  <a href='?p={$area}&a={$area}' rel="{$area}"
+		  <a href='{$BBURL}/{$area}'
 			class='navMod{if $area == $pagestate.areaid} navCurrMod{/if}'><img
-			src="{$btn.image}" alt="{$btn.name}" title="{$btn.name}" /></a>
+			src="{$BBURL}/{$btn.image}" alt="{$btn.name}" title="{$btn.name}" /></a>
 		{/foreach}
 	  {/if}
 	</div>

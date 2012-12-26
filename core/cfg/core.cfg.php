@@ -5,10 +5,16 @@ define('PROTOCOL', $_SERVER['SERVER_PROTOCOL']);
 define('URL', strtolower(current(explode('/', PROTOCOL))) . "://{$_SERVER['HTTP_HOST']}{$_SERVER['PHP_SELF']}");
 define('BBURL', dirname(URL));
 
-// Relative urls for static content, relative paths for PHP use
+// Relative urls for to static content, for PHP use
 define('SCRIPTS', 'core/static/scripts');
 define('IMAGES',  'core/static/images');
 define('STYLES',  'core/static/styles');
+
+// Absolute urls for static content, for template use
+define('SCRIPTS_URL', BBURL . '/core/static/scripts');
+define('IMAGES_URL',  BBURL . '/core/static/images');
+define('STYLES_URL',  BBURL . '/core/static/styles');
+define('CORE_SKINS',  BBURL . '/core/skins');
 
 define('TEMPLATES', CORE . '/static/templates');
 
@@ -18,7 +24,6 @@ define('TRAITS',      LIBS . '/Traits');
 
 # Old core paths
 define('CORE_LIB',    CORE . '/oldlib');
-define('CORE_SKINS',  CORE . '/skins');
 
 
 # Core shortcut to library paths
@@ -41,8 +46,3 @@ define('MAX_ALERTS_PER_USER', 50);
 
 # Permissions
 define('PERMITS_CACHE_TIMEOUT', 1800, true);		/* Time to cache Permissions and structure */
-
-
-# Xajax
-define('XAJAX_JS_DIR', 'core/lib/third-party/Xajax/xajax_js');
-define('XAJAX_VERBOSE', false, true);

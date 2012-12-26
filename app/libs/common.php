@@ -229,7 +229,7 @@ function sync($user='', $params=array())
 	/* Check reminders */
 	seekReminders($params);
 
-	return oXajaxResp();
+	return Response;
 }
 
 function checkIfUserStillOnline($user)
@@ -287,7 +287,7 @@ function seekReminders($params=array())
 		# Add reminder (open event for current user)
 		if ($active && $reminder['user'] == getSes('user'))
 		{
-			addScript("xajax_eventInfo('{$reminder['id_event']}');");
+			addScript("eventInfo('{$reminder['id_event']}');");
 			$filter = array('id_reminder_user' => $reminder['id_reminder_user']);
 			oSQL()->delete('reminders_users', $filter);
 		}
@@ -315,58 +315,17 @@ function seekReminders($params=array())
 
 function say($msg, $type='', $img='')
 {
-	$msg = preg_replace('_\s+_', ' ', addslashes($msg));
-	return addScript("say(\"{$msg}\", \"{$type}\", \"{$img}\");");
+	return Response::say($msg, $type, $img);
 }
 
-function showMenu()
+function addAlert($alert)
 {
-	return isXajax()
-		? addScriptCall('showMenu')
-		: Controller::js("showMenu();");
+	return Response::alert($alert);
 }
 
-function hideMenu()
+function addScript($js)
 {
-	return isXajax()
-		? addScriptCall('hideMenu')
-		: Controller::js("hideMenu();");
-}
-
-function isXajax($call=NULL)
-{
-	$ajax = empty($_POST['xajax']) ? false : $_POST['xajax'];
-	return $call ? ($ajax == $call) : $ajax;
-}
-
-function addAlert($x)
-{
-	oXajaxResp()->addAlert($x);
-	return oXajaxResp();
-}
-
-function addAssign($x, $y, $z)
-{
-	oXajaxResp()->addAssign($x, $y, $z);
-	return oXajaxResp();
-}
-
-function addAppend($x, $y, $z)
-{
-	oXajaxResp()->addAppend($x, $y, $z);
-	return oXajaxResp();
-}
-
-function addScript($x)
-{
-	oXajaxResp()->addScript($x);
-	return oXajaxResp();
-}
-
-function addScriptCall()
-{
-	call_user_func_array(array(oXajaxResp(), 'addScriptCall'), func_get_args());
-	return oXajaxResp();
+	return Response::js($js);
 }
 
 /**
@@ -617,4 +576,36 @@ function error_handler($no, $str, $file, $line)
 	Template::one()->append('errMsgs', ($cnt >= 10) ? '.' : "<div>{$msg}</div>");
 
 	return true;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+function agendaEventTypes()
+{
+	return [
+		''			=> '(seleccionar)',
+		'incomes'   => 'Cobranzas',
+		'delivery'  => 'Expedición',
+		'invoice'   => 'Facturación',
+		'warranty'  => 'Garantía',
+		'travel'    => 'Giras',
+		'install'   => 'Instalaciones',
+		'calls'     => 'Llamadas',
+		'estimate'  => 'Presupuestos',
+		'laststeps' => 'Puesta a punto y curso',
+		'meetings'  => 'Reuniones',
+		'remote'    => 'Servicios remotos',
+		'service'   => 'Servicios técnicos',
+		'sales'     => 'Ventas',
+		'technical' => 'Visitas técnicas',
+	];
 }
