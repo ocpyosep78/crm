@@ -130,7 +130,7 @@ class Builder{
 				break;
 
 			case 'Xajax':
-				$Xajax = new xajax("", "xajax_", 'ISO-8859-1');
+				$Xajax = new xajax("", "xajax_", 'UTF8');
 				$Xajax->outputEntitiesOn();
 				$Xajax->decodeUTF8InputOn();
 				// break; ommitted on purpose

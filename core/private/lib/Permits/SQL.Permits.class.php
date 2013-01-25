@@ -11,23 +11,23 @@
 
 /*
 	Methods that use Connection's modify() method, return an AnswerSQL object.
-	
+
 	This object contains the following public attributes (note to self: outdated list):
 		* msg	/> A string personalized message (defaults to '')
 		* code	/> Either true or false
 		* rows	/> mysql_affected_rows() returned by the query
-		
+
 	The personalized msg is set by assigning a string to each property, using:
 		* ->setErrMsg( 'error message to print if query fails' );
 		* ->setOkMsg( 'success message to print if query succeeds' );
-		
+
 */
-	
+
 	require_once( CONNECTION_PATH );
 
 
 	class pSQL extends Connection{
-		
+
 
 /***************
 ** Q U E R Y   M E T H O D S
@@ -67,7 +67,7 @@
 					ORDER BY `order`";
 			return $this->query($sql, 'named', 'id_area');
 		}
-		
+
 		protected function getUserPermits($profile, $user){
 			$sql = "SELECT `p`.*
 					FROM `_permissions` `p`
@@ -77,7 +77,7 @@
 					OR(`pbp`.`id_profile` = '{$profile}' && IFNULL(`pbu`.`type`, 'add') <> 'sub')";
 			return $this->query($sql, 'named', 'code');
 		}
-		
+
 		protected function getUserModules($profile, $user){
 			$sql = "SELECT	`m`.*,
 							`p`.`name`
@@ -105,19 +105,19 @@
 					ORDER BY `a`.`order`, `g`.`order`";
 			return $this->query($sql, 'named', 'code');
 		}
-		
+
 
 /***************
 ** M O D I F Y   M E T H O D S
 ****************
 ** (INSERT, UPDATE)
 ***************/
-			
+
 
 /***************
 ** M O D I F Y   M E T H O D S
 ****************
 ** (DELETE)
 ***************/
-		
+
 	}

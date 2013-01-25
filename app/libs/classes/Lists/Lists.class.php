@@ -105,9 +105,9 @@
 			return array(
 				''			=> '(seleccionar)',
 				'incomes'   => 'Cobranzas',
-				'delivery'  => 'Expedición',
-				'invoice'   => 'Facturación',
-				'warranty'  => 'Garantía',
+				'delivery'  => 'ExpediciÃ³n',
+				'invoice'   => 'FacturaciÃ³n',
+				'warranty'  => 'GarantÃ­a',
 				'travel'    => 'Giras',
 				'install'   => 'Instalaciones',
 				'calls'     => 'Llamadas',
@@ -115,9 +115,9 @@
 				'laststeps' => 'Puesta a punto y curso',
 				'meetings'  => 'Reuniones',
 				'remote'    => 'Servicios remotos',
-				'service'   => 'Servicios técnicos',
+				'service'   => 'Servicios tÃ©cnicos',
 				'sales'     => 'Ventas',
-				'technical' => 'Visitas técnicas',
+				'technical' => 'Visitas tÃ©cnicas',
 			);
 
 		}
@@ -125,18 +125,18 @@
 		public function salesTypes(){
 
 			return array(
-				'install'	=> 'Instalación',
+				'install'	=> 'InstalaciÃ³n',
 				'sale'		=> 'Venta',
-				'service'	=> 'Visita Técnica',
+				'service'	=> 'Visita TÃ©cnica',
 			);
 
 		}
 
 		public function warranties(){	/* In months */
 			return array(
-				12	=> '1 año',
+				12	=> '1 aÃ±o',
 				6	=> '6 meses',
-				0	=> '(sin garantía)',
+				0	=> '(sin garantÃ­a)',
 			);
 		}
 

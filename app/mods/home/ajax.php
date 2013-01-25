@@ -15,23 +15,23 @@ function editAcc($atts)
 	# If an error occurred, set $err = array(FieldWithError, ErrorTip)
 	if (!$atts['oldPass'])
 	{
-		$err = array('oldPass', 'Debe escribir la contraseña actual.');
+		$err = array('oldPass', 'Debe escribir la contraseÃ±a actual.');
 	}
 	elseif (md5($atts['oldPass']) != getSes('pass'))
 	{
-		$err = array('oldPass', 'La contraseña actual no es correcta.');
+		$err = array('oldPass', 'La contraseÃ±a actual no es correcta.');
 	}
 	elseif (!$atts['newPass1'])
 	{
-		$err = array('newPass1', 'Debe escribir su nueva contraseña 2 veces.');
+		$err = array('newPass1', 'Debe escribir su nueva contraseÃ±a 2 veces.');
 	}
 	elseif (!$atts['newPass2'])
 	{
-		$err = array('newPass2', 'Debe escribir su nueva contraseña 2 veces.');
+		$err = array('newPass2', 'Debe escribir su nueva contraseÃ±a 2 veces.');
 	}
 	elseif ($atts['newPass1'] != $atts['newPass2'])
 	{
-		$err = array('newPass2', 'Las contraseñas nuevas no coinciden.');
+		$err = array('newPass2', 'Las contraseÃ±as nuevas no coinciden.');
 	}
 	elseif ($valid !== true)
 	{
@@ -44,7 +44,7 @@ function editAcc($atts)
 	}
 
 	# Set message to return to the user after processing the request, if error
-	oSQL()->setErrMsg("Ocurrió un error. Su contraseña no fue modificada.");
+	oSQL()->setErrMsg("OcurriÃ³ un error. Su contraseÃ±a no fue modificada.");
 
 	# Request query and catch answer, then return it to the user
 	$data = array('user' => getSes('user'), 'pass' => md5($atts['newPass1']));
@@ -63,7 +63,7 @@ function editAcc($atts)
 	}
 	else
 	{
-		return logout('Inicie sesión con su nueva contraseña.', 2);
+		return logout('Inicie sesiÃ³n con su nueva contraseÃ±a.', 2);
 	}
 
 }
@@ -94,7 +94,7 @@ function createEvent($data, $id=NULL)
 
 		if (empty($event))
 		{
-			return say('No se encontró el evento pedido. Inténtelo nuevamente.');
+			return say('No se encontrÃ³ el evento pedido. IntÃ©ntelo nuevamente.');
 		}
 
 		if (!canEditEvent(getSes('user'), $event['creator']))
@@ -120,17 +120,17 @@ function createEvent($data, $id=NULL)
 	}
 	elseif (!checkTimeStamp($data['ini']))
 	{
-		$err = array('iniDate', 'Fecha/hora de inicio inválida.');
+		$err = array('iniDate', 'Fecha/hora de inicio invÃ¡lida.');
 	}
 	elseif ($data['end'] !== NULL)
 	{
 		if (!checkTimeStamp($data['end']))
 		{
-			$err = array('endTime', 'Hora de finalización inválida.');
+			$err = array('endTime', 'Hora de finalizaciÃ³n invÃ¡lida.');
 		}
 		elseif ($data['ini'] > $data['end'])
 		{
-			$err = array('endTime', 'La hora de inicio debe preceder a la de finalización');
+			$err = array('endTime', 'La hora de inicio debe preceder a la de finalizaciÃ³n');
 		}
 	}
 
@@ -157,7 +157,7 @@ function createEvent($data, $id=NULL)
 		  $data['id_event'], $data['id_customer'], $data['alarm']);
 
 	oSQL()->setOkMsg('El evento fue guardado correctamente.');
-	oSQL()->setErrMsg('Ocurrió un error al intentar guardar el evento.');
+	oSQL()->setErrMsg('OcurriÃ³ un error al intentar guardar el evento.');
 
 	if ($id)
 	{

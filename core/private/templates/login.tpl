@@ -5,7 +5,7 @@
 			<td><input class='input' type="text" name="user" /></td>
 		</tr>
 
-		<tr><th>Contraseña:</th>
+		<tr><th>ContraseÃ±a:</th>
 			<td><input class='input' type="password" name="pass" /></td>
 		</tr>
 

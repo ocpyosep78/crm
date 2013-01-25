@@ -213,10 +213,10 @@ function uploadAnalylize($file, $noFileReturn=NULL)
 
 		case UPLOAD_ERR_INI_SIZE:
 		case UPLOAD_ERR_FORM_SIZE:
-			return 'El tamaño del archivo supera el máximo permitido.';
+			return 'El tamaÃ±o del archivo supera el mÃ¡ximo permitido.';
 
 		case UPLOAD_ERR_PARTIAL:
-			return 'No se pudo comprobar la integridad del archivo. Inténtelo nuevamente.';
+			return 'No se pudo comprobar la integridad del archivo. IntÃ©ntelo nuevamente.';
 
 		case UPLOAD_ERR_NO_FILE:
 			return $noFileReturn;
@@ -224,10 +224,10 @@ function uploadAnalylize($file, $noFileReturn=NULL)
 		case UPLOAD_ERR_NO_TMP_DIR:
 		case UPLOAD_ERR_CANT_WRITE:
 		case UPLOAD_ERR_EXTENSION:
-			return 'La configuración de la aplicación o del servidor no permite subir este archivo.';
+			return 'La configuraciÃ³n de la aplicaciÃ³n o del servidor no permite subir este archivo.';
 	}
 
-	return 'Ocurrió un error desconocido al intentar subir el archivo.';
+	return 'OcurriÃ³ un error desconocido al intentar subir el archivo.';
 }
 
 
@@ -291,7 +291,7 @@ function checkIfUserStillOnline($user)
 		saveLog('loginLogout', 'out', 'timed out', $user);
 	}
 
-	oNav()->queueMsg('Sesión cerrada correctamente.', 'warning');
+	oNav()->queueMsg('SesiÃ³n cerrada correctamente.', 'warning');
 
 	return addScript("location.href = 'index.php';");
 }
@@ -520,7 +520,7 @@ function login($user, $pass)
 		if ($info['blocked'] == '1')
 		{
 			return say('Este usuario se encuentra actualmente bloqueado. '.
-				'Por más información consulte a un administrador.');
+				'Por mÃ¡s informaciÃ³n consulte a un administrador.');
 		}
 
 		acceptLogin($info);
@@ -530,7 +530,7 @@ function login($user, $pass)
 	}
 	else
 	{
-		return say('Nombre de usuario o contraseña incorrectos.');
+		return say('Nombre de usuario o contraseÃ±a incorrectos.');
 	}
 }
 
@@ -538,7 +538,7 @@ function acceptLogin($info)
 {
 	$ip = $_SERVER['REMOTE_ADDR'];
 
-	if (in_array(substr($ip, 0, 3), array('192', '127')))
+	if (preg_match('_^(192|127)_', $ip))
 	{
 		$cookie = sha1(time() . rand(1, time()));
 		$expire = time() + (3600*24*30);
@@ -562,7 +562,7 @@ function acceptLogin($info)
 	oSQL()->removeOldLogs(MAX_LOGS_GLOBAL);
 }
 
-function logout($msg='Su sesión fue cerrada correctamente.', $type=1)
+function logout($msg='Su sesiÃ³n fue cerrada correctamente.', $type=1)
 {
 	saveLog('loginLogout', 'out');
 

@@ -162,7 +162,7 @@ foreach ($urgentAjax as $key => $code)
 		catch (Exception $e)
 		{
 			header('Content-type: text/xml');
-			$error = devMode() ? $e->getMessage() : 'Ocurrió un error inesperado';
+			$error = devMode() ? $e->getMessage() : 'OcurriÃ³ un error inesperado';
 			echo say($error)->getXML();
 
 			exit;
@@ -288,7 +288,7 @@ catch (PublicException $e)
 catch (Exception $e)
 {
 	header('Content-type: text/xml');
-	$error = devMode() ? $e->getMessage() : 'Ocurrió un error inesperado';
+	$error = devMode() ? $e->getMessage() : 'OcurriÃ³ un error inesperado';
 	echo say($error)->getXML();
 
 	exit;
@@ -306,5 +306,5 @@ FileForm::processRequests();
 oSmarty()->assign('Xajax', oXajax());
 oSmarty()->assign('Page', oPageCfg()->getPage());
 
-header("Content-Type: text/html; charset=iso-8859-1");
+header("Content-Type: text/html; charset=utf8");
 oSmarty()->display(getSkinTpl());

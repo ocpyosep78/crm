@@ -105,6 +105,7 @@ EOF;
 		{
 			$this->clear();
 
+			mysql_set_charset('utf8');
 			$res = mysql_query(($this->sql=$sql), $this->conn);
 
 			if ($this->findError())
@@ -161,6 +162,7 @@ EOF;
 
 			$this->sql = $sql;
 
+			mysql_set_charset('utf8');
 			$res = mysql_query($this->sql , $this->conn);
 
 			$this->findError();
@@ -363,12 +365,12 @@ EOF;
 		private function clearMessages()
 		{
 			$this->messages = array(
-				'success'			=> 'Su consulta finalizó correctamente.',
-				'stdError'			=> 'Ocurrió un error desconocido al procesar su consulta. Se ha guardado un registro del error.',
-				'duplicate'			=> 'Ocurrió un error (clave duplicada). Se ha guardado un registro del error.',
-				'constraint_parent'	=> 'La base de datos ha bloqueado la modificación de este elemento (FK constraint).<br />'.
-					'Otros elementos de la base de datos dependen o derivan de él.',
-				'constraint_child'	=> 'La base de datos ha bloqueado la modificación de este elemento (FK constraint).<br />'.
+				'success'			=> 'Su consulta finalizÃ³ correctamente.',
+				'stdError'			=> 'OcurriÃ³ un error desconocido al procesar su consulta. Se ha guardado un registro del error.',
+				'duplicate'			=> 'OcurriÃ³ un error (clave duplicada). Se ha guardado un registro del error.',
+				'constraint_parent'	=> 'La base de datos ha bloqueado la modificaciÃ³n de este elemento (FK constraint).<br />'.
+					'Otros elementos de la base de datos dependen o derivan de Ã©l.',
+				'constraint_child'	=> 'La base de datos ha bloqueado la modificaciÃ³n de este elemento (FK constraint).<br />'.
 					'Este elemento depende o deriva de otros elementos en la base de datos.',
 			);
 		}

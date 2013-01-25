@@ -1,13 +1,7 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html>
 <head>
-
-	<meta http-equiv="X-UA-Compatible" content="IE=8" />
-	<!--[if IE 9]>
-	  <meta http-equiv="X-UA-Compatible" content="IE=9" />
-	<![endif]-->
-
-	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf8">
 	<meta http-equiv="Pragma" content="no-cache">
 	<meta http-equiv="Expires" content="-1">
 	<meta http-equiv="Last-Modified" content="0">
@@ -129,8 +123,8 @@
 	</div>
 
 	<div id='main_menu' rowspan="2">
-		<img id='hideMenu' src='app/images/arrow_head_left.gif' title='Ocultar menú' />
-		<img id='showMenu' src='app/images/arrow_head_right.gif' title='Mostrar menú' />
+		<img id='hideMenu' src='app/images/arrow_head_left.gif' title='Ocultar menÃº' />
+		<img id='showMenu' src='app/images/arrow_head_right.gif' title='Mostrar menÃº' />
 		<div id='menuDiv'>
 		  <div class='h_filler' style='width:140px;'>&nbsp;</div>
 		  {foreach from=$Page->menuItems key=key item=items}

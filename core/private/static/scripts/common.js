@@ -439,7 +439,7 @@ $(function(){
 				var msg = 'Debe escribir un nombre de usuario.';
 				return frm.user.focus() & say(msg, 'error', 0) & false;
 			} else if (!frm.pass.val()) {
-				var msg = 'Debe escribir su contraseña.';
+				var msg = 'Debe escribir su contraseÃ±a.';
 				return frm.pass.focus() & say(msg, 'error', 0) & false;
 			} else {
 				xajax_login(frm.user.val(), frm.pass.val());
@@ -510,7 +510,7 @@ function Snippet(el){
 	function _do(action, opts) {
 		switch (action) {
 			case 'delete':
-				var ask = '¿Realmente desea eliminar este elemento?';
+				var ask = 'Â¿Realmente desea eliminar este elemento?';
 				break;
 		}
 
@@ -752,12 +752,12 @@ function initializeList(model, modifier, src) {
 
 			switch (axn) {
 				case 'delete':
-					if( confirm('¿Realmente desea eliminar este elemento?') ){
+					if( confirm('Â¿Realmente desea eliminar este elemento?') ){
 						window['xajax_delete' + $.capitalize(model)](id, modifier);
 					};
 					break;
 				case 'block':
-					if( confirm('¿Realmente desea bloquear este elemento?') ){
+					if( confirm('Â¿Realmente desea bloquear este elemento?') ){
 						window['xajax_block' + $.capitalize(model)](id, modifier);
 					};
 					break;
@@ -831,12 +831,12 @@ function initializeSimpleList() {
 				case 'edit':
 					return SL.enableEditItem($(this)._for());
 				case 'delete':
-					if( !confirm('¿Realmente desea eliminar este elemento?') ) {
+					if( !confirm('Â¿Realmente desea eliminar este elemento?') ) {
 						return;
 					}
 					break;
 				case 'block':
-					if( !confirm('¿Realmente desea bloquear este elemento?') ) {
+					if( !confirm('Â¿Realmente desea bloquear este elemento?') ) {
 						return;
 					}
 					break;

@@ -30,7 +30,7 @@ if ('undefined' != typeof xajax.debug) {
   xajax.debug.text[113] = 'PREPARANDO PETICION';
   xajax.debug.text[114] = 'INICIANDO XAJAX CALL (En desuso: use xajax.request)';
   xajax.debug.text[115] = 'INICIANDO XAJAX REQUEST';
-  xajax.debug.text[116] = 'Ning�n procesador de respuesta esta disponible para tratar la respuesta del servidor.\n';
+  xajax.debug.text[116] = 'Ningún procesador de respuesta esta disponible para tratar la respuesta del servidor.\n';
   xajax.debug.text[117] = '.\nRevisa mensajes de error del servidor.';
   xajax.debug.text[118] = 'RECIBIDO [status: ';
   xajax.debug.text[119] = ', size: ';
@@ -42,7 +42,7 @@ if ('undefined' != typeof xajax.debug) {
   xajax.debug.text[125] = 'HECHO [';
   xajax.debug.text[126] = 'ms]';
   xajax.debug.text[127] = 'INICIALIZANDO PETICION OBJETO';
-   
+
   xajax.debug.exceptions = [];
   xajax.debug.exceptions[10001] = 'Invalid response XML: La respuesta contiene una etiqueta desconocida: {data}.';
   xajax.debug.exceptions[10002] = 'GetRequestObject: XMLHttpRequest no disponible, xajax esta deshabilitado.';

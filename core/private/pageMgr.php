@@ -38,8 +38,8 @@ if (!isXajax())
 	$pags = oPermits()->getPagesFromModule( $cMod );
 
 	# Register current coordinates info in PageCfg for template use
-	oPageCfg()->add_develMsgs("MÛdulo: {$mods[$cMod]['name']} ({$cMod})");
-	oPageCfg()->add_develMsgs("P·gina: {$pags[$cPag]['name']} ({$cPag})");
+	oPageCfg()->add_develMsgs("M√≥dulo: {$mods[$cMod]['name']} ({$cMod})");
+	oPageCfg()->add_develMsgs("P√°gina: {$pags[$cPag]['name']} ({$cPag})");
 
 	oPageCfg()->add_modules($mods);
 	oPageCfg()->set_module($cMod);
@@ -90,7 +90,6 @@ oPageCfg()->add_pageNav($pags[$cPag]['name'], $cPag);
 $js = SCRIPTS_PATH . "/{$cMod}.js";
 is_file($js) && oPageCfg()->add_jScripts($js);
 
-
 # Build Menu (non-developed pages don't have an ID, and they're grayed out by PageCfg)
 foreach ($pags as $code => $page)
 {
@@ -115,7 +114,7 @@ oPageCfg()->add_jsOnLoad("loadContent('".oNav()->getCode()."');");
 foreach( $mods as $key => $val ) oPageCfg()->add_navButtons( $key );
 
 # Add logout button to navigation bar
-oPageCfg()->add_navButtons('logout', false, 'Cerrar sesiÛn');
+oPageCfg()->add_navButtons('logout', false, 'Cerrar sesi√≥n');
 
 # Display menu (it's hidden when no session -not the case, since we're here)
 showMenu();
