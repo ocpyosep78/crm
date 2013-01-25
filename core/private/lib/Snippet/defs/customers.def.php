@@ -28,18 +28,18 @@ class Snippet_def_customers extends Snippets_Handler_Source
 		return array(
 			'customers' => array(
 				'id_customer'	=> array('name' => 'ID', 'isKey' => true),
-				'number'		=> 'N鷐ero',
+				'number'		=> 'N煤mero',
 				'customer'		=> 'Empresa',
-				'legal_name'	=> 'Raz髇 Social',
+				'legal_name'	=> 'Raz贸n Social',
 				'rut'			=> 'RUT',
-				'address'		=> 'Direcci髇',
-				'billingaddress'=> 'Dir. de Facturaci髇',
+				'address'		=> 'Direcci贸n',
+				'billingaddress'=> 'Dir. de Facturaci贸n',
 				'id_location'	=> '',
-				'phone'			=> 'Tel閒ono',
+				'phone'			=> 'Tel茅fono',
 				'email'			=> 'Email',
 				'seller'		=> array('FK' => '_users.user', 'hidden' => true),
 				'since'			=> array('name' => 'Fecha Ingreso', 'frozen' => true),
-				'subscribed'	=> array('name' => 'Subscripci髇', 'hidden' => true),
+				'subscribed'	=> array('name' => 'Subscripci贸n', 'hidden' => true),
 			),
 			'_locations' => array(
 				'id_location'	=> array('FK' => 'customers.id_location', 'hidden' => true),
@@ -76,7 +76,7 @@ class Snippet_def_customers extends Snippets_Handler_Source
 		snp_Layer_access::addCustomPermit('newAgendaEvent');
 
 		return array('view',
-		             array('newCustomerTech' => 'Nueva ficha t閏nica para el'),
+		             array('newCustomerTech' => 'Nueva ficha t茅cnica para el'),
 		             array('newAgendaEvent'  => 'Nuevo evento para el'),
 		             'create', 'edit', 'delete');
 	}
@@ -133,7 +133,7 @@ class Snippet_def_customers extends Snippets_Handler_Source
 						`lc`.*,
 						CONCAT(`c`.`customer`,
 							IF(`c`.`legal_name` = '', '', CONCAT(' (', `c`.`legal_name`, ')')),
-							' (Cliente ', IFNULL(`c`.`number`, 'sin n鷐ero'), ')') AS 'tipToolText'
+							' (Cliente ', IFNULL(`c`.`number`, 'sin n煤mero'), ')') AS 'tipToolText'
 				FROM `customers` `c`
 				LEFT JOIN `_users` `u` ON (`u`.`user` = `c`.`seller`)
 				LEFT JOIN `_locations` `lc` USING (`id_location`)

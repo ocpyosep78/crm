@@ -7,19 +7,19 @@
  * Licence: GNU GENERAL PUBLIC LICENSE <http://www.gnu.org/licenses/gpl.txt>
  */
 
-	
+
 	class Snippet_def_estimates_pack extends Snippets_Handler_Source{
-	
+
 		protected function getBasicAttributes(){
-			
+
 			return array(
 				'name'		=> 'Presupuesto Corporativo',
 				'plural'	=> 'Presupuestos Corporativos',
 			);
-			
+
 		}
-		
-		
+
+
 		/**
 		 * @overview: List of tables involving this module, and each relevant field in them,
 		 *            plus attributes for each field that could be used by Modules.
@@ -34,7 +34,7 @@
 		 *            hidden => false explicitly to override.
 		 */
 		protected function getDatabaseDefinition(){
-		
+
 			$data = array(
 				'estimates_pack' => array(
 					'id_estimates_pack'	=> array('isKey' => true),
@@ -45,17 +45,17 @@
 				),
 				'customers' => array(
 					'id_customer'	=> array('name' => 'ID', 'isKey' => true),
-					'number'		=> 'Número',
+					'number'		=> 'NÃºmero',
 					'customer'		=> 'Empresa',
-					'legal_name'	=> 'Razón Social',
+					'legal_name'	=> 'RazÃ³n Social',
 					'rut'			=> 'RUT',
-					'address'		=> 'Dirección',
+					'address'		=> 'DirecciÃ³n',
 					'id_location'	=> '',
-					'phone'			=> 'Teléfono',
+					'phone'			=> 'TelÃ©fono',
 					'email'			=> 'Email',
 					'seller'		=> array('FK' => '_users.user', 'hidden' => true),
 					'since'			=> array('name' => 'Fecha Ingreso'),
-					'subscribed'	=> array('name' => 'Subscripción', 'hidden' => true),
+					'subscribed'	=> array('name' => 'SubscripciÃ³n', 'hidden' => true),
 				),
 				'_users' => array(
 					'user'		=> '',
@@ -73,13 +73,13 @@
 				if( !is_array($atts) ) $atts = array('name' => $atts);
 				$atts['frozen'] = true;
 			}
-			
+
 			return $data;
-			
+
 		}
-		
+
 		protected function getFieldsFor( $type ){
-		
+
 			switch( $type ){
 				case 'list':
 					return array('created', 'name', 'customer', 'sellerName', 'estimates');
@@ -91,11 +91,11 @@
 					return array('number', 'customer', 'legal_name', 'rut', 'since', '>',
 						'phone', 'email', 'address', 'location', 'sellerName');
 			}
-		
+
 		}
-		
+
 		protected function getItemData( $id ){
-		
+
 			# Get main data for this estimates pack
 			$sql = "SELECT	`ep`.*,
 							DATE_FORMAT(`ep`.`created`, '%d-%m-%Y') AS 'created',
@@ -113,9 +113,9 @@
 					WHERE `ep`.`id_estimates_pack` = '{$id}'
 					ORDER BY `ep`.`created`";
 			$data = $this->sqlEngine->query($sql, 'row');
-			
+
 			if( empty($data) ) return array();
-			
+
 			# Attach links to each member
 			$sql = "SELECT	`e`.`id_estimate`,
 							`e`.`estimate`
@@ -127,7 +127,7 @@
 				$arr[] = "<a href='javascript:void(0);' onclick=\"getPage('estimatesInfo', ['{$k}'])\">{$v}</a>";
 			}
 			$data['estimates'] = isset($arr) ? join('<br />', $arr) : '(ninguno)';
-			
+
 			# Add statistics as fields
 			$sql = "SELECT	COUNT(DISTINCT(`ed`.`id_product`)) AS 'products',
 							SUM(`ed`.`amount`) AS 'unities',
@@ -145,23 +145,23 @@
 			$data['utility'] = (float)$stats['cost']
 				? number_format(($stats['price']/$stats['cost'])*100-100, 2).'%'
 				: '--';
-			
+
 			return $data;
-			
+
 		}
-		
+
 		protected function getTools(){
-		
+
 			return array('view', 'create', 'edit', 'delete');
-			
+
 		}
-				
+
 /*		protected function checkFilter( &$filters ){
 		}/**/
-		
+
 /*		protected function checkData( &$data ){
 		}/**/
-		
+
 		protected function getValidationRuleSet(){
 
 			return array(
@@ -174,26 +174,26 @@
 				'address'		=> array('text', NULL, 50),
 				'id_location'	=> array('selection'),
 			);
-			
+
 		}/**/
-		
+
 /*		protected function strictValidation(){
 			return true;
 		}/**/
 
 /* TEMP : All these methods below should be automatically created based on the definition */
-		
+
 private function globalFilters( &$filters ){
 
 	$srch = $filters['*'];
 	$filters = array();
-	
+
 	$fields = array_diff($this->getFieldsFor('view'), (array)'>');
-	
+
 	foreach( $fields as $field ) $filters["`{$field}`"] = $srch;
-	
+
 }
-		
+
 protected function getListData($filters=array(), $join='AND'){
 	if( isset($filters['*']) ){
 		$this->globalFilters( $filters );
@@ -216,5 +216,5 @@ protected function getListData($filters=array(), $join='AND'){
 			ORDER BY `ep`.`created`";
 	return $sql;
 }
-		
+
 	}
