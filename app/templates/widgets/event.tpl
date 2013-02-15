@@ -23,12 +23,4 @@
 	{if $event.target} <span class='agenda_targetUser'>&gt; {$event.target}</span>{/if}
 	
 	<span class='agenda_eventText'>- {$event.event}</span>
-
-	<span class='eventTools'>
-	  {if $Permits->can('editEvent') && $event.canEdit && !$event.closed}
-		<img for='edit'   src='app/images/agendaTools/edit.png' title='editar' />
-		<img for='cancel' src='app/images/agendaTools/cancel.png' title='cancelar/posponer' />
-		<img for='close'  src='app/images/agendaTools/close.png' title='cerrar' />
-	  {/if}
-	</span>
 </p>

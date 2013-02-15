@@ -1,5 +1,3 @@
-J = jQuery.noConflict();
-
 $_ = {style:{}};
 $E = {
 	addEvent: function(){ return $E; },
@@ -585,26 +583,24 @@ Modal = {
 /***********************************************************************************/
 
 function setAgendaHandlers(){
-	J('.eventUnit').click(function(){
-		xajax_eventInfo(J(this).find('input[type="hidden"]').val());
+	if( $$('.eventUnit') ) $$('.eventUnit').forEach(function(evt){
+		evt.addEvent('click', function eventInfo(){
+			xajax_eventInfo( $(this).getElement('INPUT').value );	/* eventID in hidden input */
+		});
 	});
 };
 
-function closeAgendaEvent(id, msg, resched){
-	(typeof resched == 'undefined') && (resched = J('#rescheduled').attr('checked')); 
-
-	var action = resched ? 'cancelar' : 'cerrar';
-	var res = prompt('Escriba un comentario para ' + action + ' el evento:', msg||'');
-	
+function closeAgendaEvent(id, msg){
+	var res = prompt('Escriba un comentario para el cierre de este evento:', msg||'');
 	if( res === '' ){
-        return showStatus('Se debe incluir un comentario al ' + action + ' un evento.');
+        return showStatus('Se debe incluir un comentario al cerrar un evento de la Agenda.');
     }else if( res ){
-        var cfm = "Se dispone a " + action + " el evento con el siguiente mensaje:\n\n" + res +
-                  "\n\nPulse Cancelar para editar el mensaje o Aceptar para confirmar.";
+        var cfm = "Se dispone a cerrar el evento con el siguiente mensaje:\n\n" + res +
+                  "\n\nPulse Cancelar para editar el mensaje.";
         if (confirm(cfm)){
-            xajax_closeAgendaEvent(id, res, resched ? 1 : 0);
+            xajax_closeAgendaEvent(id, res, $('rescheduled').checked ? 1 : 0);
         } else {
-            closeAgendaEvent(id, res, resched);
+            closeAgendaEvent(id, res);
         }
     }
 };

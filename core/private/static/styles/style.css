@@ -592,10 +592,10 @@ table.calcells td.hover{background-color:#999999;}
 .agendaHalfDays .agenda_dayWrapper{ height:45%; }
 .agenda_dayContent{ top:45px; bottom:2px; left:0px; right:0px; }
 #agendaTbl .agenda_dayContent{ position:absolute; overflow:auto; }
-.eventUnit{ position:relative; clear:both; min-height:40px; margin:1px 3px 5px 1px; padding:1px 2px; cursor:pointer; background-image:linear-gradient(#e0f0ff, #d0d0ef); box-shadow:#606065 2px 2px 3px; }
+.eventUnit{ clear:both; min-height:40px; margin:1px 3px 5px 1px; padding:1px 2px; cursor:pointer; background-image:linear-gradient(#e0f0ff, #d0d0ef); box-shadow:#606065 2px 2px 3px; }
 .eventUnit:hover{ background:#e0e0e0; color:#600000; }
 .agenda_eventInfo{ color:#003300; font-weight:bold !important; }
-.eventClosed{ display:none; background:#f0ffc0; background-image:linear-gradient(#f0ffe8, #f0ffa0); }
+.eventClosed{ background:#f0ffc0; background-image:linear-gradient(#f0ffe8, #f0ffa0); }
 .eventClosed .agenda_eventText{ color:#000000; }
 IMG.agenda_eventUser{ float:left; height:40px; width:30px; margin-bottom:2px; margin-right:3px; }
 IMG.agenda_eventType{ float:right; height:30px; width:30px; margin:3px; }
@@ -625,19 +625,6 @@ IMG.agenda_eventType{ float:right; height:30px; width:30px; margin:3px; }
 .eventClosedMsg{ text-align:center; color:#000000; margin:30px 0px 20px 0px; }
 .eventRescheduled{ background:#f0ccc0; }
 .eventInfoRescheduled{ color:#993300; font-size:18px; font-weight:bold; font-family:Arial, Helvetica, sans-serif; text-transform:uppercase; }
-.eventTools{
-	position:absolute;
-	top:8px;
-	right:45px;
-	overflow:hidden;
-}
-.eventTools img{
-	position:relative;
-	right:-300px;
-	height:24px;
-	width:24px;
-	margin:0px 2px;
-}
 
 /**
  * TABS
