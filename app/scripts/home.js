@@ -54,50 +54,17 @@ function ini_agenda(){
 		getPage(e, 'agenda', [$('thisDate').value, getFilters(), $('showRescheduled').checked ? 1 : 0]);
 	};
 	$$('.sel_agendaFilters').forEach(function(sel){ sel.onchange = filterAgenda; });
-
-	J('.eventRescheduled')[J('#showRescheduled').attr('checked') ? 'show' : 'hide']();
-	J('#showRescheduled').click(function(){
-		J('.eventRescheduled').toggle();
-	});
-
-	// Animate Event Tools
-	J('.eventUnit:not(.eventClosed)').hover(function(){
-		J(this).find('.eventTools img').animate({
-			'right': 0
-		}, {'duration': 100, 'queue': false});
-		J(this).children(':not(.eventTools)').animate({
-			'opacity': 0.6
+	$('showRescheduled').onclick = function(){
+		var that = this;
+		$$('.eventRescheduled').forEach(function(p){
+			$(p).setStyle('display', that.checked ? 'block' : 'none');
 		});
-	}, function(){
-		J(this).find('.eventTools img').animate({
-			'right': -200
-		}, {'duration': 500, 'queue': false});
-		J(this).children(':not(.eventTools)').animate({
-			'opacity': 1
-		});
-	});
-	
-	// Activate Event Tools
-	J('.eventTools img').click(function(e){
-		var eventID = J(this).parents('.eventUnit:first').find('[name="id_event"]').val();
-
-		switch (J(this).attr('for'))
-		{
-			case 'edit': getPage(e, 'editEvent', [eventID])
-				break;
-			case 'cancel': closeAgendaEvent(eventID, '', true);
-				break;
-			case 'close': closeAgendaEvent(eventID);
-				break;
-			default:
-				return;
-		}
-		return false;
-	});
+	};
+	$('showRescheduled').onclick();
 };
 function ini_agendaDay(){
-	J('.eventUnit').click(function(){
-		xajax_eventInfo(J(this).find('input[type="hidden"]').val());
+	$$('.eventUnit').forEach(function(evt){
+		evt.addEvent('click', function(){ xajax_eventInfo( $(this).getElement('INPUT').value ); });
 	});
 
 	function getFilters(){
@@ -109,11 +76,13 @@ function ini_agendaDay(){
 		getPage(e, 'agendaDay', [$('thisDate').value, getFilters(), $('showRescheduled').checked ? 1 : 0]);
 	};
 	$$('.sel_agendaFilters').forEach(function(sel){ sel.onchange = filterAgenda; });
-
-	J('.eventRescheduled')[J('#showRescheduled').attr('checked') ? 'show' : 'hide']();
-	J('#showRescheduled').click(function(){
-		J('.eventRescheduled').toggle();
-	});
+	$('showRescheduled').onclick = function(){
+		var that = this;
+		$$('.eventRescheduled').forEach(function(p){
+			$(p).setStyle('display', that.checked ? 'block' : 'none');
+		});
+	};
+	$('showRescheduled').onclick();
 };
 
 function ini_activity_technical(){ ini_activity(); };
