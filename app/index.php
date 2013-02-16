@@ -1,6 +1,5 @@
 <?php
 
-
 /***************
 ** I N I T I A L   C O N F I G U R A T I O N
 ***************/
