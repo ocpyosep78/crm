@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<title>Untitled Document</title>
+</head>
+
+<body>
+
+<pre>
+
+
+	FPDF($orientation='P', $unit='mm', $format='A4')
+	SetMargins($left, $top, $right=null)
+	SetLeftMargin( $margin )
+	SetTopMargin( $margin )
+	SetRightMargin( $margin )
+	SetAutoPageBreak($auto, $margin=0)
+	SetDisplayMode($zoom, $layout='continuous')
+	SetCompression( $compress )
+	SetTitle($title, $isUTF8=false)
+	SetSubject($subject, $isUTF8=false)
+	SetAuthor($author, $isUTF8=false)
+	SetKeywords($keywords, $isUTF8=false)
+	SetCreator($creator, $isUTF8=false)
+	AliasNbPages($alias='{nb}')
+	Error($msg)
+	Open()
+	Close()
+	AddPage($orientation='', $format='')
+	Header()
+	Footer()
+	PageNo()
+	SetDrawColor($r, $g=null, $b=null)
+	SetFillColor($r, $g=null, $b=null)
+	SetTextColor($r, $g=null, $b=null)
+	GetStringWidth($s)
+	SetLineWidth($width)
+	Line($x1, $y1, $x2, $y2)
+	Rect($x, $y, $w, $h, $style='')
+	AddFont($family, $style='', $file='')
+	SetFont($family, $style='', $size=0)
+	SetFontSize($size)
+	AddLink()
+	SetLink($link, $y=0, $page=-1)
+	Link($x, $y, $w, $h, $link)
+	Text($x, $y, $txt)
+	AcceptPageBreak()
+	Cell($w, $h=0, $txt='', $border=0, $ln=0, $align='', $fill=false, $link='')
+	MultiCell($w, $h, $txt, $border=0, $align='J', $fill=false)
+	Write($h, $txt, $link='')
+	Ln($h=null)
+	Image($file, $x=null, $y=null, $w=0, $h=0, $type='', $link='')
+	GetX()
+	SetX($x)
+	GetY()
+	SetY($y)
+	SetXY($x, $y)
+	Output($name='', $dest='')
+	
+</pre>
+
+
+
+
+</body>
+</html>

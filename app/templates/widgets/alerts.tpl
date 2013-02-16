@@ -68,14 +68,13 @@
 		firstLoad: true,
 		list: {},
 		lastRead: 0,
-		alertRead: "<img src='{$BBURL}/app/images/buttons/delete.png' alt='quitar' title='quitar de la lista' />",
+		alertRead: "<img src='app/images/buttons/delete.png' alt='quitar' title='quitar de la lista' />",
 		request: function(){
-			loggedIn && silentXajax('sync', [loggedIn, {from: sync.lastRead}]);
+			if( loggedIn ) silentXajax('sync', [loggedIn, {from: sync.lastRead}]);
 		},
 		requestRemoval: function(){
-			var ref = this.parent().attr('ref');
-			ref && removeAlert(ref);
-			sync.remove(ref);
+			if( this.parentNode.ref ) xajax_removeAlert( this.parentNode.ref );
+			sync.remove( this.parentNode.ref );
 		},
 		process: function( alerts ){
 			// Add new items to the (graphical) list
@@ -83,34 +82,37 @@
 			if( !this.hasAlerts() ) this.hide();
 			this.firstLoad = false;
 		},
-		add: function(al){
+		add: function( al ){
+			var that = this;
 			this.list[al.id] = al;
 			this.lastRead = Math.max(al.id||0, this.lastRead);
-			$('<div />')
-				.html(this.alertRead + al.date + al.msg)
-				.attr('ref', al.id)		/* Reference to alert's ID */
-				.prependTo($('#alertsList'))
-				.find('img').click(function(){
-					sync.requestRemoval.apply($(this));
-					clearTimeout($('#alertsBox').showAlertsTO);
-					return false;
-				});
-			$('#alertsList').parent().scrollTop(0);
+			var el = $(document.createElement('DIV'));
+			el.innerHTML = this.alertRead + al.date + al.msg;
+			el.ref = al.id;		/* Reference to alert's ID */
+			el.getElement('IMG').addEvent('click', function(e){
+				e.stop();
+				that.requestRemoval.apply( this );
+				clearTimeout( $('alertsBox').showAlertsTO );
+			});
+			$('alertsList').insertBefore(el, $('alertsList').firstChild);
+			$('alertsList').parentNode.scrollTop = 0;
 			this.show();
-			this.firstLoad || this.highlightRow(el);
+			if( !this.firstLoad ) this.highlightRow( el );
 		},
-		remove: function(x){
-			$('#alertsList div[ref="'+x+'"]').remove();
-			$('#alertsList div').length || this.hide();
+		remove: function( x ){
+			$('alertsList').getElements('DIV').forEach(function(el){
+				if( el.ref == x ) el.parentNode.removeChild( el );
+			});
+			if( !$('alertsList').getElements('DIV').length ) this.hide();
 		},
 		show: function(){
-			$('#alertsBox').show();
+			$('alertsBox').setStyle('display', 'block');
 		},
 		hide: function(){
-			$('#alertsBox').hide();
+			$('alertsBox').setStyle('display', 'none');
 		},
 		hasAlerts: function(){
-			for(x in this.list) if(this.list.hasOwnProperty(x)) return true;
+			for( x in this.list ) if( this.list.hasOwnProperty(x) ) return true;
 			return false;
 		},
 		highlightRow: function( row ){
@@ -118,26 +120,28 @@
 			setTimeout(function(){ row.className = ''; }, 30000);
 		}
 	};
-
-	$(function(){			/* Alerts & Sync */
+	
+	window.addEvent('domready', function(){			/* Alerts & Sync */
 		sync.request();
 		var syncItvl = setInterval(sync.request, 5000);
-		var $box = $('#alertsBox');
-		$box.mouseenter(function(){
+/* xajax_removeAllAlerts(); unused for now, but functional */
+		var $box = $('alertsBox');
+		$box.addEvent('mouseenter', function(){
 			$box.showAlertsTO = setTimeout(function(){
 				$box.addClass('shown');
 			}, 1000);
 		});
-		$box.mouseleave(function(e){
-			clearTimeout($box.showAlertsTO);
-			$box.removeClass('shown').css('scrollTop', 0);
+		$box.addEvent('mouseleave', function(e){
+			clearTimeout( $box.showAlertsTO );
+			$box.removeClass('shown').scrollTop = 0;
 		});
-		$box.click(function(){
+		$box.addEvent('click', function(){
 			$box.toggleClass('shown');
-			$box.hasClass('shown') ? $box.focus() : $box.css('scrollTop', 0);
+			if( $box.hasClass('shown') ) $box.focus();
+			else $box.scrollTop = 0;
 		});
 	});
-
+	
 </script>
 {/literal}
 

@@ -1,15 +1,25 @@
 <?php
 
+isset($_GET['chatCheck']) && die();
+
+// Try the old code (if it returns, we'll go on with the new one)
+if (!$_GET || !empty($_GET['nav']))
+{
+	require_once 'app/index.php';
+	exit;
+}
+
 define('BASE', dirname(__FILE__));
-define('CORE', BASE . '/core');
+define('PATH_PVT', BASE . '/private');
+define('PATH_PUB', BASE . '/public');
 
 
 // Load config files (defines)
-require_once BASE . '/app/cfg/config.cfg.php';
-require_once CORE . '/cfg/core.cfg.php';
+require_once PATH_PUB . '/cfg/config.cfg.php';
+require_once PATH_PVT . '/cfg/core.cfg.php';
 
 // Local config file, if exists
-$devCfg = BASE . '/app/cfg/local.cfg.php';
+$devCfg = PATH_PUB . '/cfg/local.cfg.php';
 is_readable($devCfg) && require_once $devCfg;
 
 
@@ -21,15 +31,15 @@ date_default_timezone_set(TIME_ZONE);
 
 
 // Common functions
-require_once BASE . '/app/libs/common.php';
+require_once PATH_PUB . '/libs/common.php';
 
 
 // Basic classes and traits
 require_once TRAITS . '/Connect.php';
 require_once TRAITS . '/Singleton.php';
 
-require_once CORE . '/Exceptions.php';
-require_once CORE . '/Object.php';
+require_once PATH_PVT . '/Exceptions.php';
+require_once PATH_PVT . '/Object.php';
 
 require_once LIBS . '/Datasource/Datasource.php';
 
@@ -47,14 +57,14 @@ require_once CORE_LIB . '/Builder/Builder.class.php';
 require_once CLASSES_PATH . '/FileForm/FileForm.php';
 
 // Controllers
-require_once CORE . '/Controllers/Controller.php';
+require_once PATH_PVT . '/Controllers/Controller.php';
 
 // Response Handler
 require_once LIBS . '/Response/Response.php';
 
 
 // Sugar (user-friendly page names)
-is_file('app/Sugar.php') && (require_once 'app/Sugar.php');
+is_file('public/Sugar.php') && (require_once 'public/Sugar.php');
 
 if (!class_exists('Sugar'))
 {

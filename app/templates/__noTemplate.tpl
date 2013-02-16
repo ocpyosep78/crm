@@ -1,1 +1,1 @@
-<div class='noTemplate'>EN CONSTRUCCIÃ“N</div>
+<div class='noTemplate'>EN CONSTRUCCIÓN</div>

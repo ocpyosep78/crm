@@ -1,13 +1,13 @@
 {include file='widgets/agenda_filters.tpl'}
 
-{if Access::can('createEvent')}
+{if $Permits->can('createEvent')}
 	<input type='button' class='button' id='btn_createEvent' value='Nuevo Evento' />
 {/if}
-
+  
 <div id='agenda_move'>
-  <img title='semana anterior' src='{$BBURL}/app/images/buttons/go-left.gif' alt='' for='{$prev}' />
-  <input type='text' id='agenda_calendar' class='calendar' style='display:none;' value='{$data[0].date|date_format:'Y/m/d'}' />
-  <img title='semana siguiente' src='{$BBURL}/app/images/buttons/go-right.gif' alt='' for='{$next}' />
+  <img title='semana anterior' src='app/images/buttons/go-left.gif' alt='' for='{$prev}' />
+  <input type='text' id='epochTrigger' class='calendar' />
+  <img title='semana siguiente' src='app/images/buttons/go-right.gif' alt='' for='{$next}' />
 </div>
 
 <table id='agendaTbl' cellspacing="7">

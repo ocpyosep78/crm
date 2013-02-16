@@ -9,14 +9,14 @@
 
 
 	define('STATIC_DATA_PATH', dirname(__FILE__).'/staticData/');
-
+	
 	require_once( dirname(__FILE__).'/SQL.Lists.class.php' );
 
 /**
  * The goal of this class is to automatize the generation of lists
  * throughout the app as much as possible. This is achieved by separating
  * the process in three big areas: static data, logic, and database.
- *
+ * 
  * A fourth area would be the script that runs on the client
  * (JS:initializeList), but the JS part does not need to be editted or
  * extended in any way, so it's out of the scope of these notes. Finally,
@@ -43,24 +43,24 @@
  * to present a list in a page where pageCode and objCode differ, you'll
  * need to pass the code as a parameter (alternatively, you can call
  * Lists#setCode() to set it beforehand).
- *
+ * 
  * Lists#printList() will attempt to load static data in the first phase,
  * which includes the list of fields (for the tabular data), a few params
- * like screen name (singular and plural) and the list of tools that will
- * be available to a tabular list: edit, delete, block, are the most
- * common options.
- *
- * Creating a new Data Provider script, or editing an existing one:
- *
+ * like screen name (singular and plural), whether to show a tip on each
+ * row, and the list of tools that will be available to a tabular list:
+ * edit, delete, block, are the most common options.
+ * 
+ * Creating a new Data Provider script, or editting an existing one:
+ * 
  * You don't need to worry about HOW data arrives to where it will be used.
  * All you need to do is create a regular PHP script in staticData/ folder
  * and define there the right variables, as follows:
- *
+ * 
  * $fields
  	A hash containing field name => screen name, where field name has to
 	match that set in the database and screen name is the name of that
 	column. Only columns present in this list (as keys) will be printed.
- *
+ * 
  * $actions
  	This is a list of possible actions. The list is a set of key => value
 	pairs, where key is the action's code (or tool code) and value is the
@@ -76,7 +76,7 @@
  *	overwrite it though). In any case, presenting them in the list will
  *	still depend on the user having enough rights to use those actions.
  *
- * On a second phase (through ajax as soon as the 'frame' is loaded), the
+ * On a second phase (through xajax as soon as the 'frame' is loaded), the
  * JS part of this library will request the content of the list. This is
  * where dynamic data retrieved from the database is required. Most of it
  * is automatized, so there's really not much to do to 'make it work'. It
@@ -87,29 +87,51 @@
 
 
 	class Lists extends SQL_Lists{
-
+		
 		private $src=NULL;				# Alternative source
-
+		
 		private $combo=true;			# Whether to include comboList in tabular lists
-
+		
 		private $comboOptions=array();	# Lists of options for simpleLists (create/edit)
-
-
-
+	
+	
+		
 /***************
 ** HARDCODED LISTS
 ***************/
+	
+		public function agendaEventTypes(){
+		
+			return array(
+				''			=> '(seleccionar)',
+				'incomes'   => 'Cobranzas',
+				'delivery'  => 'Expedición',
+				'invoice'   => 'Facturación',
+				'warranty'  => 'Garantía',
+				'travel'    => 'Giras',
+				'install'   => 'Instalaciones',
+				'calls'     => 'Llamadas',
+				'estimate'  => 'Presupuestos',
+				'laststeps' => 'Puesta a punto y curso',
+				'meetings'  => 'Reuniones',
+				'remote'    => 'Servicios remotos',
+				'service'   => 'Servicios técnicos',
+				'sales'     => 'Ventas',
+				'technical' => 'Visitas técnicas',
+			);
+		
+		}
 		
 		public function salesTypes(){
-
+		
 			return array(
 				'install'	=> 'Instalación',
 				'sale'		=> 'Venta',
 				'service'	=> 'Visita Técnica',
 			);
-
+			
 		}
-
+		
 		public function warranties(){	/* In months */
 			return array(
 				12	=> '1 año',
@@ -117,163 +139,210 @@
 				0	=> '(sin garantía)',
 			);
 		}
-
-
-
+	
+	
+		
 /***************
 ** OBJECT'S MAIN (TABULAR) LISTS
 ***************/
 
-		public function printList($code=NULL, $modifier=NULL)
-		{
+		public function printList($code=NULL, $modifier=NULL){
+			
 			# Update page content (prints list frame)
 			oNav()->updateContent($this->listHTML($code, $modifier), true);
-
+			
 			# Call JS function to start rolling
 			return $this->initializeList();
+			
 		}
-
-		public function initializeList()
-		{
-			return addScript("initializeList('{$this->code}', '{$this->modifier}', '{$this->src}');");
+		
+		public function initializeList(){
+			return addScript( "initializeList('{$this->code}', '{$this->modifier}', '{$this->src}');" );
 		}
-
+	
 		/**
 		 * This function generates a list of any particular object suitable for
 		 * tabular listing (users, customers, products, etc.). It doesn't fill
-		 * it with the actual data yet.
+		 * it with the actual data, but sets the frame for self#updateList to
+		 * work with (and calls it automatically).
 		 */
-		public function listHTML($code=NULL, $modifier=NULL)
-		{
-			$this->code = is_null($code) ? oNav()->currentPage() : $code;
+		public function listHTML($code=NULL, $modifier=NULL){
+		
+			$this->code = is_null($code) ? oNav()->getCurrentPage() : $code;
 			$this->modifier = $modifier;
-
+			
 			# Import static data
 			$static = $this->getStaticData();
-
+			
 			# Put it in Smarty's universe
-			Template::one()->assign('code', $this->code);
-			Template::one()->assign('modifier', $this->modifier);
-			Template::one()->assign('fields', $static['fields']);
-			Template::one()->assign('params', $static['params']);
-			Template::one()->assign('comboList', NULL);	# Initialize
-
+			oSmarty()->assign('code', $this->code);
+			oSmarty()->assign('modifier', $this->modifier);
+			oSmarty()->assign('fields', $static['fields']);
+			oSmarty()->assign('params', $static['params']);
+			oSmarty()->assign('comboList', NULL);	# Initialize
+			
 			# Combo list ($code, $modifier)
 			if( $this->combo ) $this->includeComboList($this->code, $this->modifier);
-
+			
 			# Fetch the template and return it
 			return $this->template('listFrame');
+			
 		}
-
-
+		
+		/**
+		 * Called through Xajax, automatically
+		 */
+		public function updateList($uID, $filter, $code, $modifier=NULL, $src=NULL){
+		
+			$this->code = $code;
+			$this->modifier = $modifier;
+			
+			# Import static data
+			$static = $this->getStaticData();
+			$tipField = $static['params']['tipField'];
+			
+			# Pre-process filters if function name was defined (in static object's data)
+			if( $static['preProcess'] && function_exists($static['preProcess']) ){
+				call_user_func_array($static['preProcess'], array(&$filter));
+			}
+			
+			# Get Data
+			$source = ($src ? $src : $this->code).'List';
+			$data = $this->$source($filter, $modifier);
+			
+			# Post-process data if function name was defined (in static object's data)
+			if( $static['postProcess'] && function_exists($static['postProcess']) ){
+				call_user_func_array($static['postProcess'], array(&$data));
+			}
+			
+			# Sort defined fields as defined (w/ user-defined function array_sort_keys)
+			foreach( $data as $k => &$v ){
+				array_sort_keys($data[$k], $static['fields']);
+				$data[$k]['tip'] = isset($v[$tipField]) ? $v[$tipField] : '';
+			}
+			
+			oSmarty()->assign('params', $static['params']);
+			oSmarty()->assign('fields', $static['fields']);
+			oSmarty()->assign('data', isset($data) ? $data : array());
+			oSmarty()->assign('axns', $static['actions']);
+			oSmarty()->assign('tools', $static['tools']);
+			oSmarty()->assign('infoPage', "{$this->code}Info");
+			
+			addAssign('TableSearchCache', 'innerHTML', $this->template('list'));
+			addScript("TableSearch.showResults('{$uID}');");
+			
+			return addScript("\$('listWrapper').update();");
+		
+		}
+	
+	
+		
 /***************
 ** OBJECT'S SIMPLE LISTS
 ***************/
 
 		public function printSimpleList($code=NULL, $modifier=NULL){
-
+			
 			# Update page content (prints simpleList)
 			oNav()->updateContent($this->simpleListHTML($code, $modifier), true);
-
+			
 			# Call JS function to start rolling
 			return $this->initializeSimpleList();
-
+			
 		}
-
+		
 		public function initializeSimpleList(){
 			return addScript( "initializeSimpleList();" );
 		}
 
 		public function simpleListHTML($code=NULL, $modifier=NULL, $filters=array()){
-
-			$this->code = is_null($code) ? oNav()->currentPage() : $code;
+		
+			$this->code = is_null($code) ? oNav()->getCurrentPage() : $code;
 			$this->modifier = $modifier;
-
+			
 			# Import static data
 			$static = $this->getStaticData();
 			$tipField = $static['params']['tipField'];
-
+			
 			# Pre-process filters if function name was defined (in static object's data)
 			if( $static['preProcess'] && function_exists($static['preProcess']) ){
 				call_user_func_array($static['preProcess'], array(&$filter));
 			}
-
+			
 			# Get Data
 			$src = ($this->src ? $this->src : $this->code).'SL';
 			$data = $this->$src($filters, $modifier);
-
+			
 			# Post-process data if post-process function was defined in static object's data
 			if( $static['postProcess'] && function_exists($static['postProcess']) ){
 				call_user_func_array($static['postProcess'], array(&$data));
 			}
-
+			
 			# Sort defined fields as defined (w/ user-defined function array_sort_keys)
-			foreach ($data as $k => &$v)
-			{
+			foreach( $data as $k => &$v ){
 				array_sort_keys($data[$k], $static['fields']);
-
 				$v['tip'] = isset($v[$tipField]) ? $v[$tipField] : '';
 				$v['tools'] = $static['tools'];
 			}
-
+			
 			# Put it in Smarty's universe
-			Template::one()->assign('simpleListID', $static['id']);
-			Template::one()->assign('code', $this->code);
-			Template::one()->assign('modifier', $this->modifier);
-			Template::one()->assign('fields', $static['fields']);
-			Template::one()->assign('noInput', $static['noInput']);
-			Template::one()->assign('params', $static['params']);
-			Template::one()->assign('tools', $static['tools']);
-			Template::one()->assign('axns', $static['actions']);
-			Template::one()->assign('data', isset($data) ? $data : array());
-			Template::one()->assign('canCreate', Access::can('create' . ucfirst($this->code)) );
-
-			Template::one()->assign('comboOptions', $this->comboOptions);
-
+			oSmarty()->assign('simpleListID', $static['id']);
+			oSmarty()->assign('code', $this->code);
+			oSmarty()->assign('modifier', $this->modifier);
+			oSmarty()->assign('fields', $static['fields']);
+			oSmarty()->assign('noInput', $static['noInput']);
+			oSmarty()->assign('params', $static['params']);
+			oSmarty()->assign('tools', $static['tools']);
+			oSmarty()->assign('axns', $static['actions']);
+			oSmarty()->assign('data', isset($data) ? $data : array());
+			oSmarty()->assign('canCreate', oPermits()->can('create'.ucfirst($this->code)) );
+			
+			oSmarty()->assign('comboOptions', $this->comboOptions);
+			
 			# Fetch the template and return it
 			return $this->template('simpleList');
-
+		
 		}
-
-
-
+		
+		
+		
 /***************
 ** HASHED (COMBO) LISTS
 ***************/
 
 		public function comboListHTML($code, $modifier=NULL, $selected=''){
-
-			if( is_null($code) ) $code = oNav()->currentPage();
+		
+			if( is_null($code) ) $code = oNav()->getCurrentPage();
 			$params = array('name' => NULL);
-
+			
 			# Attempt to load config file
 			if( is_file($path=STATIC_DATA_PATH."{$code}.sd.php") ) require( $path );
-
-			Template::one()->assign('combo', array(
+			
+			oSmarty()->assign('combo', array(
 				'code'		=> $code,
 				'params'	=> array('name' => $params['name']),
 				'list'		=> $this->$code( $modifier ),
 				'selected'	=> $selected,
 			));
-
+			
 			return $this->template( 'comboList' );
-
+			
 		}
-
+		
 		public function includeComboList($code=NULL, $modifier=NULL, $sel=''){
-
-			Template::one()->assign('comboList', $this->comboListHTML($code, $modifier, $sel));
-
+		
+			oSmarty()->assign('comboList', $this->comboListHTML($code, $modifier, $sel));
+			
 		}
-
-
-
+	
+	
+		
 /***************
 ** PRIVATE METHODS
 ***************/
-
+		
 		private function getStaticData( $key=NULL ){
-
+		
 			# Let required (SD) file know if we got a modifier
 			$code = $this->code;
 			$modifier = $this->modifier;
@@ -291,10 +360,10 @@
 			$noInput = array();
 			$preProcess = NULL;
 			$postProcess = NULL;
-
+			
 			# Attempt to load config file
 			if( is_file($path=STATIC_DATA_PATH."{$code}.sd.php") ) require( $path );
-
+			
 			# Fix/Complete Params
 			$params += array(
 				'tipField'	=> NULL,
@@ -302,7 +371,7 @@
 				'name'		=> '',
 				'plural'	=> ''
 			);
-
+			
 			$axns = array();
 			# Fix/Complete Tools
 			foreach( array_reverse($tools) as $axn ) $axns[$axn] = $axn.ucfirst($code);
@@ -312,7 +381,7 @@
 				if( !isset($noInput[$k]) ) $noInput[$k] = NULL;
 				if( is_array($field) && !isset($noInput[$field[1]]) ) $noInput[$field[1]] = NULL;
 			}
-
+			
 			# Return a hash with all relevant static data for current list
 			return $key
 				? (isset($$key) ? $$key : NULL)
@@ -326,23 +395,23 @@
 					'preProcess'	=> $preProcess,
 					'postProcess'	=> $postProcess,
 				);
-
+			
 		}
-
+		
 		private function template( $which ){
-
+			
 			return is_file($path=dirname(__FILE__)."/templates/{$which}.tpl")
-				? Template::one()->fetch( $path )
+				? oSmarty()->fetch( $path )
 				: '';
-
+			
 		}
-
+		
 		public function hasCombo( $bool=true ){
-
+		
 			$this->combo = $bool;
-
+		
 		}
-
+		
 		/**
 		 * Sets an altenative source for data. The code passed as paramter follows
 		 * the same rules as a real code (meaning lists based on it will be appended
@@ -350,15 +419,15 @@
 		 * from the DB.
 		 */
 		public function setSource( $src ){
-
+		
 			$this->src = $src;
-
+			
 		}
-
+		
 		public function addComboOptions($name, $options=array()){
-
+		
 			$this->comboOptions[$name] = $options;
-
+		
 		}
-
+		
 	}
