@@ -17,40 +17,6 @@
 ** U R G E N T   X A J A X   F U N C T I O N S
 ***************/
 
-<<<<<<< HEAD
-$urgentAjax = array(
-	'sync'		=> 'sync',
-	'getPage'	=> array('getPage', oNav(), 'getPage'),
-	'showPage'	=> array('showPage', oNav(), 'showPage'),
-);
-
-foreach ($urgentAjax as $key => $code)
-{
-	oXajax()->registerFunction($code);
-
-	if (isXajax($key))
-	{
-
-		try
-		{
-			oXajax()->processRequests();
-		}
-		catch (PublicException $e)
-		{
-			header('Content-type: text/xml');
-			echo say(addslashes($e->getMessage()))->getXML();
-
-			exit;
-		}
-		catch (Exception $e)
-		{
-			header('Content-type: text/xml');
-			$error = devMode() ? $e->getMessage() : 'Ocurrió un error inesperado';
-			echo say($error)->getXML();
-
-			exit;
-		}
-=======
 	$urgentAjax = array(
 		'sync'		=> 'sync',
 		'getPage'	=> array('getPage', oNav(), 'getPage'),
@@ -60,7 +26,6 @@ foreach ($urgentAjax as $key => $code)
 	foreach( $urgentAjax as $key => $code ){
 		oXajax()->registerFunction( $code );
 		if( isXajax($key) ) oXajax()->processRequests();
->>>>>>> refactor
 	}
 
 
@@ -148,26 +113,7 @@ foreach ($urgentAjax as $key => $code)
 ***************/
 
 	oXajax()->processRequests();
-<<<<<<< HEAD
-}
-catch (PublicException $e)
-{
-	header('Content-type: text/xml');
-	echo say($e->getMessage())->getXML();
-
-	exit;
-}
-catch (Exception $e)
-{
-	header('Content-type: text/xml');
-	$error = devMode() ? $e->getMessage() : 'Ocurrió un error inesperado';
-	echo say($error)->getXML();
-
-	exit;
-}
-=======
 	oPajax()->processRequests();
->>>>>>> refactor
 
 
 
@@ -181,10 +127,5 @@ catch (Exception $e)
 	oSmarty()->assign('Pajax', oPajax());
 	oSmarty()->assign('Page', oPageCfg()->getPage());
 
-<<<<<<< HEAD
-header("Content-Type: text/html; charset=utf8");
-oSmarty()->display(getSkinTpl());
-=======
 	header("Content-Type: text/html; charset=iso-8859-1");
 	oSmarty()->display( oNav()->inFrame ? FRAME_TPL_PATH : getSkinTpl() );
->>>>>>> refactor
