@@ -18,14 +18,14 @@ class View_User extends View
 		'name'        => 'Nombre',
 		'lastName'    => 'Apellido',
 		"CONCAT(`name`, ' ', `lastName`)" => 'Nombre',
-		'address'     => 'Dirección',
-		'phone'       => 'Teléfono',
+		'address'     => 'DirecciÃ³n',
+		'phone'       => 'TelÃ©fono',
 		'email'       => 'Email',
 		'department'  => 'Departamento',
 		'position'    => 'Cargo',
-		'employeeNum' => 'Nº de Empleado',
+		'employeeNum' => 'NÂº de Empleado',
 		'profile'     => 'Perfil',
-		'last_access' => 'Último Login');
+		'last_access' => 'Ãšltimo Login');
 
 	// List of fields to present when listing all Model items
 	protected $__tabular_fields = array(

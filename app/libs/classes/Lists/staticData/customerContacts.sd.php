@@ -11,6 +11,6 @@
 //		'id_contact'	=> 'ID Contacto',
 //		'id_customer'	=> 'ID Cliente',
 		'name'		=> 'Nombre Completo',
-		'phone'		=> 'Teléfono',
+		'phone'		=> 'TelÃ©fono',
 		'email'		=> 'Email',
 	);

@@ -8,7 +8,7 @@ class View_Customer extends View
 	protected $__plural = 'Clientes';
 	protected $__gender = 'm';
 
-	protected $__actions = ['newTech'  => ['title'   => 'Nueva ficha tÈcnica para el cliente',
+	protected $__actions = ['newTech'  => ['title'   => 'Nueva ficha t√©cnica para el cliente',
 	                                       'depends' => '__id__'],
 	                        'newEvent' => ['title'   => 'Nuevo evento para el cliente',
 	                                       'depends' => '__id__']];
@@ -18,19 +18,19 @@ class View_Customer extends View
 	// Screen name of each field (real or aliased)
 	protected $__screen_names = [
 		'customer'       => 'Nombre Comercial',
-		'legal_name'     => 'RazÛn Social',
+		'legal_name'     => 'Raz√≥n Social',
 		'rut'            => 'RUT',
 
-		'number'         => 'N∫ de Cliente',
+		'number'         => 'N¬∫ de Cliente',
 		'since'          => 'Fecha de Ingreso',
 		"CONCAT(`_users`.`name`, ' ', `_users`.`lastName`)" => 'Vendedor',
 
-		'phone'          => 'TelÈfono',
+		'phone'          => 'Tel√©fono',
 		'email'          => 'Email',
-		'address'        => 'DirecciÛn',
-		'billingaddress' => 'Dir. de FacturaciÛn',
+		'address'        => 'Direcci√≥n',
+		'billingaddress' => 'Dir. de Facturaci√≥n',
 		'location'       => 'Ciudad/Localidad',
-		'subscribed'     => 'SubscripciÛn'];
+		'subscribed'     => 'Subscripci√≥n'];
 
 	protected $__tabular_fields = [
 		'number', 'customer', 'legal_name', 'address', 'phone',

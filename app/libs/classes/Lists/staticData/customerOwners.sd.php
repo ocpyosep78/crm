@@ -11,8 +11,8 @@
 //		'id_contact'	=> 'ID Contacto',
 //		'id_customer'	=> 'ID Cliente',
 		'name'		=> 'Nombre Completo',
-		'address'	=> 'Dirección',
-		'phone'		=> 'Teléfono',
+		'address'	=> 'DirecciÃ³n',
+		'phone'		=> 'TelÃ©fono',
 		'email'		=> 'Email',
 		'docNum'	=> 'Documento',
 	);

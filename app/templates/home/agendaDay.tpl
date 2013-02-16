@@ -7,7 +7,7 @@
 	  {foreach from=$day.events item=event}
 		{include file='widgets/event.tpl' event=$event showDays=false}
 	  {foreachelse}
-		<div class='noResMsg'>No hay eventos registrados para este día</div>
+		<div class='noResMsg'>No hay eventos registrados para este dÃ­a</div>
 	  {/foreach}
 	</div>
 </div>
