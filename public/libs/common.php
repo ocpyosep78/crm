@@ -166,10 +166,10 @@ function uploadAnalylize($file, $noFileReturn=NULL)
 
 		case UPLOAD_ERR_INI_SIZE:
 		case UPLOAD_ERR_FORM_SIZE:
-			return 'El tama�o del archivo supera el m�ximo permitido.';
+			return 'El tamaño del archivo supera el máximo permitido.';
 
 		case UPLOAD_ERR_PARTIAL:
-			return 'No se pudo comprobar la integridad del archivo. Int�ntelo nuevamente.';
+			return 'No se pudo comprobar la integridad del archivo. Inténtelo nuevamente.';
 
 		case UPLOAD_ERR_NO_FILE:
 			return $noFileReturn;
@@ -177,10 +177,10 @@ function uploadAnalylize($file, $noFileReturn=NULL)
 		case UPLOAD_ERR_NO_TMP_DIR:
 		case UPLOAD_ERR_CANT_WRITE:
 		case UPLOAD_ERR_EXTENSION:
-			return 'La configuraci�n de la aplicaci�n o del servidor no permite subir este archivo.';
+			return 'La configuración de la aplicación o del servidor no permite subir este archivo.';
 	}
 
-	return 'Ocurri� un error desconocido al intentar subir el archivo.';
+	return 'Ocurrió un error desconocido al intentar subir el archivo.';
 }
 
 
@@ -432,7 +432,7 @@ function login($user, $pass)
 		if ($info['blocked'] == '1')
 		{
 			return say('Este usuario se encuentra actualmente bloqueado. '.
-				'Por m�s informaci�n consulte a un administrador.');
+				'Por más información consulte a un administrador.');
 		}
 
 		acceptLogin($info);
@@ -442,7 +442,7 @@ function login($user, $pass)
 	}
 	else
 	{
-		return say('Nombre de usuario o contrase�a incorrectos.');
+		return say('Nombre de usuario o contraseña incorrectos.');
 	}
 }
 
@@ -474,7 +474,7 @@ function acceptLogin($info)
 	oSQL()->removeOldLogs(MAX_LOGS_GLOBAL);
 }
 
-function logout($msg='Su sesi�n fue cerrada correctamente.', $type=1)
+function logout($msg='Su sesión fue cerrada correctamente.', $type=1)
 {
 	saveLog('loginLogout', 'out');
 
