@@ -23,11 +23,11 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- * 
+ *
  * @package xajax
  * @version $Id$
  * @copyright Copyright (c) 2005-2006  by Jared White & J. Max Wilson
@@ -47,8 +47,7 @@
  */
 if (!defined ('XAJAX_DEFAULT_CHAR_ENCODING'))
 {
-	//define ('XAJAX_DEFAULT_CHAR_ENCODING', 'utf-8' );
-	define ('XAJAX_DEFAULT_CHAR_ENCODING', 'ISO-8859-1');
+	define ('XAJAX_DEFAULT_CHAR_ENCODING', 'utf-8');
 }
 
 require_once(dirname(__FILE__)."/xajaxResponse.inc.php");
@@ -76,13 +75,13 @@ if (!defined ('XAJAX_POST'))
 }
 
 /**
- * The xajax class generates the xajax javascript for your page including the 
+ * The xajax class generates the xajax javascript for your page including the
  * Javascript wrappers for the PHP functions that you want to call from your page.
  * It also handles processing and executing the command messages in the XML responses
  * sent back to your page from your PHP functions.
- * 
+ *
  * @package xajax
- */ 
+ */
 class Xajax
 {
 	/**#@+
@@ -127,7 +126,7 @@ class Xajax
 	/**
 	 * @var boolean Show messages in the client browser's status bar (default false)
 	 */
-	var $bStatusMessages;	
+	var $bStatusMessages;
 	/**
 	 * @var boolean Allow xajax to exit after processing a request (default true)
 	 */
@@ -168,13 +167,13 @@ class Xajax
 	 * @var integer Position in $aObjArray
 	 */
 	var $iPos;
-	
+
 	/**#@-*/
-	
+
 	/**
 	 * Constructor. You can set some extra xajax options right away or use
 	 * individual methods later to set options.
-	 * 
+	 *
 	 * @param string  defaults to the current browser URI
 	 * @param string  defaults to "xajax_";
 	 * @param string  defaults to XAJAX_DEFAULT_CHAR_ENCODING defined above
@@ -200,11 +199,11 @@ class Xajax
 		$this->bDecodeUTF8Input = false;
 		$this->bOutputEntities = false;
 	}
-		
+
 	/**
 	 * Sets the URI to which requests will be made.
 	 * <i>Usage:</i> <kbd>$xajax->setRequestURI("http://www.xajaxproject.org");</kbd>
-	 * 
+	 *
 	 * @param string the URI (can be absolute or relative) of the PHP script
 	 *               that will be accessed when an xajax request occurs
 	 */
@@ -216,15 +215,15 @@ class Xajax
 	/**
 	 * Sets the prefix that will be appended to the Javascript wrapper
 	 * functions (default is "xajax_").
-	 * 
+	 *
 	 * @param string
-	 */ 
-	// 
+	 */
+	//
 	function setWrapperPrefix($sPrefix)
 	{
 		$this->sWrapperPrefix = $sPrefix;
 	}
-	
+
 	/**
 	 * Enables debug messages for xajax.
 	 * */
@@ -232,7 +231,7 @@ class Xajax
 	{
 		$this->bDebug = true;
 	}
-	
+
 	/**
 	 * Disables debug messages for xajax (default behavior).
 	 */
@@ -240,7 +239,7 @@ class Xajax
 	{
 		$this->bDebug = false;
 	}
-		
+
 	/**
 	 * Enables messages in the browser's status bar for xajax.
 	 */
@@ -248,7 +247,7 @@ class Xajax
 	{
 		$this->bStatusMessages = true;
 	}
-	
+
 	/**
 	 * Disables messages in the browser's status bar for xajax (default behavior).
 	 */
@@ -256,7 +255,7 @@ class Xajax
 	{
 		$this->bStatusMessages = false;
 	}
-	
+
 	/**
 	 * Enables the wait cursor to be displayed in the browser (default behavior).
 	 */
@@ -264,15 +263,15 @@ class Xajax
 	{
 		$this->bWaitCursor = true;
 	}
-	
+
 	/**
 	 * Disables the wait cursor to be displayed in the browser.
 	 */
 	function waitCursorOff()
 	{
 		$this->bWaitCursor = false;
-	}	
-	
+	}
+
 	/**
 	 * Enables xajax to exit immediately after processing a request and
 	 * sending the response back to the browser (default behavior).
@@ -281,7 +280,7 @@ class Xajax
 	{
 		$this->bExitAllowed = true;
 	}
-	
+
 	/**
 	 * Disables xajax's default behavior of exiting immediately after
 	 * processing a request and sending the response back to the browser.
@@ -290,7 +289,7 @@ class Xajax
 	{
 		$this->bExitAllowed = false;
 	}
-	
+
 	/**
 	 * Turns on xajax's error handling system so that PHP errors that occur
 	 * during a request are trapped and pushed to the browser in the form of
@@ -308,7 +307,7 @@ class Xajax
 	{
 		$this->bErrorHandler = false;
 	}
-	
+
 	/**
 	 * Specifies a log file that will be written to by xajax during a request
 	 * (used only by the error handling system at present). If you don't invoke
@@ -335,7 +334,7 @@ class Xajax
 	{
 		$this->bCleanBuffer = false;
 	}
-	
+
 	/**
 	 * Sets the character encoding for the HTTP output based on
 	 * <kbd>$sEncoding</kbd>, which is a string containing the character
@@ -368,7 +367,7 @@ class Xajax
 	{
 		$this->bDecodeUTF8Input = false;
 	}
-	
+
 	/**
 	 * Tells the response object to convert special characters to HTML entities
 	 * automatically (only works if the mb_string extension is available).
@@ -377,7 +376,7 @@ class Xajax
 	{
 		$this->bOutputEntities = true;
 	}
-	
+
 	/**
 	 * Tells the response object to output special characters intact. (default
 	 * behavior).
@@ -386,7 +385,7 @@ class Xajax
 	{
 		$this->bOutputEntities = false;
 	}
-				
+
 	/**
 	 * Registers a PHP function or method to be callable through xajax in your
 	 * Javascript. If you want to register a function, pass in the name of that
@@ -398,12 +397,12 @@ class Xajax
 	 * to pass the object by reference). Note: the function name is what you
 	 * call via Javascript, so it can be anything as long as it doesn't
 	 * conflict with any other registered function name.
-	 * 
+	 *
 	 * <i>Usage:</i> <kbd>$xajax->registerFunction("myFunction");</kbd>
 	 * or: <kbd>$xajax->registerFunction(array("myFunctionName", &$myObject, "myMethod"));</kbd>
-	 * 
+	 *
 	 * @param mixed  contains the function name or an object callback array
-	 * @param mixed  request type (XAJAX_GET/XAJAX_POST) that should be used 
+	 * @param mixed  request type (XAJAX_GET/XAJAX_POST) that should be used
 	 *               for this function.  Defaults to XAJAX_POST.
 	 */
 	function registerFunction($mFunction,$sRequestType=XAJAX_POST)
@@ -412,31 +411,31 @@ class Xajax
 			$this->aFunctions[$mFunction[0]] = 1;
 			$this->aFunctionRequestTypes[$mFunction[0]] = $sRequestType;
 			$this->aObjects[$mFunction[0]] = array_slice($mFunction, 1);
-		}	
+		}
 		else {
 			$this->aFunctions[$mFunction] = 1;
 			$this->aFunctionRequestTypes[$mFunction] = $sRequestType;
 		}
 	}
-	
+
 	/**
 	 * Registers a PHP function to be callable through xajax which is located
 	 * in some other file.  If the function is requested the external file will
 	 * be included to define the function before the function is called.
-	 * 
+	 *
 	 * <i>Usage:</i> <kbd>$xajax->registerExternalFunction("myFunction","myFunction.inc.php",XAJAX_POST);</kbd>
-	 * 
+	 *
 	 * @param string contains the function name or an object callback array
 	 *               ({@link xajax::registerFunction() see registerFunction} for
 	 *               more info on object callback arrays)
 	 * @param string contains the path and filename of the include file
-	 * @param mixed  the RequestType (XAJAX_GET/XAJAX_POST) that should be used 
+	 * @param mixed  the RequestType (XAJAX_GET/XAJAX_POST) that should be used
 	 *		          for this function. Defaults to XAJAX_POST.
 	 */
 	function registerExternalFunction($mFunction,$sIncludeFile,$sRequestType=XAJAX_POST)
 	{
 		$this->registerFunction($mFunction, $sRequestType);
-		
+
 		if (is_array($mFunction)) {
 			$this->aFunctionIncludeFiles[$mFunction[0]] = $sIncludeFile;
 		}
@@ -444,7 +443,7 @@ class Xajax
 			$this->aFunctionIncludeFiles[$mFunction] = $sIncludeFile;
 		}
 	}
-	
+
 	/**
 	 * Registers a PHP function to be called when xajax cannot find the
 	 * function being called via Javascript. Because this is technically
@@ -452,9 +451,9 @@ class Xajax
 	 * only useful when you're directly using the xajax.call() Javascript
 	 * method. Use the catch-all feature when you want more dynamic ability to
 	 * intercept unknown calls and handle them in a custom way.
-	 * 
+	 *
 	 * <i>Usage:</i> <kbd>$xajax->registerCatchAllFunction("myCatchAllFunction");</kbd>
-	 * 
+	 *
 	 * @param string contains the function name or an object callback array
 	 *               ({@link xajax::registerFunction() see registerFunction} for
 	 *               more info on object callback arrays)
@@ -469,7 +468,7 @@ class Xajax
 			$this->sCatchAllFunction = $mFunction;
 		}
 	}
-	
+
 	/**
 	 * Registers a PHP function to be called before xajax calls the requested
 	 * function. xajax will automatically add the request function's response
@@ -478,9 +477,9 @@ class Xajax
 	 * the first element being false (a boolean) and the second being the
 	 * response. In this case, the pre-function's response will be returned to
 	 * the browser without xajax calling the requested function.
-	 * 
+	 *
 	 * <i>Usage:</i> <kbd>$xajax->registerPreFunction("myPreFunction");</kbd>
-	 * 
+	 *
 	 * @param string contains the function name or an object callback array
 	 *               ({@link xajax::registerFunction() see registerFunction} for
 	 *               more info on object callback arrays)
@@ -495,37 +494,37 @@ class Xajax
 			$this->sPreFunction = $mFunction;
 		}
 	}
-	
+
 	/**
 	 * Returns true if xajax can process the request, false if otherwise.
 	 * You can use this to determine if xajax needs to process the request or
 	 * not.
-	 * 
+	 *
 	 * @return boolean
-	 */ 
+	 */
 	function canProcessRequests()
 	{
 		if ($this->getRequestMode() != -1) return true;
 		return false;
 	}
-	
+
 	/**
 	 * Returns the current request mode (XAJAX_GET or XAJAX_POST), or -1 if
 	 * there is none.
-	 * 
+	 *
 	 * @return mixed
 	 */
 	function getRequestMode()
 	{
 		if (!empty($_GET["xajax"]))
 			return XAJAX_GET;
-		
+
 		if (!empty($_POST["xajax"]))
 			return XAJAX_POST;
-			
+
 		return -1;
 	}
-	
+
 	/**
 	 * This is the main communications engine of xajax. The engine handles all
 	 * incoming xajax requests, calls the apporiate PHP functions (or
@@ -535,8 +534,8 @@ class Xajax
 	 * been sent.
 	 */
 	function processRequests()
-	{	
-		
+	{
+
 		$requestMode = -1;
 		$sFunctionName = "";
 		$bFoundFunction = true;
@@ -546,36 +545,36 @@ class Xajax
 		$sPreResponse = "";
 		$bEndRequest = false;
 		$sResponse = "";
-		
+
 		$requestMode = $this->getRequestMode();
 		if ($requestMode == -1) return;
-	
+
 		if ($requestMode == XAJAX_POST)
 		{
 			$sFunctionName = $_POST["xajax"];
-			
-			if (!empty($_POST["xajaxargs"])) 
+
+			if (!empty($_POST["xajaxargs"]))
 				$aArgs = $_POST["xajaxargs"];
 		}
 		else
-		{	
+		{
 			header ("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
 			header ("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
 			header ("Cache-Control: no-cache, must-revalidate");
 			header ("Pragma: no-cache");
-			
+
 			$sFunctionName = $_GET["xajax"];
-			
-			if (!empty($_GET["xajaxargs"])) 
+
+			if (!empty($_GET["xajaxargs"]))
 				$aArgs = $_GET["xajaxargs"];
 		}
-		
+
 		// Use xajax error handler if necessary
 		if ($this->bErrorHandler) {
 			$GLOBALS['xajaxErrorHandlerText'] = "";
 			set_error_handler("xajaxErrorHandler");
 		}
-		
+
 		if ($this->sPreFunction) {
 			if (!$this->_isFunctionCallable($this->sPreFunction)) {
 				$bFoundFunction = false;
@@ -591,7 +590,7 @@ class Xajax
 			include_once($this->aFunctionIncludeFiles[$sFunctionName]);
 			ob_end_clean();
 		}
-		
+
 		if ($bFoundFunction) {
 			$sFunctionNameForSpecial = $sFunctionName;
 			if (!array_key_exists($sFunctionName, $this->aFunctions))
@@ -615,27 +614,27 @@ class Xajax
 				$sResponse = $objResponse->getXML();
 			}
 		}
-		
+
 		if ($bFoundFunction)
 		{
 			for ($i = 0; $i < sizeof($aArgs); $i++)
 			{
 				// If magic quotes is on, then we need to strip the slashes from the args
 				if (get_magic_quotes_gpc() == 1 && is_string($aArgs[$i])) {
-				
+
 					$aArgs[$i] = stripslashes($aArgs[$i]);
 				}
 				if (stristr($aArgs[$i],"<xjxobj>") != false)
 				{
-					$aArgs[$i] = $this->_xmlToArray("xjxobj",$aArgs[$i]);	
+					$aArgs[$i] = $this->_xmlToArray("xjxobj",$aArgs[$i]);
 				}
 				else if (stristr($aArgs[$i],"<xjxquery>") != false)
 				{
-					$aArgs[$i] = $this->_xmlToArray("xjxquery",$aArgs[$i]);	
+					$aArgs[$i] = $this->_xmlToArray("xjxquery",$aArgs[$i]);
 				}
 				else if ($this->bDecodeUTF8Input)
 				{
-					$aArgs[$i] = $this->_decodeUTF8Data($aArgs[$i]);	
+					$aArgs[$i] = $this->_decodeUTF8Data($aArgs[$i]);
 				}
 			}
 
@@ -653,7 +652,7 @@ class Xajax
 				}
 				if ($bEndRequest) $sResponse = $sPreResponse;
 			}
-			
+
 			if (!$bEndRequest) {
 				if (!$this->_isFunctionCallable($sFunctionName)) {
 					$objResponse = new xajaxResponse();
@@ -682,7 +681,7 @@ class Xajax
 				}
 			}
 		}
-		
+
 		$sContentHeader = "Content-type: text/xml;";
 		if ($this->sEncoding && strlen(trim($this->sEncoding)) > 0)
 			$sContentHeader .= " charset=".$this->sEncoding;
@@ -703,30 +702,30 @@ class Xajax
 
 			$sErrorResponse->loadXML($sResponse);
 			$sResponse = $sErrorResponse->getXML();
-			
+
 		}
 		if ($this->bCleanBuffer) while (@ob_end_clean());
 		print $sResponse;
 		if ($this->bErrorHandler) restore_error_handler();
-		
+
 		if ($this->bExitAllowed)
 			exit();
 	}
 
-	/**			
+	/**
 	 * Prints the xajax Javascript header and wrapper code into your page by
 	 * printing the output of the getJavascript() method. It should only be
 	 * called between the <pre><head> </head></pre> tags in your HTML page.
 	 * Remember, if you only want to obtain the result of this function, use
 	 * {@link xajax::getJavascript()} instead.
-	 * 
+	 *
 	 * <i>Usage:</i>
 	 * <code>
 	 *  <head>
 	 *		...
 	 *		< ?php $xajax->printJavascript(); ? >
 	 * </code>
-	 * 
+	 *
 	 * @param string the relative address of the folder where xajax has been
 	 *               installed. For instance, if your PHP file is
 	 *               "http://www.myserver.com/myfolder/mypage.php"
@@ -742,11 +741,11 @@ class Xajax
 	{
 		print $this->getJavascript($sJsURI, $sJsFile);
 	}
-	
+
 	/**
 	 * Returns the xajax Javascript code that should be added to your HTML page
 	 * between the <kbd><head> </head></kbd> tags.
-	 * 
+	 *
 	 * <i>Usage:</i>
 	 * <code>
 	 *  < ?php $xajaxJSHead = $xajax->getJavascript(); ? >
@@ -754,7 +753,7 @@ class Xajax
 	 *		...
 	 *		< ?php echo $xajaxJSHead; ? >
 	 * </code>
-	 * 
+	 *
 	 * @param string the relative address of the folder where xajax has been
 	 *               installed. For instance, if your PHP file is
 	 *               "http://www.myserver.com/myfolder/mypage.php"
@@ -768,17 +767,17 @@ class Xajax
 	 * @return string
 	 */
 	function getJavascript($sJsURI="", $sJsFile=NULL)
-	{	
+	{
 		$html = $this->getJavascriptConfig();
 		$html .= $this->getJavascriptInclude($sJsURI, $sJsFile);
-		
+
 		return $html;
 	}
-	
+
 	/**
 	 * Returns a string containing inline Javascript that sets up the xajax
 	 * runtime (typically called internally by xajax from get/printJavascript).
-	 * 
+	 *
 	 * @return string
 	 */
 	function getJavascriptConfig()
@@ -798,14 +797,14 @@ class Xajax
 		}
 
 		$html .= "\t</script>\n";
-		return $html;		
+		return $html;
 	}
-	
+
 	/**
 	 * Returns a string containing a Javascript include of the xajax.js file
 	 * along with a check to see if the file loaded after six seconds
 	 * (typically called internally by xajax from get/printJavascript).
-	 * 
+	 *
 	 * @param string the relative address of the folder where xajax has been
 	 *               installed. For instance, if your PHP file is
 	 *               "http://www.myserver.com/myfolder/mypage.php"
@@ -821,10 +820,10 @@ class Xajax
 	function getJavascriptInclude($sJsURI="", $sJsFile=NULL)
 	{
 		if ($sJsFile == NULL) $sJsFile = XAJAX_JS_DIR."/xajax.js";
-			
+
 		if ($sJsURI != "" && substr($sJsURI, -1) != "/") $sJsURI .= "/";
-		
-		$html = "\t<script type=\"text/javascript\" src=\"" . $sJsURI . $sJsFile . "\"></script>\n";	
+
+		$html = "\t<script type=\"text/javascript\" src=\"" . $sJsURI . $sJsFile . "\"></script>\n";
 		$html .= "\t<script type=\"text/javascript\">\n";
 		$html .= "window.setTimeout(function () { if (!xajaxLoaded) { alert('Error: the xajax Javascript file could not be included. Perhaps the URL is incorrect?\\nURL: {$sJsURI}{$sJsFile}'); } }, 6000);\n";
 		$html .= "\t</script>\n";
@@ -835,14 +834,14 @@ class Xajax
 	 * This method can be used to create a new xajax.js file out of the
 	 * xajax_uncompressed.js file (which will only happen if xajax.js doesn't
 	 * already exist on the filesystem).
-	 * 
+	 *
 	 * @param string an optional argument containing the full server file path
 	 *               of xajax.js.
 	 */
 	function autoCompressJavascript($sJsFullFilename=NULL)
-	{	
+	{
 		$sJsFile = XAJAX_JS_DIR."/xajax.js";
-		
+
 		if ($sJsFullFilename) {
 			$realJsFile = $sJsFullFilename;
 		}
@@ -855,7 +854,7 @@ class Xajax
 		if (!file_exists($realJsFile)) {
 			$srcFile = str_replace(".js", "_uncompressed.js", $realJsFile);
 			if (!file_exists($srcFile)) {
-				trigger_error("The xajax uncompressed Javascript file could not be found in the <b>" . dirname($realJsFile) . "</b> folder. Error ", E_USER_ERROR);	
+				trigger_error("The xajax uncompressed Javascript file could not be found in the <b>" . dirname($realJsFile) . "</b> folder. Error ", E_USER_ERROR);
 			}
 			require(dirname(__FILE__)."/xajaxCompress.php");
 			$javaScript = implode('', file($srcFile));
@@ -870,10 +869,10 @@ class Xajax
 			}
 		}
 	}
-	
+
 	/**
 	 * Returns the current URL based upon the SERVER vars.
-	 * 
+	 *
 	 * @access private
 	 * @return string
 	 */
@@ -953,11 +952,11 @@ class Xajax
 		unset($aURL);
 		return $sURL;
 	}
-	
+
 	/**
 	 * Returns true if the function name is associated with an object callback,
 	 * false if not.
-	 * 
+	 *
 	 * @param string the name of the function
 	 * @access private
 	 * @return boolean
@@ -967,11 +966,11 @@ class Xajax
 		if (array_key_exists($sFunction, $this->aObjects)) return true;
 		return false;
 	}
-	
+
 	/**
 	 * Returns true if the function or object callback can be called, false if
 	 * not.
-	 * 
+	 *
 	 * @param string the name of the function
 	 * @access private
 	 * @return boolean
@@ -988,13 +987,13 @@ class Xajax
 		}
 		else {
 			return function_exists($sFunction);
-		}	
+		}
 	}
-	
+
 	/**
 	 * Calls the function, class method, or object method with the supplied
 	 * arguments.
-	 * 
+	 *
 	 * @param string the name of the function
 	 * @param array  arguments to pass to the function
 	 * @access private
@@ -1010,10 +1009,10 @@ class Xajax
 		}
 		return $mReturn;
 	}
-	
+
 	/**
 	 * Generates the Javascript wrapper for the specified PHP function.
-	 * 
+	 *
 	 * @param string the name of the function
 	 * @param mixed  the request type
 	 * @access private
@@ -1021,7 +1020,7 @@ class Xajax
 	 */
 	function _wrap($sFunction,$sRequestType=XAJAX_POST)
 	{
-		$js = "function ".$this->sWrapperPrefix."$sFunction(){return xajax.call(\"$sFunction\", arguments, ".$sRequestType.");}\n";		
+		$js = "function ".$this->sWrapperPrefix."$sFunction(){return xajax.call(\"$sFunction\", arguments, ".$sRequestType.");}\n";
 		return $js;
 	}
 
@@ -1029,7 +1028,7 @@ class Xajax
 	 * Takes a string containing xajax xjxobj XML or xjxquery XML and builds an
 	 * array representation of it to pass as an argument to the PHP function
 	 * being called.
-	 * 
+	 *
 	 * @param string the root tag of the XML
 	 * @param string XML to convert
 	 * @access private
@@ -1048,19 +1047,19 @@ class Xajax
 		$sXml = str_replace("</v>","|~|</v>|~|",$sXml);
 		$sXml = str_replace("<q>","<q>|~|",$sXml);
 		$sXml = str_replace("</q>","|~|</q>|~|",$sXml);
-		
+
 		$this->aObjArray = explode("|~|",$sXml);
-		
+
 		$this->iPos = 0;
 		$aArray = $this->_parseObjXml($rootTag);
-        
+
 		return $aArray;
 	}
-	
+
 	/**
 	 * A recursive function that generates an array from the contents of
 	 * $this->aObjArray.
-	 * 
+	 *
 	 * @param string the root tag of the XML
 	 * @access private
 	 * @return array
@@ -1068,7 +1067,7 @@ class Xajax
 	function _parseObjXml($rootTag)
 	{
 		$aArray = array();
-		
+
 		if ($rootTag == "xjxobj")
 		{
 			while(!stristr($this->aObjArray[$this->iPos],"</xjxobj>"))
@@ -1078,7 +1077,7 @@ class Xajax
 				{
 					$key = "";
 					$value = null;
-						
+
 					$this->iPos++;
 					while(!stristr($this->aObjArray[$this->iPos],"</e>"))
 					{
@@ -1114,12 +1113,12 @@ class Xajax
 						}
 						$this->iPos++;
 					}
-					
+
 					$aArray[$key]=$value;
 				}
 			}
 		}
-		
+
 		if ($rootTag == "xjxquery")
 		{
 			$sQuery = "";
@@ -1134,7 +1133,7 @@ class Xajax
 				$sQuery	.= $this->aObjArray[$this->iPos];
 				$this->iPos++;
 			}
-			
+
 			parse_str($sQuery, $aArray);
 			if ($this->bDecodeUTF8Input)
 			{
@@ -1156,13 +1155,13 @@ class Xajax
 				$aArray = $newArray;
 			}
 		}
-		
+
 		return $aArray;
 	}
-	
+
 	/**
 	 * Decodes string data from UTF-8 to the current xajax encoding.
-	 * 
+	 *
 	 * @param string data to convert
 	 * @access private
 	 * @return string converted data
@@ -1173,7 +1172,7 @@ class Xajax
 		if ($this->bDecodeUTF8Input)
 		{
 			$sFuncToUse = NULL;
-			
+
 			if (function_exists('iconv'))
 			{
 				$sFuncToUse = "iconv";
@@ -1190,7 +1189,7 @@ class Xajax
 			{
 				trigger_error("The incoming xajax data could not be converted from UTF-8", E_USER_NOTICE);
 			}
-			
+
 			if ($sFuncToUse)
 			{
 				if (is_string($sValue))
@@ -1210,10 +1209,10 @@ class Xajax
 				}
 			}
 		}
-		return $sValue;	
+		return $sValue;
 	}
-		
-}// end class xajax 
+
+}// end class xajax
 
 /**
  * This function is registered with PHP's set_error_handler() function if
@@ -1223,7 +1222,7 @@ function xajaxErrorHandler($errno, $errstr, $errfile, $errline)
 {
 	$errorReporting = error_reporting();
 	if (($errno & $errorReporting) == 0) return;
-	
+
 	if ($errno == E_NOTICE) {
 		$errTypeStr = "NOTICE";
 	}

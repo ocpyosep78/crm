@@ -103,7 +103,7 @@
 
 		if( is_null($resp) ) $resp = oXajaxResp();
 
-		header( "Content-type: text/xml; charset=iso-8859-1" );
+		header( "Content-type: text/xml; charset=utf-8" );
 		print $resp->getXML();
 		die();
 

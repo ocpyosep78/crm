@@ -4,32 +4,32 @@
 
 	<meta http-equiv="X-UA-Compatible" content="IE=8" />
 
-	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<meta http-equiv="Pragma" content="no-cache">
 	<meta http-equiv="Expires" content="-1">
 	<meta http-equiv="Last-Modified" content="0">
 	<meta http-equiv="Cache-Control" content="no-cache, mustrevalidate">
 	<meta name="robots" content="none">
-	
+
 	<link rel="shortcut icon" href="favicon.ico" />
 
 	<title>{$Page->appTitle}</title>
-	
+
 	{* Styles *}
 	{foreach from=$Page->styleSheets item=styleSheet}
 		<link rel="stylesheet" type="text/css" href="{$styleSheet}" />
 	{/foreach}
-	
+
 	{* Ajax *}
 	{$Xajax->printJavascript()}
 	{$Pajax->printJavascript()}
-	
+
 	{* javaScript files *}
 	<script type='text/javascript'>var IN_FRAME = {$IN_FRAME}</script>
 	{foreach from=$Page->jScripts item=jScript}
 		<script type='text/javascript' src='{$jScript}'></script>
 	{/foreach}
-	
+
 	{* JS code *}
 	<script type='text/javascript'>
 		{$Page->jsCode}
@@ -37,7 +37,7 @@
 			{$Page->jsOnLoad}
 		{literal}}{/literal} );
 	</script>
-	
+
 </head>
 <body>
 
@@ -46,7 +46,7 @@
 
 
 	<div id='frameContent'>
-		
+
 	  <div id='frameTitle'>
 		{$Page->page}
 		<img class='CloseButtonHover' src="app/images/buttons/closeHover.png" alt='cerrar' title='cerrar ventana' />
@@ -57,16 +57,16 @@
 	  	<div id='main_box'></div>
 	  </div>
 	</div>
-	
-	
+
+
 	<div id='curtain'></div>		{* modal windows, refer to JS:Modal object *}
-	
-	
+
+
 	{* Widgets *}
 	{if $USER && $Permits->can('agenda')}{include file='widgets/eventInfo.tpl'}{/if}
 	{include file='widgets/loadingMsg.tpl'}
 	{if $Page->debugger}{include file='widgets/debugger.tpl'}{/if}
-	
+
 
 </body>
 </html>
