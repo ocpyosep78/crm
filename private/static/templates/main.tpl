@@ -25,8 +25,8 @@
 
 
 	{* JS files *}
-	<script type="text/javascript" src="{$SCRIPTS_URL}/jquery/jquery-1.8.2.min.js"></script>
-	<script type="text/javascript" src="{$SCRIPTS_URL}/jquery/jquery-ui-1.9.1.min.js"></script>
+	<script type="text/javascript" src="{$SCRIPTS_URL}/jquery/jquery-1.8.2.js"></script>
+	<script type="text/javascript" src="{$SCRIPTS_URL}/jquery/jquery-ui-1.9.1.js"></script>
 	<script type="text/javascript" src="{$SCRIPTS_URL}/jquery/jquery.qtip2.js"></script>
 	<script type="text/javascript" src="{$SCRIPTS_URL}/common.js?sid={$NOW}"></script>
 
