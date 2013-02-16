@@ -26,7 +26,7 @@
 		
 		# Validate input
 		if( ($ans=oValidate()->test($data, 'estimates')) !== true ){
-			return showStatus('Los datos ingresados no son válidos.');
+			return showStatus('Los datos ingresados no son vÃ¡lidos.');
 		}
 		
 		foreach( $products as &$product ){
@@ -40,7 +40,7 @@
 		
 		# Pass the right message of success to SQL object
 		$msg = empty($data['orderNumber'])
-			? "La cotización '{$data['estimate']}' fue guardada correctamente."
+			? "La cotizaciÃ³n '{$data['estimate']}' fue guardada correctamente."
 			: "El presupuesto '{$data['estimate']}' (orden #{$data['orderNumber']}) fue guardado correctamente.";
 		oSQL()->setOkMsg( $msg );
 		
@@ -98,7 +98,7 @@
 		
 		# Make sure we have enough of this product defined in this estimate
 		if( !$maxAmount || $data['amount'] > $maxAmount ){
-			if( $maxAmount < 1 ) return showStatus('No hay más elementos disponibles de este tipo.');
+			if( $maxAmount < 1 ) return showStatus('No hay mÃ¡s elementos disponibles de este tipo.');
 			else{
 				$s = ($maxAmount == 1) ? '' : 's';			/* Plurales */
 				$n = ($maxAmount == 1) ? '' : 'n';			/* Plurales */
@@ -111,7 +111,7 @@
 		
 		# Make sure a description was given
 		if( empty($data['position']) ){
-			return showStatus('Debe ingresar una descripción para esta entrada del Plan de Obras.');
+			return showStatus('Debe ingresar una descripciÃ³n para esta entrada del Plan de Obras.');
 		}
 		
 		# Attempt to save the new entry
@@ -120,7 +120,7 @@
 		# If no error occurred, reload page_installPlan() (adding the id of the last inserted product)
 		return !$ans->error
 			? oNav()->reloadPageWithAtts(array($data['id_estimate'], $data['id_product']))
-			: showStatus('No se pudo guardar la entrada. Verifique sus datos e inténtelo nuevamente.');
+			: showStatus('No se pudo guardar la entrada. Verifique sus datos e intÃ©ntelo nuevamente.');
 		
 	}
 	
@@ -140,7 +140,7 @@
 		$ans = oSQL()->insert($data, 'estimates_pack');
 		
 		return $ans->error
-			? showStatus('Ocurrió un error al intentar crear este elemento.')
+			? showStatus('OcurriÃ³ un error al intentar crear este elemento.')
 			: oNav()->getPage('estimates_packInfo', (array)$ans->ID);
 	
 	}
@@ -150,7 +150,7 @@
 		$ans = oSQL()->update($data, 'estimates', array('id_estimate'));
 		
 		return $ans->error
-			? showStatus('Ocurrió un error al intentar agregar el presupuesto.')
+			? showStatus('OcurriÃ³ un error al intentar agregar el presupuesto.')
 			: oNav()->reloadPage();
 	
 	}

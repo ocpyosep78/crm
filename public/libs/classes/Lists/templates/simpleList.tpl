@@ -50,7 +50,7 @@
   {foreachelse}																			{* LIST IS EMPTY *}
 	<tr>
 	  <td colspan='{math equation="x + y" x=$fields|@count y=1}' class='noResMsg'>
-		Esta lista aun no contiene elementos{if $canCreate} (utilice la línea debajo para crear nuevos elementos){/if}
+		Esta lista aun no contiene elementos{if $canCreate} (utilice la lÃ­nea debajo para crear nuevos elementos){/if}
 	  </td>
 	</tr>
   {/foreach}

@@ -16,8 +16,8 @@
 	{foreach from=$permits item=permit}
 	  {if $permit.enabled == $stat}
 	  
-		{if $permit.type == 'page'}{assign var=type value='p·gina'}
-		{elseif $permit.type == 'module'}{assign var=type value='mÛdulo'}
+		{if $permit.type == 'page'}{assign var=type value='p√°gina'}
+		{elseif $permit.type == 'module'}{assign var=type value='m√≥dulo'}
 		{else}{assign var=type value='otros'}{/if}
 		
 		<div class='permitRow' for='{$permit.code}' title='{$permit.title}'>

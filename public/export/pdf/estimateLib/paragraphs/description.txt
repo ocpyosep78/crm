@@ -1,5 +1,5 @@
 <!--
 
-	En este texto se incluye la descripciÛn de la placa/DVR, en lugar de %s. No remover el comodÌn.
+	En este texto se incluye la descripci√≥n de la placa/DVR, en lugar de %s. No remover el comod√≠n.
 	
--->El sistema digital de observaciÛn contar· con %s Se grabar·n las secuencias de video digitalmente, utilizando software en espaÒol, y permitiendo monitorear desde una interfaz amigable todas las c·maras del sistema, tanto de forma local (lan) como remota (internet: la calidad depende de la conexiÛn disponible). Se podr· grabar hasta un mes de video contÌnuo, dependiendo de la configuraciÛn del sistema (disco duro recomendado: 250 Gb o superior).
+-->El sistema digital de observaci√≥n contar√° con %s Se grabar√°n las secuencias de video digitalmente, utilizando software en espa√±ol, y permitiendo monitorear desde una interfaz amigable todas las c√°maras del sistema, tanto de forma local (lan) como remota (internet: la calidad depende de la conexi√≥n disponible). Se podr√° grabar hasta un mes de video cont√≠nuo, dependiendo de la configuraci√≥n del sistema (disco duro recomendado: 250 Gb o superior).

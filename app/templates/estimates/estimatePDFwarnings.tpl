@@ -26,7 +26,7 @@
 
 	<h2>Advertencias</h2>
 	<div class='subTitle'>
-		Lea atentamente las advertencias que siguen, antes de continuar con la generación del archivo PDF
+		Lea atentamente las advertencias que siguen, antes de continuar con la generaciÃ³n del archivo PDF
 	</div>
 	
 	<ul>{foreach from=$warnings item=warning}<li>{$warning}</li>{/foreach}</ul>

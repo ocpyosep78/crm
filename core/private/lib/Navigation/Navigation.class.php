@@ -40,7 +40,7 @@
 		
 			# If use can't access page $page, abort navigation
 			if( $this->User->cant($page) ){
-				$msg = 'Su cuenta no posee permisos para acceder a esta página';
+				$msg = 'Su cuenta no posee permisos para acceder a esta pÃ¡gina';
 				return $this->Client->display( $msg );
 			}
 			

@@ -19,7 +19,7 @@ var Pajax = {
 			if( !fDoc.body || !fDoc.body.innerHTML ) return;	// Still waiting...
 			var pjx = fDoc.getElementsByTagName('P');
 			if( !pjx || pjx.length != 1 ){						// Not a valid answer
-				showStatus( 'Ocurrió un error al procesar el formulario.' );
+				showStatus( 'OcurriÃ³ un error al procesar el formulario.' );
 				var errStr = fDoc.body.innerHTML;
 				clearFrame();
 				throw( errStr );

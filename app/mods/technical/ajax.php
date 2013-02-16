@@ -21,7 +21,7 @@
             $note = addslashes($note);
             $res = oSQL()->saveAdminTechNote($id, $note)->successCode;
         } else $res = NULL;
-        return showStatus($res ? 'Nota guardada con éxito' : 'Ocurrió un error al guardar la nota', !!$res);
+        return showStatus($res ? 'Nota guardada con Ã©xito' : 'OcurriÃ³ un error al guardar la nota', !!$res);
     }
 	
 	function tchFormSuggest($key, $val){
@@ -29,7 +29,7 @@
 		/* Validate input */
 		if( $key == 'custNumber' ){
 			$key = 'number';
-			if( !empty($val) && !is_numeric($val) ) return showStatus('Número de cliente inválido.');
+			if( !empty($val) && !is_numeric($val) ) return showStatus('NÃºmero de cliente invÃ¡lido.');
 		}
 		
 		$customers = oSQL()->getCustomersForService( array($key => $val) );
@@ -63,7 +63,7 @@
 		else{
 			# Get all relevant info for this invoice (either install or sale)
 			$data = oSQL()->getInstallForNewService( $id );
-			if( empty($data) ) return showStatus('Ocurrió un error al intentar leer los datos de la factura.');
+			if( empty($data) ) return showStatus('OcurriÃ³ un error al intentar leer los datos de la factura.');
 			# Part install date and fix warranty (from warranty months to warranty void date)
 			$data['warranty'] = strtotime($data['date'].' + '.$data['warranty'].' months') > time() ? 1 : 0;
 			list($data['installYear'], $data['installMonth'], $data['installDay']) = explode('-', $data['date']);
@@ -144,19 +144,19 @@
 			oSQL()->ROLLBACK();
 			# Handle expected errors
 			if( $ans->column == 'invoice' && $ans->error == SQL_ERROR_DUPLICATE ){
-				return showStatus("Ya existe una factura con número {$data['invoice']} registrada.");
+				return showStatus("Ya existe una factura con nÃºmero {$data['invoice']} registrada.");
 			}
 			if( $ans->column == 'number' && $ans->error = SQL_ERROR_DUPLICATE ){
-				return showStatus("El número de visita {$data['number']} ya está en uso.");
+				return showStatus("El nÃºmero de visita {$data['number']} ya estÃ¡ en uso.");
 			}
 			# Fall back to a generic error message
-			return showStatus('Ocurrió un error al intentar guardar el formulario. '.
-				'Revise sus datos e inténtelo nuevamente.');
+			return showStatus('OcurriÃ³ un error al intentar guardar el formulario. '.
+				'Revise sus datos e intÃ©ntelo nuevamente.');
 		}
 		oSQL()->COMMIT();
 		
 		# Success
-		$msg = sprintf('La visita técnica fue correctamente %s.', ($sqlAxn == 'insert') ? 'creada.' : 'modificada.');
+		$msg = sprintf('La visita tÃ©cnica fue correctamente %s.', ($sqlAxn == 'insert') ? 'creada.' : 'modificada.');
 		
 		return oNav()->getPage('techVisitsInfo', array($data['id_sale']), $msg, 1);
 

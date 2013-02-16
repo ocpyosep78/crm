@@ -18,7 +18,7 @@ function saveAdminTechNotes($id, $note)
 		$res = NULL;
 	}
 
-	return say($res ? 'Nota guardada con éxito' : 'Ocurrió un error al guardar la nota', !!$res);
+	return say($res ? 'Nota guardada con Ã©xito' : 'OcurriÃ³ un error al guardar la nota', !!$res);
 }
 
 function tchFormSuggest($key, $val){
@@ -27,7 +27,7 @@ function tchFormSuggest($key, $val){
 		$key = 'number';
 		if (!empty($val) && !is_numeric($val))
 		{
-			return say('Número de cliente inválido.');
+			return say('NÃºmero de cliente invÃ¡lido.');
 		}
 	}
 
@@ -62,7 +62,7 @@ function tchFormAcceptSale($id, $cust=NULL){	/* `id_sale` from `sales`, `id_cust
 	else{
 		# Get all relevant info for this invoice (either install or sale)
 		$data = oSQL()->getInstallForNewService( $id );
-		if( empty($data) ) return say('Ocurrió un error al intentar leer los datos de la factura.');
+		if( empty($data) ) return say('OcurriÃ³ un error al intentar leer los datos de la factura.');
 		# Part install date and fix warranty (from warranty months to warranty void date)
 		$data['warranty'] = strtotime($data['date'].' + '.$data['warranty'].' months') > time() ? 1 : 0;
 		list($data['installYear'], $data['installMonth'], $data['installDay']) = explode('-', $data['date']);
@@ -169,24 +169,24 @@ function createTechVisit($data)
 		# Handle expected errors
 		if ($ans->column == 'invoice' && $ans->error == SQL_ERROR_DUPLICATE)
 		{
-			return say("Ya existe una factura con número {$data['invoice']} registrada.");
+			return say("Ya existe una factura con nÃºmero {$data['invoice']} registrada.");
 		}
 
 		if ($ans->column == 'number' && $ans->error = SQL_ERROR_DUPLICATE)
 		{
-			return say("El número de visita {$data['number']} ya está en uso.");
+			return say("El nÃºmero de visita {$data['number']} ya estÃ¡ en uso.");
 		}
 
 		# Fall back to a generic error message
-		return say('Ocurrió un error al intentar guardar el formulario. '.
-				   'Revise sus datos e inténtelo nuevamente.');
+		return say('OcurriÃ³ un error al intentar guardar el formulario. '.
+				   'Revise sus datos e intÃ©ntelo nuevamente.');
 	}
 
 	oSQL()->COMMIT();
 
 	# Success
 	$axn = ($sqlAxn == 'insert') ? 'creada.' : 'modificada.';
-	$msg = sprintf('La visita técnica fue correctamente %s.', $axn);
+	$msg = sprintf('La visita tÃ©cnica fue correctamente %s.', $axn);
 
 	return oNav()->getPage('techVisitsInfo', array($data['id_sale']), $msg, 1);
 }

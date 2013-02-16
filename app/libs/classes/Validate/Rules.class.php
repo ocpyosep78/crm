@@ -25,7 +25,7 @@
 			/* open: anything */
 			'open'			=> '/^.*$/',
 			/* text: most common symbols for regular latin1 texts, plus puntuation and quotes (double and single) */
-			'text'			=> '/^[\w\-\.\,\;\(\)\/áéíóúàèìòùäëïöüñÁÉÍÓÚÑÀÈÌÒÙÄËÏÖÜ\"\'\s:]*$/',
+			'text'			=> '/^[\w\-\.\,\;\(\)\/Ã¡Ã©Ã­Ã³ÃºÃ Ã¨Ã¬Ã²Ã¹Ã¤Ã«Ã¯Ã¶Ã¼Ã±ÃÃ‰ÃÃ“ÃšÃ‘Ã€ÃˆÃŒÃ’Ã™Ã„Ã‹ÃÃ–Ãœ\"\'\s:]*$/',
 			/* alpha: letters, numbers and underscore */
 			'alpha'			=> '/^[a-zA-Z0-9_]*$/',
 			/* alphaMixed: underscores, at least one letter, at least one number, and any extra amount of them */

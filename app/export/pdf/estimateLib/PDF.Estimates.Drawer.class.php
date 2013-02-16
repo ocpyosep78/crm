@@ -50,7 +50,7 @@
 			$this->SetXY(0, 90);
 			$this->SetFont(NULL, 'B', 14);
 			$this->SetTextColor(0, 0, 120);
-			$this->MultiCell(0, 6, "N∫ DE ORDEN: {$estm['info']['orderNumber']}", NULL, 'R');
+			$this->MultiCell(0, 6, "N¬∫ DE ORDEN: {$estm['info']['orderNumber']}", NULL, 'R');
 			
 			# Print customer's info
 			$this->SetXY($this->w/2, 50);
@@ -90,8 +90,8 @@
 			
 			# Even zooming, more than 9 elements cannot be presented in the list
 			if( count($products) > 18 ){
-				$msg = 'La lista de productos (p·g. 2) no puede contener m·s de 18 tipos de item. ';
-				$msg .= 'SÛlo se mostrar·n los primeros 18 items, y no se mostrar·n im·genes.';
+				$msg = 'La lista de productos (p√°g. 2) no puede contener m√°s de 18 tipos de item. ';
+				$msg .= 'S√≥lo se mostrar√°n los primeros 18 items, y no se mostrar√°n im√°genes.';
 				$this->warn( $msg );
 			}
 			
@@ -103,7 +103,7 @@
 			$cnt = count( $products );
 			$this->setY( 25 + 10*$zoom );
 			$this->SetFont('', 'B', 12*$zoom);
-			$this->Cell(0, 10*$zoom, 'El sistema est· compuesto por:', NULL, 1, 'C');
+			$this->Cell(0, 10*$zoom, 'El sistema est√° compuesto por:', NULL, 1, 'C');
 			if( $cnt < 7 ) $this->Ln((12 - $cnt) * 2);
 			
 			# Products list
@@ -153,7 +153,7 @@
 			$this->SetFont('Courier', 'B', '10');
 			$this->SetFillColor( 220 );
 			$this->Cell(0, 6, 'Modalidad de pago: a convenir', 'LRT', 1, 'L', 1);
-			$this->Cell(0, 6, 'Presupuesto v·lido por 30 dÌas', 'LRB', 1, 'L', 1);
+			$this->Cell(0, 6, 'Presupuesto v√°lido por 30 d√≠as', 'LRB', 1, 'L', 1);
 			
 		}
 		
@@ -171,7 +171,7 @@
 			$plan = $this->DP->getPlan();
  
 			# Add page with header and footer
-			$this->SetHeaderTitle( 'PlanificaciÛn de Obras' );
+			$this->SetHeaderTitle( 'Planificaci√≥n de Obras' );
 			$this->AddPage();
 			
 			# Table of products and their locations / comments
@@ -183,9 +183,9 @@
 			$h = 7;
 			$this->SetX( 18 );
 			$this->SetFont('', 'B', 16);
-			$this->Cell(58, $h*$rows, 'ArtÌculo', 1, 0, 'C');
+			$this->Cell(58, $h*$rows, 'Art√≠culo', 1, 0, 'C');
 			$this->Cell(20, $h*$rows, 'Cant.', 1, 0, 'C');
-			$this->Cell(98, $h*$rows, 'InformaciÛn', 1, 2, 'C');
+			$this->Cell(98, $h*$rows, 'Informaci√≥n', 1, 2, 'C');
 			foreach( $plan as $row ){
 				$this->SetX( 18 );
 				$this->SetTextColor(0, 0, 90);
@@ -230,8 +230,8 @@
 			$this->SetXY(10, 252);
 			$this->setTextColor( 90 );
 			$this->SetFont('Arial', 'IB', 10);
-			$this->Cell(0, 8, 'Nota: Las im·genes son de referencia y pueden no coincidir con el'.
-				' modelo incluÌdo en esta cotizaciÛn', NULL, 1, 'R');
+			$this->Cell(0, 8, 'Nota: Las im√°genes son de referencia y pueden no coincidir con el'.
+				' modelo inclu√≠do en esta cotizaci√≥n', NULL, 1, 'R');
 		
 		}
 	
@@ -263,15 +263,15 @@
 			$this->SetXY(10, 252);
 			$this->setTextColor( 90 );
 			$this->SetFont('Arial', 'IB', 10);
-			$this->Cell(0, 8, 'Nota: Las im·genes son de referencia y pueden no coincidir con el'.
-				' modelo incluÌdo en esta cotizaciÛn', NULL, 1, 'R');
+			$this->Cell(0, 8, 'Nota: Las im√°genes son de referencia y pueden no coincidir con el'.
+				' modelo inclu√≠do en esta cotizaci√≥n', NULL, 1, 'R');
 			
 		}
 	
 		public function drawTotals(){
 		
 			# Add page with header and footer
-			$this->SetHeaderTitle( 'CotizaciÛn' );
+			$this->SetHeaderTitle( 'Cotizaci√≥n' );
 			$this->AddPage();
 			$this->SetFont('Arial');
 		
@@ -280,7 +280,7 @@
 		public function drawAbout(){
 		
 			# Add page with header and footer
-			$this->SetHeaderTitle( 'QuiÈnes somos' );
+			$this->SetHeaderTitle( 'Qui√©nes somos' );
 			$this->AddPage();
 			$this->SetFont('Arial');
 			
@@ -302,7 +302,7 @@
 			# MI authorization
 			$this->ln( 3 );
 			$this->SetFont('Arial', 'B', 12);
-			$this->MultiCell(0, NULL, 'Contamos con la habilitaciÛn de RE.NA.EM.SE (Ministerio del Interior)', 0, 'C');
+			$this->MultiCell(0, NULL, 'Contamos con la habilitaci√≥n de RE.NA.EM.SE (Ministerio del Interior)', 0, 'C');
 			
 			# Company's images
 			$this->SetXY(-80, -70);

@@ -18,7 +18,7 @@ function smarty_modifier_date_locale($string, $format = SMARTY_RESOURCE_DATE_FOR
         return;
     } 
 	$days = array('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday');
-	$dias = array('Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo');
+	$dias = array('Lunes', 'Martes', 'MiÃ©rcoles', 'Jueves', 'Viernes', 'SÃ¡bado', 'Domingo');
 	$months = array('January', 'February', 'March', 'April', 'May', 'June',
 		'July', 'August', 'September', 'October', 'November', 'December');
 	$meses = array('Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',

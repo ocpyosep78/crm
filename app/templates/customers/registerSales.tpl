@@ -28,7 +28,7 @@
 		<th valign="top">Vendedor</th>
 		<td>
 		  <select id='seller' disabled='disabled'>
-			<option value=''>(autom·tico)</option>
+			<option value=''>(autom√°tico)</option>
 			{foreach from=$Lists->sellers() key=k item=v}
 			  <option value='{$k}'>{$v}</option>
 			{/foreach}
@@ -47,7 +47,7 @@
 	  </tr>
 	  
 	  <tr>
-		<th valign="top">GarantÌa</th>
+		<th valign="top">Garant√≠a</th>
 		<td>
 		  <select name='warranty'>
 			{foreach from=$Lists->warranties() key=k item=v}
@@ -82,7 +82,7 @@
 	  </tr>
 	  
 	  <tr>
-		<th valign="top">TÈcnico / Responsable</th>
+		<th valign="top">T√©cnico / Responsable</th>
 		<td>
 		  <select name='technician'>
 			<option value=''>(seleccionar)</option>
@@ -94,7 +94,7 @@
 	  </tr>
 	  
 	  <tr>
-		<th valign="top">DescripciÛn Breve</th>
+		<th valign="top">Descripci√≥n Breve</th>
 		<td>
 		  <input type='text' name='description' value='' size='60' />
 		</td>

@@ -39,17 +39,17 @@
 				return true;
 			case UPLOAD_ERR_INI_SIZE:
 			case UPLOAD_ERR_FORM_SIZE:
-				return 'El tamaÒo del archivo supera el m·ximo permitido.';
+				return 'El tama√±o del archivo supera el m√°ximo permitido.';
 			case UPLOAD_ERR_PARTIAL:
-				return 'No se pudo comprobar la integridad del archivo. IntÈntelo nuevamente.';
+				return 'No se pudo comprobar la integridad del archivo. Int√©ntelo nuevamente.';
 			case UPLOAD_ERR_NO_FILE:
 				return $noFileReturn;
 			case UPLOAD_ERR_NO_TMP_DIR:
 			case UPLOAD_ERR_CANT_WRITE:
 			case UPLOAD_ERR_EXTENSION:
-				return 'La configuraciÛn de la aplicaciÛn o del servidor no permite subir este archivo.';
+				return 'La configuraci√≥n de la aplicaci√≥n o del servidor no permite subir este archivo.';
 		}
 		
-		return 'OcurriÛ un error desconocido al intentar subir el archivo.';
+		return 'Ocurri√≥ un error desconocido al intentar subir el archivo.';
 		
 	}

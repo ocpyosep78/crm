@@ -58,35 +58,35 @@
 			
 			# FATAL ERRORS
 			if( empty($DP->estimate) ){
-				die('No se encontrÛ el presupuesto pedido en la base de datos. Revise sus datos e intÈntelo nuevamente.');
+				die('No se encontr√≥ el presupuesto pedido en la base de datos. Revise sus datos e int√©ntelo nuevamente.');
 			}
 			if( empty($DP->customer) ){
-				die('El presupuesto no est· asociado a ning˙n cliente o el cliente no fue encontrado en la base de datos.');
+				die('El presupuesto no est√° asociado a ning√∫n cliente o el cliente no fue encontrado en la base de datos.');
 			}
 			if( empty($DP->system) ){
-				die('El presupuesto no est· asociado a un sistema, o el sistema asociado no fue encontrado en la base de datos.');
+				die('El presupuesto no est√° asociado a un sistema, o el sistema asociado no fue encontrado en la base de datos.');
 			}
 			if( empty($DP->system) ){
-				die('La lista de productos del presupuesto est· vacÌa, no se puede continuar.');
+				die('La lista de productos del presupuesto est√° vac√≠a, no se puede continuar.');
 			}
 			
 			# WARNINGS
 			if( empty($DP->plan) ){
 				$this->warn('<span>No se ha definido un plan de obra</span> para este presupuesto.<br />'.
-					'Si contin˙a, no se incluir· la hoja correspondiente a la planificaciÛn de obra.');
+					'Si contin√∫a, no se incluir√° la hoja correspondiente a la planificaci√≥n de obra.');
 			}
 			if( $atts['system'] == 'cctv' ){
 				if( !!$atts['isDVR'] + !!$atts['isGV'] + !!$atts['isGeo'] > 1 ){
-					$this->warn('El sistema posee <span>2 o m·s tipos de procesadores de gr·ficos</span> (GV, DVR, GeoVision)<br />'.
+					$this->warn('El sistema posee <span>2 o m√°s tipos de procesadores de gr√°ficos</span> (GV, DVR, GeoVision)<br />'.
 						'No se recomienda continuar sin corregir este problema.');
 				}
 				if( count($atts['graphicalHW']) > 1 ){
-					$this->warn('El sistema posee <span>2 o m·s productos de tipo '.
+					$this->warn('El sistema posee <span>2 o m√°s productos de tipo '.
 						($atts['isDVR'] ? 'DVR' : ($atts['isGV'] ? 'GV' : ($atts['isGeo'] ? 'GeoVision' : '(desconocido)'))).
-						'</span>. Si decide ignorar esta advertencia, es posible que la descripciÛn del sistema no sea la adecuada.');
+						'</span>. Si decide ignorar esta advertencia, es posible que la descripci√≥n del sistema no sea la adecuada.');
 				}
 				if( !$atts['isDVR'] && !$atts['isGV'] && !$atts['isGeo'] ){
-					$this->warn('El sistema CCTV <span>no posee placas (GV, Geo) ni DVR</span> para el procesamiento gr·fico.<br />'.
+					$this->warn('El sistema CCTV <span>no posee placas (GV, Geo) ni DVR</span> para el procesamiento gr√°fico.<br />'.
 						'No se recomienda continuar sin corregir este problema.');
 				}
 				if( !$atts['hasServer'] && ($atts['isGV'] || $atts['isGeo']) ){
@@ -197,7 +197,7 @@
 			# Move cursor to next position
 			$this->SetY(40);
 			
-			# Show date to the right, rotated 90∫
+			# Show date to the right, rotated 90¬∫
 			$this->SetFont('Arial', '', 12);
 			if( $this->atts['printable'] ){
 				$this->SetXY(161, 29);
@@ -215,14 +215,14 @@
 			
 		}
 		
-		//Pie de p·gina
+		//Pie de p√°gina
 		public function Footer(){
 return;	/* Disabled for now */
-			//PosiciÛn: a 1,5 cm del final
+			//Posici√≥n: a 1,5 cm del final
 			$this->SetY(-15);
 			//Arial italic 8
 			$this->SetFont('Arial', 'I', 8);
-			//N˙mero de p·gina
+			//N√∫mero de p√°gina
 			$this->Cell(0, 10, 'Page '.$this->PageNo().'/{nb}', 0, 0, 'C');
 			
 		}

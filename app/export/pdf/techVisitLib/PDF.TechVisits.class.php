@@ -57,7 +57,7 @@
 			$this->DrawData();
 			
 			# Print resulting PDF
-			$this->Output('Constancia Técnica.pdf', $this->downloadable ? 'D' : 'I');
+			$this->Output('Constancia TÃ©cnica.pdf', $this->downloadable ? 'D' : 'I');
 			
 		}
 		
@@ -102,7 +102,7 @@
 				$this->SetFontSize(10);
 				$this->SetXY(171, 8);
 				if( !empty($v['technicianName']) ){
-					$this->Cell(30, 5, "Técnico responsable", 0, 2, 'C');
+					$this->Cell(30, 5, "TÃ©cnico responsable", 0, 2, 'C');
 					$this->Cell(30, NULL, $v['technicianName'], 0, 1, 'C');
 				}
 				$this->SetTextColor( 0 );

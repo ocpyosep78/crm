@@ -20,13 +20,13 @@ class PDF_TechVisits_Provider extends SQL{
      */
     public function __construct( $id ){
 
-        if( empty($id) ) die('Faltan par·metros para procesar su solicitud');
+        if( empty($id) ) die('Faltan par√°metros para procesar su solicitud');
 
         parent::__construct();
 
         $this->visit = $this->getTechVisit( $id );
 
-        if( empty($this->visit['id_sale']) ) die('No se encontrÛ la constancia tÈcnica buscada.');
+        if( empty($this->visit['id_sale']) ) die('No se encontr√≥ la constancia t√©cnica buscada.');
 
     }
 

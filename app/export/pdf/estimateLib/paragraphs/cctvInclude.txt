@@ -1,9 +1,9 @@
-* Instalaci髇 y configuraci髇 de software de control y monitoreo.
-    * Instalaci髇 y puesta a punto, ajusto de foco y posicionamiento de c醡aras.
-    * Instalaci髇 de fuente de alimentaci髇.
+* Instalaci贸n y configuraci贸n de software de control y monitoreo.
+    * Instalaci贸n y puesta a punto, ajusto de foco y posicionamiento de c谩maras.
+    * Instalaci贸n de fuente de alimentaci贸n.
     * Costos de traslado, operativa de obra, mano de obra.
     * Curso introductorio sobre el funcionamiento del sistema para el personal asignado.
-    * Soporte t閏nico gratuito por un mes.
-    * Asistencia remota instant醤ea (requiere conexi髇 a internet ADSL permanente).
-    * Instalaci髇 y configuraci髇 del software para mantenimiento remoto desde nuestro departamento t閏nico.
+    * Soporte t茅cnico gratuito por un mes.
+    * Asistencia remota instant谩nea (requiere conexi贸n a internet ADSL permanente).
+    * Instalaci贸n y configuraci贸n del software para mantenimiento remoto desde nuestro departamento t茅cnico.
 	

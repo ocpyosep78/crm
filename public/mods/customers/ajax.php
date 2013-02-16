@@ -40,7 +40,7 @@
 		}
 
 		# Register new customer
-		oSQL()->setOkMsg("El cliente {$atts['customer']} fue ingresado con éxito".
+		oSQL()->setOkMsg("El cliente {$atts['customer']} fue ingresado con Ã©xito".
 			($potential ? ' (como posible cliente)' : ''));
 		$ans = oSQL()->insert($atts, 'customers');
 
@@ -50,10 +50,10 @@
 		# Handled errors
 		if( $ans->error == 1062 ){
 			if( $ans->column == 'customer' ){
-				return say("El nombre {$atts['customer']} ya está registrado en la base de datos.");
+				return say("El nombre {$atts['customer']} ya estÃ¡ registrado en la base de datos.");
 			}
 			elseif( $ans->column == 'number' ){
-				return say("Ya existe un cliente con ese número. Verifique sus datos o inténtelo nuevamente.");
+				return say("Ya existe un cliente con ese nÃºmero. Verifique sus datos o intÃ©ntelo nuevamente.");
 			}
 		}
 
@@ -84,14 +84,14 @@
 		if( $atts['number'] ){
 			$res = oSQL()->getCustomers(array('number' => $atts['number']));
 			if( count($res) > 1 || (count($res) == 1 && $res[0]['id_customer'] != $atts['id_customer']) ){
-				return say("Ya existe un cliente con ese número.\\n".
-					"Verifique sus datos o inténtelo nuevamente.");
+				return say("Ya existe un cliente con ese nÃºmero.\\n".
+					"Verifique sus datos o intÃ©ntelo nuevamente.");
 			}
 		}
 		else $atts['number'] = NULL;
 
 		# Request query and catch answer, then return it to the user
-		oSQL()->setOkMsg("El cliente {$atts['customer']} fue modificado con éxito");
+		oSQL()->setOkMsg("El cliente {$atts['customer']} fue modificado con Ã©xito");
 		$ans = oSQL()->editCustomers( $atts );
 
 		if( $ans->error ){
@@ -135,8 +135,8 @@
 				return say( $ans1->msg );
 			}
 			# If it either inserted a new invoice, or it already existed, we're ready to go
-			oSQL()->setErrMsg('Ocurrió un error al intentar ingresar la venta en la base de datos.');
-			oSQL()->setDuplMsg('Ya existe una venta registrada con ese número de factura.');
+			oSQL()->setErrMsg('OcurriÃ³ un error al intentar ingresar la venta en la base de datos.');
+			oSQL()->setDuplMsg('Ya existe una venta registrada con ese nÃºmero de factura.');
 			$ans2 = oSQL()->insert($data, 'sales');
 			if( $ans2->error ){
 				oSQL()->ROLLBACK();
@@ -176,7 +176,7 @@
 
 		$ans = oSQL()->delete('customers_contacts', array('id_contact' => $id));
 		if( !$ans->error ) return oNav()->reloadPage();
-		else return say('Ocurrió un error. El elemento no pudo ser eliminado.');
+		else return say('OcurriÃ³ un error. El elemento no pudo ser eliminado.');
 
 	}
 
@@ -206,6 +206,6 @@
 
 		$ans = oSQL()->delete('customers_owners', array('id_owner' => $id));
 		if( !$ans->error ) return oTabs()->switchTab('owners');
-		else return say('Ocurrió un error. El elemento no pudo ser eliminado.');
+		else return say('OcurriÃ³ un error. El elemento no pudo ser eliminado.');
 
 	}

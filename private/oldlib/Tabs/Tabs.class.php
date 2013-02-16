@@ -143,7 +143,7 @@
 			# Run the tab's function (so it can assign smarty vars)
 			if (!$allowed)
 			{
-				return say('No se puede cargar la pestaña solicitada.');
+				return say('No se puede cargar la pestaÃ±a solicitada.');
 			}
 
 			# Call tab handler

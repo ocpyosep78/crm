@@ -7,13 +7,13 @@ function ini_home(){
 function ini_createEvent( id_event ){		/* Agenda */
 	$('btn_saveEvent').addEvent('click', function(){
 		if( $('evt_iniTime').value === '' || !validateTimeInput('evt_iniTime', 'value') ){
-			return FTshowTip('evt_iniTime', 'Hora de inicio inválida.');
+			return FTshowTip('evt_iniTime', 'Hora de inicio invÃ¡lida.');
 		};	/* Preformat time, validate and apply changes if valid */
 		if( $('evt_endTime').value !== '' && !validateTimeInput('evt_endTime', 'value') ){
-			return FTshowTip('evt_endTime', 'Hora de finalización inválida.');
+			return FTshowTip('evt_endTime', 'Hora de finalizaciÃ³n invÃ¡lida.');
 		};
 		if( readTextArea('evt_event').trim() === '' ){
-			return FTshowTip('evt_event', 'Debe proporcionar una descripción del evento.');
+			return FTshowTip('evt_event', 'Debe proporcionar una descripciÃ³n del evento.');
 		};
 		xajax_createEvent(xajax.getFormValues('frmEditEvent'), id_event || 0);
 	});
@@ -88,8 +88,8 @@ function ini_agendaDay(){
 function ini_activity_technical(){ ini_activity(); };
 function ini_activity_sales(){ ini_activity(); };
 function ini_activity(){
-	var msg = "¿Está seguro que desea descartar esta entrada?\n" + 
-		"Si continúa, el elemento no volverá a aparecer en esta lista.";
+	var msg = "Â¿EstÃ¡ seguro que desea descartar esta entrada?\n" + 
+		"Si continÃºa, el elemento no volverÃ¡ a aparecer en esta lista.";
 	$$('.closeActivityEntry').forEach(function(btn){
 		var id = btn.getAttribute('FOR');
 		if( id ) btn.addEvent('click', function(){

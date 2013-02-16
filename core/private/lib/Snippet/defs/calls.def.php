@@ -40,9 +40,9 @@
 				'_calls' => array(
 					'id_call'		=> array('name' => 'ID', 'isKey' => true),
 					'type'			=> array('name' => 'Tipo', 'type' => 'list', 'listSrc' => 'activity_types'),
-					'caller'		=> array('name' => 'Quién llama'),
+					'caller'		=> array('name' => 'QuiÃ©n llama'),
 					'date'			=> array('name' => 'Fecha / Hora', 'type' => 'datetime'),
-					'detail'		=> array('name' => 'Motivo / Descripción', 'type' => 'area'),
+					'detail'		=> array('name' => 'Motivo / DescripciÃ³n', 'type' => 'area'),
 					'id_note'		=> array('name' => 'Nota asociada', 'FK' => '_notes.id_note'),
 				),
 				'customers' => array(
@@ -136,7 +136,7 @@
 			}
 			$this->fixFilters($filters, array(
 				'assigned'	=> "CONCAT(`u`.`name`,' ', `u`.`lastName`)",
-				'typeLabel'	=> "IF(`ll`.`type` = 'technical', 'Técnica', 'Ventas')",
+				'typeLabel'	=> "IF(`ll`.`type` = 'technical', 'TÃ©cnica', 'Ventas')",
 		//		'email'			=> '`c`.`email`',
 			));
 			
@@ -146,7 +146,7 @@
 							CONCAT(`ll`.`date`, ' - ', `caller`,
 								IF(ISNULL(`ll`.`id_customer`), '',
 								CONCAT(' (', `c`.`customer`, ')'))) AS 'tipToolText',
-							IF(`ll`.`type` = 'technical', 'Técnica', 'Ventas') AS 'typeLabel'
+							IF(`ll`.`type` = 'technical', 'TÃ©cnica', 'Ventas') AS 'typeLabel'
 					FROM `_calls` `ll`
 					LEFT JOIN `_users` `u` USING (`user`)
 					LEFT JOIN `customers` `c` USING (`id_customer`)

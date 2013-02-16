@@ -85,7 +85,7 @@
 			
 			oNav()->setJSParams( $data );
 		}
-		else return oNav()->getPage('techVisits', 'No se encontró la visita pedida.');
+		else return oNav()->getPage('techVisits', 'No se encontrÃ³ la visita pedida.');
 		
 		oSmarty()->assign('systems', oLists()->systems());
 		oSmarty()->assign('technicians', oLists()->technicians());

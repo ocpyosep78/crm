@@ -103,18 +103,18 @@
 		public function salesTypes(){
 
 			return array(
-				'install'	=> 'Instalación',
+				'install'	=> 'InstalaciÃ³n',
 				'sale'		=> 'Venta',
-				'service'	=> 'Visita Técnica',
+				'service'	=> 'Visita TÃ©cnica',
 			);
 
 		}
 
 		public function warranties(){	/* In months */
 			return array(
-				12	=> '1 año',
+				12	=> '1 aÃ±o',
 				6	=> '6 meses',
-				0	=> '(sin garantía)',
+				0	=> '(sin garantÃ­a)',
 			);
 		}
 

@@ -21,7 +21,7 @@
 		
 		$path = "logs/{$file}.txt";
 		
-		if( !is_file($path) ) return '(vacío)';
+		if( !is_file($path) ) return '(vacÃ­o)';
 		
 		$fp = @fopen($path, 'rb');
 		if( !$fp ) return 'Error al abrir el archivo';
@@ -29,6 +29,6 @@
 		$log = '';
 		while( $data=fgets($fp) ) $log .= nl2br($data);
 		
-		return $log ? $log : '(vacío)';
+		return $log ? $log : '(vacÃ­o)';
 		
 	}

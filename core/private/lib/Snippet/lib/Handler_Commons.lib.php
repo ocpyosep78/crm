@@ -135,7 +135,7 @@
 			
 			# Show tool tips where enabled if validation failed
 			if( $res !== true ){
-				$this->Layers->get('ajax')->display('Falló la validación de los datos ingresados');
+				$this->Layers->get('ajax')->display('FallÃ³ la validaciÃ³n de los datos ingresados');
 				$this->showToolTip($res['field'], $res['tip']);
 			}
 			

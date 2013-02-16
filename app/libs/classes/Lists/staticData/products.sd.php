@@ -14,16 +14,16 @@
 	);
 
 	$fields = array(
-		'category'		=> $modifier == 'products' ? 'Categoría' : NULL,
-		'code'			=> $modifier == 'products' ? 'Código' : NULL,
+		'category'		=> $modifier == 'products' ? 'CategorÃ­a' : NULL,
+		'code'			=> $modifier == 'products' ? 'CÃ³digo' : NULL,
 		'name'			=> 'Nombre',
 		'model'			=> $modifier == 'products' ? 'Modelo' : NULL,
 		'trademark'		=> $modifier == 'products' ? 'Marca' : NULL,
 //		'price'			=> 'Precio',
-		'description'	=> $modifier != 'products' ? 'Descripción' : NULL,
+		'description'	=> $modifier != 'products' ? 'DescripciÃ³n' : NULL,
 //		'system'		=> 'Sistema',
 	);
 	
 	if( $modifier == 'products' ){
-//		$fields['code'] = 'Código',
+//		$fields['code'] = 'CÃ³digo',
 	}

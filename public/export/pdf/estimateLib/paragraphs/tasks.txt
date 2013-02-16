@@ -1,5 +1,5 @@
 <!--
 
-	Este texto puede ser leÌdo parcialmente (desde el tercer caracter). Se asume que el texto comenzar· siempre 'se instalar·n[...]'.
+	Este texto puede ser le√≠do parcialmente (desde el tercer caracter). Se asume que el texto comenzar√° siempre 'se instalar√°n[...]'.
 	
--->Se instalar·n c·maras en los ambientes previamente acordados. Se enfocar·n correctamente y se realizar· todo el cableado requerido. Luego de efectuar todas las pruebas y demos necesarias, haremos la puesta a punto y daremos un breve curso sobre el funcionamiento del programa.
+-->Se instalar√°n c√°maras en los ambientes previamente acordados. Se enfocar√°n correctamente y se realizar√° todo el cableado requerido. Luego de efectuar todas las pruebas y demos necesarias, haremos la puesta a punto y daremos un breve curso sobre el funcionamiento del programa.

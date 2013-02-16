@@ -33,7 +33,7 @@
 	function postProcessNotesData( $data ){
 
 		foreach( $data as &$row ){
-			$row['visibility'] = !empty($row['user']) ? 'Privado' : 'Público';
+			$row['visibility'] = !empty($row['user']) ? 'Privado' : 'PÃºblico';
 		}
 
 	}

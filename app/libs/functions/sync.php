@@ -27,7 +27,7 @@
 	function checkIfUserStillOnline( $user ){
 		if( $user == getSes('user')  ) return;
 		if( oSQL()->getLastLoginLogout($user) == 'in' ) saveLog('loginLogout', 'out', 'timed out', $user);
-		oNav()->queueMsg('Su sesiÛn fue cerrada. Debe iniciar sesiÛn nuevamente para continuar.', 'warning');
+		oNav()->queueMsg('Su sesi√≥n fue cerrada. Debe iniciar sesi√≥n nuevamente para continuar.', 'warning');
 		return addScript("location.href = 'index.php';");
 		
 	}

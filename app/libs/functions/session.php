@@ -29,7 +29,7 @@
 		if( $info=oSQL()->attemptLogin($user, $pass) ){
 			if( $info['blocked'] == '1' ){
 				return showStatus('Este usuario se encuentra actualmente bloqueado. '.
-					'Por más información consulte a un administrador.');
+					'Por mÃ¡s informaciÃ³n consulte a un administrador.');
 			};
 			if( substr($_SERVER['REMOTE_ADDR'], 0, 3) != '192' ){
 				if( $fp=fopen('logs/remoteAccess.txt', 'a') ){
@@ -43,10 +43,10 @@
 			doActionsAtLogin();
 			return addScript('setTimeout(function(){location.href = location.href;},20);');
 		}
-		else return showStatus('Nombre de usuario o contraseña incorrectos.');
+		else return showStatus('Nombre de usuario o contraseÃ±a incorrectos.');
 	}
 	
-	function logout($msg='Su sesión fue cerrada correctamente.', $type=1){
+	function logout($msg='Su sesiÃ³n fue cerrada correctamente.', $type=1){
 		saveLog('loginLogout', 'out');
 		$_SESSION['crm'] = array();
 		oNav()->clear();

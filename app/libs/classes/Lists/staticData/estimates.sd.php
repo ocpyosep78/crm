@@ -1,13 +1,13 @@
 <?php
 
 	$params = array(
-		'name'		=> $modifier == 'isQuote' ? 'Cotización' : 'Presupuesto',
+		'name'		=> $modifier == 'isQuote' ? 'CotizaciÃ³n' : 'Presupuesto',
 		'plural'	=> $modifier == 'isQuote' ? 'Cotizaciones' : 'Presupuestos',
 	);
 	
 	$fields = array(
 //		'id_estimate'	=> '',
-		'orderNumber'	=> 'Nº Orden',
+		'orderNumber'	=> 'NÂº Orden',
 		'estimate'		=> 'Nombre',
 //		'id_customer'	=> '',
 		'customer'		=> 'Cliente',

@@ -38,9 +38,9 @@
 				'Alerts'			=> 'Alertas',							# Configure everything related to alerts
 				# Devel (developers only, grouped DB tasks, with integrity checks, etc.)
 				'devPermits'		=> 'Permisos',							# Permissions (add, edit, delete, hide, alias)
-				'devMods'			=> 'Módulos',							# Modules list (add, edit, delete, tests)
-				'devPages'			=> 'Páginas',							# Pages and Areas list (add, edit, delete, tests)
-				'devInsert'			=> 'Editar Código',						# Allows developers to edit code via web
+				'devMods'			=> 'MÃ³dulos',							# Modules list (add, edit, delete, tests)
+				'devPages'			=> 'PÃ¡ginas',							# Pages and Areas list (add, edit, delete, tests)
+				'devInsert'			=> 'Editar CÃ³digo',						# Allows developers to edit code via web
 				'devQueries'		=> 'Consultas SQL',						# Allows developers to execute sql queries
 			);
 			foreach( $tabs as $code => $tab ){

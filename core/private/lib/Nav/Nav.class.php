@@ -38,11 +38,11 @@
 				case 'viewItem':
 					$page = "{$code}Info";
 				default:
-					return showStatus("La p·gina solicitada no est· disponible{$detail}.");
+					return showStatus("La p√°gina solicitada no est√° disponible{$detail}.");
 			}
 		
 			if( !oPermits()->can($page) ){
-				return showStatus("Su cuenta no posee permisos para acceder a esta p·gina{$detail}.");
+				return showStatus("Su cuenta no posee permisos para acceder a esta p√°gina{$detail}.");
 			}
 			
 			$this->code = time().microtime();
@@ -117,10 +117,10 @@
 				return $this->loadContent();
 			}
 			elseif( $code === NULL ){
-				return showStatus("La p·gina solicitada no est· disponible.");
+				return showStatus("La p√°gina solicitada no est√° disponible.");
 			}
 			elseif( !$code ){
-				return showStatus("No es posible cargar la p·gina solicitada.");
+				return showStatus("No es posible cargar la p√°gina solicitada.");
 			}
 			elseif( !$inFrame ){
 				return addScript("location.href = '{$href}'");
@@ -184,8 +184,8 @@
 			
 			if( !$parsed && !is_file($page) && !is_file(TEMPLATES_PATH.$page) ){
 				return $this->inFrame
-					? $this->abortFrame('La p·gina que intenta cargar no est· disponible.')
-					: showStatus('La p·gina que intenta cargar no est· disponible.');
+					? $this->abortFrame('La p√°gina que intenta cargar no est√° disponible.')
+					: showStatus('La p√°gina que intenta cargar no est√° disponible.');
 			}
 			
 			$HTML = $parsed ? $page : oSmarty()->fetch($page);
@@ -220,7 +220,7 @@
 			if( !$res ){
 				$tpl = oPermits()->getModuleFromPage($page)."/{$page}.tpl";
 				if( is_file(TEMPLATES_PATH.$tpl) ) $this->updateContent( $tpl );
-				else trigger_error("No se pudo encontrar la plantilla de la p·gina ({$tpl})");
+				else trigger_error("No se pudo encontrar la plantilla de la p√°gina ({$tpl})");
 			}
 			
 			addScript('Modal.close();');	/* Just in case */

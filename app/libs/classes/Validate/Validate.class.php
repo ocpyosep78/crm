@@ -75,7 +75,7 @@
 				if( !isset($set[$field]) ){
 					if( !$strict ) continue;
 					else return trigger_error(
-						"El campo {$field} est· en las reglas pero no en el set recibido.",
+						"El campo {$field} est√° en las reglas pero no en el set recibido.",
 						E_USER_NOTICE
 					);
 				}

@@ -13,7 +13,7 @@
    
 <table class='eventInfoTbl' cellpadding="3" cellspacing="0">
 	<tr>
-		<th>Descripción</th>
+		<th>DescripciÃ³n</th>
 		<td style='font-style:italic; color:#000000'>{$event.event}</td>
 	</tr>
 	<tr>

@@ -1,6 +1,6 @@
 <div id='TableSearchBox'>
 	<img id='TableSearchCloseButtonHover' src="app/images/buttons/closeHover.png" alt='cerrar' title='cerrar ventana' />
 	<img id='TableSearchCloseButton' src="app/images/buttons/close.png" alt='cerrar' />
-	<div id='TableSearchTitle'>Término de búsqueda:</div>
+	<div id='TableSearchTitle'>TÃ©rmino de bÃºsqueda:</div>
 	<input type='text' size='30' id='TableSearchInput' />
 </div>

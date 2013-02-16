@@ -49,21 +49,21 @@
 		# Block 'Datos de la Empresa'
 		oFormTable()->addTitle( 'Datos de la empresa' );
 		oFormTable()->addInput('Nombre Comercial', array('id' => 'customer'));
-		oFormTable()->addInput('Raz髇 Social', array('id' => 'legal_name'));
+		oFormTable()->addInput('Raz贸n Social', array('id' => 'legal_name'));
 		oFormTable()->addInput('R.U.T.', array('id' => 'rut'));
 
 		# Block 'Interno'
 		oFormTable()->addTitle( 'Interno' );
-		oFormTable()->addInput('N鷐ero de Cliente', array('id' => 'number'));
+		oFormTable()->addInput('N煤mero de Cliente', array('id' => 'number'));
 		oFormTable()->addCombo('Vendedor',
 			array('' => '(ninguno)') + oLists()->sellers(),
 			array('id' => 'seller', 'selected' => $id ? $cust['seller'] : '' ));
 
-		# Block 'Informaci髇'
-		oFormTable()->addTitle( 'Informaci髇' );
-		oFormTable()->addInput('Tel閒ono', array('id' => 'phone'));
+		# Block 'Informaci贸n'
+		oFormTable()->addTitle( 'Informaci贸n' );
+		oFormTable()->addInput('Tel茅fono', array('id' => 'phone'));
 		oFormTable()->addInput('Email', array('id' => 'email'));
-		oFormTable()->addInput('Direcci髇', array('id' => 'address'));
+		oFormTable()->addInput('Direcci贸n', array('id' => 'address'));
 		oFormTable()->addCombo('Ciudad',
 			array('' => '') + oSQL()->getLocations(),
 			array('id' => 'id_location', 'selected' => $id ? $cust['id_location'] : 29));	/* TEMP : use MAIN_LOCATOIN instead */

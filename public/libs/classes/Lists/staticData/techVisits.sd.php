@@ -1,17 +1,17 @@
 <?php
 
 	$params = array(
-		'name'		=> 'Visita Técnica',
-		'plural'	=> 'Visitas Técnicas'
+		'name'		=> 'Visita TÃ©cnica',
+		'plural'	=> 'Visitas TÃ©cnicas'
 	);
 
 	$fields = array(
 		'date'			=> 'Fecha',
-		'number'		=> 'Número',
+		'number'		=> 'NÃºmero',
 		'customer'		=> 'Cliente',
 #		'period'		=> 'Desde/hasta',
-		'technician'	=> 'Técnico',
-		'quality'		=> 'Calificación',
+		'technician'	=> 'TÃ©cnico',
+		'quality'		=> 'CalificaciÃ³n',
 #		'saleInvoice'	=> 'Factura (venta)',
 		'invoice'		=> 'Factura (visita)',
 #		'attachedOrder'	=> 'Orden Adjunta',

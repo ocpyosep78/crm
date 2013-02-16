@@ -22,7 +22,7 @@
 	  </table>
 	</div>
   {foreachelse}
-	<div class='emptyFieldMsg'>Error: no se encontró información de este elemento</div>
+	<div class='emptyFieldMsg'>Error: no se encontrÃ³ informaciÃ³n de este elemento</div>
   {/foreach}
 
   {if isset($snippet_extraHTML)}{$snippet_extraHTML}{/if}

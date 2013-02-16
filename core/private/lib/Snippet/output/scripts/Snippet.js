@@ -41,8 +41,8 @@ var Snippet = {
 	/* sendRequest is used by different buttons (bigTools, listRowTools, etc.) */
 	sendRequest: function(snippet, atts, filters){
 		// Configure btns behavior: set which ones need confirmation
-		var ask = { deleteItem: '¿Realmente desea eliminar este elemento?',
-					blockItem: '¿Realmente desea bloquear este elemento?' };
+		var ask = { deleteItem: 'Â¿Realmente desea eliminar este elemento?',
+					blockItem: 'Â¿Realmente desea bloquear este elemento?' };
 		// Merge default params over original params
 		var toAdd = {filters:filters||'', writeTo:'', initialize:1};
 		var params = Object.merge(Object.clone(atts.params), toAdd);
@@ -388,10 +388,10 @@ try{
 						case 'edit':
 							return SL.enableEditItem( id );
 						case 'delete':
-							if( !confirm('¿Realmente desea eliminar este elemento?') ) return;
+							if( !confirm('Â¿Realmente desea eliminar este elemento?') ) return;
 							break;
 						case 'block':
-							if( !confirm('¿Realmente desea bloquear este elemento?') ) return;
+							if( !confirm('Â¿Realmente desea bloquear este elemento?') ) return;
 							break;
 					};
 					if( !window[func] ) throw('Function ' + func + ' is not registered!');

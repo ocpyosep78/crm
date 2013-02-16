@@ -1,6 +1,6 @@
 {if not $data}
 	<div class='innerListEmpty listPreLoad'>
-		Sin resultados (ningún {$name|lower} cumple con los criterios de búsqueda aplicados)
+		Sin resultados (ningÃºn {$name|lower} cumple con los criterios de bÃºsqueda aplicados)
 	</div>
 {else}
 	<table class='innerList'>

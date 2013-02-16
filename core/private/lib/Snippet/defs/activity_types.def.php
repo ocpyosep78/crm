@@ -37,7 +37,7 @@
 		protected function getListData($filters=array(), $join='AND'){
 		
 			return array(
-				'technical' => 'Técnica',
+				'technical' => 'TÃ©cnica',
 				'sales'		=> 'Ventas',
 			);
 			

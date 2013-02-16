@@ -19,7 +19,7 @@
 		private $toolsBase = array(
 			'list'		=> 'listado',
 			'create'	=> 'agregar',
-			'view'		=> 'ver información de',
+			'view'		=> 'ver informaciÃ³n de',
 			'edit'		=> 'editar',
 			'block'		=> 'bloquear',
 			'unblock'	=> 'desbloquear',

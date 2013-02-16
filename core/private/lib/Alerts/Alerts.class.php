@@ -75,11 +75,11 @@
 					if( $data['id_profile'] < getSes('id_profile') ) break;
 					switch( $objID ){
 						case 'in':
-							$msg = "{$user} ha iniciado sesión.";
+							$msg = "{$user} ha iniciado sesiÃ³n.";
 						break;
 						case 'out':
 							$opt = ($extra == 'timed out') ? ' (por inactividad)' : '';
-							$msg = "La sesión de {$user} ha finalizado{$opt}";
+							$msg = "La sesiÃ³n de {$user} ha finalizado{$opt}";
 						break;
 					}
 				break;

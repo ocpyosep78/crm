@@ -7,7 +7,7 @@
 	<thead>
 	  <tr>
 		<th>Cantidad</th>
-		<th>Artículo</th>
+		<th>ArtÃ­culo</th>
 		<th>Precio Unit.</th>
 		<th width='45px'>Importe</th>
 		<th width='45px'>IVA</th>

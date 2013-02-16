@@ -72,12 +72,12 @@ class Nav
 		}
 		elseif (is_null($code))
 		{
-			$msg = 'La p·gina solicitada no est· disponible';
+			$msg = 'La p√°gina solicitada no est√° disponible';
 			throw new PublicException($page);
 		}
 		elseif (!$code)
 		{
-			$msg = 'No es posible cargar la p·gina solicitada';
+			$msg = 'No es posible cargar la p√°gina solicitada';
 			throw new PublicException($page);
 		}
 		else
@@ -119,7 +119,7 @@ class Nav
 
 		if (!$parsed && !is_file($page) && !is_file($path))
 		{
-			return say('La p·gina que intenta cargar no est· disponible.');
+			return say('La p√°gina que intenta cargar no est√° disponible.');
 		}
 
 		$HTML = $parsed ? $page : Template::one()->fetch($page);
@@ -168,7 +168,7 @@ class Nav
 			}
 			else
 			{
-				$msg = "No se pudo encontrar la plantilla de la p·gina ({$tpl})";
+				$msg = "No se pudo encontrar la plantilla de la p√°gina ({$tpl})";
 				throw new Exception($msg);
 			}
 		}

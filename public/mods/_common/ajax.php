@@ -21,14 +21,14 @@ function editUsers($data)
 		# Check image type and other attributes, if a new image was submitted
 		if ($img['size']) {
 			if (($imgAtts = getimagesize($img['tmp_name'])) === false || $imgAtts[2] != IMAGETYPE_PNG) {
-				$msg = "El archivo subido debe ser una imagen con formato/extensión \'png\'.";
+				$msg = "El archivo subido debe ser una imagen con formato/extensiÃ³n \'png\'.";
 				return FileForm::addResponse("say('{$msg}');");
 			}
 		}
 
 		# Set messages to return to the user after processing the request
-		oSQL()->setOkMsg("La información fue correctamente actualizada.");
-		oSQL()->setErrMsg("Ocurrió un error. Los cambios no fueron guardados.");
+		oSQL()->setOkMsg("La informaciÃ³n fue correctamente actualizada.");
+		oSQL()->setErrMsg("OcurriÃ³ un error. Los cambios no fueron guardados.");
 		# Request query and catch answer, then return it to the user
 		$ans = oSQL()->editUsers($data);
 		$page = 'usersInfo';
@@ -40,7 +40,7 @@ function editUsers($data)
 
 			if (!move_uploaded_file($img['tmp_name'], $imgpath))
 			{
-				$msg = "No se pudo guardar la imagen. Inténtelo nuevamente.";
+				$msg = "No se pudo guardar la imagen. IntÃ©ntelo nuevamente.";
 				return FileForm::addResponse("say('{$msg}');");
 			}
 		}
@@ -70,7 +70,7 @@ function eventInfo($id)
 	Template::one()->assign('editions', oSQL()->getEventEditions($id));
 
 	$dialogAtts = array('width' => 600,
-	                    'title' => 'Información de Evento');
+	                    'title' => 'InformaciÃ³n de Evento');
 
 	return dialog('home/eventInfo.tpl', '#eventInfo', $dialogAtts);
 }
@@ -85,7 +85,7 @@ function closeAgendaEvent($id, $msg, $rescheduled = false) {
 	$ans = oSQL()->closeAgendaEvent($data);
 
 	if ($ans->error)
-		return say('Ocurrió un error al intentar cerrar el evento.');
+		return say('OcurriÃ³ un error al intentar cerrar el evento.');
 	else {
 		saveLog('agendaEventClosed', $id, $msg);
 		return oNav()->reloadPage('El evento fue cerrado correctamente.', 1);
@@ -96,14 +96,14 @@ function removeAlert($id) {
 
 	$ans = oSQL()->removeAlert($id);
 
-	return $ans->error ? say('No se pudo eliminar el evento. Inténtelo nuevamente.') : oXajaxResp();
+	return $ans->error ? say('No se pudo eliminar el evento. IntÃ©ntelo nuevamente.') : oXajaxResp();
 }
 
 function removeAllAlerts() {
 
 	$ans = oSQL()->removeAllAlerts(getSes('user'));
 
-	return $ans->error ? say('No se pudo eliminar el evento. Inténtelo nuevamente.') : oXajaxResp();
+	return $ans->error ? say('No se pudo eliminar el evento. IntÃ©ntelo nuevamente.') : oXajaxResp();
 }
 
 function createNotes($data, $modifier)
@@ -156,5 +156,5 @@ function deleteNotes($id)
 	if (!$ans->error)
 		return oTabs()->switchTab('notes');
 	else
-		return say('Ocurrió un error. El elemento no pudo ser eliminado.');
+		return say('OcurriÃ³ un error. El elemento no pudo ser eliminado.');
 }

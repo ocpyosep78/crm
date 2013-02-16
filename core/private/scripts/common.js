@@ -510,7 +510,7 @@ function validEmail( email ){
 };
 
 function showAlerts(){
-	alert('En construcción');
+	alert('En construcciÃ³n');
 };
 
 function xajaxSubmit(oForm, sFunc, showDisabled, atts){		/* Submit form through ajax */
@@ -554,7 +554,7 @@ function FTshowTip( field, tip ){
 			} );
 		};
 		var name = ($('field_'+field)||{}).innerHTML || '';
-		var msg = 'El valor del campo %s no es válido. Por favor verifique el dato ingresado';
+		var msg = 'El valor del campo %s no es vÃ¡lido. Por favor verifique el dato ingresado';
 		showStatus( sprintf(msg, name) );
 	}, 300 );
 };
@@ -645,12 +645,12 @@ function initializeList(code, modifier, src){
 				e.stop();
 				switch( axn ){
 					case 'delete':
-						if( confirm('¿Realmente desea eliminar este elemento?') ){
+						if( confirm('Â¿Realmente desea eliminar este elemento?') ){
 							window['xajax_delete' + code.capitalize()](id, modifier);
 						};
 						break;
 					case 'block':
-						if( confirm('¿Realmente desea bloquear este elemento?') ){
+						if( confirm('Â¿Realmente desea bloquear este elemento?') ){
 							window['xajax_block' + code.capitalize()](id, modifier);
 						};
 						break;
@@ -731,10 +731,10 @@ function initializeSimpleList(){
 					case 'edit':
 						return SL.enableEditItem( id );
 					case 'delete':
-						if( !confirm('¿Realmente desea eliminar este elemento?') ) return;
+						if( !confirm('Â¿Realmente desea eliminar este elemento?') ) return;
 						break;
 					case 'block':
-						if( !confirm('¿Realmente desea bloquear este elemento?') ) return;
+						if( !confirm('Â¿Realmente desea bloquear este elemento?') ) return;
 						break;
 				};
 				if( !window[func] ) throw('Function ' + func + ' is not registered!');

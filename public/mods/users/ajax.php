@@ -30,14 +30,14 @@
 			{
                 if (($imgAtts=getimagesize($img['tmp_name'])) === false || $imgAtts[2] != IMAGETYPE_PNG )
 				{
-                    $msg = "El archivo subido debe ser una imagen con formato/extensión \'png\'.";
+                    $msg = "El archivo subido debe ser una imagen con formato/extensiÃ³n \'png\'.";
                     return FileForm::addResponse("say('{$msg}');");
                 }
             }
 
 			# Set messages to return to the user after processing the request
-			oSQL()->setErrMsg("El usuario {$atts['user']} fue creado con éxito");
-			oSQL()->setErrMsg("Ocurrió un error al intentar crear el usuario {$atts['user']}");
+			oSQL()->setErrMsg("El usuario {$atts['user']} fue creado con Ã©xito");
+			oSQL()->setErrMsg("OcurriÃ³ un error al intentar crear el usuario {$atts['user']}");
 			oSQL()->setDuplMsg("El usuario {$atts['user']} ya existe. Debe elegir otro nombre de usuario");
 
 			# Request query and catch answer, then return it to the user
@@ -56,7 +56,7 @@
 
                     if (!move_uploaded_file($img['tmp_name'], $imgpath))
 					{
-                        $msg = "No se pudo guardar la imagen. Inténtelo nuevamente.";
+                        $msg = "No se pudo guardar la imagen. IntÃ©ntelo nuevamente.";
                         return FileForm::addResponse("say('{$msg}');");
                     }
                 }
@@ -77,12 +77,12 @@
 		$blockStatus = $unblock ? 'desbloqueado' : 'bloqueado';
 		oSQL()->setOkMsg("El usuario {$user} fue {$blockStatus} correctamente.");
 		oSQL()->setErrMsg("El usuario {$user} no pudo ser bloqueado. ".
-			"Verifique sus permisos e inténtelo nuevamente.");
+			"Verifique sus permisos e intÃ©ntelo nuevamente.");
 
 		$ans = oSQL()->blockUsers($user, $unblock);
 		if( !$ans->error ){
 			if( $user == loggedIn() ){
-				$msg = 'Su cuenta fue bloqueada. No podrá iniciar sesión hasta que un administrador la habilite.';
+				$msg = 'Su cuenta fue bloqueada. No podrÃ¡ iniciar sesiÃ³n hasta que un administrador la habilite.';
 				return logout( $msg );
 			}
 			else return oNav()->reloadPage($ans->msg, 1);
@@ -102,7 +102,7 @@
 
 		oSQL()->setOkMsg("El usuario {$user} fue eliminado correctamente.");
 		oSQL()->setErrMsg("No se pudo eliminar el usuario {$user}. ".
-			"Verifique sus permisos e inténtelo nuevamente.");
+			"Verifique sus permisos e intÃ©ntelo nuevamente.");
 
 		$ans = oSQL()->deleteUsers( $user );
 		if( !$ans->error ) return oNav()->reloadPage($ans->msg, 1);

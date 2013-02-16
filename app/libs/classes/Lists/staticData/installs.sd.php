@@ -1,7 +1,7 @@
 <?php
 
 	$params = array(
-		'name'		=> 'Instalación',
+		'name'		=> 'InstalaciÃ³n',
 		'plural'	=> 'Instalaciones'
 	);
 /*

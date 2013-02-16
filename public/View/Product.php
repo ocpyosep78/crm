@@ -15,12 +15,12 @@ class View_Product extends View
 	protected $__screen_names = [
 //		'id_product' => '',
 //		'id_category' => '',
-		'category' => 'CategorÌa',
+		'category' => 'Categor√≠a',
 		'type' => 'Tipo',
 		'name' => 'Nombre',
 		'cost' => 'Costo',
 		'price' => 'Precio',
-		'description' => 'DescripciÛn'];
+		'description' => 'Descripci√≥n'];
 
 	protected $__tabular_fields = [
 		'category', 'type', 'name', 'price', 'description'];

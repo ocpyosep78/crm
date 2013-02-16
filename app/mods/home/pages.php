@@ -21,17 +21,17 @@
 		
 		oFormTable()->clear();
 		oFormTable()->setPrefix( 'editAcc_' );
-		oFormTable()->setFrameTitle( 'Cambiar Contraseña' );
+		oFormTable()->setFrameTitle( 'Cambiar ContraseÃ±a' );
 		
 		# Block 'Cuenta'
 		oFormTable()->addTitle( "Cuenta ({$user['user']})" );
-		oFormTable()->addInput('Contraseña Actual', array('id' => 'oldPass'), 'password');
-		oFormTable()->addInput('Nueva Contraseña', array('id' => 'newPass1'), 'password');
-		oFormTable()->addInput('Repetir Contraseña', array('id' => 'newPass2'), 'password');
+		oFormTable()->addInput('ContraseÃ±a Actual', array('id' => 'oldPass'), 'password');
+		oFormTable()->addInput('Nueva ContraseÃ±a', array('id' => 'newPass1'), 'password');
+		oFormTable()->addInput('Repetir ContraseÃ±a', array('id' => 'newPass2'), 'password');
 		
-		# Block 'Información'
-		oFormTable()->addTitle( 'Información' );
-		oFormTable()->addRow('Último Acceso', $user['last_access']
+		# Block 'InformaciÃ³n'
+		oFormTable()->addTitle( 'InformaciÃ³n' );
+		oFormTable()->addRow('Ãšltimo Acceso', $user['last_access']
 			? date('d-m-Y H:i:s', strtotime($user['last_access']))
 			: "<span style='color:#600000; font-size:12px; font-weight:bold'>Nunca</span>"
 		);
@@ -91,7 +91,7 @@
 		# Block Datos Requeridos
 		oFormTable()->clear();
 		oFormTable()->setPrefix('evt_');
-		oFormTable()->addTitle('Parámetros del Evento');
+		oFormTable()->addTitle('ParÃ¡metros del Evento');
 		oFormTable()->addInput('Fecha', array(
 			'id' => 'iniDate',
 			'class' => 'input calendar',
@@ -102,17 +102,17 @@
 		oFormTable()->addCombo('Tipo',
 			oLists()->agendaEventTypes(),
 			array('id' => 'type'));
-		oFormTable()->addArea('Descripción', array(
+		oFormTable()->addArea('DescripciÃ³n', array(
 			'id'	=> 'event',
 			'style'	=> 'height:140px; width:320px;'
 		) );
 		if( $id ) oFormTable()->fillValues( $event );		# Fill table with values (editting)
 		oSmarty()->assign('required', oFormTable()->getTemplate());
 		
-		# Block Configuración avanzada
+		# Block ConfiguraciÃ³n avanzada
 		oFormTable()->clear();
 		oFormTable()->setPrefix('evt_');
-		oFormTable()->addTitle('Parámetros Opcionales');
+		oFormTable()->addTitle('ParÃ¡metros Opcionales');
 		oFormTable()->addCombo('Usuario Asignado',
 			array('(sin especificar)') + $users,
 			array('id' => 'target'));
@@ -195,7 +195,7 @@
 	}
 
 	function page_agendaDay($date=NULL, $currFilters=array(), $showRescheduled=1){
-		if( !$date ) return oNav()->abortFrame('Faltan datos requeridos para cargar la página.');
+		if( !$date ) return oNav()->abortFrame('Faltan datos requeridos para cargar la pÃ¡gina.');
 	
 		# Basic structure of data to be passed
 		$day['date'] = $date;

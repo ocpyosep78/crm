@@ -163,7 +163,7 @@
 			$sql = "SELECT	`ss`.`id_sale`,
 							CONCAT(
 								DATE_FORMAT(`l`.`date`, '%d/%m/%Y'),
-								IF(ISNULL(`ss`.`number`), ' (sin número)', CONCAT(' (visita #', `ss`.`number`, ')')),
+								IF(ISNULL(`ss`.`number`), ' (sin nÃºmero)', CONCAT(' (visita #', `ss`.`number`, ')')),
 								' - ', `c`.`customer`
 							)
 					FROM `sales` `l`
@@ -179,7 +179,7 @@
 							CONCAT(`u`.`name`, ' ', `u`.`lastName`) AS 'technician'
 					FROM `_users` `u`
 					JOIN `_departments` `d` USING (`id_department`)
-					WHERE `d`.`department` = 'Técnica'";
+					WHERE `d`.`department` = 'TÃ©cnica'";
 			return $this->asHash( $sql );
 		}
 
@@ -303,7 +303,7 @@
 							`l`.`currency`,
 							`l`.`cost`,
 							`ss`.*,
-							IFNULL(`ss`.`number`, '(sin número)') AS 'number',
+							IFNULL(`ss`.`number`, '(sin nÃºmero)') AS 'number',
 							DATE_FORMAT(`l`.`date`, '%d/%m/%Y') AS 'date',
 							CONCAT(`u`.`name`, ' ', `u`.`lastName`) AS 'technician',
 							CONCAT(`ss`.`starts`, ' a ', `ss`.`ends`) AS 'period',
@@ -360,7 +360,7 @@
 		public function notesSL( $filters=array() ){
 			$sql = "SELECT	`n`.`id_note`,
 							`n`.`type`,
-							IF(`type` = 'technical', 'Técnica', 'Ventas') AS 'typeName',
+							IF(`type` = 'technical', 'TÃ©cnica', 'Ventas') AS 'typeName',
 							`n`.`note`,
 							`n`.`user`,
 							`n`.`by`,

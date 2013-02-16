@@ -18,7 +18,7 @@
 	function page_usersInfo( $acc ){
 		
 		$user = oSQL()->getUser( $acc );
-		if( empty($user) ) return oNav()->redirectTo('users', NULL, 'No se encontró el usuario buscado.');
+		if( empty($user) ) return oNav()->redirectTo('users', NULL, 'No se encontrÃ³ el usuario buscado.');
 		
 		$id = $user['user'];
 		$self = $id == getSes('user');
@@ -30,10 +30,10 @@
 		# Block 'Personal'
 		oFormTable()->clear();
 		oFormTable()->addRow('Nombre', "{$user['name']} {$user['lastName']}");
-		oFormTable()->addRow('Teléfono', $user['phone']);
-		oFormTable()->addRow('Dirección', $user['address']);
+		oFormTable()->addRow('TelÃ©fono', $user['phone']);
+		oFormTable()->addRow('DirecciÃ³n', $user['address']);
 		oFormTable()->addRow('Email', $user['email']);
-		oFormTable()->addRow($self ? 'Acceso Previo' : 'Último Acceso', $lastAccess
+		oFormTable()->addRow($self ? 'Acceso Previo' : 'Ãšltimo Acceso', $lastAccess
 			? date('d-m-Y H:i:s', strtotime($lastAccess))
 			: "<span id='firstLoginMsg'>".($self ? 'Primer Login' : 'Nunca')."</span>");
 		$blocks[] = oFormTable()->getTemplate();
@@ -42,7 +42,7 @@
 		oFormTable()->clear();
 		oFormTable()->addRow('Usuario', $user['user']);
 		oFormTable()->addRow('Perfil', $user['profile']);
-		oFormTable()->addRow('Número', $user['employeeNum']);
+		oFormTable()->addRow('NÃºmero', $user['employeeNum']);
 		oFormTable()->addRow('Departamento', $user['department']);
 		oFormTable()->addRow('Cargo', $user['position']);
 		$blocks[] = oFormTable()->getTemplate();
@@ -69,7 +69,7 @@
 			$user = oSQL()->getUser( $acc );
 			if( empty($user) ) return oNav()->loadContent('users', array(), 'Usuario no encontrado.');
 			if( $user['id_profile'] < getSes('id_profile') ){
-				return oNav()->goBack('No es posible editar usuarios con perfil más alto que el suyo.');
+				return oNav()->goBack('No es posible editar usuarios con perfil mÃ¡s alto que el suyo.');
 			}
 		}
 		
@@ -86,7 +86,7 @@
 		
 		if( !$edit ){
 			oFormTable()->addInput('Usuario', array('id' => 'user'));
-			oFormTable()->addInput('Contraseña', array('id' => 'pass'), 'password');
+			oFormTable()->addInput('ContraseÃ±a', array('id' => 'pass'), 'password');
 		}
 		else{
 			oFormTable()->hiddenRow();
@@ -103,8 +103,8 @@
 		oFormTable()->addTitle( 'Personal' );
 		oFormTable()->addInput('Nombre', array('id' => 'name'));
 		oFormTable()->addInput('Apellidos', array('id' => 'lastName'));
-		oFormTable()->addInput('Teléfono', array('id' => 'phone'));
-		oFormTable()->addInput('Dirección', array('id' => 'address'));
+		oFormTable()->addInput('TelÃ©fono', array('id' => 'phone'));
+		oFormTable()->addInput('DirecciÃ³n', array('id' => 'address'));
 		oFormTable()->addInput('Email', array('id' => 'email'));
 
         oFormTable()->addTitle( '' );
@@ -113,7 +113,7 @@
 		
 		# Block 'Interno'
 		oFormTable()->addTitle( 'Interno' );
-		oFormTable()->addInput('Número', array('id' => 'employeeNum'));
+		oFormTable()->addInput('NÃºmero', array('id' => 'employeeNum'));
 		oFormTable()->addCombo('Departamento',
 			array('' => '(seleccionar)') + oLists()->departments(),
 			array('id' => 'id_department'));
@@ -121,9 +121,9 @@
 		
 		if( $edit ){
 			
-			# Block 'Información'
-			oFormTable()->addTitle( 'Información' );
-			oFormTable()->addRow('Último Acceso', $user['last_access']
+			# Block 'InformaciÃ³n'
+			oFormTable()->addTitle( 'InformaciÃ³n' );
+			oFormTable()->addRow('Ãšltimo Acceso', $user['last_access']
 				? date('d-m-Y H:i:s', strtotime($user['last_access']))
 				: "<span style='color:#600000; font-size:12px; font-weight:bold'>Nunca</span>"
 			);

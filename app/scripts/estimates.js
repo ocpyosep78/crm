@@ -322,7 +322,7 @@ Object Rows: array with custom methods
 	
 	if( $('btn_save') ) $('btn_save').onclick = function(){
 		if( !$('param_estimate').value ){
-			return showStatus('Debe escribir un nombre válido para guardar un presupuesto o cotización.');
+			return showStatus('Debe escribir un nombre vÃ¡lido para guardar un presupuesto o cotizaciÃ³n.');
 		};
 		// Get data from the table, and estimate's params
 		var Data = Rows.getData();
@@ -335,10 +335,10 @@ Object Rows: array with custom methods
 			'pack': $('hdn_pack').value || '',
 		};
 		// Ask for confirmation if table is empty
-		if( !Data.length && !confirm('La lista está vacía. ¿Desea guardarla de todos modos?') ) return;
+		if( !Data.length && !confirm('La lista estÃ¡ vacÃ­a. Â¿Desea guardarla de todos modos?') ) return;
 		if( !Params.orderNumber || !Params.id_customer || !Params.id_system ){
 			alert('Faltan datos requeridos para crear un Presupuesto.\n' +
-				  'La lista será guardada como Cotización.');
+				  'La lista serÃ¡ guardada como CotizaciÃ³n.');
 		};
 		xajax_saveEstimate(Params, Data, id_estimate);
 	};

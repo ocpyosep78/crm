@@ -37,7 +37,7 @@
 	<input type='text' id='tch_number' maxlength='8' value='' />
 	
 	<div id='tch_extra'>
-		<div>Técnico responsable</div>
+		<div>TÃ©cnico responsable</div>
 		<select id='tch_technician'>
 		  <option value=''></option>
 		  {foreach from=$technicians key=k item=v}<option value='{$k}'>{$v}</option>{/foreach}
@@ -137,7 +137,7 @@
 
 <div>
 	<div id='tch_suggest_title'>
-		Ingrese el número de Cliente para ver las instalaciones correspondientes
+		Ingrese el nÃºmero de Cliente para ver las instalaciones correspondientes
 	</div>
 	<div id='tch_suggest'></div>
 </div>

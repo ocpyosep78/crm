@@ -26,19 +26,19 @@
 	function page_productsInfo( $id ){
 	
 		# Make sure we got an existing ID
-		if( !$id || !($prod=oSQL()->getProduct($id)) ) return oNav()->goBack('No se encontró el producto pedido.');
+		if( !$id || !($prod=oSQL()->getProduct($id)) ) return oNav()->goBack('No se encontrÃ³ el producto pedido.');
 		
 		oFormTable()->clear();
-		oFormTable()->setFrameTitle( 'Detalles del artículo' );
+		oFormTable()->setFrameTitle( 'Detalles del artÃ­culo' );
 		
 		if( $prod['type'] == 'products' ){
 			oFormTable()->addRow('', "<div class='productInfoPreview'><img src='app/images/products/{$id}.jpg' /></div>");
 		}
 		
-		if( $prod['type'] == 'products' ) oFormTable()->addTitle( 'Básico' );
+		if( $prod['type'] == 'products' ) oFormTable()->addTitle( 'BÃ¡sico' );
 		
 		# Block 'Cuenta'
-		oFormTable()->addRow('Categoría', $prod['category']);
+		oFormTable()->addRow('CategorÃ­a', $prod['category']);
 		oFormTable()->addRow('Nombre', $prod['name']);
 		if( oPermits()->can('seeProductsPrice') ){
 			oFormTable()->addRow('Costo', "U\$S {$prod['cost']}");
@@ -48,14 +48,14 @@
 				: '--';
 			oFormTable()->addRow('Utilidad', $util);
 		}
-		oFormTable()->addRow('Descripción', "<div class='productDescription'>{$prod['description']}</div>");
+		oFormTable()->addRow('DescripciÃ³n', "<div class='productDescription'>{$prod['description']}</div>");
 		if( $prod['type'] == 'products' ){
 			oFormTable()->addTitle( 'Extendido' );
-			oFormTable()->addRow('Código', $prod['code']);
+			oFormTable()->addRow('CÃ³digo', $prod['code']);
 			oFormTable()->addRow('Marca', $prod['trademark']);
 			oFormTable()->addRow('Modelo', $prod['model']);
 			oFormTable()->addRow('Proveedor', $prod['provider']);
-			oFormTable()->addRow('Garantía', ($prod['warranty'] == 12) ? "1 año" : "{$prod['warranty']} meses");
+			oFormTable()->addRow('GarantÃ­a', ($prod['warranty'] == 12) ? "1 aÃ±o" : "{$prod['warranty']} meses");
 			oFormTable()->addRow('Sistema', $prod['system']);
 		}
 		
@@ -64,7 +64,7 @@
 		# Options for this article
 		if( oPermits()->can('editProducts') ){
 			$link = "<a href='javascript:void(0);' ".
-				"onclick=\"getPage('editProducts', ['{$id}', '{$prod['type']}']);\">Editar Artículo</a>";
+				"onclick=\"getPage('editProducts', ['{$id}', '{$prod['type']}']);\">Editar ArtÃ­culo</a>";
 			oFormTable()->addPreText( $link );
 		}
 		
@@ -92,29 +92,29 @@
 	
 		if( $id ){
 			$prod = oSQL()->getProduct( $id );
-			if( empty($prod) ) return oNav()->loadContent('products', array(), 'Artículo no encontrado.');
+			if( empty($prod) ) return oNav()->loadContent('products', array(), 'ArtÃ­culo no encontrado.');
 		}
 		
 		$type = !empty($prod['type']) ? $prod['type'] : (!empty($type) ? $type : NULL);
 		
 		oFormTable()->clear();
 		oFormTable()->setPrefix( 'np_' );
-		oFormTable()->setFrameTitle( $id ? 'Editar Artículo' : 'Nuevo Artículo' );
+		oFormTable()->setFrameTitle( $id ? 'Editar ArtÃ­culo' : 'Nuevo ArtÃ­culo' );
 		
 		if( $id && $type == 'products' ){
 			oFormTable()->addRow('', "<div class='productInfoPreview'><img src='app/images/products/{$id}.jpg' /></div>");
 		}
 		
-		if( $type == 'products' ) oFormTable()->addTitle( 'Básico' );
+		if( $type == 'products' ) oFormTable()->addTitle( 'BÃ¡sico' );
 		
 		if( count($categories=oLists()->product_categories($type)) == 1 ){
 			oFormTable()->hiddenRow();
 			$atts = array('id' => 'id_category', 'value' => array_shift(array_keys($categories)));
 			oFormTable()->addInput('', $atts, 'hidden');
-			oFormTable()->addRow('Categoría', array_shift($categories));
+			oFormTable()->addRow('CategorÃ­a', array_shift($categories));
 		}
 		else{
-			oFormTable()->addCombo('Categoría',
+			oFormTable()->addCombo('CategorÃ­a',
 				array('' => 'seleccionar') + $categories,
 				array('id' => 'id_category', 'selected' => $id ? $prod['id_category'] : ''));
 		}
@@ -123,19 +123,19 @@
 			oFormTable()->addInput('Costo', array('id' => 'cost'));
 			oFormTable()->addInput('Precio', array('id' => 'price'));
 		}
-		oFormTable()->addArea('Descripción', array(
+		oFormTable()->addArea('DescripciÃ³n', array(
 			'id'	=> 'description',
 			'style'	=> 'height:50px; width:300px;'
 		) );
 		
 		if( $type == 'products' ){
 			oFormTable()->addTitle( 'Extendido' );
-			oFormTable()->addInput('Código', array('id' => 'code'));
+			oFormTable()->addInput('CÃ³digo', array('id' => 'code'));
 			oFormTable()->addInput('Marca', array('id' => 'trademark'));
 			oFormTable()->addInput('Modelo', array('id' => 'model'));
 			oFormTable()->addInput('Proveedor', array('id' => 'provider'));
-			oFormTable()->addCombo('Garantía',
-				array(0 => 'Sin garantía', 3 => '3 meses', 6 => '6 meses', 12 => '1 año'),
+			oFormTable()->addCombo('GarantÃ­a',
+				array(0 => 'Sin garantÃ­a', 3 => '3 meses', 6 => '6 meses', 12 => '1 aÃ±o'),
 				array('id' => 'warranty', 'selected' => $id ? (int)$prod['warranty'] : 12 ));
 			oFormTable()->addTitle( '' );
 			oFormTable()->addFile('Imagen', array('id' => 'img'), '');
@@ -156,7 +156,7 @@
 		oFormTable()->pajaxSubmit('createProducts');
 		
 		# Submit line
-		oFormTable()->addSubmit($id ? 'Guardar Cambios' : 'Ingresar Artículo');
+		oFormTable()->addSubmit($id ? 'Guardar Cambios' : 'Ingresar ArtÃ­culo');
 		
 		oSmarty()->assign('editProductTbl', oFormTable()->getTemplate());
 		

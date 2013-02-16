@@ -27,7 +27,7 @@
 		'estimates'     => array('name' => "Presupuestos ({$cnt['estimates']})", 'permit' => 'estimates'),
 		'sales'         => array('name' => "Ventas ({$cnt['sales']})", 'permit' => 'sales'),
 		'installs'      => "Instalaciones ({$cnt['installs']})",
-		'techVisits'    => array('name' => "Técnica ({$cnt['techVisits']})", 'permit' => 'techVisits'),
+		'techVisits'    => array('name' => "TÃ©cnica ({$cnt['techVisits']})", 'permit' => 'techVisits'),
 //		'history'       => 'Historial',
 	);
 	
@@ -44,8 +44,8 @@
 		oLists()->hasCombo( false );
 		oLists()->setSource("notesByCustomer");
 		oLists()->addComboOptions('id_customer', array('' => '') + oLists()->customers());
-		oLists()->addComboOptions('type', array('' => '', 'technical' => 'Técnica', 'sales' => 'Ventas'));
-		oLists()->addComboOptions('visibility', array(getSes('user') => 'Privado', '' => 'Público'));
+		oLists()->addComboOptions('type', array('' => '', 'technical' => 'TÃ©cnica', 'sales' => 'Ventas'));
+		oLists()->addComboOptions('visibility', array(getSes('user') => 'Privado', '' => 'PÃºblico'));
 		
 		# For users with permit usersNotes, we show all notes. For others, just their own.
 		$ids = oPermits()->can('usersNotes') ? $id : "{$id}__|__".getSes('user');

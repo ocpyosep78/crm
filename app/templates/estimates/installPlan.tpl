@@ -17,7 +17,7 @@
 	</div>
 	
 	<div class='CLEAR'>
-		Descripción (ubicación y otros detalles)<br />
+		DescripciÃ³n (ubicaciÃ³n y otros detalles)<br />
 		<input type='text' name='position' value='' size='80' />
 	</div>
 	
@@ -33,7 +33,7 @@
 	  <tr>
 		<th colspan='2'>Cantidad</th>
 		<th>Producto</th>
-		<th>Ubicación y otros detalles</th>
+		<th>UbicaciÃ³n y otros detalles</th>
 	  </tr>
 	  
 	  {foreach from=$data item=row}

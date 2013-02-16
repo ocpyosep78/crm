@@ -10,7 +10,7 @@
 		{else}{if $data.estimate}{$data.estimate}{else}(sin especificar){/if}{/if}</td>
   </tr>
   <tr>
-	<th>Número de Orden</th>
+	<th>NÃºmero de Orden</th>
 	<td>{if $edit}<input type='text' id='param_orderNumber' value='{$estimate.orderNumber}' />
 		{else}{if $data.orderNumber}{$data.orderNumber}{else}(sin especificar){/if}{/if}</td>
   </tr>

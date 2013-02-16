@@ -20,8 +20,8 @@
 	function permitsFilters(){
 		return array(
 			'%'			=> 'Todos',
-			'module'	=> 'Módulos',
-			'page'		=> 'Páginas',
+			'module'	=> 'MÃ³dulos',
+			'page'		=> 'PÃ¡ginas',
 			'permit'	=> 'Otros',
 		);
 	}

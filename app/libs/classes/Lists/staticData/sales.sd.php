@@ -9,9 +9,9 @@
 	$fields = array(
 		'type'			=> 'Tipo',
 		'date'			=> 'Fecha',
-		'invoice'		=> 'Nº Factura',
+		'invoice'		=> 'NÂº Factura',
 		'customer'		=> 'Cliente',
-		'notes'			=> 'Descripción / Notas',
+		'notes'			=> 'DescripciÃ³n / Notas',
 //		'id_sale'		=> '',
 //		'id_customer'	=> '',
 //		'technician'	=> '',

@@ -56,7 +56,7 @@ function ini_createTechVisits( data ){
 			if( typeof(data) != 'object' ) return;
 			for( var x in data ) if( data.hasOwnProperty(x) ) this.addCustomersSuggest( data[x] );
 			if( !$('tch_suggest').innerHTML ){
-				var msg = 'No hay resultados que coincidan con su búsqueda';
+				var msg = 'No hay resultados que coincidan con su bÃºsqueda';
 				$('tch_suggest').innerHTML = "<div class='tch_s_empty'>" + msg + "</div>";
 			};
 		},
@@ -67,14 +67,14 @@ function ini_createTechVisits( data ){
 			$('tch_suggest').innerHTML += "<div class='tch_s_contact'>" +
 				(data.contact ? 'Contacto: ' + data.contact + '<br />' : '') + "</div>";
 			$('tch_suggest').innerHTML += "<div class='tch_s_row tch_s_noInvoice' cust='" + data.id_customer + "'>" +
-				"Servicio Técnico sin factura previa</div>";
+				"Servicio TÃ©cnico sin factura previa</div>";
 			for( var i=0, row ; row=data['rows'][i] ; i++ ){
 				$('tch_suggest').innerHTML += "<div class='tch_s_row' for='" + row.onSale + "'>" +
 					"Factura: " + row.invoice + 
 					(row.system ? ' (' + row.system + ")" : '') + 
-					' | Garantía vence: ' + row.warrantyVoid +
+					' | GarantÃ­a vence: ' + row.warrantyVoid +
 					(row['void'] ? ' <strong>(vencida)</strong>' : '') +
-					(row.notes ? '<br /><em>&nbsp;&nbsp;Más información: ' + row.notes + '</em>' : '') +
+					(row.notes ? '<br /><em>&nbsp;&nbsp;MÃ¡s informaciÃ³n: ' + row.notes + '</em>' : '') +
 					'</div>';
 			};
 			$('tch_suggest').getElements('.tch_s_row').forEach(function(row){
@@ -104,15 +104,15 @@ function ini_createTechVisits( data ){
 		submit: function( e ){
 			if( $('tch_buttons').style.display !== 'block' ) return;
 			if( !this.checkSnapshot() ){
-				var msg = 'ATENCIÓN:\n\n' +
+				var msg = 'ATENCIÃ“N:\n\n' +
 					'Algunos datos del cliente fueron cambiados sin mediar\n' +
-					'confirmación. El contacto puede ser editado libremente, pero\n' +
-					'no así los restantes datos del cliente.\n\n' +
-					'Si desea elegir un cliente diferente, realice la búsqueda por\n' +
+					'confirmaciÃ³n. El contacto puede ser editado libremente, pero\n' +
+					'no asÃ­ los restantes datos del cliente.\n\n' +
+					'Si desea elegir un cliente diferente, realice la bÃºsqueda por\n' +
 					'cualquiera de los campos habilitados y seleccione un elemento\n' +
 					' de la lista de sugerencias.\n\n' +
 					'Pulse Aceptar para recargar los datos correspondientes a su\n' +
-					'última selección, o Cancelar para elegir nuevamente un cliente\n' +
+					'Ãºltima selecciÃ³n, o Cancelar para elegir nuevamente un cliente\n' +
 					'o factura.';
 				return confirm(msg) ? this.restoreFromSnapshot() : null;
 			};

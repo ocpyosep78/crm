@@ -87,7 +87,7 @@
 		oSmarty()->assign('isNew', $isNew);
 		oSmarty()->assign('isQuote', $isQuote);
 		
-		$type = $isNew ? 'Nombre' : ($isQuote ? 'CotizaciÛn' : 'Presupuesto');
+		$type = $isNew ? 'Nombre' : ($isQuote ? 'Cotizaci√≥n' : 'Presupuesto');
 		oSmarty()->assign('estimateType', $type);
 		
 		$common = estimates_commonData();
@@ -143,10 +143,10 @@
 		oSmarty()->assign('miniHeader', false);
 		oSmarty()->assign('edit', false);
 		oSmarty()->assign('isQuote', $isQuote);
-		oSmarty()->assign('estimateType', $isQuote ? 'CotizaciÛn' : 'Presupuesto');
+		oSmarty()->assign('estimateType', $isQuote ? 'Cotizaci√≥n' : 'Presupuesto');
 		
 		if( empty($estimate) ){		/* Something's wrong, this array should have all info */
-			return oNav()->getPage('estimates', array(), 'No se encontrÛ el presupuesto pedido.');
+			return oNav()->getPage('estimates', array(), 'No se encontr√≥ el presupuesto pedido.');
 		}
 		
 		$system = 1;
@@ -176,7 +176,7 @@
 		$estimate = getEstimate( $id );
 		
 		if( empty($estimate) ){		/* Something's wrong, this array should have all info */
-			return oNav()->getPage('estimates', array(), 'No se encontrÛ el presupuesto pedido.');
+			return oNav()->getPage('estimates', array(), 'No se encontr√≥ el presupuesto pedido.');
 		}
 		
 		addScript('window.estimateDetail = '.toJson($estimate['detail']));

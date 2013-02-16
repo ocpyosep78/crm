@@ -20,9 +20,9 @@
 		$permits = oConfig()->{"getPermitsBy{$type}"}($id, $filter);
 		
 		foreach( $permits as &$permit ){
-			$permit['title'] = "Código: {$permit['code']}";
+			$permit['title'] = "CÃ³digo: {$permit['code']}";
 			switch( $permit['type'] ){
-				case 'page': $permit['title'] .= " | Módulo: {$permit['module']}"; break;
+				case 'page': $permit['title'] .= " | MÃ³dulo: {$permit['module']}"; break;
 				default: break;
 			}
 		}

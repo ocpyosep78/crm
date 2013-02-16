@@ -28,27 +28,27 @@
 		protected function dbStructure(){
 		
 			$this->tables['customers'] = array(
-				'number'		=> 'N鷐ero',
+				'number'		=> 'N煤mero',
 				'customer'		=> 'Empresa',
-				'legal_name'	=> 'Raz髇 Social',
+				'legal_name'	=> 'Raz贸n Social',
 				'rut'			=> 'RUT',
-				'address'		=> 'Direcci髇',
-				'phone'			=> 'Tel閒ono',
+				'address'		=> 'Direcci贸n',
+				'phone'			=> 'Tel茅fono',
 				'email'			=> 'Email',
 				'since'			=> 'Fecha Ingreso',
-//				'subscribed'	=> 'Subscripci髇',
+//				'subscribed'	=> 'Subscripci贸n',
 			);
 			$this->tables['customers_contacts'] = array(
 				'name'			=> 'Nombre',
-				'phone'			=> 'Tel閒ono',
+				'phone'			=> 'Tel茅fono',
 				'email'			=> 'Email',
 			);
 			$this->tables['customers_owners'] = array(
 				'name'			=> 'Nombre',
 				'docNum'		=> 'Documento',
-				'phone'			=> 'Tel閒ono',
+				'phone'			=> 'Tel茅fono',
 				'email'			=> 'Email',
-				'address'		=> 'Direcci髇',
+				'address'		=> 'Direcci贸n',
 			);
 			$this->tables['_locations'] = array(
 				'location'		=> 'Ciudad/Localidad',

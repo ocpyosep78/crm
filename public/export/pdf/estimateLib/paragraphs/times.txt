@@ -1,5 +1,5 @@
 <!--
 
-	Este archivo cuenta con un comodín al comienzo, que será reemplazado con el tiempo (dinámicamente calculado) estimado. No remover.
+	Este archivo cuenta con un comodÃ­n al comienzo, que serÃ¡ reemplazado con el tiempo (dinÃ¡micamente calculado) estimado. No remover.
 
--->%s, con posibilidad de trabajar en la noche si así se requiriera, para evitar molestias por la presencia de nuestro equipo de trabajo en las instalaciones.
+-->%s, con posibilidad de trabajar en la noche si asÃ­ se requiriera, para evitar molestias por la presencia de nuestro equipo de trabajo en las instalaciones.
