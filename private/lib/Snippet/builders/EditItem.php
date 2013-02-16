@@ -103,7 +103,7 @@ class snp_EditItem extends Snippet
 		/* open: anything (for fields where only length matters) */
 		'open'			=> '/.*/',
 		/* text: most common symbols for regular latin1 texts, plus puntuation and quotes (double and single) */
-		'text'			=> '/^[\w\-\.\,\;\(\)\/·ÈÌÛ˙‡ËÏÚ˘‰ÎÔˆ¸Ò¡…Õ”⁄—¿»Ã“ŸƒÀœ÷‹\"\'\s:]*$/',
+		'text'			=> '/^[\w\-\.\,\;\(\)\/√°√©√≠√≥√∫√†√®√¨√≤√π√§√´√Ø√∂√º√±√Å√â√ç√ì√ö√ë√Ä√à√å√í√ô√Ñ√ã√è√ñ√ú\"\'\s:]*$/',
 		/* alpha: letters, numbers and underscore */
 		'alpha'			=> '/^[a-zA-Z0-9_]*$/',
 		/* alphaMixed: underscores, at least one letter, at least one number, and any extra amount of them */
@@ -140,29 +140,29 @@ class snp_EditItem extends Snippet
 ***************/
 
 	public $fmtTips = array(
-		'open'			=> 'El texto ingresado contiene caracteres inv·lidos.',
-		'text'			=> 'El texto ingresado contiene caracteres inv·lidos.',
-		'alpha'			=> 'Este campo acepta solamente letras, n˙meros y guiones bajos.',
-		'alphaMixed'	=> 'Este campo acepta letras, n˙meros y guiones bajos, y debe tener al menos una letra y un n˙mero.',
-		'email'			=> 'Debe escribir una direcciÛn de email v·lida.',
-		'num'			=> 'Este campo acepta solamente n˙meros.',
-		'cost'			=> 'Este campo acepta solamente n˙meros enteros o decimales.',
-		'docNum'		=> 'Debe ingresar un documento v·lido (ej: 1234567-8).',
-		'phone'			=> 'El telÈfono ingresado no es v·lido.',
-		'rut'			=> 'Un RUT v·lido debe ser un n˙mero de 12 dÌgitos.',
-		'ranged'		=> 'Este campo acepta solamente n˙meros.',
-		'time'			=> 'Debe seleccionar una hora v·lida.',
-		'date'			=> 'Debe seleccionar una fecha v·lida.',
+		'open'			=> 'El texto ingresado contiene caracteres inv√°lidos.',
+		'text'			=> 'El texto ingresado contiene caracteres inv√°lidos.',
+		'alpha'			=> 'Este campo acepta solamente letras, n√∫meros y guiones bajos.',
+		'alphaMixed'	=> 'Este campo acepta letras, n√∫meros y guiones bajos, y debe tener al menos una letra y un n√∫mero.',
+		'email'			=> 'Debe escribir una direcci√≥n de email v√°lida.',
+		'num'			=> 'Este campo acepta solamente n√∫meros.',
+		'cost'			=> 'Este campo acepta solamente n√∫meros enteros o decimales.',
+		'docNum'		=> 'Debe ingresar un documento v√°lido (ej: 1234567-8).',
+		'phone'			=> 'El tel√©fono ingresado no es v√°lido.',
+		'rut'			=> 'Un RUT v√°lido debe ser un n√∫mero de 12 d√≠gitos.',
+		'ranged'		=> 'Este campo acepta solamente n√∫meros.',
+		'time'			=> 'Debe seleccionar una hora v√°lida.',
+		'date'			=> 'Debe seleccionar una fecha v√°lida.',
 		'selection'		=> 'Debe seleccionar un elemento de la lista',
 	);
 
 	public $lenTips = array(	/* Key means, in order: ranged, min is defined, max is defined */
-		'101'	=> '%sEl campo debe contener un m·ximo de %s caracteres.',
+		'101'	=> '%sEl campo debe contener un m√°ximo de %s caracteres.',
 		'110'	=> 'El campo debe contener al menos %s caracteres.%s',
 		'111'	=> 'La longitud del campo debe estar entre %s y %s.',
 		'001'	=> '%sLa longitud del campo no puede ser mayor que %s.',
 		'010'	=> 'La longitud del campo no puede ser menor que %s.%s',
-		'011'	=> 'Debe escribir al menos %s caracteres y no m·s de %s.',
+		'011'	=> 'Debe escribir al menos %s caracteres y no m√°s de %s.',
 		'000'	=> 'Este campo debe contener %s caracteres',
 	);
 
@@ -205,7 +205,7 @@ class snp_EditItem extends Snippet
 			# If some defined field is not included in data, respond depending on strict param
 			if( !isset($data[$field]) && !$strict ) continue;
 			elseif( !isset($data[$field]) ){
-				$err = "El campo {$field} est· en las reglas pero no en el set recibido.";
+				$err = "El campo {$field} est√° en las reglas pero no en el set recibido.";
 				return trigger_error($err, E_USER_NOTICE);
 			}
 			# Explode this field's rule in its parts: type, lower length, upper length
