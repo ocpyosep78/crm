@@ -142,7 +142,7 @@
 				or die('No se encontró el presupuesto buscado.');
 
 			$detail = $this->SQL_getEstimateDetail( $id )
-				or die('El presupuesto pedido esté vacío o no se pudo acceder a su contenido.');
+				or die('El presupuesto pedido está vacío o no se pudo acceder a su contenido.');
 			foreach( $detail as $k => $row ) $items[$row['type']][$k] = $row;
 
 			return $this->estimate = array('info' => $info, 'items' => $items);
@@ -339,16 +339,16 @@
 		public function paragraph_code2title( $code ){
 
 			$hash = array(
-				'description'	=> 'Descripción del sistema',
-				'materials'		=> 'Materiales de instalación',
-				'tasks'			=> 'Tareas a realizar',
-				'times'			=> 'Tiempo de instalación',
-				'cctvInclude'	=> 'Incluye:',
-				'changesNote'	=> 'IMPORTANTE',
-				'server'		=> 'Servidor con tecnología Intel',
-				'screen'		=> 'Monitor ViewSonic 19"',
-				'company'		=> 'Nuestra empresa',
-				'quality'		=> 'Calidad, Seriedad y Confianza',
+				'description' => 'Descripción del sistema',
+				'materials'   => 'Materiales de instalación',
+				'tasks'       => 'Tareas a realizar',
+				'times'       => 'Tiempo de instalación',
+				'cctvInclude' => 'Incluye:',
+				'changesNote' => 'IMPORTANTE',
+				'server'      => 'Servidor con tecnología Intel',
+				'screen'      => 'Monitor ViewSonic 19"',
+				'company'     => 'Nuestra empresa',
+				'quality'     => 'Calidad, Seriedad y Confianza',
 			);
 
 			return isset($hash[$code]) ? $hash[$code] : NULL;

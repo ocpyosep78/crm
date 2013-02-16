@@ -14,7 +14,7 @@ function canEditEvent($user, $creator, $target=NULL)
 
 	# 3. Groups of users who can edit eachother's events
 	$groups[] = ['mantunez', 'rdelossantos', 'gperdomo', 'rferdinand', 'flaborde'];
-	
+
 	foreach ($groups as $group)
 	{
 		if (in_array($user, $group))
@@ -68,7 +68,7 @@ function openLogs($file)
 		}
 	}
 
-	return empty($log) ? '(vacío)' : $log;
+	return empty($log) ? '(vacÃ­o)' : $log;
 }
 
 
@@ -118,17 +118,17 @@ function createProducts($atts)    // false = not new (editing)
 	# Check image type and other attributes, if a new image was submitted
 	if( $img['size'] ){
 		if( ($imgAtts=getimagesize($img['tmp_name'])) === false || $imgAtts[2] != IMAGETYPE_JPEG ){
-			$msg = "El archivo subido debe ser una imagen con formato/extensión \'jpg\'.";
+			$msg = "El archivo subido debe ser una imagen con formato/extensiÃ³n \'jpg\'.";
 			return FileForm::addResponse("say('{$msg}');");
 		}
 	}
 	elseif( $isNew && !empty($extended) ){
-		$msg = "Debe seleccionar una imagen para este artículo.";
+		$msg = "Debe seleccionar una imagen para este artÃ­culo.";
 		return FileForm::addResponse("say('{$msg}');");
 	}
 
 	# Request query and catch answer, then return it to the user
-	$okMsg = 'El artículo fue %s correctamente.';
+	$okMsg = 'El artÃ­culo fue %s correctamente.';
 	oSQL()->setOkMsg( sprintf($okMsg, $isNew ? 'registrado' : 'modificado') );
 
 	oSQL()->BEGIN();
@@ -148,7 +148,7 @@ function createProducts($atts)    // false = not new (editing)
 	# Save picture if one was chosen and data was stored
 	if( $img['size'] ){
 		if( !move_uploaded_file($img['tmp_name'], "app/images/products/{$id}.jpg") ){
-			$msg = "No se pudo guardar la imagen. Inténtelo nuevamente.";
+			$msg = "No se pudo guardar la imagen. IntÃ©ntelo nuevamente.";
 			return FileForm::addResponse("say('{$msg}');");
 		}
 	}
