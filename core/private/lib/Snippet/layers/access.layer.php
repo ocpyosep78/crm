@@ -1,14 +1,14 @@
 <?php
 
-	class snp_Layer_access{
+	class SnippetLayer_access{
 
         private static $permits;
 
-
+	
 		public function can($snippet, $code){
             // Custom permits
             if (!empty(self::$permits[$snippet])) return true;
-
+			
 			switch( $snippet ){
 				case 'list':
 				case 'commonList':
@@ -33,11 +33,11 @@
 				default:
 					return false;
 			}
-
+		
 			return oPermits()->can( $what );
-
+		
 		}
-
+	
 		public function cant($snippet, $code){
 			return !$this->can($snippet, $code);
 		}
@@ -45,5 +45,5 @@
         public static function addCustomPermit($code, $can=true){
             self::$permits[$code] = $can;
         }
-
+		
 	}

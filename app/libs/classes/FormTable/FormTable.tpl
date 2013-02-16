@@ -13,7 +13,9 @@
 	<div class='FormTableBox'>
 {/if}
 
-<form {foreach from=$FT->formAtts key=att item=value} {$att}="{$value}"{/foreach}>
+{if $FT->hasForm()}
+  <form {foreach from=$FT->formAtts key=att item=value} {$att}="{$value}"{/foreach}>
+{/if}
 	<table{foreach from=$FT->tableAtts key=att item=value} {$att}='{$value}'{/foreach}>
 		{foreach from=$FT->data item=x}
 			<tr{if $x.hidden} style='display:none;'{/if}{if $x.atts.id} id='row_{$x.atts.id}'{/if}>
@@ -39,7 +41,8 @@
 						<textarea{foreach from=$x.atts key=att item=val} {$att}='{$val}'{/foreach}
 						>{$x.atts.value}</textarea>
 					{elseif $x.type == 'combo'}
-						<select{foreach from=$x.atts key=att item=val} {$att}='{$val}'{/foreach} class='input' />
+						<select{foreach from=$x.atts key=att item=val} {$att}='{$val}'{/foreach}
+							class='input' onfocus='highLightBox(this);' />
 							{foreach from=$x.value key=value item=text}
 								<option value='{$value}'{if $x.selected == $value} selected='selected'{/if}>
 									{$text}
@@ -47,14 +50,21 @@
 							{/foreach}
 						</select>
 					{else}
-						<input type='{$x.type}' {foreach from=$x.atts key=att item=val} {$att}='{$val}'{/foreach} />
+						<input type='{$x.type}'
+							{if $x.type == 'text' || $x.type == 'password'} onfocus='highLightBox(this);'{/if}
+							{foreach from=$x.atts key=att item=val} {$att}='{$val}'{/foreach} />
 					{/if}
 					</td>
 				{/if}
 			</tr>
+			{if $x.atts.id}
+				<tr><td colspan='2' class='Tip'><div id='tip_{$x.atts.id}'></div></td></tr>
+			{/if}
 		{/foreach}
 	</table>
-</form>
+{if $FT->hasForm()}
+  </form>
+{/if}
 
 {if $FT->hasFrame()}
 	</fieldset>

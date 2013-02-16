@@ -142,7 +142,7 @@
 				or die('No se encontró el presupuesto buscado.');
 
 			$detail = $this->SQL_getEstimateDetail( $id )
-				or die('El presupuesto pedido está vacío o no se pudo acceder a su contenido.');
+				or die('El presupuesto pedido esté vacío o no se pudo acceder a su contenido.');
 			foreach( $detail as $k => $row ) $items[$row['type']][$k] = $row;
 
 			return $this->estimate = array('info' => $info, 'items' => $items);
@@ -198,16 +198,17 @@
 		 * the path (local or http) to a given picture (for each customer we expect 3
 		 * pictures: small, mid and large).
 		 */
-		public function getCustImgs()
-		{
-			$generic = IMG_PATH . "/customers/{$this->cust}%s.jpg";
-			$unknown = IMG_PATH . '/customers/unknown.gif';
+		public function getCustImgs(){
+
+			$generic = IMG_PATH."customers/{$this->cust}%s.jpg";
+			$unknown = IMG_PATH.'customers/unknown.gif';
 
 			$paths['small'] = is_file($path=sprintf($generic, '')) ? $path : $unknown;
 			$paths['mid'] = is_file($path=sprintf($generic, 'mid')) ? $path : $paths['small'];
 			$paths['large'] = is_file($path=sprintf($generic, 'large')) ? $path : $paths['mid'];
 
 			return $paths;
+
 		}
 
 

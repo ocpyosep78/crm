@@ -1,6 +1,7 @@
 <?php
 
+require_once 'migrate/migrate.php';
 
-if( isset($_GET['chatCheck']) ) die();
-
-require_once('app/index.php');
+/**
+ * When migration is over, this file should just include public/index.php
+ */

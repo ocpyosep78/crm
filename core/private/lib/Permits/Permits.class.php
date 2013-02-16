@@ -102,11 +102,11 @@
 		 * Normalized 'access restricted' message
 		 */
 		public function noAccessMsg(){
-			return say('Su cuenta no posee permisos para realizar esta acción.');
+			return showStatus('Su cuenta no posee permisos para realizar esta acción.');
 		}
 
 		/**
-		 * Checks if a permission is granted and dies with a global «access restricted» message
+		 * Checks if a permission is granted and dies with a global access restricted message
 		 */
 		public function stopIfNoPermission( $perm ){
 			if( $this->cant($perm) ) die('Su cuenta no posee permisos para realizar esta acción.');

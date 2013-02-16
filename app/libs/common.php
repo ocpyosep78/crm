@@ -1,577 +1,212 @@
 <?php
 
-function db($var, $die=true)
-{
-	headers_sent() || header('Content-Type: application/json');
-	$var ? print_r($var) : var_dump($var);
-	echo "\n";
-	$die && die();
-}
-
-function devMode()
-{
-	return (defined('DEVMODE') && DEVMODE) || (getSes('id_profile') == 1);
-}
-
-function loadMainSmartyVars()
-{
-	# Put main objects in Smarty's universe
-	oSmarty()->assign('Builder', $GLOBALS['Builder']);
-	oSmarty()->assign('Permits', oPermits());
-
-	# Global Smarty vars
-	oSmarty()->assign('APP_NAME', APP_NAME);
-	oSmarty()->assign('CHAT_ADDRESS', CHAT_ADDRESS);
-	oSmarty()->assign('IMG_PATH', IMG_PATH);
-	oSmarty()->assign('IN_FRAME', oNav()->inFrame ? 1 : 0);
-	oSmarty()->assign('LAST_UPDATE', strtotime(LAST_UPDATE));
-	oSmarty()->assign('PROFILE', getSes('profile'));
-	oSmarty()->assign('NOW', date('Y-m-d H:i:s'));
-	oSmarty()->assign('URL', "http://{$_SERVER['HTTP_HOST']}{$_SERVER['PHP_SELF']}");
-	oSmarty()->assign('USER', getSes('user'));
-	oSmarty()->assign('USERID', getSes('user'));
-	oSmarty()->assign('USER_NAME', getSes('name').' '.getSes('lastName'));
-	oSmarty()->assign('VERSION', VERSION);
-	oSmarty()->assign('VERSION_STATUS', VERSION_STATUS);
-
-	oSmarty()->assign('cycleValues', '#eaeaf5,#e5e5e5,#e5e5e5');		/* TEMP till Modules & Snippet are ready */
-
-	oSmarty()->assign('DATES', array(
-		'today'		=> date('Y-m-d H:i:s'),
-		'nextWeek'	=> date('Y-m-d H:i:s', strtotime('+ 7 days')),
-		'nextMonth'	=> date('Y-m-d H:i:s', strtotime('+ 1 month')),
-	) );
-}
-
-function getSkinName()
-{
-	return isset($_GET['skin']) ? $_GET['skin'] : (defined('SKIN') && SKIN ? SKIN : '');
-}
-
-function getSkinTpl()
-{
-	$skin = realpath(CORE_SKINS . '/' . getSkinName() . '.tpl');
-	return $skin ? $skin : MAIN_TPL_PATH;
-}
-
-function getSkinCss()
-{
-	$skin = getSkinName();
-	return $skin && is_file($css=CORE_SKINS . "/{$skin}.css") ? $css : CORE_STYLES . '/style.css';
-}
-
-function safeDiv($a , $b , $def=0)
-{
-	return $b ? $a/$b : $def;
-}
-
-function getPercent($val, $total, $dec=0)
-{
-	return ($total) ? round($val * 100 / $total, $dec) : 0;
-}
-
-function win2unix($path)
-{
-	return str_replace( '\\', '/', $path );
-}
-
-function isWinOS()
-{
-	return !!( strtoupper(substr(PHP_OS,0,3)) === 'WIN' );
-}
-
-function checkTime($str)
-{
-	return !!preg_match('/^(2[0-3]|[01]\d):[0-5]\d$/', $str);
-}
-
-function canonicalize_time($time)
-{
-	return preg_match('/[\s0]*(\d|1[0-2]):(\d{2})\s*([AaPp][Mm])/xms', $time, $match)
-		? sprintf('%02d:%d%s', $match[1], $match[2], strtoupper($match[3]))
-		: false;
-}
-
-function format_time($h, $m=NULL)
-{
-	$time = !$m ? (strstr($h, ':') ? $h : "{$h}:00") : "{$h}:{$m}";
-	preg_match('/^(2[0-3]|[01]?\d):([0-5]?\d)$/xms', $time, $m);
-	return preg_match('/^(2[0-3]|[01]?\d):([0-5]?\d)$/xms', $time, $match)
-		? sprintf('%02d:%02d', $match[1], $match[2])
-		: false;
-}
-
-function format_date($y, $m, $d)
-{
-	return preg_match('/[^\d]+/', $y.$m.$d) ? false : date('Y-m-d', mktime(0, 0, 0, $m, $d, $y));
-}
-
-function checkTimeStamp($str='')
-{
-	return date('Y-m-d H:i:s', strtotime($str)) === $str;
-}
-
-function mySqlDate($time=NULL)
-{
-	return date('Y-m-d H:i:s', $time);
-}
-
 /**
- * Uses array $a2 keys to sort matching keys in $a1.
- *
- * For example:
- *	$a1 = array('one' => 'uno', 'two' => 'dos', 'three' => 'tres', 'four' => 'cuatro');
- *	$a2 = array('two' => 'anything', 'one' => 'does not matter', 'four' => NULL);
- *	array_sort_keys($a1, $a1);
- *	# Now $a1 is:
- *		array('two' => 'dos', 'one' => 'uno', 'four' => 'cuatro', 'three' => 'tres')
+ * AppTemplate - PHP Framework for building CRM-like applications
+ * GitHub https://github.com/dbarreiro/crm_template/
+ * Copyright (C) 2011 Diego Barreiro <diego.bindart@gmail.com>
+ * Licence: GNU GENERAL PUBLIC LICENSE <http://www.gnu.org/licenses/gpl.txt>
  */
-function array_sort_keys(&$a1, $a2)
-{
-	foreach (array_intersect_key($a2, $a1) as $k => $v)
-	{
-		$new[$k] = isset($a1[$k]) ? $a1[$k] : NULL;
+
+	function updateCRM(){
+
+		if( !getSes('id_profile') == 1 ) return oPermits()->noAccessMsg();
+
+		$path = realpath('update.bat');
+		if( !$path ) return showStatus('update batch missing');
+
+		$command = "start /b \"{$path}\"";
+		test( passthru($command) );
+
+
+		return showStatus('ya va...');
+
 	}
 
-	foreach (array_diff_key($a1, $a2) as $k => $v)
-	{
-		$new[$k] = $v;
-	}
 
-	$a1 = isset($new) ? $new : $a1;
-}
+	function loadFunctionFiles(){
 
-/**
- * function toJson(array $arr[, boolean $forceObj = false])
- *      Converts an array to a JSON string. If not $forceObj, numeric arrays are
- * returned as JS arrays (i.e. with [] delimiters instead of {}).
- *
- * @param array $arr
- * @param boolean $forceObj
- * @return string
- */
-function toJson($arr, $forceObj=false)
-{
-	if (!is_array($arr) || !count($arr))
-	{
-		return $forceObj ? '{}' : '[]';
-	}
-
-	$onlyNum = true;
-
-	foreach ($arr as $k => $v)
-	{
-		$onlyNum = $onlyNum && is_numeric($k);
-	}
-
-	foreach( $arr as $k => $v ){
-		$key = $onlyNum ? '' : '"'.$k.'":';
-		$val = is_array($v)
-			? toJson($v)
-			: (is_numeric($v) ? $v : '"'.addslashes($v).'"');
-		$json[] = "{$key}{$val}";
-	}
-
-	$content = join(",", $json);
-
-	return ($onlyNum && !$forceObj) ? "[{$content}]" : "{{$content}}";
-}
-
-function toJS($mixed)
-{
-	if (is_null($mixed))
-	{
-		return 'null';
-	}
-	elseif (is_array($mixed) || is_object($mixed))
-	{
-		return toJson($mixed, true);
-	}
-	elseif (is_string($mixed))
-	{
-		if ($mixed === 'undefined')
-		{
-			return '';
+		# Auto load functions scripts (all files within FUNCTIONS_PATH directory)
+		if( is_dir(FUNCTIONS_PATH) && ($dir=dir(FUNCTIONS_PATH)) ){
+			while( $name=$dir->read() ){
+				if( $name == '.' || $name == '..' ) continue;
+				if( is_dir($file=FUNCTIONS_PATH.$name) ) continue;
+				require_once( $functions[]=$file );
+			}
+			$dir->close();
 		}
-		else
-		{
-			return '"' . preg_replace('_\s+_', ' ', addslashes($mixed)) . '"';
-		}
-	}
-	else
-	{
-		return $mixed;
-	}
-}
+		else trigger_error('Error al iniciar aplicación.', E_USER_ERROR);
 
-function uploadAnalylize($file, $noFileReturn=NULL)
-{
-	switch ($file['error'])
-	{
-		case UPLOAD_ERR_OK:				# No error
-			return true;
-
-		case UPLOAD_ERR_INI_SIZE:
-		case UPLOAD_ERR_FORM_SIZE:
-			return 'El tamaño del archivo supera el máximo permitido.';
-
-		case UPLOAD_ERR_PARTIAL:
-			return 'No se pudo comprobar la integridad del archivo. Inténtelo nuevamente.';
-
-		case UPLOAD_ERR_NO_FILE:
-			return $noFileReturn;
-
-		case UPLOAD_ERR_NO_TMP_DIR:
-		case UPLOAD_ERR_CANT_WRITE:
-		case UPLOAD_ERR_EXTENSION:
-			return 'La configuración de la aplicación o del servidor no permite subir este archivo.';
 	}
 
-	return 'Ocurrió un error desconocido al intentar subir el archivo.';
-}
+	function loadMainSmartyVars(){
 
+		# Put main objects in Smarty's universe
+		oSmarty()->assign('Builder', $GLOBALS['Builder']);
+		oSmarty()->assign('Permits', oPermits());
 
-function saveLog($typeID, $objectID, $extra='', $user=NULL)
-{
-	// Decide whether to save logs in `logs` table or `history` table
-	$data = ['logType'  => $typeID,
-	         'objectID' => $objectID,
-	         'user'     => $user ? $user : getSes('user'),
-	         'extra'    => $extra];
+		# Global Smarty vars
+		oSmarty()->assign('APP_NAME', APP_NAME);
+		oSmarty()->assign('APP_IMG', APP_IMG);
+		oSmarty()->assign('CHAT_ADDRESS', CHAT_ADDRESS);
+		oSmarty()->assign('IMG_PATH', IMG_PATH);
+		oSmarty()->assign('IN_FRAME', oNav()->inFrame ? 1 : 0);
+		oSmarty()->assign('LAST_UPDATE', strtotime(LAST_UPDATE));
+		oSmarty()->assign('PROFILE', getSes('profile'));
+		oSmarty()->assign('NOW', date('Y-m-d H:i:s'));
+		oSmarty()->assign('URL', "http://{$_SERVER['HTTP_HOST']}{$_SERVER['PHP_SELF']}");
+		oSmarty()->assign('USER', getSes('user'));
+		oSmarty()->assign('USER_NAME', getSes('name').' '.getSes('lastName'));
+		oSmarty()->assign('VERSION', VERSION);
+		oSmarty()->assign('VERSION_STATUS', VERSION_STATUS);
 
-	$ans = oSQL()->registerLog('logs_history', $data);
+		oSmarty()->assign('cycleValues', '#eaeaf5,#e5e5e5,#e5e5e5');		/* TEMP till Modules & Snippet are ready */
 
-	if (!$ans->error && isAlertActive($typeID))
-	{
-		$ans = oSQL()->registerLog('logs', $data);
+		oSmarty()->assign('DATES', array(
+			'today'		=> date('Y-m-d H:i:s'),
+			'nextWeek'	=> date('Y-m-d H:i:s', strtotime('+ 7 days')),
+			'nextMonth'	=> date('Y-m-d H:i:s', strtotime('+ 1 month')),
+		) );
+
 	}
 
-	if (!$ans->error)
-	{
-		return true;
-	}
+	function test($something, $moveOn=false){
 
-	// Error handling, with file logging when DB logging fails
-	$msg = date('Y-m-d H:i:s').
-		" - Error logging '{$typeID}' event, for object '{$objectID}': ".
-		" ({$ans->error}) {$ans->errDesc}\r\n";
-
-	$fh = @fopen(LOGS_PATH . '/loggingErrors.txt', 'a');
-	$fh && (@fwrite($fh, $msg) & @fclose($fh));
-}
-
-function isAlertActive($id)
-{
-	return oSQL()->isAlertActive($id);
-}
-
-function sync($user='', $params=array())
-{
-	// Register session timeouts and reload page to force login
-	$user && checkIfUserStillOnline($user);
-
-	/* Check alerts */
-	seekAlerts($params);
-
-	/* Check reminders */
-	seekReminders($params);
-
-	return oXajaxResp();
-}
-
-function checkIfUserStillOnline($user)
-{
-	if ($user == getSes('user'))
-	{
-		return;
-	}
-
-	if (oSQL()->getLastLoginLogout($user) == 'in')
-	{
-		saveLog('loginLogout', 'out', 'timed out', $user);
-	}
-
-	oNav()->queueMsg('Sesión cerrada correctamente.', 'warning');
-
-	return addScript("location.href = 'index.php';");
-}
-
-function seekAlerts($params=array())
-{
-	$user = getSes('user');
-
-	if ($user)
-	{
-		$logsFrom = empty($params['from']) ? 0 : $params['from'];
-
-		oAlerts()->browseLogs($logsFrom);
-		oAlerts()->processLogs();
-
-		$alerts = oAlerts()->getAlerts();
-
-		addScript('sync.process('.toJson($alerts).');');
-	}
-}
-
-function seekReminders($params=array())
-{
-	$reminders = oSQL()->seekReminders();
-
-	# See which reminders are still active
-	$keep = array();
-
-	foreach ($reminders as $reminder)
-	{
-		# List reminders
-		if (!isset($keep[$reminder['id_reminder']]))
-		{
-			$keep[$reminder['id_reminder']] = false;
+		if( !is_bool($moveOn) || count(func_get_args()) > 2 ){
+			$moveOn = false;
+			$something = func_get_args();
 		}
 
-		# Inactive reminders (event already happened) are ignored and removed
-		$active = strtotime($reminder['ini']) > time();
+		ob_start();
+		echo "\n/* DEBUGGER */\n\n";
+		$something ? print_r( $something ) : var_dump( $something );
+		$text = preg_replace('/\n*$/', '', ob_get_contents());
+		ob_end_clean();
 
-		# Add reminder (open event for current user)
-		if ($active && $reminder['user'] == getSes('user'))
-		{
-			addScript("xajax_eventInfo('{$reminder['id_event']}');");
-			$filter = array('id_reminder_user' => $reminder['id_reminder_user']);
-			oSQL()->delete('reminders_users', $filter);
-		}
-		# Do not delete reminders that have other users left to remind
-		elseif ($active)
-		{
-			$keep[$reminder['id_reminder']] = true;
-		}
+		if( !isXajax() ) echo '<pre>'.nl2br($text).'</pre>';
+		else alertThroughXajax( $text );
+
+		if( !$moveOn ) die();
+
 	}
 
-	# Remove reminders that do not have more users to remind
-	foreach ($keep as $id => $keepReminder)
-	{
-		if (!$keepReminder)
-		{
-			oSQL()->delete('reminders', array('id_reminder' => $id));
-		}
-	}
-}
+	function alertThroughXajax( $text ){
 
+		oXajaxResp();		/* Let Builder include required files */
+		$resp = new xajaxResponse();
+		$resp->addAlert( $text );
 
-/******************************************************************************/
-/********************************** A J A X ***********************************/
-/******************************************************************************/
+		returnXajax( $resp );
 
-function say($msg, $type='', $img='')
-{
-	$msg = preg_replace('_\s+_', ' ', addslashes($msg));
-	return addScript("say(\"{$msg}\", \"{$type}\", \"{$img}\");");
-}
-
-function showMenu()
-{
-	return isXajax()
-		? addScriptCall('showMenu')
-		: oPageCfg()->add_jsOnLoad("showMenu();");
-}
-
-function hideMenu()
-{
-	return isXajax()
-		? addScriptCall('hideMenu')
-		: oPageCfg()->add_jsOnLoad("hideMenu();");
-}
-
-function isXajax($call=NULL)
-{
-	$ajax = empty($_POST['xajax']) ? false : $_POST['xajax'];
-	return $ajax ? ($ajax == $call) : false;
-}
-
-function addAlert($x)
-{
-	oXajaxResp()->addAlert($x);
-	return oXajaxResp();
-}
-
-function addAssign($x, $y, $z)
-{
-	oXajaxResp()->addAssign($x, $y, $z);
-	return oXajaxResp();
-}
-
-function addAppend($x, $y, $z)
-{
-	oXajaxResp()->addAppend($x, $y, $z);
-	return oXajaxResp();
-}
-
-function addScript($x)
-{
-	oXajaxResp()->addScript($x);
-	return oXajaxResp();
-}
-
-function addScriptCall()
-{
-	call_user_func_array(array(oXajaxResp(), 'addScriptCall'), func_get_args());
-	return oXajaxResp();
-}
-
-/**
- * dialog(string $content, string $element[, array $atts])
- *      Creates $element if it doesn't exist, make $content it's inner html, and
- * call jQuery-ui dialog() on it.
- *
- * @param string $content       Template name (ending on '.tpl') or html
- * @param string $element       Valid jQuery selector for an id (including #)
- * @param array $atts           List of properties to be passed to dialog()
- * @return XajaxResponse
- */
-function dialog($content, $selector, $atts=array())
-{
-	// Send the html (fetch the template first, if $content's a template name)
-	$isTemplate = preg_match('_\.tpl$_', $content);
-	$html = $isTemplate ? oSmarty()->fetch($content) : $content;
-
-	jQuery($selector)->touch()->html($html)->dialog($atts);
-
-	return addScript("$('.ui-widget-overlay').click(function(){
-		\$('{$selector}').dialog('close');
-	});");
-}
-
-
-/******************************************************************************/
-/******************************** J Q U E R Y *********************************/
-/******************************************************************************/
-
-class jQuery
-{
-
-	private $selector;
-
-	public function __construct($selector)
-	{
-		$this->selector = $selector;
 	}
 
-	public function __call($method, $arguments)
-	{
-		$selector = toJS($this->selector);
-		$args = join(', ', array_map('toJS', $arguments));
+	function returnXajax( $resp=NULL ){
 
-		addScript("\$({$selector}).{$method}({$args})");
+		if( is_null($resp) ) $resp = oXajaxResp();
 
-		return $this;
+		header( "Content-type: text/xml; charset=iso-8859-1" );
+		print $resp->getXML();
+		die();
+
 	}
 
-}
+	function toJson( $arr=array() ){
 
-
-function jQuery($selector='undefined')
-{
-	return new jQuery($selector);
-}
-
-
-/******************************************************************************/
-/******************************* S E S S I O N ********************************/
-/******************************************************************************/
-
-function regSes($key, $val)
-{
-	$_SESSION['crm'][$key] = $val;
-}
-
-function getSes($key)
-{
-	return isset($_SESSION['crm'][$key]) ? $_SESSION['crm'][$key] : NULL;
-}
-
-function clearSes($key)
-{
-	regSes($key, NULL);
-}
-
-function loggedIn()
-{
-	if (!getSes('user') && !empty($_COOKIE['crm_user']))
-	{
-		$user = substr($_COOKIE['crm_user'], 0, -40);
-		$cookie = substr($_COOKIE['crm_user'], -40);
-
-		$info = oSQL()->getUser($user);
-
-		if ($info && ($info['cookie'] == $cookie))
-		{
-			acceptLogin($info);
-			header('Refresh:0');
-		}
-	}
-
-	return getSes('user');
-}
-
-function login($user, $pass)
-{
-	$info = oSQL()->getUser($user);
-
-	if ($info && ($info['pass'] == md5($pass)))
-	{
-		if ($info['blocked'] == '1')
-		{
-			return say('Este usuario se encuentra actualmente bloqueado. '.
-				'Por más información consulte a un administrador.');
+		if( !is_array($arr) || !count($arr) ) return '{}';
+		foreach( $arr as $k => $v ){
+			$json[] = '"'.$k.'":'.(is_array($v)
+				? toJson($v)
+				: (is_numeric($v) ? $v : '"'.addslashes($v).'"')
+			);
 		}
 
-		acceptLogin($info);
-		saveLog('loginLogout', 'in');
-
-		return addScript('setTimeout(function(){location.href = location.href;}, 20);');
-	}
-	else
-	{
-		return say('Nombre de usuario o contraseña incorrectos.');
-	}
-}
-
-function acceptLogin($info)
-{
-	$ip = $_SERVER['REMOTE_ADDR'];
-
-	if (preg_match('_^(192|127)_', $ip))
-	{
-		$cookie = sha1(time() . rand(1, time()));
-		$expire = time() + (3600*24*30);
-		setcookie('crm_user', "{$info['user']}{$cookie}", $expire);
-	}
-	elseif ($fp=fopen(LOGS_PATH . '/remoteAccess.txt', 'a'))
-	{
-		$date = date('d/m/Y H:i:s');
-		$log = "{$date}: Usuario {$info['user']} loguea desde {$ip}\n\n";
-		fwrite($fp, $log) & fclose($fp);
+		return '{'.join(",", $json).'}';
 	}
 
-	oSQL()->saveLastAccess($info['user'], isset($cookie) ? $cookie : NULL);
+	function getSkinName(){
 
-	foreach ($info as $key => $val)
-	{
-		regSes($key, $val);
+		return isset($_GET['skin']) ? $_GET['skin'] : (defined('SKIN') && SKIN ? SKIN : '');
+
 	}
 
-	oSQL()->removeOldAlerts(getSes('user'), MAX_ALERTS_PER_USER);
-	oSQL()->removeOldLogs(MAX_LOGS_GLOBAL);
-}
+	function getSkinTpl(){
 
-function logout($msg='Su sesión fue cerrada correctamente.', $type=1)
-{
-	saveLog('loginLogout', 'out');
+		$skin = realpath( CORE_SKINS.getSkinName().'.tpl' );
 
-	setcookie('crm_user', '');
-	$_SESSION['crm'] = array();
+		return $skin ? $skin : MAIN_TPL_PATH;
 
-	oNav()->clear();
-	oPermits()->clear();
-	oNav()->queueMsg($msg, $type);
+	}
 
-	return addScript("location.href = 'index.php';");
-}
+	function getSkinCss(){
+
+		$skin = getSkinName();
+		return $skin && is_file($css=CORE_SKINS."{$skin}.css") ? $css : CORE_STYLES.'style.css';
+
+	}
+
+	function safeDiv( $a , $b , $def=0 ){
+		return $b ? $a/$b : $def;
+	}
+
+	function getPercent($val, $total, $dec=0) {
+		return ($total) ? round($val * 100 / $total, $dec) : 0;
+	}
+
+	function win2unix( $path ){
+		return str_replace( '\\', '/', $path );
+	}
+
+	function isWinOS(){
+		return !!( strtoupper(substr(PHP_OS,0,3)) === 'WIN' );
+	}
+
+	function checkTime( $str ){
+		return !!preg_match('/^(2[0-3]|[01]\d):[0-5]\d$/', $str);
+	}
+
+	function canonicalize_time( $time ){
+		return preg_match('/[\s0]*(\d|1[0-2]):(\d{2})\s*([AaPp][Mm])/xms', $time, $match)
+			? sprintf('%02d:%d%s', $match[1], $match[2], strtoupper($match[3]))
+			: false;
+	}
+
+	function format_time($h, $m=NULL ){
+		$time = !$m ? (strstr($h, ':') ? $h : "{$h}:00") : "{$h}:{$m}";
+		preg_match('/^(2[0-3]|[01]?\d):([0-5]?\d)$/xms', $time, $m);
+		return preg_match('/^(2[0-3]|[01]?\d):([0-5]?\d)$/xms', $time, $match)
+			? sprintf('%02d:%02d', $match[1], $match[2])
+			: false;
+	}
+
+	function format_date($y, $m, $d){
+		return preg_match('/[^\d]+/', $y.$m.$d) ? false : date('Y-m-d', mktime(0, 0, 0, $m, $d, $y));
+	}
+
+	function checkTimeStamp( $str='' ){
+
+		return date('Y-m-d H:i:s', strtotime($str)) === $str;
+
+	}
+
+	function mySqlDate( $time=NULL ){
+
+		return date('Y-m-d H:i:s', $time);
+
+	}
+
+	/**
+	 * Uses array $a2 keys to sort matching keys in $a1.
+	 * For example:
+	 *	$a1 = array('one' => 'uno', 'two' => 'dos', 'three' => 'tres', 'four' => 'cuatro');
+	 *	$a2 = array('two' => 'anything', 'one' => 'does not matter', 'four' => NULL);
+	 *	array_sort_keys($a1, $a1);
+	 *	# Now $a1 is:
+	 *		array('two' => 'dos', 'one' => 'uno', 'four' => 'cuatro', 'three' => 'tres')
+	 */
+	function array_sort_keys(&$a1, $a2){
+
+		foreach( array_intersect_key($a2, $a1) as $k => $v ) $new[$k] = isset($a1[$k]) ? $a1[$k] : NULL;
+		foreach( array_diff_key($a1, $a2) as $k => $v ) $new[$k] = $v;
+
+		return ($a1 = isset($new) ? $new : $a1);
+
+	}

@@ -1,20 +1,37 @@
-function ini_registerSales() {
-	var frm = $.forms('frmOldSales');
+function ini_customers( type ){};
+function ini_potentialCustomers(){};
 
-	frm.setSeller = function(code){
-		this.seller.val(code);
-	};
-	frm.id_customer.change(function(){
-		frm.seller.val(0);
-		silentXajax('setSeller', [this.val()]);
+function ini_customersInfo(){
+	($('editCustomers')||$E).addEvent('click', function(e){
+		getPage(e, 'editCustomers', [this.getAttribute('for')]);
 	});
-	frm.submit(function(){
-		xajax_registerSale(xajax.getFormValues(frm.get(0)));
-	});
-	frm.restart = function(){
-		this.reset().find('[name="saleType"]:first').click();
-	};
+};
 
+function ini_createCustomers( isNotNew ){
+	($('potentialSubmit')||$E).addEvent('click', function(){
+		xajaxSubmit($('createCustomerForm'), isNotNew ? 'editCustomers' : 'createCustomers', true);
+	});
+};
+
+function ini_editCustomers(){
+	ini_createCustomers( true );		/* Initialize like new customer but with a different prefix */
+};
+
+function ini_registerSales(){
+	var frm = $(document.forms['frmOldSales']);
+	for( var i=0, els=$(frm).getElements('INPUT,SELECT'), el ; el=els[i] ; i++ ){
+		if( el.name && el.type != 'radio' ) newTip(el.name, el);
+	};
+	frm.setSeller = function( code ){
+		selectOption(this['seller'], code||'', 'value');
+	};
+	$(frm['id_customer']).addEvent('change', function(){
+		selectOption(frm['seller'], 0);
+		silentXajax('setSeller', [this.value]);
+	});
+	frm.addEvent('submit', function(){
+		xajax_registerSale( xajax.getFormValues(frm) );
+	});
 	/* Following code adjusts which element should be disabled depending on
 		which type of sale it is (fields being a list of all depending fields) */
 	var optionalFields = {	/* each type list includes depending fields to SHOW */
@@ -23,19 +40,18 @@ function ini_registerSales() {
 		product: ['warranty'],
 		service: ['technician']
 	};
-
-	frm.find('[name="saleType"]').click(function(e){
-		e.stopPropagation();
-
-		$.each(optionalFields.fields, function(i, field){
-			frm[field].attr('disabled', true);
+	$$(frm.saleType).forEach(function(rad){
+		rad.addEvent('click', function(){
+			rad.checked = true;
+			optionalFields.fields.forEach(function(f){ frm[f].disabled = true; });
+			optionalFields[rad.value].forEach(function(f){ frm[f].disabled = false; });
 		});
-		$.each(optionalFields[$(this).val()], function(i, field){
-			frm[field].attr('disabled', false);
-		});
-	}).parent().click(function(){
-		$(this).find('[name="saleType"]').click();
+		$(rad.parentNode).addEvent('click', function(){ rad.click(); });
 	});
-
+	// I make it a property of the form to be able to call it through ajax
+	frm.restart = function(){
+		this.reset();
+		$$(this.saleType)[0].click();
+	};
 	frm.restart();
 };

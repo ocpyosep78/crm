@@ -6,7 +6,7 @@
   
 <div id='agenda_move'>
   <img title='semana anterior' src='app/images/buttons/go-left.gif' alt='' for='{$prev}' />
-  <input type='text' id='agenda_calendar' class='calendar' style='display:none;' value='{$data[0].date|date_locale:'Y/m/d'}' />
+  <input type='text' id='epochTrigger' class='calendar' />
   <img title='semana siguiente' src='app/images/buttons/go-right.gif' alt='' for='{$next}' />
 </div>
 

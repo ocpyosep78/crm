@@ -60,7 +60,7 @@ HTML, BODY{
  * FIXES for global styles
  */
 
-#notifications{
+#statusMsgs{
 	position:absolute !important;
 	top:25px !important;
 	left:3px !important;

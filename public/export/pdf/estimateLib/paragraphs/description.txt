@@ -1,0 +1,5 @@
+<!--
+
+	En este texto se incluye la descripción de la placa/DVR, en lugar de %s. No remover el comodín.
+	
+-->El sistema digital de observación contará con %s Se grabarán las secuencias de video digitalmente, utilizando software en español, y permitiendo monitorear desde una interfaz amigable todas las cámaras del sistema, tanto de forma local (lan) como remota (internet: la calidad depende de la conexión disponible). Se podrá grabar hasta un mes de video contínuo, dependiendo de la configuración del sistema (disco duro recomendado: 250 Gb o superior).

@@ -5,7 +5,7 @@
 	
 		public function display($msg, $type='error'){
 		
-			say($msg, $type);
+			showStatus($msg, $type);
 			
 			return $this;
 		

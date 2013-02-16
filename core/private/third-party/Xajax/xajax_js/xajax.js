@@ -16,7 +16,10 @@ catch(e3){req=null;}
 }
 if(!req&&window.createRequest)
 req=window.createRequest();if(!req)this.DebugMessage("Request Object Instantiation failed.");return req;}
-this.$=function(sId){return document.getElementById(sId);}
+this.$=function(sId){if(!sId){return null;}
+var returnObj=$(sId);if(!returnObj&&document.all){returnObj=document.all[sId];}
+if(xajaxDebug&&!returnObj&&sId!=this.workId){this.DebugMessage("Element with the id \""+sId+"\" not found.");}
+return returnObj;}
 this.include=function(sFileName){var objHead=document.getElementsByTagName('head');var objScript=document.createElement('script');objScript.type='text/javascript';objScript.src=sFileName;objHead[0].appendChild(objScript);}
 this.stripOnPrefix=function(sEventName){sEventName=sEventName.toLowerCase();if(sEventName.indexOf('on')==0){sEventName=sEventName.replace(/on/,'');}
 return sEventName;}

@@ -22,7 +22,7 @@
 		if( !empty($inUse) ){
 			$msg = 'No es posible eliminar este producto porque está en uso. '.
 				'El producto es utilizado en uno o más presupuestos ('.join(', ', $inUse).')';
-			return say( $msg );
+			return showStatus( $msg );
 		}
 		
 		oSQL()->setOkMsg("El artículo seleccionado fue eliminado correctamente.");
@@ -33,6 +33,6 @@
 			if( is_file($path="app/images/products/{$id}.jpg") ) @unlink( $path );
 			return oNav()->reloadPage($ans->msg, 1);
 		}
-		else return say( $ans->msg );
+		else return showStatus( $ans->msg );
 	
 	}

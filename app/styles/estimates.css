@@ -1,0 +1,352 @@
+SELECT.systemProductsSelect{
+	display:none;
+}
+
+
+/* estimateInfo */
+#estimateInfoTbl{
+	padding:5px;
+	background:#ffffff;
+	text-align:left;
+	border:solid 2px #036;
+	border-radius:6px;
+	
+	
+}
+#estimateInfoTbl A{
+	text-decoration:none;
+}
+#estimateInfoTbl TH{
+	padding-right:30px;
+}
+.systemPreview{
+	float:left;
+}
+#systemPreview{
+	height:105px;
+	margin-right:10px;
+}
+
+.printableEstimate .comboListBox{
+	display:none;
+}
+
+/* quotes (first define styles for printable popup, then for main page) */
+.quoteBasicLine{
+	display:none;
+}
+.quotesTable{
+	padding:5px;
+	background:#ffffff;
+	border-collapse:collapse;
+	border:1px solid #505050;
+	background:#ffffff;
+}
+.quotesTable TH{
+	padding:4px;
+}
+.quotesTable TD, .quotesTable TH{
+	border:solid 1px #505050;
+}
+.hiddenAmount, .hiddenPrice{
+	display:block;
+}
+.quoteInput{
+	display:none;
+}
+.productName{
+	display:none;
+}
+#quotesTableWrapper{
+	margin-top:20px;
+}
+#quotesTableWrapper .hiddenAmount, #quotesTableWrapper .hiddenPrice{
+	display:none;
+}
+#quotesTableWrapper .quoteInput{
+	display:block;
+}
+#quotesTableWrapper .productName{
+	display:block;
+}
+#quotesTableWrapper .quotesTable{
+	border:2px solid #000030;
+}
+#quotesTableWrapper .quotesTable TH{
+	border:2px solid #000030;
+	border-collapse:collapse;
+	border-left:none;
+}
+.quotesTable THEAD, .quotesTable TFOOT{
+	height:30px;
+}
+.quotesTable TD INPUT{
+	height:18px;
+	padding:3px 1px 0px 1px;
+	margin:0px;
+	color:#000000;
+	border:1px solid #ffffff;
+}
+#quotesTableWrapper, INPUT{
+	color:#000000 !important;
+}
+.rowSelected, .rowSelected INPUT{
+	color:#000060 !important;
+}
+.autoCell{
+	padding:2px;
+	text-align:right;
+}
+.estimateInfoName{
+	padding:2px;
+	width:460px;
+}
+.suggestDIV{
+	white-space:nowrap;
+}
+.suggestBox{
+	height:18px;
+}
+.suggestBox, .suggestBox INPUT.productName{
+	position:relative;
+	width:460px;
+	margin:0px;
+	padding:0px;
+	background:#ffffff;
+	font-size:11px;
+	font-weight:normal;
+	font-family:Verdana, Geneva, sans-serif;
+	color:#808080;
+}
+.suggestBox DIV{
+	position:absolute;
+	top:5px;
+	right:2px;
+}
+.match{
+	color:#606060;
+	font-weight:bold;
+}
+.formattedResult{
+	color:#002066;
+	font-weight:bold;
+	white-space:nowrap;
+	margin-top:-17px;
+	overflow:hidden;
+}
+#quotesTableWrapper .formattedResult{
+	margin-top:-5px;
+}
+#quotesTableWrapper .formattedResult SPAN{
+	color:#606090;
+	font-weight:normal;
+}
+.suggestBox INPUT.productName{
+	width:458px;
+	padding-top:0px;
+	background-color:transparent;
+	color:#000000;
+}
+#listBox{
+	display:none;
+	position:absolute;
+	z-index:500;
+}
+#estimateListWrapper{
+	height:300px;
+	overflow:auto;
+	text-align:right;
+}
+#suggestList{
+	width:460px;
+	padding:0px;
+	border:solid 1px #003333;
+	background: #ffffff;
+	color:#000000;
+	text-align:left;
+}
+#suggestList A{
+	display:block;
+	padding:1px 3px;
+	color:#002040;
+	text-decoration:none;
+	white-space:nowrap;
+	overflow:hidden;
+	cursor:pointer;
+}
+#suggestList A:hover{
+	background-image:linear-gradient(#e0e0e0,  #8090a0);
+	color:#900000;
+}
+#suggestList A.selected{
+	background-image:linear-gradient(#f8f8fa,  #90a0b0);
+	color:#300000;
+}
+#quotesButtons{
+	margin-top:20px;
+}
+
+#saveEstimateWrapper{
+	display:none;
+	position:absolute;
+	height:170px;
+	width:200px;
+	margin-top:-100px;
+	margin-left:-85px;
+	overflow:visible;
+}
+#saveEstimate{
+	padding:10px 20px;
+	border:solid 2px #003300;
+	background:#f0f0f2;
+}
+#saveEstimate INPUT, #saveEstimate SELECT{
+	margin-bottom:5px;
+}
+#saveEstimate INPUT{
+	width:153px;
+}
+#saveEstimate SELECT{
+	width:156px;
+}
+.saveEstimateLine{
+	text-align:center;
+	margin:10px 0px;
+	padding:5px;
+}
+.saveEstimateLine INPUT{
+	width:70px !important;
+}
+#saveEstimateTitle{
+	height:15px;
+	padding:5px 0px 0px 10px;
+	background:#003300;
+	color:#ffffff;
+}
+#estimateInfoTbl TD{
+	border-spacing:0px !important;
+}
+#estimateInfoTbl TH{
+	line-height:1.6em;
+}
+#estimateInfoTbl INPUT[type=text]{
+	margin:0px;
+	padding:0px;
+}
+#estimateInfoTbl SELECT{
+	width:170px;
+}
+
+
+
+#quotesTableWrapper .waiting::after{
+	position:absolute;
+	right:0px;
+	text-align:right;
+	content:'buscando...';
+}
+
+/**
+ * INSTALL PLAN
+ */
+ 
+.installPlanRow{
+	float:left;
+}
+#installPlan, #frm_plan{
+	margin-top:30px;
+}
+#installPlan TH{
+	min-width:100px;
+	padding:2px 3px;
+	border-top:solid 1px #000000;
+	border-bottom:solid 1px #000000;
+	white-space:nowrap;
+}
+#installPlan TD{
+	max-width:400px;
+	white-space:normal;
+}
+#installPlan IMG{
+	height:14px;
+	width:14px;
+	cursor:pointer;
+}
+.planAmount{
+	width:50px;
+}
+.planName{
+	width:250px;
+}
+.planPosition{
+	width:500px;
+	white-space:normal !important;
+}
+
+#printEstimatePDF{
+	display:none;
+}
+.estimatePDFbutton{
+	float:left;
+	margin:0px 5px 10px 0px;
+}
+#estimatePDF{
+	float:left;
+	clear:both;
+	height:500px;
+	width:800px;
+}
+
+#estimatePDF_print{
+	visibility:hidden;
+}
+
+
+/**
+ * Estimates Pack
+ */
+.estimates_pack_detail{
+	margin-bottom:30px;
+	border:solid 1px #000000;
+	background:#ffffff;
+	overflow:auto;
+}
+.estimates_pack_detail > TABLE{
+	width:100%;
+}
+.estimates_pack_detail > TABLE TH, .estimates_pack_detail > TABLE TD{
+	border:solid 1px #f0f0ff;
+}
+.estimates_pack_detail TH.fields{
+	width:20px;
+	padding:0px 5px;
+	text-align:right;
+}
+.estimates_pack_detail TH > SPAN{
+	border-bottom:solid 1px #c0c0c0;
+	color:#0000e0;
+	font-weight:normal;
+	cursor:pointer;
+}
+.estimates_pack_detail TD{
+	padding:3px;
+	border-left:solid 1px #c0c0c0 !important;
+}
+.redNumbers{
+	color:#e00000;
+	font-weight:bold;
+}
+.estimates_pack_tools{
+	min-height:1.5em;
+	margin-bottom:3px;
+	padding:5px 0px 3px 0px;
+	text-align:center;
+	color:#0000e0;
+	cursor:pointer;
+}
+.estimates_pack_tools:hover{
+	padding:4px 0px 2px 0px;
+	border-top:solid 1px #000000;
+	border-bottom:solid 1px #000000;
+	background:#e0e0e0;
+}
