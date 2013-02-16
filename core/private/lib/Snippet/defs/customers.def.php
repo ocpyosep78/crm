@@ -7,19 +7,19 @@
  * Licence: GNU GENERAL PUBLIC LICENSE <http://www.gnu.org/licenses/gpl.txt>
  */
 
-	
+
 	class Snippet_def_customers extends Snippets_Handler_Source{
-	
+
 		protected function getBasicAttributes(){
-			
+
 			return array(
 				'name'		=> 'Cliente',
 				'plural'	=> 'Clientes',
 			);
-			
+
 		}
-		
-		
+
+
 		/**
 		 * @overview: List of tables involving this module, and each relevant field in them,
 		 *            plus attributes for each field that could be used by Modules.
@@ -34,22 +34,22 @@
 		 *            hidden => false explicitly to override.
 		 */
 		protected function getDatabaseDefinition(){
-		
+
 			return array(
 				'customers' => array(
 					'id_customer'	=> array('name' => 'ID', 'isKey' => true),
-					'number'		=> 'N鷐ero',
+					'number'		=> 'N煤mero',
 					'customer'		=> 'Empresa',
-					'legal_name'	=> 'Raz髇 Social',
+					'legal_name'	=> 'Raz贸n Social',
 					'rut'			=> 'RUT',
-					'address'		=> 'Direcci髇',
-					'billingaddress'=> 'Dir. de Facturaci髇',
+					'address'		=> 'Direcci贸n',
+					'billingaddress'=> 'Dir. de Facturaci贸n',
 					'id_location'	=> '',
-					'phone'			=> 'Tel閒ono',
+					'phone'			=> 'Tel茅fono',
 					'email'			=> 'Email',
 					'seller'		=> array('FK' => '_users.user', 'hidden' => true),
 					'since'			=> array('name' => 'Fecha Ingreso', 'frozen' => true),
-					'subscribed'	=> array('name' => 'Subscripci髇', 'hidden' => true),
+					'subscribed'	=> array('name' => 'Subscripci贸n', 'hidden' => true),
 				),
 				'_locations' => array(
 					'id_location'	=> array('FK' => 'customers.id_location', 'hidden' => true),
@@ -60,11 +60,11 @@
 					'seller'	=> array('name' =>'Vendedor', 'aliasOf' => '$name $lastName'),
 				),
 			);
-			
+
 		}
-		
+
 		protected function getFieldsFor( $type ){
-		
+
 			switch( $type ){
 				case 'list':
 					return array('number', 'customer', 'legal_name', 'address', 'phone', 'sellerName');
@@ -76,27 +76,27 @@
 					return array('number', 'customer', 'legal_name', 'rut', 'since', '>',
 						'phone', 'email', 'address', 'location', 'sellerName');
 			}
-		
+
 		}
-		
+
 		protected function getTools(){
             SnippetLayer_access::addCustomPermit('newCustomerTech');
             SnippetLayer_access::addCustomPermit('newAgendaEvent');
-		
+
 			return array('view',
-                         array('newCustomerTech' => 'Nueva ficha t閏nica para el'),
+                         array('newCustomerTech' => 'Nueva ficha t茅cnica para el'),
                          array('newAgendaEvent'  => 'Nuevo evento para el'),
                          'create',
                          'edit',
                          'delete');
 		}
-				
+
 /*		protected function checkFilter( &$filters ){
 		}/**/
-		
+
 /*		protected function checkData( &$data ){
 		}/**/
-		
+
 		protected function getValidationRuleSet(){
 
 			return array(
@@ -110,28 +110,28 @@
 				'billingaddress'=> array('text', NULL, 80),
 				'id_location'	=> array('selection'),
 			);
-			
+
 		}/**/
-		
+
 /*		protected function strictValidation(){
 			return true;
 		}/**/
 
 /* TEMP : All these methods below should be automatically created based on the definition */
-		
+
 private function globalFilters( &$filters ){
 
 	$srch = $filters['*'];
 	$filters = array();
-	
+
 	$fields = array_diff($this->getFieldsFor('view'), (array)'>');
 	foreach( $fields as $field ) $filters["`{$field}`"] = $srch;
-	
+
 	$filters["`cc`.`name`"] = $srch;
 	$filters["`co`.`name`"] = $srch;
-	
+
 }
-		
+
 protected function getListData($filters=array(), $join='AND'){
 	if( isset($filters['*']) ){
 		$this->globalFilters( $filters );
@@ -149,7 +149,7 @@ protected function getListData($filters=array(), $join='AND'){
 					`lc`.*,
 					CONCAT(`c`.`customer`,
 						IF(`c`.`legal_name` = '', '', CONCAT(' (', `c`.`legal_name`, ')')),
-						' (Cliente ', IFNULL(`c`.`number`, 'sin n鷐ero'), ')') AS 'tipToolText'
+						' (Cliente ', IFNULL(`c`.`number`, 'sin n煤mero'), ')') AS 'tipToolText'
 			FROM `customers` `c`
 			LEFT JOIN `_users` `u` ON (`u`.`user` = `c`.`seller`)
 			LEFT JOIN `_locations` `lc` USING (`id_location`)
@@ -170,5 +170,5 @@ private function getFilterFromModifier(){
 	}
 	return '1';		# No filter for status (show all customers)
 }
-		
+
 	}

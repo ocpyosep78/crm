@@ -139,10 +139,10 @@
 			if( !is_null($this->estimate) ) return $this->estimate;
 
 			$info = $this->SQL_getEstimateData( $id )
-				or die('No se encontró el presupuesto buscado.');
+				or die('No se encontrÃ³ el presupuesto buscado.');
 
 			$detail = $this->SQL_getEstimateDetail( $id )
-				or die('El presupuesto pedido está vacío o no se pudo acceder a su contenido.');
+				or die('El presupuesto pedido estÃ¡ vacÃ­o o no se pudo acceder a su contenido.');
 			foreach( $detail as $k => $row ) $items[$row['type']][$k] = $row;
 
 			return $this->estimate = array('info' => $info, 'items' => $items);
@@ -286,11 +286,11 @@
 				case 'cabling': return array();
 				# Sistema CCTV
 				case 'cctv': return array('description', 'materials', 'tasks', 'times');
-				# Domótica
+				# DomÃ³tica
 				case 'domotics': return array();
-				# Detección de Incendios
+				# DetecciÃ³n de Incendios
 				case 'fire': return array();
-				# Centrales Telefónicas
+				# Centrales TelefÃ³nicas
 				case 'central': return array();
 				# Unknown system (error)
 				default: return array();
@@ -318,11 +318,11 @@
 				case 'cabling': return array();
 				# Sistema CCTV
 				case 'cctv': return array('company', 'quality');
-				# Domótica
+				# DomÃ³tica
 				case 'domotics': return array();
-				# Detección de Incendios
+				# DetecciÃ³n de Incendios
 				case 'fire': return array();
-				# Centrales Telefónicas
+				# Centrales TelefÃ³nicas
 				case 'central': return array();
 				# Unknown system (error)
 				default: return array();
@@ -338,16 +338,16 @@
 		public function paragraph_code2title( $code ){
 
 			$hash = array(
-				'description'	=> 'Descripción del sistema',
-				'materials'		=> 'Materiales de instalación',
-				'tasks'			=> 'Tareas a realizar',
-				'times'			=> 'Tiempo de instalación',
-				'cctvInclude'	=> 'Incluye:',
-				'changesNote'	=> 'IMPORTANTE',
-				'server'		=> 'Servidor con tecnología Intel',
-				'screen'		=> 'Monitor ViewSonic 19"',
-				'company'		=> 'Nuestra empresa',
-				'quality'		=> 'Calidad, Seriedad y Confianza',
+				'description' => 'DescripciÃ³n del sistema',
+				'materials'   => 'Materiales de instalaciÃ³n',
+				'tasks'       => 'Tareas a realizar',
+				'times'       => 'Tiempo de instalaciÃ³n',
+				'cctvInclude' => 'Incluye:',
+				'changesNote' => 'IMPORTANTE',
+				'server'      => 'Servidor con tecnologÃ­a Intel',
+				'screen'      => 'Monitor ViewSonic 19"',
+				'company'     => 'Nuestra empresa',
+				'quality'     => 'Calidad, Seriedad y Confianza',
 			);
 
 			return isset($hash[$code]) ? $hash[$code] : NULL;
@@ -372,12 +372,12 @@
 												: NULL));
 									return !$desc ? NULL : sprintf($this->readParagraph($pgph), $desc);
 
-				case 'tasks':		return ($this->get('hasServer') ? 'Se armarán los servidores y se' : 'Se').
+				case 'tasks':		return ($this->get('hasServer') ? 'Se armarÃ¡n los servidores y se' : 'Se').
 										substr($this->readParagraph($pgph), 2);
 
 				case 'times':		return sprintf($this->readParagraph( $pgph ), ($this->get('cams') <= 8
-										? 'De 1 a 3 días'
-										: ($this->get('cams') <= 15 ? 'De 2 a 5 días' : 'A confirmar')));
+										? 'De 1 a 3 dÃ­as'
+										: ($this->get('cams') <= 15 ? 'De 2 a 5 dÃ­as' : 'A confirmar')));
 
 
 				default: return $this->readParagraph( $pgph );

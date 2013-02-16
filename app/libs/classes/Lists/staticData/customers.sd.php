@@ -7,14 +7,14 @@
 
 	$fields = array(
 //		'id_customer'	=> 'ID interno',
-		'number'		=> 'Nº',
+		'number'		=> 'NÂº',
 		'customer'		=> 'Empresa',
-		'legal_name'	=> 'Razón Social',
+		'legal_name'	=> 'RazÃ³n Social',
 //		'rut'			=> 'RUT',
-		'address'		=> 'Dirección',
+		'address'		=> 'DirecciÃ³n',
 //		'id_location'	=> '',
 //		'location'		=> 'Ciudad',
-		'phone'			=> 'Teléfono',
+		'phone'			=> 'TelÃ©fono',
 //		'email'			=> 'Email',
 		'sellerName'	=> 'Vendedor',
 //		'since'			=> 'Fecha Ingreso',

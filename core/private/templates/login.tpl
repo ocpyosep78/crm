@@ -57,7 +57,7 @@
 			}
 			else if( !oPass.value ){
 				oPass.focus();
-				return showStatus('Debe escribir su contraseña.');
+				return showStatus('Debe escribir su contraseÃ±a.');
 			}
 			else xajax_login(oUser.value, oPass.value);
 			return false;
@@ -71,22 +71,22 @@
 
 <div class='loginWrapper'>
 	<form name='formLogin' action='javascript:void(0);'>
-	
+
 	  <table id='loginTbl' border="0" align="center">
 		<tr>
 			<th>Usuario:</th>
 			<td><input class='input' type="text" name="user" /></td>
 		</tr>
 		<tr>
-			<th>Contraseña:</th>
+			<th>ContraseÃ±a:</th>
 			<td><input class='input' type="password" name="pass" /></td>
 		</tr>
-		<tr align="center">	
+		<tr align="center">
 			<td colspan="2">
 				<input type="submit" id='btn_login' class="specialButton" value="Entrar" />
 			</td>
 		</tr>
 	  </table>
-		
+
 	</form>
 </div>
