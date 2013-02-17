@@ -11,7 +11,7 @@
 
 	<img class='agenda_eventUser' alt='' title='{$event.creator}' src='{$event.creatorimg}' />
 	<img class='agenda_eventType' alt='' title='{$types[$event.type]}'
-		src='{$IMAGES_URL}/images/agendaEvents/{if $event.rescheduled}rescheduled/{/if}{$event.type}.png' />
+		src='{$IMAGES_URL}/agendaEvents/{if $event.rescheduled}rescheduled/{/if}{$event.type}.png' />
 
 	<span class='agenda_eventInfo'>
 		{if $showDays}{$event.ini|date_format:'d/m/Y, H:i'}

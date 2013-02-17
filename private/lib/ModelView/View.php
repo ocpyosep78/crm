@@ -237,14 +237,15 @@ abstract class View
 			return NULL;
 		}
 
-		$path = str_replace('%id%', $id, $this->img_path);
+		$url = str_replace('%id%', $id, $this->img_path);
+		$path = BASE . str_replace(BBURL, '', $url);
 
 		if (!is_readable($path))
 		{
-			$path = str_replace('%id%', '__missing__', $this->img_path);
+			$url = str_replace('%id%', '__missing__', $this->img_path);
 		}
 
-		return $path;
+		return $url;
 	}
 
 	/**

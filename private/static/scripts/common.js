@@ -291,7 +291,7 @@ $(function(){
 	// Activate NavBar buttons
 	$('body').on('click', '.navMod', function(e){
 		$('.navCurrMod')._class('navMod');
-		$(this)._class('navCurrMod');
+		$(this).addClass('navCurrMod');
 		getPage(e, $(this)._rel());
 		return false;
 	});
