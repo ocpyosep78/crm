@@ -15,9 +15,11 @@ define('TIME_ZONE', 'America/Montevideo');
 define('CLASSES_PATH', PATH_PUB . '/libs/classes');
 define('THIRD_PARTY_PATH', PATH_PUB . '/libs/third-party');
 define('EXPORT_PDF_PATH', PATH_PUB . '/export/pdf');
-define('IMG_PATH', PATH_PUB . '/images');
+define('IMAGES_PATH', PATH_PUB . '/images');
 define('MODS_PATH', PATH_PUB . '/mods');
 define('TEMPLATES_PATH', PATH_PUB . '/templates');
+
+define('IMAGES_URL', URL_PUB . '/images');
 
 
 # Application

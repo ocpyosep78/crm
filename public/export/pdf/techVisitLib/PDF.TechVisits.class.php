@@ -45,7 +45,7 @@ class PDF_TechVisits extends ExtendedFPDF
 
 		# Page background
 		if( !$this->printable ){
-			$this->Image('app/images/background/techVisits.jpg', -7.5, -3, 223, 213);
+			$this->Image(IMAGES_URL . '/background/techVisits.jpg', -7.5, -3, 223, 213);
 		}
 
 		$this->DrawData();

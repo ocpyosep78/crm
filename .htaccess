@@ -3,7 +3,7 @@ RewriteEngine On
 
 RewriteRule ^(.+)\.css$ dynCss.php?path=$0&%{QUERY_STRING} [L,NC]
 
-RewriteRule ^ajax$ index.php?ajax&params=%{QUERY_STRING} [L]
+RewriteRule ^ajax$ index.php?ajax [L,NC]
 
 RewriteCond %{REQUEST_FILENAME} !-f
-RewriteRule ^(.+)$ index.php?params=$1 [L,NC]
+RewriteRule ^(.+)$ index.php?args=$1 [L,NC]

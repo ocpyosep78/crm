@@ -8,7 +8,7 @@ define('SNP_LIB', SNP_PATH . '/lib');
 
 # Paths for output (templates, images, styles, jScripts)
 define('SNP_TEMPLATES', SNP_PATH . '/templates');
-define('SNP_IMAGES', IMAGES . '/snippet');
+define('SNP_IMAGES', PATH_IMAGES . '/snippet');
 
 
 abstract class Snippet
@@ -361,7 +361,7 @@ abstract class Snippet
 				}
 				else
 				{
-					$static = IMG_PATH . "/{$this->params['basemodel']}";
+					$static = URL_IMAGES . "/{$this->params['basemodel']}";
 					$props['icon'] = "{$static}/Snippets/actions/{$axn}.png";
 				}
 			}

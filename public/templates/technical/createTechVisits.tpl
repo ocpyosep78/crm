@@ -3,7 +3,7 @@
 	even if it's '&nbsp;' (amazing crap, isn't it?!) -->
 <!--[if IE]>&nbsp;
 	<style type='text/css'>
-		#technicalForm INPUT{ background:url({$BBURL}/app/images/background/transparent.gif) repeat !important; }
+		#technicalForm INPUT{ background:url({$IMAGES_URL}/background/transparent.gif) repeat !important; }
 		#tch_custNumber{ top:125px !important; }
 		#tch_info_left INPUT{ height:18px; }
 		.tch_options{ right:30px; }
@@ -13,7 +13,7 @@
 		#tch_complete INPUT{ margin:-21px 12px 0px 16px !important; }
 		.tch_costLine INPUT{ top:0px !important; }
 		#tch_pendingEstimate{ top:0px !important; }
-		#tch_period{ background:url({$BBURL}/app/images/background/transparent.gif) !important; }
+		#tch_period{ background:url({$IMAGES_URL}/background/transparent.gif) !important; }
 		.tch_quality INPUT{ margin:3px 26px 0px 62px !important; }
 		.tch_quality #tch_quality_good{ margin-left:51px !important; }
 		.tch_quality #tch_quality_excellent{ margin-left:69px !important; }
@@ -27,7 +27,7 @@
 <form name='frm_newTechVisit' action='javascript:void(0);'>
   <div id='technicalForm'>
 
-	<img id='technicalFormBg' src='{$BBURL}/app/images/technical/form.jpg' alt='' />
+	<img id='technicalFormBg' src='{$IMAGES_URL}/technical/form.jpg' alt='' />
 
 	<div id='tch_buttons'>
 		<div id='tch_save'>Guardar</div>
@@ -120,11 +120,11 @@
 		<input type='text' id='tch_endsM' maxlength='2' value='' />
 	</div>
 
-	<img class='tchSearch' id='tchSrch_custNumber' src='{$BBURL}/app/images/buttons/search.gif' alt='' />
-	<img class='tchSearch' id='tchSrch_customer' src='{$BBURL}/app/images/buttons/search.gif' alt='' />
-	<img class='tchSearch' id='tchSrch_contact' src='{$BBURL}/app/images/buttons/search.gif' alt='' />
-	<img class='tchSearch' id='tchSrch_address' src='{$BBURL}/app/images/buttons/search.gif' alt='' />
-	<img class='tchSearch' id='tchSrch_phone' src='{$BBURL}/app/images/buttons/search.gif' alt='' />
+	<img class='tchSearch' id='tchSrch_custNumber' src='{$IMAGES_URL}/buttons/search.gif' alt='' />
+	<img class='tchSearch' id='tchSrch_customer' src='{$IMAGES_URL}/buttons/search.gif' alt='' />
+	<img class='tchSearch' id='tchSrch_contact' src='{$IMAGES_URL}/buttons/search.gif' alt='' />
+	<img class='tchSearch' id='tchSrch_address' src='{$IMAGES_URL}/buttons/search.gif' alt='' />
+	<img class='tchSearch' id='tchSrch_phone' src='{$IMAGES_URL}/buttons/search.gif' alt='' />
 
 	<input type='hidden' id='tch_onSale' value='' />
 	<input type='hidden' id='tch_id_customer' value='' />

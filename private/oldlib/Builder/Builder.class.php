@@ -125,7 +125,7 @@ class Builder{
 	 * Some classes might make it hard to keep the right path structure, specially
 	 * if it's a secondary class of a big library.
 	 * Just add those exceptions to the list, in the switch, returning the right
-	 * path as a string (from base directory, above app/).
+	 * path as a string (from base directory, above PATH_PUB).
 	 */
 	private function classPath( $obj ){
 
@@ -140,7 +140,7 @@ class Builder{
 				return CLASSES_PATH . "/{$obj}/{$obj}.class.php";
 			break;
 			default:
-				return CORE_LIB . "/{$obj}/{$obj}.class.php";
+				return PATH_OLDLIB . "/{$obj}/{$obj}.class.php";
 			break;
 		}
 

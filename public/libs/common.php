@@ -406,6 +406,7 @@ function clearSes($key)
 
 function loggedIn()
 {
+	// Keep session alive by cookies
 	if (!getSes('user') && !empty($_COOKIE['crm_user']))
 	{
 		$user = substr($_COOKIE['crm_user'], 0, -40);
@@ -421,29 +422,6 @@ function loggedIn()
 	}
 
 	return getSes('user');
-}
-
-function login($user, $pass)
-{
-	$info = oSQL()->getUser($user);
-
-	if ($info && ($info['pass'] == md5($pass)))
-	{
-		if ($info['blocked'] == '1')
-		{
-			return say('Este usuario se encuentra actualmente bloqueado. '.
-				'Por más información consulte a un administrador.');
-		}
-
-		acceptLogin($info);
-		saveLog('loginLogout', 'in');
-
-		return addScript('setTimeout(function(){location.href = location.href;}, 20);');
-	}
-	else
-	{
-		return say('Nombre de usuario o contraseña incorrectos.');
-	}
 }
 
 function acceptLogin($info)
@@ -472,19 +450,6 @@ function acceptLogin($info)
 
 	oSQL()->removeOldAlerts(getSes('user'), MAX_ALERTS_PER_USER);
 	oSQL()->removeOldLogs(MAX_LOGS_GLOBAL);
-}
-
-function logout($msg='Su sesión fue cerrada correctamente.', $type=1)
-{
-	saveLog('loginLogout', 'out');
-
-	setcookie('crm_user', '');
-	$_SESSION['crm'] = array();
-
-	oNav()->clear();
-	oNav()->queueMsg($msg, $type);
-
-	return addScript("location.href = 'index.php';");
 }
 
 function errorName($errno)
@@ -519,14 +484,14 @@ function error_handler($no, $str, $file, $line)
 
 		if (substr($str,0,18) == 'Undefined index:  ')
 		{
-			$file = "{$root}/app/templates/{$fileName}";
+			$file = TEMPLATES_PATH . "/{$fileName}";
 			$smartyVar = substr($str,18);
 			$str = 'Undeclared Smarty Variable \''.substr($str,18).'\'';
 		}
 		else
 		{
 			$file .= ", line {$line})<br />&nbsp;&nbsp;&nbsp;&nbsp;";
-			$file .= "({$root}/app/templates/{$fileName})";
+			$file .= TEMPLATES_PATH . "/{$fileName})";
 		}
 	}
 

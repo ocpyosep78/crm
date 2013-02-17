@@ -19,16 +19,16 @@
 
 
 	{* Styles *}
-	<link rel="stylesheet" type="text/css" href="{$SCRIPTS_URL}/jquery/themes/{$UI_THEME}/jquery-ui.css" />
-	<link rel="stylesheet" type="text/css" href="{$SCRIPTS_URL}/jquery/jquery.qtip2.css" />
+	<link rel="stylesheet" type="text/css" href="{$URL_SCRIPTS}/jquery/themes/{$UI_THEME}/jquery-ui.css" />
+	<link rel="stylesheet" type="text/css" href="{$URL_SCRIPTS}/jquery/jquery.qtip2.css" />
 	<link rel="stylesheet" type="text/css" href="{$css}" />
 
 
 	{* JS files *}
-	<script type="text/javascript" src="{$SCRIPTS_URL}/jquery/jquery-1.8.2.js"></script>
-	<script type="text/javascript" src="{$SCRIPTS_URL}/jquery/jquery-ui-1.9.1.js"></script>
-	<script type="text/javascript" src="{$SCRIPTS_URL}/jquery/jquery.qtip2.js"></script>
-	<script type="text/javascript" src="{$SCRIPTS_URL}/common.js?sid={$NOW}"></script>
+	<script type="text/javascript" src="{$URL_SCRIPTS}/jquery/jquery-1.8.2.js"></script>
+	<script type="text/javascript" src="{$URL_SCRIPTS}/jquery/jquery-ui-1.9.1.js"></script>
+	<script type="text/javascript" src="{$URL_SCRIPTS}/jquery/jquery.qtip2.js"></script>
+	<script type="text/javascript" src="{$URL_SCRIPTS}/common.js?sid={$NOW}"></script>
 
 	{* JS on domready *}
 	{if isset($js)}
@@ -43,21 +43,21 @@
 </head>
 <body>
 
-	{include file="$TEMPLATES/navbar.tpl"}
+	{include file="$PATH_TPLS/navbar.tpl"}
 
 	<div id='notifications'>
 		<span>{$APP_NAME}</span>
-		<img class='errorStatus' src='{$BBURL}/app/images/statusMsg/error.png'>
-		<img class='successStatus' src='{$BBURL}/app/images/statusMsg/success.png'>
-		<img class='warningStatus' src='{$BBURL}/app/images/statusMsg/warning.png'>
+		<img class='errorStatus' src='{$IMAGES_URL}/statusMsg/error.png'>
+		<img class='successStatus' src='{$IMAGES_URL}/statusMsg/success.png'>
+		<img class='warningStatus' src='{$IMAGES_URL}/statusMsg/warning.png'>
 		<div></div>
 	</div>
 
 	<div id='main_box'>{$content}</div>
 
-	{include file="$TEMPLATES/foot.tpl"}
+	{include file="$PATH_TPLS/foot.tpl"}
 
-	{include file="$TEMPLATES/menu.tpl"}
+	{include file="$PATH_TPLS/menu.tpl"}
 
 	{* Widgets *}
 	{if false && $USER && Access::can('chatActivity')}{include file='widgets/chat.tpl'}{/if}
@@ -65,10 +65,10 @@
 
 	<div id='loadingGif'>
 		<div>Cargando...</div>
-		<img src="{$BBURL}/app/images/loading.gif" alt="Cargando..." />
+		<img src="{$IMAGES_URL}/loading.gif" alt="Cargando..." />
 	</div>
 
-	{if devMode()}{include file="$TEMPLATES/debugger.tpl"}{/if}
+	{if devMode()}{include file="$PATH_TPLS/debugger.tpl"}{/if}
 
 </body>
 </html>

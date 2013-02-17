@@ -1,7 +1,7 @@
 <div id='debugHeader'>
   <div>
 	<div id="openDebug"></div>
-	<img id='debugStats' src='{$BBURL}/app/images/stats.gif' alt='extended info' />
+	<img id='debugStats' src='{$IMAGES_URL}/stats.gif' alt='extended info' />
 	<ul id="debuggerbox">
 	  <li>Debugger <span style="color:#0000a0; cursor:pointer;">(click para minimizar)</span></li>
 

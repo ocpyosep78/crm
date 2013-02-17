@@ -1,31 +1,4 @@
 /******************************************************************************/
-/********************************** T E M P ***********************************/
-/******************************************************************************/
-var ajax = {
-	login: function(){
-
-	},
-	logout: function(){
-
-	},
-	loadContent: function(){
-
-	},
-	switchTab: function(){
-
-	},
-	eventInfo: function(){
-
-	},
-	closeAgendaEvent: function(){
-
-	},
-	snippet: function(){
-
-	}
-};
-
-/******************************************************************************/
 /******************************** J Q U E R Y *********************************/
 /******************************************************************************/
 
@@ -182,6 +155,10 @@ function db(x) {
 	alert('Debug log generated for: ' + x);
 }
 
+function empty(x) {
+	return (typeof x === 'undefined') || !x;
+}
+
 /******************************************************************************/
 /***************************** D E B U G G I N G ******************************/
 /******************************************************************************/
@@ -192,6 +169,23 @@ function raise( msg ){
 		: '';
 	return DEVMODE ? !!alert( caller + 'error: ' + (msg||'') ) : false;
 };
+
+
+/******************************************************************************/
+/*************************** C O N T R O L L E R S ****************************/
+/******************************************************************************/
+
+function ajax(id)
+{
+	$.ajax({url: 'ajax',
+	        type: 'post',
+	        dataType: 'json',
+	        data: {id: id,
+	               args: $(arguments).toArray().slice(1)},
+	        success: function(js) {
+				$.map(js, eval);
+			}});
+}
 
 
 /******************************************************************************/
@@ -208,12 +202,14 @@ function say(txt, type, stay) {
 
 	$('#notifications').hide(1)._class(cl + 'Status')
 		.find('div:last').html(txt).end()
-		.show('drop', {direction:'up'}, 500, function(){
+		.show('drop', {direction:'up', height:400}, 500, function(){
 			// Cancel pending hiding and queue a new one (0 == don't hide)
 			clearTimeout($(this).data('hto'));
-			(stay !== 0) && $(this).data('hto', setTimeout(function(){
-				$('#notifications').fadeOut({queue:false});
-			}, (stay||10)*1000));
+			if ((stay !== 0) && empty(window.SHOW_LOGO_AREA)) {
+				$(this).data('hto', setTimeout(function(){
+					$('#notifications').fadeOut({queue:false});
+				}, (stay||10)*1000));
+			}
 		});
 }
 
@@ -252,8 +248,10 @@ function hideMenu(){ toggleMenu(false); }
 
 function getPage() {
 	var args = $.makeArray(arguments),
-	    event = args.shift();
-	$('#main_box').load(BBURL + '/ajax/' + args);
+	    shift = (args.shift()||{}).shiftKey,
+		page = args.shift();
+
+	ajax('content', page, args, shift);
 }
 
 // Initialize loaded page and events associated to new elements in it
@@ -299,7 +297,7 @@ $(function(){
 	});
 
 	$('body').on('click', '.logout', function(){
-		ajax.logout();
+		ajax('logout');
 	});
 
 	// Menu
@@ -337,7 +335,7 @@ $(function(){
 
 	// Tabs functionality
 	$('body').on('click', '#tabButtons div', function(){
-		return ajax.switchTab($(this)._for()) & false;
+		return ajax('switchTab', $(this)._for()) & false;
 	});
 
 	// Styled ToolTips
@@ -357,7 +355,7 @@ $(function(){
 
 	// Activate agenda eventUnits
 	$('body').on('click', '.eventUnit', function(){
-		ajax.eventInfo($(this).find('input[type="hidden"]').val());
+		ajax('eventInfo', $(this).find('input[type="hidden"]').val());
 	});
 
 	// FileForm: add pseudo-ajax submit to forms with File inputs
@@ -420,13 +418,9 @@ $(function(){
 	});
 
 	$('#loggedAs span[userid]').click(function(){
-		ajax.snippet('simpleItem', 'User', {'id': $(this).attr('userid'),
-		                                     'action': 'dialog'});
+		ajax('snippet', 'simpleItem', 'User', {'id': $(this).attr('userid'),
+		                                       'action': 'dialog'});
 	}).css('cursor', 'pointer');
-
-	// Load current content
-	var nav = location.href.match(/\?nav=([\d\.]+)/) || ['', ''];
-	ajax.loadContent(nav[1]);
 });
 
 
@@ -441,10 +435,8 @@ $(function(){
 	if (frm.length) {
 		frm.user.addClass('inputFocused').focus();
 
-		// Show the main logo above when login (if not visible already)
-		setTimeout(function(){
-			$('#notifications:hidden').length && say('', 'none', 0);
-		}, 1000);
+		window.SHOW_LOGO_AREA = true;
+		$('#notifications').show(1);
 
 		frm.submit(function(){
 			if (!frm.user.val()) {
@@ -454,7 +446,7 @@ $(function(){
 				var msg = 'Debe escribir su contraseña.';
 				return frm.pass.focus() & say(msg, 'error', 0) & false;
 			} else {
-				ajax.login(frm.user.val(), frm.pass.val());
+				ajax('login', frm.user.val(), frm.pass.val());
 			}
 
 			return false;
@@ -529,7 +521,7 @@ function Snippet(el){
 		if (!ask || confirm(ask))
 		{
 			var args = $.extend({}, params, opts||{}, {action: action});
-			action && ajax.snippet(kind, model, args);
+			action && ajax('snippet', kind, model, args);
 		}
 	}
 
@@ -702,7 +694,7 @@ function closeAgendaEvent(id, msg, resched) {
         var cfm = "Se dispone a " + action + " el evento con el siguiente mensaje:\n\n" + res +
                   "\n\nPulse Cancelar para editar el mensaje o Aceptar para confirmar.";
         if (confirm(cfm)) {
-            ajax.closeAgendaEvent(id, res, resched ? 1 : 0);
+            ajax('closeAgendaEvent', id, res, resched ? 1 : 0);
         } else {
             closeAgendaEvent(id, res, resched);
         }
@@ -724,12 +716,12 @@ function initializeList(model, modifier, src) {
 			switch (axn) {
 				case 'delete':
 					if( confirm('¿Realmente desea eliminar este elemento?') ){
-						window['ajax.delete' + $.capitalize(model)](id, modifier);
+						ajax('delete' + $.capitalize(model), id, modifier);
 					};
 					break;
 				case 'block':
 					if( confirm('¿Realmente desea bloquear este elemento?') ){
-						window['ajax.block' + $.capitalize(model)](id, modifier);
+						ajax('block' + $.capitalize(model), id, modifier);
 					};
 					break;
 				default:
@@ -754,8 +746,7 @@ function initializeSimpleList() {
 			this.inputs.each(function(){
 				data[this._name()] = this.val();
 			}, true);
-			var func = 'ajax.create' + $.capitalize(model);
-			window[func] && window[func](data, modifier);
+			ajax('create' + $.capitalize(model), data, modifier);
 		};
 
 		this.enableEditItem = function(id) {
@@ -813,12 +804,8 @@ function initializeSimpleList() {
 					break;
 			};
 
-			var func = 'ajax.' + $(this).attr('axn') + $.capitalize(model);
-			if( !window[func] ) {
-				throw('Function ' + func + ' is not registered!');
-			}
-
-			return window[func]($(this)._for(), modifier) & false;
+			var fn = $(this).attr('axn') + $.capitalize(model);
+			return ajax(fn, $(this)._for(), modifier) & false;
 		});
 	});
 };
@@ -949,7 +936,7 @@ function ini_agenda(){
 		dateFormat: 'yy/mm/dd',
 		autoSize: true,
 		showAnim: 'slideDown',
-		buttonImage: BBURL + '/app/images/agendaTools/calendar.gif',
+		buttonImage: IMAGES_URL + '/agendaTools/calendar.gif',
 		buttonImageOnly: true,
 		beforeShow: function(input, inst){
 			var itvl = setInterval(function(){
@@ -1056,7 +1043,7 @@ function ini_activity(){
 
 	$('.closeActivityEntry').each(function(i, btn){
 		$(btn)._for() && $(btn).click(function(){
-			confirm(msg) && ajax.closeActivityEntry($(btn)._for());
+			confirm(msg) && ajax('closeActivityEntry', $(btn)._for());
 		});
 	});
 }
@@ -1112,14 +1099,14 @@ function ini_createTechVisits( data ){
 			}, true);
 
             if (data.id_customer && !data.id_sale) {
-                ajax.tchFormAcceptSale('', data.id_customer);
+                ajax('tchFormAcceptSale', '', data.id_customer);
             } else if(data) {
                 this.fillForm(data, !data.id_sale);
             }
 		},
 		/* data is sent as parameter if provided, otherwise the whole form is sent */
 		search: function(by){
-			this.frm[by] && ajax.tchFormSuggest(by, this.frm[by].val());
+			this.frm[by] && ajax('tchFormSuggest', by, this.frm[by].val());
 		},
 		clearSuggest: function(){
 			$('#tch_suggest').html('');
@@ -1170,7 +1157,7 @@ function ini_createTechVisits( data ){
 			});
 
 			$('#tch_suggest .tch_s_row').click(function(){
-				ajax.tchFormAcceptSale($(this)._for()||'', $(this).attr('cust')||'');
+				ajax('tchFormAcceptSale', $(this)._for()||'', $(this).attr('cust')||'');
 			});
 		},
 		fillForm: function(data, auto){	/* 'auto' means a script called, not the user */
@@ -1264,7 +1251,7 @@ function ini_createTechVisits( data ){
 function ini_editTechVisits( data ){ ini_createTechVisits( data ); };
 
 function ini_techVisitsInfo( id ){
-	var src = 'app/export/pdf/techVisit.php?id=' + id;
+	var src = URL_PUB + '/export/pdf/techVisit.php?id=' + id;
 
 	$('#techVisitsPDF')._src(src + '#toolbar=0&navpanes=0&scrollbar=0');
 	$('#techVisitsPrintPDF')._src(src + '&printer#toolbar=0');
@@ -1279,6 +1266,6 @@ function ini_techVisitsInfo( id ){
 
     // AdminTechNotes
     $('#saveAdminTechNotes').click(function(){
-		ajax.saveAdminTechNotes(id, $('#adminTechNotes textarea').val()||'');
+		ajax('saveAdminTechNotes', id, $('#adminTechNotes textarea').val()||'');
 	});
 };

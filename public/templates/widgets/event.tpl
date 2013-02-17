@@ -11,7 +11,7 @@
 
 	<img class='agenda_eventUser' alt='' title='{$event.creator}' src='{$event.creatorimg}' />
 	<img class='agenda_eventType' alt='' title='{$types[$event.type]}'
-		src='{$BBURL}/app/images/agendaEvents/{if $event.rescheduled}rescheduled/{/if}{$event.type}.png' />
+		src='{$IMAGES_URL}/images/agendaEvents/{if $event.rescheduled}rescheduled/{/if}{$event.type}.png' />
 
 	<span class='agenda_eventInfo'>
 		{if $showDays}{$event.ini|date_format:'d/m/Y, H:i'}
@@ -26,9 +26,9 @@
 
 	<span class='eventTools'>
 	  {if Access::can('editEvent') && $event.canEdit && !$event.closed}
-		<img for='edit'   src='{$BBURL}/app/images/agendaTools/edit.png' title='editar' />
-		<img for='cancel' src='{$BBURL}/app/images/agendaTools/cancel.png' title='cancelar/posponer' />
-		<img for='close'  src='{$BBURL}/app/images/agendaTools/close.png' title='cerrar' />
+		<img for='edit'   src='{$IMAGES_URL}/agendaTools/edit.png' title='editar' />
+		<img for='cancel' src='{$IMAGES_URL}/agendaTools/cancel.png' title='cancelar/posponer' />
+		<img for='close'  src='{$IMAGES_URL}/agendaTools/close.png' title='cerrar' />
 	  {/if}
 	</span>
 </p>

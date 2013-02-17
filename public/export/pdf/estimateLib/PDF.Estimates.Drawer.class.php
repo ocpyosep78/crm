@@ -112,7 +112,7 @@ class PDF_Estimates_Drawer extends PDF_Estimates{
 			# Only 6 images should be printed (max)
 			if( $cnt < 9 && count($imgsPrinted) < 6 && !in_array($item['code'], $imgsPrinted) ){
 				$imgsPrinted[] = $item['code'];
-				$path = "app/images/products/{$item['id_product']}.jpg";
+				$path = IMAGES_URL . "/products/{$item['id_product']}.jpg";
 				$this->FramedImage($path, ($imgX) * 31 + 12.5, 134, 28);
 				$pos = array($this->GetX(), $this->GetY());
 				$this->SetXY(($imgX++) * 31 + 12.5, 165);
@@ -215,8 +215,8 @@ class PDF_Estimates_Drawer extends PDF_Estimates{
 		$this->MultiCell(110, 7, array_shift($pgph));
 
 		# Images
-		$this->Image('app/images/export/server_1.gif', $this->w - 125, 70, 125);
-		$this->Image('app/images/export/server_2.gif', 10, 140, NULL, 130);
+		$this->Image(IMAGES_URL . '/export/server_1.gif', $this->w - 125, 70, 125);
+		$this->Image(IMAGES_URL . '/export/server_2.gif', 10, 140, NULL, 130);
 
 		# Disclaimer
 		$this->SetXY(10, 252);
@@ -248,8 +248,8 @@ class PDF_Estimates_Drawer extends PDF_Estimates{
 		$this->MultiCell(110, 7, array_shift($pgph));
 
 		# Images
-		$this->Image('app/images/export/viewsonic.gif', $this->w - 135, 110, 125);
-		$this->Image('app/images/export/viewsonic_sideview.gif', 10, 115, NULL, 130);
+		$this->Image(IMAGES_URL . '/export/viewsonic.gif', $this->w - 135, 110, 125);
+		$this->Image(IMAGES_URL . '/export/viewsonic_sideview.gif', 10, 115, NULL, 130);
 
 		# Disclaimer
 		$this->SetXY(10, 252);
@@ -298,9 +298,9 @@ class PDF_Estimates_Drawer extends PDF_Estimates{
 
 		# Company's images
 		$this->SetXY(-80, -70);
-		$this->Image('app/images/export/company.jpg', NULL, NULL, 70, 40);
+		$this->Image(IMAGES_URL . '/export/company.jpg', NULL, NULL, 70, 40);
 		$this->SetXY(20, -60);
-		$this->Image('app/images/export/headerLogo.png', NULL, NULL, 70);
+		$this->Image(IMAGES_URL . '/export/headerLogo.png', NULL, NULL, 70);
 
 	}
 

@@ -30,7 +30,7 @@
 
 
 	# Session
-	session_start();
+	@session_start();
 
 	# PHP config
 	putenv( "LANG=spanish" );

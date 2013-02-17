@@ -127,4 +127,9 @@ class Response
 			self::assign($var, constant($var));
 		}
 	}
+
+	public static function reload($url=NULL)
+	{
+		self::js('location.href = ' . ($url ? "'$url'" : 'location.href'));
+	}
 }

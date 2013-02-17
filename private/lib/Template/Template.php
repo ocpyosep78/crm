@@ -1,6 +1,6 @@
 <?php
 
-require_once THIRD_PARTY . '/Smarty/libs/Smarty.class.php';
+require_once PATH_THIRDPARTY . '/Smarty/libs/Smarty.class.php';
 
 
 class Template extends Smarty
@@ -21,16 +21,12 @@ class Template extends Smarty
 		// Import all defined constants to the template scope
 		$this->assign(get_defined_constants(true)['user']);
 
-		// A snapshot of the current page state (group, area, page, etc)
-		$this->assign('pagestate', Access::currentState());
-
 		// Global vars
 		$this->assign('NOW', microtime(true));
 		$this->assign('USER', getSes('user'));
 		$this->assign('USERID', getSes('user'));
 		$this->assign('USERNAME', getSes('name').' '.getSes('lastName'));
 		$this->assign('PROFILE', getSes('profile'));
-		$this->assign('BBURL', BBURL);
 
 		// Debugger
 		$this->assign('errMsgs', []);

@@ -13,7 +13,7 @@
 	define('CORE_LIB', CORE_PRIVATE.'lib/');
 	define('CORE_THIRD_PARTY', CORE_PRIVATE.'third-party/');
 	define('CORE_SCRIPTS', CORE_PRIVATE.'scripts/');
-	define('CORE_SKINS', CORE_PUBLIC.'skins/');
+	define('URL_SKINS', CORE_PUBLIC.'skins/');
 	define('CORE_STATIC', CORE_PRIVATE.'static/');
 	define('CORE_IMAGES', CORE_STATIC.'images/');
 	define('CORE_STYLES', CORE_STATIC.'styles/');

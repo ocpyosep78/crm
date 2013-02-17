@@ -7,79 +7,96 @@ class Controller
 	use Object;
 
 
-	protected static $request_type;     // What's expected to be returned?
-
-	protected static $request;
-	protected static $params;
-
-
 	public static function process()
 	{
-		self::$request_type = 'page';
-
-		// Translate params
-		isset($_GET['params']) || ($_GET['params'] = 'home');
-		$params = explode('/', trim($_GET['params'], '/'));
-
-		self::$request = Sugar::page(array_shift($params), true);
-		self::$params = $params;
-
-		switch (self::$request_type)
+		if (self::ajax())
 		{
-			case 'page':
-				echo self::page();
-				exit(0);
+			// jQuery won't send empty arrays through ajax
+			!empty($_POST['args']) || ($_POST['args'] = []);
 
-			default:
-				throw new InvalidRequestException($type);
+			// For guests, block all ajax calls except 'login'
+			if (!self::logged() && !self::ajax('login'))
+			{
+				Response::reload();
+			}
+			elseif(self::ajax('content'))
+			{
+				db($_POST['args']);
+				$args = $_POST['args'];
+				$page = array_shift($args);
+				Response::html('#main_box', self::page($page, $args, true));
+			}
+			else
+			{
+				call_user_func_array(['Ajax', self::ajax()], $_POST['args']);
+			}
+
+			$response = Template::one()->retrieve('js');
+
+			if (!$response)
+			{
+				$response = ["say('Error: no response returned by server')"];
+			}
+
+			echo json_encode($response);
+		}
+		else
+		{
+			// Translate args
+			!empty($_GET['args']) || ($_GET['args'] = 'home');
+			$args = explode('/', trim($_GET['args'], '/'));
+			$page = Sugar::page(array_shift($args), true);
+
+			echo self::page($page, $args);
+
+			exit(0);
 		}
 	}
 
 	/**
-	 * private string page()
-	 *      Build and return the HTML for #main_box (the actual page content).
+	 * private string page(string $page, array $args)
+	 *      Build and return the HTML for the page.
 	 *
+	 * @param string $page
+	 * @param array $args
 	 * @return string
 	 */
-	private static function page()
+	private static function page($page, $args, $onlyContent=false)
 	{
-		header("Content-Type: text/html; charset=utf8");
-
 		// Import a few constants into the javascript global scope
-		Response::importConst('DEVMODE', 'BBURL');
+		Response::importConst('DEVMODE', 'BBURL', 'IMAGES_URL');
 
 		// Content
 		if (!self::logged())
 		{
 			// No content is to be shown for guests, other than the login screen
-			$content = Template::one()->fetch('login.tpl');
+			$content = Template::one()->fetch(PATH_TPLS . '/login.tpl');
 		}
 		else
 		{
 			// Show menu for all pages unless explicitely told otherwise
 			Response::showMenu();
 
-			$page = self::$request;
 			$fn = "page_{$page}";
-			$params = self::$params;
 
-			if (!is_callable($fn))
+			// Default to page 'home' if page is empty or invalid
+			if (!$page || !is_callable($fn))
 			{
 				$fn = 'page_' . Sugar::page(Sugar::home(), true);
-				$params = [];
+				$args = [];
 			}
 
-			switch (count($params))
+			switch (count($args))
 			{
 				case 0: $fn();
 					break;
-				case 1: $fn($params[0]);
+				case 1: $fn($args[0]);
 					break;
-				case 2: $fn($params[0], $params[1]);
+				case 2: $fn($args[0], $args[1]);
 					break;
-				case 3: $fn($params[0], $params[1], $params[2]);
+				case 3: $fn($args[0], $args[1], $args[2]);
 					break;
-				default: call_user_func_array($fn, $params);
+				default: call_user_func_array($fn, $args);
 					break;
 			}
 
@@ -99,24 +116,28 @@ class Controller
 
 		Template::one()->assign('content', $content);
 
-		// Frame
-		if (self::ajax())
+		// Only content or the whole page?
+		if ($onlyContent)
 		{
 			// Simple wrapper, mainly for javascript plus the content's html
-			$html = Template::one()->fetch(TEMPLATES . '/content.tpl');
+			$html = Template::one()->fetch(PATH_TPLS . '/content.tpl');
 		}
 		else
 		{
+			// A snapshot of the current page state (group, area, page, etc)
+			Template::one()->assign('pagestate', Access::environment($page));
+
 			// Logout button (navbar and menu)
-			Template::one()->assign('img_logout', IMG_PATH . '/navButtons/logout.png');
+			$img_logout = IMAGES_URL . '/navButtons/logout.png';
+			Template::one()->assign(compact('img_logout'));
 
 			// Skin chosen from $_GET, constant, or disabled (in that order)
 			$skin = !empty($_GET['skin'])
 				? $_GET['skin']
 				: ((defined('SKIN') && SKIN) ? SKIN : NULL);
 
-			$tpl = $skin ? (CORE_SKINS . "/{$skin}.css") : TEMPLATES . '/main.tpl';
-			$css = $skin ? (CORE_SKINS . "/{$skin}.css") : STYLES_URL . '/style.css';
+			$tpl = $skin ? (URL_SKINS . "/{$skin}.css") : PATH_TPLS . '/main.tpl';
+			$css = $skin ? (URL_SKINS . "/{$skin}.css") : URL_STYLES . '/style.css';
 
 			Template::one()->assign('css', $css);
 			$html = Template::one()->fetch($tpl);

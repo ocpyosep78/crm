@@ -68,7 +68,7 @@
 	to load the picture for it). By default it contains the most commonly
 	used actions (edit, delete, block) and you shouldn't need to edit it
 	or add more entries in regular lists. If you do, remember you will
-	need to save a picture for it too, in 'app/images/buttons/{$code}.png'
+	need to save a picture for it too, in '{$IMAGES_PATH}/buttons/{$code}.png'
  *
  * $tools							i.e. array('edit', 'delete')
  *	A list of tools to show in each row. These tools need to be defined in
@@ -99,7 +99,7 @@
 /***************
 ** HARDCODED LISTS
 ***************/
-		
+
 		public function salesTypes(){
 
 			return array(

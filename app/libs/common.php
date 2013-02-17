@@ -130,7 +130,7 @@
 
 	function getSkinTpl(){
 
-		$skin = realpath( CORE_SKINS.getSkinName().'.tpl' );
+		$skin = realpath( URL_SKINS.getSkinName().'.tpl' );
 
 		return $skin ? $skin : MAIN_TPL_PATH;
 
@@ -139,7 +139,7 @@
 	function getSkinCss(){
 
 		$skin = getSkinName();
-		return $skin && is_file($css=CORE_SKINS."{$skin}.css") ? $css : CORE_STYLES.'style.css';
+		return $skin && is_file($css=URL_SKINS."{$skin}.css") ? $css : CORE_STYLES.'style.css';
 
 	}
 

@@ -68,7 +68,7 @@
 		firstLoad: true,
 		list: {},
 		lastRead: 0,
-		alertRead: "<img src='{$BBURL}/app/images/buttons/delete.png' alt='quitar' title='quitar de la lista' />",
+		alertRead: "<img src='{$IMAGES_URL}/buttons/delete.png' alt='quitar' title='quitar de la lista' />",
 		request: function(){
 			loggedIn && silentXajax('sync', [loggedIn, {from: sync.lastRead}]);
 		},

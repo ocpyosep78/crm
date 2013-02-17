@@ -200,8 +200,8 @@
 		 */
 		public function getCustImgs()
 		{
-			$generic = IMG_PATH . "/customers/{$this->cust}%s.jpg";
-			$unknown = IMG_PATH . '/customers/unknown.gif';
+			$generic = URL_IMAGES . "/customers/{$this->cust}%s.jpg";
+			$unknown = URL_IMAGES . '/customers/unknown.gif';
 
 			$paths['small'] = is_file($path=sprintf($generic, '')) ? $path : $unknown;
 			$paths['mid'] = is_file($path=sprintf($generic, 'mid')) ? $path : $paths['small'];

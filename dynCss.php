@@ -28,7 +28,7 @@
  * are efficiency problems, accessibility issues (what if the user does not have
  * JS enabled?) and limitations (will a script see what the actual stylesheet
  * looked like before the browser put its hands on it?).
- * 
+ *
  * As in many other fields, the simple answer is usually the right answer. Why
  * not handle these problems BEFORE the client is even aware of them? Any time
  * you want a linear-gradient, you'll have to write one rule for old Opera, one
@@ -36,13 +36,13 @@
  * rule! Why not automate this? Since the fix is on the server side, the sheet
  * will simply be cached as any regular css file, without needing to perform the
  * required actions more than once. So, efficiency will not noticeably suffer.
- * 
+ *
  * In an attempt to achive this goal, dynCss adds the missing rules every time
  * the CSS3 rule is found, and finally adds the PIE behavior file to handle IE
  * issues.
  *
  * The following rules are recognized and 'fixed' by dynCss:
- * 
+ *
  * opacity:xx;          Adds filter:alpha(opacity=xx*100)
  *
  * border-radius:xx;    Adds -moz-border-radius, -webkit-border-radius,
@@ -64,13 +64,13 @@
  * dynCss adds missing semicolons (usually neglected in final props of a rule),
  * strips comments and eliminates all extra white space, to make the stylesheet
  * as light as possible. Serving your content gzipped is of course recommended.
- * 
+ *
  * For debugging purposes, pass a parameter 'preview' in the URL and the sheet
  * will add proper linefeeds to make it humanly readable, after applying all
  * replacements and additions. This way you can see exactly what the stylesheet
  * looks like to the browser, with all added props.
  */
- 
+
 
 
 /**
@@ -79,7 +79,7 @@
  */
 if (!empty($_GET['path'])) {
 
- 
+
     function linearGradients($matches) {
         $keymap = array('css3',         // Proper CSS3 rule, complete, as it was written
                         'property',     // Name of property: background or background-image
@@ -91,11 +91,11 @@ if (!empty($_GET['path'])) {
         foreach ($keymap as $pos => $key) {
             $$key = $matches[$pos];
         }
-        
+
         // Make sure to have a default value for $direction, for legacy syntax
         $direction || ($direction = 'to bottom');
         $directionLegacy = $direction;
-        
+
         // For old syntax, we need the source rather than the target of the gradient
         $dirsOld = array('to '    => '',
                          'top'    => 'bottom',
@@ -103,7 +103,7 @@ if (!empty($_GET['path'])) {
                          'bottom' => 'top',
                          'left'   => 'right');
         $directionOld = str_ireplace(array_keys($dirsOld), array_values($dirsOld), $direction);
-        
+
         // Gecko, Opera, Webkit, start counting from the right instead of the top,
         // and counter-clockwise instead of clockwise, contrary to current spec. See:
         // (https://developer.mozilla.org/en/CSS/linear-gradient#AutoCompatibilityTable)
@@ -112,10 +112,10 @@ if (!empty($_GET['path'])) {
         } else {
             $directionLegacy = $directionOld;
         }
-        
+
         preg_match_all('/([^,]+?(?:\([^)]+\))?)+/', $strStops, $colorMatches);
         $colorStops = $colorStopsOld = $colorMatches[0];
-        
+
         // Get old versions of each colorstop definition where needed
         foreach ($colorStops as $i => &$cs) {
             $opacity = preg_match('/(\d+)%\)/', $cs, $match);
@@ -128,15 +128,15 @@ if (!empty($_GET['path'])) {
         }
         $strColorStops = join(',', $colorStops);
         $strColorStopsOld = join(',', $colorStopsOld);
-        
+
         $plainColor = preg_replace('/ .+$/', '', $colorStopsOld[0]);
         $firstColor = $colorStopsOld[0];
         $lastColor = end($colorStopsOld);
-        
+
         // Old webkit syntax requires direction to be defined by from and to sides/corners
         $dirWkFrom = strstr($directionOld, 'deg') ? '0 0' : $directionOld;
         $dirWkTo = strstr($direction, 'deg') ? '0 100%' : str_replace('to ', '', $direction);
-        
+
         $tpl = "{$property}:{$before}%slinear-gradient(%s,$strColorStopsOld){$after};";
         $rules = array(
             // Fallback if no gradients
@@ -163,10 +163,10 @@ if (!empty($_GET['path'])) {
 
         return join('', $rules);
     }
-    
+
     // Find out where this file is, relative to the document root
     $htc = preg_replace('/^\/*/', '', $_SERVER['SCRIPT_NAME']);
-    
+
     // Read the actual CSS file
     $css = file_get_contents(dirname(__FILE__) . "/{$_GET['path']}");
 
@@ -203,7 +203,7 @@ if (!empty($_GET['path'])) {
         // Add behavior rule (IE) where needed
         '/({[^}]+(border-radius|box-shadow|gradient|shadow)+[^}]+)\}/' => "$1behavior:url({$htc});}",
     );
-    
+
     // For debugging, format stylesheet to be readable
     if (isset($_GET['preview'])) {
         $replacements['/([;{])([^}])/'] = "$1\n    $2";
@@ -217,10 +217,10 @@ if (!empty($_GET['path'])) {
 
     // Trim leading and trailing white space
     $css = trim($css);
-    
+
     header('Content-Type: text/css');
     echo $css;
-    
+
     exit(0);
 }
 

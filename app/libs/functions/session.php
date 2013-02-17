@@ -16,7 +16,7 @@
 	function getSes( $key ){
 		return isset($_SESSION['crm'][$key]) ? $_SESSION['crm'][$key] : NULL;
 	}
-	
+
 	function clearSes( $key ){
 		regSes($key, NULL);
 	}
@@ -45,12 +45,17 @@
 		}
 		else return showStatus('Nombre de usuario o contraseña incorrectos.');
 	}
-	
+
 	function logout($msg='Su sesión fue cerrada correctamente.', $type=1){
 		saveLog('loginLogout', 'out');
+
+		setcookie('crm_user', '');
 		$_SESSION['crm'] = array();
+
 		oNav()->clear();
-		oPermits()->clear();
 		oNav()->queueMsg($msg, $type);
-		return addScript("location.href = 'index.php';");
+
+		oPermits()->clear();
+
+		return addScript("location.href = '';");
 	}

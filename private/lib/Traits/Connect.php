@@ -95,13 +95,17 @@ trait Connect
 				$Error->column = 'Unknown';
 		}
 
-		$log = "\r\n" . date('Y-m-d H:i:s') . " [{$Error->errno}]: {$Error->error})\r\n" .
-		       "SQL: {$sql}\r\n";
-
-		if ($fp=@fopen(LOGS_PATH . '/logSQL.txt', 'a'))
+		if ($Error->errno)
 		{
-			fwrite($fp, $log);
-			fclose($fp);
+			$log = "\r\n" . date('Y-m-d H:i:s')
+			     . " [{$Error->errno}]: {$Error->error})\r\n"
+			     . "SQL: {$sql}\r\n";
+
+			if ($fp=@fopen(LOGS_PATH . '/logSQL.txt', 'a'))
+			{
+				fwrite($fp, $log);
+				fclose($fp);
+			}
 		}
 
 		return $Error;

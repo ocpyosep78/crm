@@ -147,7 +147,7 @@ function createProducts($atts)    // false = not new (editing)
 
 	# Save picture if one was chosen and data was stored
 	if( $img['size'] ){
-		if( !move_uploaded_file($img['tmp_name'], "app/images/products/{$id}.jpg") ){
+		if( !move_uploaded_file($img['tmp_name'], IMAGES_PATH . "/products/{$id}.jpg") ){
 			$msg = "No se pudo guardar la imagen. Inténtelo nuevamente.";
 			return FileForm::addResponse("say('{$msg}');");
 		}

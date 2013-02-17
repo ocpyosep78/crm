@@ -98,20 +98,19 @@ class Access
 	}
 
 	/**
-	 * static array currentState()
+	 * static array environment(string $pageid)
 	 *      Read all relevant info related to the current page state: the area,
 	 * page attrs, menu group, etc.
 	 *
+	 * @param string $pageid
 	 * @return array
 	 */
-	public static function currentState()
+	public static function environment($pageid)
 	{
 		static $state;
 
-		if (!$state)
+		if (empty($state[$pageid]))
 		{
-			# Current page and input attributes
-			$pageid = oNav()->currentPage();
 			$areaid = self::pageArea($pageid);
 
 			// All areas and pages
@@ -136,9 +135,11 @@ class Access
 
 			$state = compact('areas', 'pages', 'allGroups', 'groups',
 			                 'areaPages', 'pageid', 'page', 'areaid', 'area');
+
+			$states[$pageid] = $state;
 		}
 
-		return $state;
+		return $states[$pageid];
 	}
 
 
@@ -180,8 +181,9 @@ class Access
 
 		foreach ($areas as $code => &$area)
 		{
-			$pattern = IMG_PATH . "/navButtons/{$code}.{png,gif}";
-			$area['image'] = current(glob($pattern, GLOB_BRACE));
+			$pattern = IMAGES_PATH . "/navButtons/{$code}.{png,gif}";
+			$image = current(glob($pattern, GLOB_BRACE));
+			$area['image'] = str_replace(BASE, '', $image);
 		}
 
 		return $areas;
