@@ -39,7 +39,7 @@
 						<textarea{foreach from=$x.atts key=att item=val} {$att}='{$val}'{/foreach}
 						>{$x.atts.value}</textarea>
 					{elseif $x.type == 'combo'}
-						<select{foreach from=$x.atts key=att item=val} {$att}='{$val}'{/foreach} class='input' />
+						<select{foreach from=$x.atts key=att item=val} {$att}='{$val}'{/foreach} class='input'>
 							{foreach from=$x.value key=value item=text}
 								<option value='{$value}'{if $x.selected == $value} selected='selected'{/if}>
 									{$text}

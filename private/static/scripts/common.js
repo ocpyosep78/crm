@@ -248,10 +248,13 @@ function hideMenu(){ toggleMenu(false); }
 
 function getPage() {
 	var args = $.makeArray(arguments),
-	    shift = (args.shift()||{}).shiftKey,
+	    kevt = args.shift()||{},
+		shift = kevt.shiftKey,
+		ctrl = kevt.ctrlKey,
 		page = args.shift();
 
-	ajax('content', page, args, shift);
+	// string 'content', object (page, shift, ctrl), array function_args
+	ajax('content', {page: page, shift: shift, ctrl: ctrl}, args.shift());
 }
 
 // Initialize loaded page and events associated to new elements in it

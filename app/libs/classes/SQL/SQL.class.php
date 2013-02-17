@@ -11,18 +11,18 @@
 
 /*
 	Methods that use Connection's modify() method, return an AnswerSQL object.
-	
+
 	This object contains the following public attributes (note to self: outdated list):
 		* msg	/> A string personalized message (defaults to '')
 		* code	/> Either true or false
 		* rows	/> mysql_affected_rows() returned by the query
-		
+
 	The personalized msg is set by assigning a string to each property, using:
 		* ->setErrMsg( 'error message to print if query fails' );
 		* ->setOkMsg( 'success message to print if query succeeds' );
-		
+
 */
-	
+
 	require_once( CONNECTION_PATH );
 
 
@@ -31,7 +31,7 @@
 		/****************************************
 		***** T A B L E   I T E M   L I S T S
 		****************************************/
-		
+
 		public function getCustomers($filters=array(), $show='all'){
 			# Status filter
 			if( $show == 'customers' ) $statusFilter = 'AND NOT ISNULL(`since`)';
@@ -62,7 +62,7 @@
 		/****************************************
 		***** U S E R S
 		****************************************/
-		
+
 		public function getUser( $user ){
 			$sql = "SELECT	`u`.*,
 							`p`.`profile`,
@@ -73,7 +73,7 @@
 					WHERE `u`.`user` = '{$user}'";
 			return $this->query($sql, 'row');
 		}
-		
+
 		public function getLocations(){
 			$sql = "SELECT	`id_location`,
 							`location`
@@ -85,7 +85,7 @@
 		/****************************************
 		***** C U S T O M E R S
 		****************************************/
-		
+
 		public function getCustomer( $cust ){
 			$sql = "SELECT	`c`.*,
 							`u`.`name`		AS 'seller_name',
@@ -104,7 +104,7 @@
 		/****************************************
 		***** P R O D U C T S
 		****************************************/
-		
+
 		public function getProduct( $id ){
 			$sql = "SELECT	`p`.*,
 							`pe`.*,
@@ -118,7 +118,7 @@
 					WHERE `p`.`id_product` = '{$id}'";
 			return $this->query($sql, 'row');
 		}
-		
+
 		public function getProductSuggest( $text ){
 			$sql = "SELECT	`id_product` AS 'id',
 							`pc`.`type`,
@@ -139,7 +139,7 @@
 		/****************************************
 		***** E S T I M A T E S
 		****************************************/
-		
+
 		public function isProductUsedInEstimates( $id ){
 			$sql = "SELECT	`e`.`estimate`
 					FROM `estimates_detail` `d`
@@ -147,7 +147,7 @@
 					WHERE `d`.`id_product` = '{$id}'";
 			return $this->query($sql, 'col');
 		}
-		
+
 		public function getEstimate( $id ){
 			$sql = "SELECT	`e`.*,
 							`c`.`customer`,
@@ -158,7 +158,7 @@
 					WHERE `e`.`id_estimate` = '{$id}'";
 			return $this->query($sql, 'row');
 		}
-		
+
 		public function getEstimatesDetail( $filters=array() ){
 			$sql = "SELECT	`e`.`id_estimate`,
 							`e`.`estimate` AS 'name',
@@ -172,7 +172,7 @@
 					ORDER BY `e`.`estimate`";
 			return $this->query($sql, 'named', 'id_estimate');
 		}
-		
+
 		public function getEstimateDetail( $id ){
 			$sql = "SELECT	`d`.`id_product` AS 'id',
 							`pc`.`type`,
@@ -188,7 +188,7 @@
 					WHERE `d`.`id_estimate` = '{$id}'";
 			return $this->query($sql, 'array');
 		}
-		
+
 		/**
 		 */
 		public function estimateProducts( $id ){
@@ -206,7 +206,7 @@
 					ORDER BY `name`, `pc`.`type`";
 			return $this->query($sql, 'named', 'id_product');
 		}
-		
+
 		public function getInstallPlan( $id ){
 			$sql = "SELECT	`ep`.*,
 							`ep`.`id_product`,
@@ -222,7 +222,7 @@
 					AND `ep`.`id_estimate` = '{$id}'";
 			return $this->query($sql, 'array');
 		}
-		
+
 		public function getRemainingProducts($id_estimate, $id_product){
 			$sql = "SELECT IFNULL(`ed`.`amount` - IFNULL(SUM(`ep`.`amount`), 0), 0)
 					FROM `estimates_detail` `ed`
@@ -231,13 +231,13 @@
 					AND `id_product` = '{$id_product}'";
 			return $this->query($sql, 'field');
 		}
-		
+
 		public function removeEntryFromPlan( $id ){
 			$sql = "DELETE FROM `estimates_plan`
 					WHERE `id_plan` = '{$id}'";
 			return $this->modify( $sql );
 		}
-		
+
 		/**
 		 * Estimates available to be added to a given pack
 		 */
@@ -254,7 +254,7 @@
 		/****************************************
 		***** T E C H N I C A L
 		****************************************/
-		
+
 		public function getCustomersForService($filters=array()){
 			$this->fixFilters($filters, array(
 				'phone'		=> 'c.phone',
@@ -272,7 +272,7 @@
 					WHERE {$this->array2filter($filters)}";
 			return $this->query($sql, 'array');
 		}
-		
+
 		public function getCustomerInstalls( $id ){
 			$sql = "SELECT	`l`.`id_sale` AS 'onSale',
 							`l`.`invoice`,
@@ -289,7 +289,7 @@
 					AND `l`.`id_customer` = '{$id}'";
 			return $this->query($sql, 'array');
 		}
-		
+
 		public function getInstallForNewService( $id ){
 			$sql = "SELECT	'' AS 'invoice',		/* overwrite sales' invoice */
 							`c`.*,
@@ -309,7 +309,7 @@
 					WHERE `l`.`id_sale` = '{$id}'";
 			return $this->query($sql, 'row');
 		}
-		
+
 		public function getTechVisit( $id ){
 			$sql = "SELECT	`l`.*,
 							`c`.*,
@@ -333,7 +333,7 @@
 		/****************************************
 		***** A G E N D A
 		****************************************/
-		
+
 		public function getEventsInfo($id=NULL, $range=array(), $filters=array()){
 			# Accept single days as range and format it correctly (same ini as end)
 			if( is_string($range) ) $range = array('ini' => $range, 'end' => $range);
@@ -366,24 +366,24 @@
 					AND {$this->array2filter($filters, 'AND', '=')}
 					AND {$usersFilter}
 					ORDER BY `e`.`ini`";
-			
+
 			$events = $this->query($sql, 'array');
-			
+
 			foreach ($events as &$event)
 			{
 				$event['creatorimg'] = $this->getUserImg($event['creator']);
 			}
-			
-			
+
+
 			return (!is_null($id) ? array_shift($events) : $events);
 		}
-		
+
 		public function getUserImg($userid)
 		{
 			$path = "app/images/users/{$userid}.png";
 			return is_file($path) ? $path : 'app/images/noavatar.png';
 		}
-		
+
 		public function getUserEvents($id, $type=NULL){
 			$conds = array(	'by'	=> "`e`.`creator` = '{$id}'",
 							'for'	=> "`e`.`target` = '{$id}'");
@@ -399,7 +399,7 @@
 					ORDER BY `e`.`ini` DESC";
 			return $this->query($sql, 'array');
 		}
-		
+
 		public function getCustomerEvents( $id ){
 			$sql = "SELECT	`e`.*,
 							'' AS `customer`,		/* for event.tpl widget */
@@ -412,14 +412,14 @@
 					ORDER BY `e`.`ini` DESC";
 			return $this->query($sql, 'array');
 		}
-		
+
 		public function getEventEditions( $id ){
 			$sql = "SELECT *
 					FROM `events_edition`
 					WHERE `id_event` = '{$id}'";
 			return $this->query($sql, 'array');
 		}
-		
+
 		public function seekReminders(){
 			$sql = "SELECT	`ru`.*,
 							`e`.`id_event`,
@@ -439,26 +439,26 @@
                     WHERE `id_sale` = '{$id}'";
             return $this->query($sql, 'field');
         }
-		
+
 
 /***************
 ** M O D I F Y   M E T H O D S
 ****************
 ** (INSERT, UPDATE)
 ***************/
-		
+
 		public function saveLastAccessDate( $user ){
 			$sql = "UPDATE `_users`
 					SET `last_access` = CURRENT_TIMESTAMP
 					WHERE `user` = '{$user}'";
 			return $this->modify( $sql );
 		}
-		
+
 		public function createUsers( $data ){
 			$data['pass'] = md5( $data['pass'] );
 			return $this->modify( $this->array2insSQL('_users', $data) );
 		}
-		
+
 		public function editUsers( $data ){
 			$assignments = $this->array2updSQL( $data );
 			$sql = "UPDATE `_users`
@@ -467,7 +467,7 @@
 					AND `id_profile` >= '".getSes('id_profile')."'";
 			return $this->modify( $sql );
 		}
-		
+
 		public function blockUsers($user, $unblock=false){
 			$block = intval(!$unblock);
 			$sql = "UPDATE `_users`
@@ -475,7 +475,7 @@
 					WHERE `user` = '{$user}'";
 			return $this->modify( $sql );
 		}
-		
+
 		public function editCustomers( $data ){
 			$assignments = $this->array2updSQL( $data );
 			$sql = "UPDATE `customers`
@@ -483,7 +483,7 @@
 					WHERE `id_customer` = '{$data['id_customer']}'";
 			return $this->modify( $sql );
 		}
-		
+
 		public function createEstimates($data, $products){
 			$this->BEGIN();		/* Start transaction, estimates require a detail to be correctly saved too */
 			$ans1 = $this->modify( $this->array2insSQL('estimates', $data) );
@@ -493,7 +493,7 @@
 			if( $ans2->error ) return $this->ROLLBACK( $ans2 );		/* Cancel transaction and return */
 			return $this->COMMIT( $ans1 );							/* Return newly created estimate's ID */
 		}
-		
+
 		public function updateEstimates($data, $products, $id){
 			$this->BEGIN();
 			# Update entry in table estimates
@@ -508,7 +508,7 @@
 			if( $ans3->error ) return $this->ROLLBACK( $ans3 );
 			return $this->COMMIT( $ans1 );
 		}
-		
+
 		public function createEvent($data, $info){
 			$ans1 = $this->insert($data, 'events');
 			if( !$ans1->error && $info['id_customer'] ){
@@ -519,7 +519,7 @@
 			}
 			return $ans1;
 		}
-		
+
 		public function editEvent($data, $info){
 			$id = $data['id_event'] = $info['id_event'];
 			$ans1 = $this->update($data, 'events', array('id_event'));
@@ -536,7 +536,7 @@
 			$this->insert($info['lastEdit'], 'events_edition');
 			return $ans1;
 		}
-		
+
 		public function closeAgendaEvent( $data ){
 			return $this->modify( $this->array2insSQL('events_results', $data) );
 		}
@@ -551,23 +551,23 @@
 /****************************************
 ***** L O G S   A N D   A L E R T S
 ****************************************/
-		
+
 		public function isAlertActive( $id ){
 			$sql = "SELECT `inUse`
 					FROM `alerts_types`
 					WHERE `id_type` = '{$id}'";
 			return $this->query($sql, 'field');
 		}
-		
+
 		public function registerLog($table, $data){
 			return $this->modify( $this->array2insSQL($table, $data) );
 		}
-		
+
 		public function getMostRecentLog(){
 			$sql = "SELECT MAX(`id_log`) FROM `logs`";
 			return $this->query($sql, 'field');
 		}
-		
+
 		public function removeOldAlerts($user, $keep=20){
 			$sql = "SELECT `id_log`
 					FROM `alerts_unread`
@@ -580,7 +580,7 @@
 					AND `id_log` NOT IN ({$newest})";
 			return $this->modify( $sql );
 		}
-		
+
 		public function removeOldLogs( $maxLogs=10000 ){
 			$sql = "SELECT MAX(`id_log`)
 					FROM `alerts_unread`";
@@ -589,7 +589,7 @@
 					WHERE `id_log` < {$max}";
 			return $this->modify( $sql );
 		}
-		
+
 		/**
 		 * Get all unread alerts from logs table, starting from the last
 		 * alert read by the user, and dump it in table alerts_unread.
@@ -613,14 +613,14 @@
 					ORDER BY `id_log`";
 			return $this->modify( $sql );
 		}
-		
+
 		public function updateLastSeenLog($user, $lastSeenLog){
 			$sql = "UPDATE `_users`
 					SET `lastSeenLog` = '{$lastSeenLog}'
 					WHERE `user` = '{$user}'";
 			return $this->modify( $sql );
 		}
-		
+
 		public function getUserAlerts($user, $startingAt=0){
 			$sql = "SELECT * FROM(
 						SELECT `l`.*
@@ -635,27 +635,27 @@
 					ORDER BY `id_log`";
 			return $this->query($sql, 'array');
 		}
-		
+
 		public function removeAlert( $id ){
 			$sql = "DELETE FROM `alerts_unread`
 					WHERE `user` = '".getSes('user')."'
 					AND `id_log` = '{$id}'";
 			return $this->modify( $sql );
 		}
-		
+
 		public function removeAllAlerts( $user ){
 			$sql = "DELETE FROM `alerts_unread`
 					WHERE `user` = '{$user}'";
 			return $this->modify( $sql );
 		}
-			
+
 
 /***************
 ** M O D I F Y   M E T H O D S
 ****************
 ** (DELETE)
 ***************/
-		
+
 		public function deleteUsers( $user ){
 			return $this->blockUsers($user);
 			$sql = "DELETE FROM `_users`
@@ -663,21 +663,21 @@
 					LIMIT 1";
 			return $this->modify( $sql );
 		}
-		
+
 		public function deleteCustomers( $id ){
 			$sql = "DELETE FROM `customers`
 					WHERE `id_customer` = '{$id}'
 					LIMIT 1";
 			return $this->modify( $sql );
 		}
-		
+
 		public function deleteProducts( $id ){
 			$sql = "DELETE FROM `_products`
 					WHERE `id_product` = '{$id}'
 					LIMIT 1";
 			return $this->modify( $sql );
 		}
-		
+
 		public function deleteEstimates( $id ){
 			$this->BEGIN();
 			$sql = "DELETE FROM `estimates_detail`
@@ -695,7 +695,7 @@
 			if( $ans3->error ) return $this->ROLLBACK( $ans3 );
 			return $this->COMMIT( $ans1 );
 		}
-		
+
 
 /***************
 ** A P P   &   S E C U R I T Y
@@ -711,7 +711,7 @@
 					LIMIT 1";
 			return $this->query($sql, 'field');
 		}
-		
+
 		public function attemptLogin($user, $pass){
 			$sql = "SELECT	`u`.*,
 							`p`.`profile`,
@@ -723,5 +723,5 @@
 					AND `u`.`pass` = MD5('{$pass}')";
 			return $this->query($sql, 'row');
 		}
-		
+
 	}

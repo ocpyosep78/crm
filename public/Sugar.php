@@ -4,8 +4,9 @@ class Sugar
 {
 
 	static $pages = [
-		'agenda' => 'agenda_en_español',
-		'users'  => 'usuarios',
+		'agenda'    => 'agenda',
+		'editEvent' => 'editarEvento',
+		'users'     => 'usuarios',
 	];
 
 	/**

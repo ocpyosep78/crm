@@ -45,7 +45,7 @@
 				return showStatus("Su cuenta no posee permisos para acceder a esta página{$detail}.");
 			}
 
-			$this->code = time().microtime();
+			$this->code = (string)time().microtime(true);
 			$this->cache('page', $page);
 			$this->cache('atts', $atts);
 
@@ -300,7 +300,7 @@
 		 */
 		public function genNavCode(){
 
-			return time().microtime();
+			return (string)time().microtime(true);
 
 		}
 

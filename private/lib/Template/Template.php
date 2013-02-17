@@ -28,6 +28,8 @@ class Template extends Smarty
 		$this->assign('USERNAME', getSes('name').' '.getSes('lastName'));
 		$this->assign('PROFILE', getSes('profile'));
 
+		$this->assign('Builder', $GLOBALS['Builder']);
+
 		// Debugger
 		$this->assign('errMsgs', []);
 	}

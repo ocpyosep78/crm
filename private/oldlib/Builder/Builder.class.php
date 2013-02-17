@@ -11,6 +11,8 @@ function getBuilderObject($obj, $code=NULL){
 
 }
 
+function oLists($code=NULL)			{	return getBuilderObject('Lists', $code);		}		/* DEPRECATED */
+
 function oStats( $code=NULL )		{	return getBuilderObject('Stats', $code);		}
 function oFormTable( $code=NULL )	{	return getBuilderObject('FormTable', $code);	}
 

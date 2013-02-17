@@ -1,5 +1,99 @@
 <?php
 
+/**
+ * Alias to page_editEvent
+ */
+function page_createEvent($id=NULL, $customerid=NULL)
+{
+	return page_editEvent($id, $customerid);
+}
+
+function page_editEvent($id=NULL, $customerid=NULL)
+{
+	$event = $id ? oSQL()->getEventsInfo($id) : [];
+
+	if ($id && empty($event))
+	{
+		return Response::page('agenda', [], 'Evento no encontrado.');
+	}
+
+	// Fix data to fit fields organization upon editing
+	if (!empty($event))
+	{
+		$event['iniDate'] = substr($event['ini'], 0, 10);
+		$event['iniTime'] = substr($event['ini'], 11, 5);
+		$event['endTime'] = $event['end'] ? substr($event['end'], 11, 5) : '';
+		unset($event['ini'], $event['end']);
+	}
+	elseif (!empty($customerid))
+	{
+		$event['id_customer'] = $customerid;
+	}
+
+	$users = View::get('User')->getHashData();
+	$customers = View::get('Customer')->getHashData();
+	Template::one()->assign(compact('users', 'customers'));
+
+	# Reminders
+	$remindees = [];
+
+	if ($id && $event['id_reminder'])
+	{
+		$filter = ['id_reminder' => $event['id_reminder']];
+		$remindees = oSQL()->doselect('reminders_users', 'user', $filter, 'col');
+	}
+	else
+	{
+		$event['reminder'] = $id ? 0 : 30;
+	}
+
+	Template::one()->assign('reminder', $event['reminder']);
+	Template::one()->assign('remindees', $remindees);
+
+	# Block required input
+	oFormTable()->clear();
+	oFormTable()->setPrefix('evt_');
+	oFormTable()->addTitle('Parámetros del Evento');
+	oFormTable()->addInput('Fecha', ['class' => 'input calendar',
+	                                 'value' => date('Y-m-d')]);
+	oFormTable()->addInput('Hora Inicio', ['id' => 'iniTime']);
+	oFormTable()->addInput('Hora Fin', ['id' => 'endTime']);
+	oFormTable()->addCombo('Tipo', agendaEventTypes(), ['id' => 'type']);
+	oFormTable()->addArea('Descripción', ['id'    => 'event',
+	                                      'style' => 'height:140px; width:320px;']);
+
+	// Fill table with values (editing)
+	$id && oFormTable()->fillValues($event);
+	Template::one()->assign('required', oFormTable()->getTemplate());
+
+	// Block optional input
+	oFormTable()->clear();
+	oFormTable()->setPrefix('evt_');
+	oFormTable()->addTitle('Parámetros Opcionales');
+	oFormTable()->addCombo('Usuario Asignado',
+	                       ['(sin especificar)'] + $users,
+	                       ['id' => 'target']);
+	oFormTable()->addCombo('Cliente relacionado',
+	                       ['(sin especificar)'] + $customers,
+	                       ['id' => 'id_customer']);
+
+	// Fill table with values (editing)
+	$event && oFormTable()->fillValues($event);
+	Template::one()->assign('optional', oFormTable()->getTemplate());
+
+	Template::one()->assign('id_event', $id ? $id : '');
+
+	return Response::content('home/editEvent.tpl');
+}
+
+
+
+
+
+
+
+
+
 function page_editAcc()
 {
 	$user = oSQL()->getUser(getSes('user'));
@@ -27,82 +121,6 @@ function page_editAcc()
 	# Add commands and actions to Xajax response object
 	oNav()->updateContent( oFormTable()->getTemplate(), true );
 	return addScript("\$('#editAcc_oldPass').focus();");
-
-}
-
-function page_createEvent($id=NULL, $customerid=NULL)
-{
-	return page_editEvent($id, $customerid);
-}
-
-function page_editEvent($id=NULL, $customerid=NULL)
-{
-	$event = $id ? oSQL()->getEventsInfo($id) : array();
-	if($id && empty($event)) return oNav()->getPage('agenda', array(), 'Evento no encontrado.');
-
-	if( !empty($event) ){		# Fix data to fit fields organization upon editing
-		$event['iniDate'] = substr($event['ini'], 0, 10);
-		$event['iniTime'] = substr($event['ini'], 11, 5);
-		$event['endTime'] = $event['end'] ? substr($event['end'], 11, 5) : '';
-		unset($event['ini'], $event['end']);
-	}
-	elseif (!empty($customerid)){
-		$event['id_customer'] = $customerid;
-	}
-
-	$users = View::get('User')->getHashData();
-	Template::one()->assign('users', $users);
-
-	# Reminders
-	$remindees = array();
-	if( $id && $event['id_reminder'] ){
-		$filter = array('id_reminder' => $event['id_reminder']);
-		$remindees = oSQL()->doselect('reminders_users', 'user', $filter, 'col');
-	}
-	else $event['reminder'] = $id ? 0 : 30;
-	Template::one()->assign('reminder', $event['reminder']);
-	Template::one()->assign('remindees', $remindees);
-
-	# Block Datos Requeridos
-	oFormTable()->clear();
-	oFormTable()->setPrefix('evt_');
-	oFormTable()->addTitle('Parámetros del Evento');
-	oFormTable()->addInput('Fecha', array(
-		'id' => 'iniDate',
-		'class' => 'input calendar',
-		'value' => date('Y-m-d'))
-	);
-	oFormTable()->addInput('Hora Inicio', array('id' => 'iniTime'));
-	oFormTable()->addInput('Hora Fin', array('id' => 'endTime'));
-	oFormTable()->addCombo('Tipo',
-		agendaEventTypes(),
-		array('id' => 'type'));
-	oFormTable()->addArea('Descripción', array(
-		'id'	=> 'event',
-		'style'	=> 'height:140px; width:320px;'
-	) );
-	if( $id ) oFormTable()->fillValues( $event );		# Fill table with values (editing)
-	Template::one()->assign('required', oFormTable()->getTemplate());
-
-	# Block Configuración avanzada
-	oFormTable()->clear();
-	oFormTable()->setPrefix('evt_');
-	oFormTable()->addTitle('Parámetros Opcionales');
-	oFormTable()->addCombo('Usuario Asignado',
-		array('(sin especificar)') + $users,
-		array('id' => 'target'));
-	oFormTable()->addCombo('Cliente relacionado',
-		array('(sin especificar)') + oLists()->customers(),
-		array('id' => 'id_customer'));
-
-	if( $event ) oFormTable()->fillValues( $event );		# Fill table with values (editing)
-
-
-	Template::one()->assign('optional', oFormTable()->getTemplate());
-
-	Template::one()->assign('id_event', $id ? $id : '');
-
-	return oNav()->updateContent('home/editEvent.tpl');
 
 }
 

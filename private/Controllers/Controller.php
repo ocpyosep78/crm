@@ -21,10 +21,11 @@ class Controller
 			}
 			elseif(self::ajax('content'))
 			{
-				db($_POST['args']);
 				$args = $_POST['args'];
-				$page = array_shift($args);
-				Response::html('#main_box', self::page($page, $args, true));
+				$page = array_shift($args)['page'];
+				$atts = array_shift($args);
+
+				Response::content(self::page($page, $atts, true), true);
 			}
 			else
 			{
@@ -45,8 +46,8 @@ class Controller
 			// Translate args
 			!empty($_GET['args']) || ($_GET['args'] = 'home');
 			$args = explode('/', trim($_GET['args'], '/'));
-			$page = Sugar::page(array_shift($args), true);
 
+			$page = Sugar::page(array_shift($args), true);
 			echo self::page($page, $args);
 
 			exit(0);
@@ -124,6 +125,8 @@ class Controller
 		}
 		else
 		{
+			Response::say();
+
 			// A snapshot of the current page state (group, area, page, etc)
 			Template::one()->assign('pagestate', Access::environment($page));
 

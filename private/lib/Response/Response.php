@@ -37,22 +37,32 @@ class Response
 	 */
 	public static function html($selector, $html, $append=0)
 	{
-		$html = addslashes($html);
+		$html = preg_replace('/[\n\r]/', '\n', '"' . addslashes($html) . '"');
 
 		if ((int)$append < 0)
 		{
-			$html = "$('{$selector}').html() + '{$html}'";
+			$html = "$('{$selector}').html() + {$html}";
 		}
 		elseif ((int)$append > 0)
 		{
-			$html = "'{$html}' + $('{$selector}').html()";
-		}
-		else
-		{
-			$html = "'{$html}'";
+			$html = "{$html} + $('{$selector}').html()";
 		}
 
-		return self::js("$('{$selector}').html({$html})");
+		self::js("$('{$selector}').html({$html})");
+	}
+
+	/**
+	 * static void content(string $x[, bool $isHtml = false])
+	 *      Update content (#main_box div).
+	 *
+	 * @param string $x         Either a template name/path or directly html
+	 * @param bool $isHtml      Whether $x is the html or just a template path
+	 * @return void
+	 */
+	public static function content($x, $isHtml=false)
+	{
+		$html = $isHtml ? $x : Template::one()->fetch($x);
+		self::html('#main_box', $html);
 	}
 
 	public static function call()
@@ -63,7 +73,7 @@ class Response
 		$args = array_map(array(get_class(), 'php2js'), $args);
 		$str_args = join(', ', $args);
 
-		return self::js("{$fn}({$str_args})");
+		self::js("{$fn}({$str_args})");
 	}
 
 	public static function php2js($val)
@@ -88,36 +98,47 @@ class Response
 		return $val;
 	}
 
-	public static function say($msg, $type='', $img='')
+	public static function say($msg=NULL, $type='', $img='')
 	{
-		return self::call('say', $msg, $type, $img);
+		if (is_null($msg))
+		{
+			empty($_SESSION['say'])
+				? false
+				: call_user_func_array('self::say', $_SESSION['say']);
+			return ($_SESSION['say'] = NULL);
+		}
+
+		self::call('say', $msg, $type, $img);
+	}
+
+	public static function sayLater($msg, $type='', $img='')
+	{
+		$_SESSION['say'] = [$msg, $type, $img];
 	}
 
 	public static function alert($alert)
 	{
-		$alert = addslashes($alert);
-		return self::call('alert', $alert);
+		self::call('alert', addslashes($alert));
 	}
 
 	public static function showMenu()
 	{
-		return self::call('showMenu');
+		self::call('showMenu');
 	}
 
 	public static function hideMenu()
 	{
-		return self::call('hideMenu');
+		self::call('hideMenu');
 	}
 
 	public static function debug($msg)
 	{
-		$msg = addslashes($msg);
-		return self::call('debug', $msg);
+		self::call('debug', addslashes($msg));
 	}
 
 	public static function assign($var, $val)
 	{
-		return self::js("{$var} = " . self::php2js($val));
+		self::js("{$var} = " . self::php2js($val));
 	}
 
 	public static function importConst()
@@ -130,6 +151,18 @@ class Response
 
 	public static function reload($url=NULL)
 	{
+		if (!is_null($url))
+		{
+			$url = trim($url, '/');
+			(strpos(BBURL, $url) !== 0) && ($url = BBURL . '/' . $url);
+		}
+
 		self::js('location.href = ' . ($url ? "'$url'" : 'location.href'));
+	}
+
+	public static function page($page, $atts=[], $msg='', $msgtype=0, $img='')
+	{
+		$msg && self::sayLater($msg, $msgtype, $img);
+		self::reload($page); # TODO : load only content (not page reload)
 	}
 }
