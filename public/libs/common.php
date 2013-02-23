@@ -416,21 +416,27 @@ function loggedIn()
 	return getSes('user');
 }
 
-function acceptLogin($info)
+function acceptLogin($info, $persist=true)
 {
 	$ip = $_SERVER['REMOTE_ADDR'];
 
-	if (in_array(substr($ip, 0, 3), array('192', '127')))
+	if ($persist)
 	{
 		$cookie = sha1(time() . rand(1, time()));
 		$expire = time() + (3600*24*30);
 		setcookie('crm_user', "{$info['user']}{$cookie}", $expire);
 	}
-	elseif ($fp=fopen(LOGS_PATH . '/remoteAccess.txt', 'a'))
+	elseif (!in_array(substr($ip, 0, 3), array('192', '127')))
 	{
-		$date = date('d/m/Y H:i:s');
-		$log = "{$date}: Usuario {$info['user']} loguea desde {$ip}\n\n";
-		fwrite($fp, $log) & fclose($fp);
+		$fp = @fopen(LOGS_PATH . '/remoteAccess.txt', 'a');
+
+		if ($fp)
+		{
+			$date = date('d/m/Y H:i:s');
+			$log = "{$date}: Usuario {$info['user']} loguea desde {$ip}\n\n";
+			@fwrite($fp, $log);
+			@fclose($fp);
+		}
 	}
 
 	oSQL()->saveLastAccess($info['user'], isset($cookie) ? $cookie : NULL);

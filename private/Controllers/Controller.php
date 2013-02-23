@@ -12,7 +12,7 @@ class Controller
 		if (self::ajax())
 		{
 			// jQuery won't send empty arrays through ajax
-			!empty($_POST['args']) || ($_POST['args'] = []);
+			$args = self::readAjaxArgs();
 
 			// For guests, block all ajax calls except 'login'
 			if (!self::logged() && !self::ajax('login'))
@@ -21,7 +21,6 @@ class Controller
 			}
 			elseif(self::ajax('content'))
 			{
-				$args = $_POST['args'];
 				$page = array_shift($args)['page'];
 				$atts = array_shift($args);
 
@@ -29,7 +28,7 @@ class Controller
 			}
 			else
 			{
-				call_user_func_array(['Ajax', self::ajax()], $_POST['args']);
+				call_user_func_array(['Ajax', self::ajax()], $args);
 			}
 
 			$response = Template::one()->retrieve('js');
@@ -147,6 +146,26 @@ class Controller
 		}
 
 		return $html;
+	}
+
+	private static function readAjaxArgs($args=NULL)
+	{
+		if (is_null($args))
+		{
+			$args = empty($_POST['args']) ? [] : json_decode($_POST['args']);
+		}
+
+		if (!is_scalar($args))
+		{
+			foreach ((array)$args as $k => $arg)
+			{
+				$newargs[$k] = self::readAjaxArgs($arg);
+			}
+
+			$args = $newargs;
+		}
+
+		return $args;
 	}
 
 }

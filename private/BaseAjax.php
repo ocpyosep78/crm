@@ -4,7 +4,7 @@ class BaseAjax
 {
 	public static function login()
 	{
-		list($user, $pass) = func_get_args();
+		list($user, $pass, $persist) = func_get_args();
 
 		$info = oSQL()->getUser($user);
 
@@ -16,7 +16,7 @@ class BaseAjax
 					'Por más información consulte a un administrador.');
 			}
 
-			acceptLogin($info);
+			acceptLogin($info, $persist);
 			saveLog('loginLogout', 'in');
 
 			return addScript('setTimeout(function(){location.href = location.href;}, 20);');

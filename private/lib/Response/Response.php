@@ -7,6 +7,9 @@
 class Response
 {
 
+	use Object;
+
+
 /******************************************************************************/
 /*********************************** B A S E **********************************/
 /******************************************************************************/
@@ -123,12 +126,12 @@ class Response
 
 	public static function showMenu()
 	{
-		self::call('showMenu');
+		self::assign('SHOW_MENU', true);
 	}
 
 	public static function hideMenu()
 	{
-		self::call('hideMenu');
+		self::assign('SHOW_MENU', false);
 	}
 
 	public static function debug($msg)

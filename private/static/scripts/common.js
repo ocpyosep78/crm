@@ -177,11 +177,17 @@ function raise( msg ){
 
 function ajax(id)
 {
+	if (typeof JSON === 'undefined')
+	{
+		return alert('El CRM no es compatible con este navegador');
+	}
+
+	var args = JSON.stringify($(arguments).toArray().slice(1));
+
 	$.ajax({url: 'ajax',
 	        type: 'post',
 	        dataType: 'json',
-	        data: {id: id,
-	               args: $(arguments).toArray().slice(1)},
+	        data: {id: id, args: args},
 	        success: function(js) {
 				$.map(js, eval);
 			}});
@@ -238,8 +244,8 @@ function toggleMenu(show) {
 }
 
 // Shortcuts to toggleMenu
-function showMenu(){ toggleMenu(true);  }
-function hideMenu(){ toggleMenu(false); }
+function showMenu(show){ toggleMenu(!!show);  }
+function hideMenu(hide){ toggleMenu(!hide); }
 
 
 /******************************************************************************/
@@ -260,6 +266,8 @@ function getPage() {
 // Initialize loaded page and events associated to new elements in it
 function iniPage(name) {
 	var fn = window['ini_'+name];
+
+	showMenu(!empty(window.SHOW_MENU));
 
 	try {
 		fn && fn.apply(fn, IniParams.get());
@@ -449,7 +457,8 @@ $(function(){
 				var msg = 'Debe escribir su contraseña.';
 				return frm.pass.focus() & say(msg, 'error', 0) & false;
 			} else {
-				ajax('login', frm.user.val(), frm.pass.val());
+				var checked = !!frm.persist.attr('checked');
+				ajax('login', frm.user.val(), frm.pass.val(), checked);
 			}
 
 			return false;

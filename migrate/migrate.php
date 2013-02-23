@@ -1,5 +1,7 @@
 <?php
 
+error_reporting(E_ERROR);
+
 $migrated = ['home',
              'agenda', 'editEvent',
              'users'];
@@ -45,7 +47,7 @@ elseif (!empty($_GET['args']))
 // New ajax call for content
 elseif ($_POST['id'] === 'content')
 {
-	$args = $_POST['args'];
+	$args = readAjaxArgs();
 	$page = array_shift($args)['page'];
 	$atts = (array)array_shift($args);
 	$isNew = true;
@@ -64,7 +66,7 @@ elseif ($_POST['id'])
 }
 else
 {
-	ñ('wtf');
+	db('wtf');
 }
 
 
@@ -211,4 +213,25 @@ function xjxArgs2Array($sXml)
 	}
 
 	return $aArray;
+}
+
+
+function readAjaxArgs($args=NULL)
+{
+	if (is_null($args))
+	{
+		$args = empty($_POST['args']) ? [] : json_decode($_POST['args']);
+	}
+
+	if (!is_scalar($args))
+	{
+		foreach ((array)$args as $k => $arg)
+		{
+			$newargs[$k] = readAjaxArgs($arg);
+		}
+
+		$args = $newargs;
+	}
+
+	return $args;
 }
