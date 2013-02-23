@@ -150,20 +150,21 @@ class Controller
 
 	private static function readAjaxArgs($args=NULL)
 	{
-		if (is_null($args))
+		$convert = function(&$args) use (&$convert)
 		{
-			$args = empty($_POST['args']) ? [] : json_decode($_POST['args']);
-		}
-
-		if (!is_scalar($args))
-		{
-			foreach ((array)$args as $k => $arg)
+			if (!is_scalar($args))
 			{
-				$newargs[$k] = self::readAjaxArgs($arg);
-			}
+				is_array($args) || ($args = (array)$args);
 
-			$args = $newargs;
-		}
+				foreach ($args as &$arg)
+				{
+					$convert($arg);
+				}
+			}
+		};
+
+		$args = empty($_POST['args']) ? [] : json_decode($_POST['args']);
+		$convert($args);
 
 		return $args;
 	}
