@@ -60,7 +60,7 @@ function closeAgendaEvent($id, $msg, $rescheduled = false) {
 		return say('Ocurrió un error al intentar cerrar el evento.');
 	else {
 		saveLog('agendaEventClosed', $id, $msg);
-		return oNav()->reloadPage('El evento fue cerrado correctamente.', 1);
+		return PageController::reload('El evento fue cerrado correctamente.', 1);
 	}
 }
 

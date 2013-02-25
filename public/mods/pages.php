@@ -119,8 +119,8 @@ function page_editAcc()
 	oFormTable()->addSubmit( 'Guardar Cambios' );
 
 	# Add commands and actions to Xajax response object
-	oNav()->updateContent( oFormTable()->getTemplate(), true );
-	return addScript("\$('#editAcc_oldPass').focus();");
+	Response::content(oFormTable()->getTemplate(), true);
+	Response::js("$('#editAcc_oldPass').focus();");
 
 }
 
@@ -128,7 +128,7 @@ function page_agendaDay($date=NULL, $filters=[])
 {
 	if (!$date)
 	{
-		return oNav()->abortFrame('Faltan datos requeridos para cargar la página.');
+		return Response::say('Faltan datos requeridos para cargar la página.');
 	}
 
 	$sqlFilter = ['type' => $filters['type'], 'user' => $filters['user']];
@@ -297,22 +297,7 @@ function page_installs()
 function page_createTechVisits($id=NULL, $customerid=NULL)
 {
 	# If an id was provided, we pass the visit's data, to pre-fill the form (edit/info mode)
-	if (!$id && !$customerid)
-	{
-		$date = explode('-', date('Y-m-d'));
-		oNav()->setJSParams( array(
-			'day'	=> $date[2],
-			'month'	=> $date[1],
-			'year'	=> $date[0],
-		) );
-	}
-	elseif (!empty($customerid))
-	{
-		$data['id_customer'] = $customerid;
-		oNav()->setJSParams( $data );
-	}
-	/* If we're editing, get data and fix special fields */
-	elseif ($data=oSQL()->getTechVisit($id))
+	if ($id && !$customerid && ($data=oSQL()->getTechVisit($id)))
 	{
 		list($data['year'], $data['month'], $data['day']) = explode('-', $data['date']);
 
@@ -339,8 +324,6 @@ function page_createTechVisits($id=NULL, $customerid=NULL)
 
 		$data['costDollars'] = $data['currency'] == 'U$S' ? $data['cost'] : '';
 		$data['cost'] = $data['currency'] == '$' ? $data['cost'] : '';
-
-		oNav()->setJSParams( $data );
 	}
 	else
 	{
@@ -366,6 +349,4 @@ function page_techVisitsInfo($id)
 	{
 		Template::one()->assign('adminNote', oSql()->getAdminTechNote($id));
 	}
-
-	oNav()->setJSParams($id);
 }

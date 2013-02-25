@@ -212,9 +212,6 @@ function isAlertActive($id)
 
 function sync($user='', $params=array())
 {
-	// Register session timeouts and reload page to force login
-	$user && checkIfUserStillOnline($user);
-
 	/* Check alerts */
 	seekAlerts($params);
 
@@ -222,23 +219,6 @@ function sync($user='', $params=array())
 	seekReminders($params);
 
 	return Response;
-}
-
-function checkIfUserStillOnline($user)
-{
-	if ($user == getSes('user'))
-	{
-		return;
-	}
-
-	if (oSQL()->getLastLoginLogout($user) == 'in')
-	{
-		saveLog('loginLogout', 'out', 'timed out', $user);
-	}
-
-	oNav()->queueMsg('Sesión cerrada correctamente.', 'warning');
-
-	return addScript("location.href = 'index.php';");
 }
 
 function seekAlerts($params=array())

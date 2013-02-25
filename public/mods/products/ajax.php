@@ -30,7 +30,7 @@ function deleteProducts($id)
 			@unlink($path);
 		}
 
-		return oNav()->reloadPage($ans->msg, 1);
+		return PageController::reload($ans->msg, 1);
 	}
 	else
 	{

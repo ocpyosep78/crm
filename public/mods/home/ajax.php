@@ -211,5 +211,5 @@ function closeActivityEntry($id)
 {
 	oSQL()->delete('activity', array('id' => $id));
 
-	return oNav()->reloadPage();
+	return PageController::reload();
 }

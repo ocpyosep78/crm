@@ -1,6 +1,6 @@
 <?php
 
-	$page = oNav()->currentPage();
+	$page = PageController::getParams('info')['id'];
 
 	$id = 'notes_';	/* Serves as prefix for several fields */
 

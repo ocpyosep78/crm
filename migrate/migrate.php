@@ -101,9 +101,6 @@ if (isset($page))
 	// Change from old to new
 	elseif ($tryNew)
 	{
-		require_once 'public/Sugar.php';
-		$page = Sugar::page($page);
-
 		$href = trim("{$bburl}/{$page}/" . join('/', $atts), '/');
 
 		if ($_POST['xajax'] === 'getPage')

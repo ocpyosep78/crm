@@ -1,6 +1,7 @@
 <?php
 
-	$id = array_shift($aux=oNav()->getCurrentAtts());
+	$id = array_shift($aux=PageController::getParams('atts'));
+
 	$filter = array('id_customer' => $id);
 
 	# If user has permit usersNotes, show all. Else, show only his own notes on the customer.

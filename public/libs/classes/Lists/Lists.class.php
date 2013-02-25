@@ -127,7 +127,7 @@
 		public function printList($code=NULL, $modifier=NULL)
 		{
 			# Update page content (prints list frame)
-			oNav()->updateContent($this->listHTML($code, $modifier), true);
+			Response::content($this->listHTML($code, $modifier), true);
 
 			# Call JS function to start rolling
 			return $this->initializeList();
@@ -145,7 +145,7 @@
 		 */
 		public function listHTML($code=NULL, $modifier=NULL)
 		{
-			$this->code = is_null($code) ? oNav()->currentPage() : $code;
+			$this->code = is_null($code) ? PageController::getParams('info')['id'] : $code;
 			$this->modifier = $modifier;
 
 			# Import static data
@@ -173,7 +173,7 @@
 		public function printSimpleList($code=NULL, $modifier=NULL){
 
 			# Update page content (prints simpleList)
-			oNav()->updateContent($this->simpleListHTML($code, $modifier), true);
+			Response::content($this->simpleListHTML($code, $modifier), true);
 
 			# Call JS function to start rolling
 			return $this->initializeSimpleList();
@@ -186,7 +186,7 @@
 
 		public function simpleListHTML($code=NULL, $modifier=NULL, $filters=array()){
 
-			$this->code = is_null($code) ? oNav()->currentPage() : $code;
+			$this->code = is_null($code) ? PageController::getParams('info')['id'] : $code;
 			$this->modifier = $modifier;
 
 			# Import static data
@@ -243,7 +243,7 @@
 
 		public function comboListHTML($code, $modifier=NULL, $selected=''){
 
-			if( is_null($code) ) $code = oNav()->currentPage();
+			if( is_null($code) ) $code = PageController::getParams('info')['id'];
 			$params = array('name' => NULL);
 
 			# Attempt to load config file

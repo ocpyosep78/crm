@@ -58,19 +58,6 @@ require_once PATH_PVT . '/BaseAjax.php';
 require_once PATH_PUB . '/Ajax.php';
 
 
-// Sugar (user-friendly page names)
-is_file('public/Sugar.php') && (require_once 'public/Sugar.php');
-
-if (!class_exists('Sugar'))
-{
-	class Sugar
-	{
-		public function page(){
-			return isset($pages[$page]) ? $pages[$page] : $page;
-		}
-	}
-}
-
 require_once MODS_PATH . '/pages.php';
 require_once MODS_PATH . '/funcs.php';
 

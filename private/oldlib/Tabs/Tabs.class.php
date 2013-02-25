@@ -13,8 +13,9 @@
 
 
 		public function __construct(){
-			$this->page = oNav()->currentPage();
-			$this->module = oNav()->getCurrentModule();
+//			$this->page = {here goes page};
+//			$this->module = {here goes module};
+			db('Under Construction (Tabs::__construct)');
 		}
 
 		public function setPage($page)
@@ -148,7 +149,7 @@
 
 			# Call tab handler
 			$fn = "tab_{$this->page}_{$tab}";
-			$postCalls = call_user_func_array($fn, oNav()->getCurrentAtts());
+			$postCalls = call_user_func_array($fn, PageController::getParams('atts'));
 
 			# Get content if template exists and no HTML string was set by the tab generating function
 			$content = !is_null($this->HTML)

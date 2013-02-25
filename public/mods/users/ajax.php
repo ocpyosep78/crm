@@ -85,7 +85,7 @@
 				$msg = 'Su cuenta fue bloqueada. No podrá iniciar sesión hasta que un administrador la habilite.';
 				return logout( $msg );
 			}
-			else return oNav()->reloadPage($ans->msg, 1);
+			else return PageController::reload($ans->msg, 1);
 		}
 		else return say( $ans->msg );
 
@@ -105,7 +105,7 @@
 			"Verifique sus permisos e inténtelo nuevamente.");
 
 		$ans = oSQL()->deleteUsers( $user );
-		if( !$ans->error ) return oNav()->reloadPage($ans->msg, 1);
+		if( !$ans->error ) return PageController::reload($ans->msg, 1);
 		else return say( $ans->msg );
 
 	}
