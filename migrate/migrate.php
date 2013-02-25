@@ -2,10 +2,12 @@
 
 error_reporting(E_ERROR);
 
-$migrated = ['home',
-             'agenda',
-//             'editEvent',
-             'users'];
+$migrated = [
+//	'home',
+//	'agenda',
+//	'editEvent',
+//	'users'
+];
 
 define('OLD_VERSION', true, true);
 
@@ -19,7 +21,7 @@ if (empty($_SESSION['crm']['user']))
 // Home page (set by default)
 elseif (empty($_GET))
 {
-	migrate();
+//	migrate();
 }
 // Old regular page load
 elseif (empty($_POST['xajax']) && !empty($_GET['nav']))
