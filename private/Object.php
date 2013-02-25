@@ -35,4 +35,17 @@ trait Object
 		}
 	}
 
+	public static function fromCamelCase($str)
+	{
+		$search = '_(^|[a-z])([A-Z])_e';
+		$replace = "'\\1' . ('\\1' ? '_' : '') . strtolower('\\2')";
+
+		return preg_replace($search, $replace, $str);
+	}
+
+	public static function uri($str)
+	{
+		return strtolower(preg_replace('_[^\wáéíóúÁÉÍÓÚ]_', '_', $str));
+	}
+
 }
