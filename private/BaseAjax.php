@@ -34,20 +34,8 @@ class BaseAjax
 		setcookie('crm_user', '');
 		$_SESSION['crm'] = array();
 
-		oNav()->clear();
-		oNav()->queueMsg($msg, $type);
-
-		return Response::reload('home');
-	}
-
-	public static function test()
-	{
-		return say("yeah, I was called");
-	}
-
-	public function __call($method, $params)
-	{
-		return say("{$method} is not a valid Ajax ID");
+		Response::sayLater($msg, $type);
+		Response::reload();
 	}
 
 }
