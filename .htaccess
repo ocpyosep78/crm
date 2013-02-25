@@ -1,4 +1,5 @@
 RewriteEngine On
+DirectorySlash Off
 
 
 RewriteRule ^(.+)\.css$ dynCss.php?path=$0&%{QUERY_STRING} [L,NC]
