@@ -79,6 +79,11 @@ class Response
 		self::js("{$fn}({$str_args})");
 	}
 
+	public static function domready($js)
+	{
+		self::js("$(function(){ {$js} })");
+	}
+
 	public static function php2js($val)
 	{
 		if (is_bool($val))
@@ -114,6 +119,15 @@ class Response
 		self::call('say', $msg, $type, $img);
 	}
 
+	/**
+	 * static void sayLater(string $msg[, string $type[, string $img]])
+	 *      Queue messages for next page load or content refresh.
+	 *
+	 * @param string $msg
+	 * @param string $type
+	 * @param string $img
+	 * @return void
+	 */
 	public static function sayLater($msg, $type='', $img='')
 	{
 		$_SESSION['say'] = [$msg, $type, $img];
@@ -141,7 +155,8 @@ class Response
 
 	public static function assign($var, $val)
 	{
-		self::js("{$var} = " . self::php2js($val));
+		preg_replace('_^window\._', '', $var);
+		self::js("window.{$var} = " . self::php2js($val));
 	}
 
 	public static function importConst()

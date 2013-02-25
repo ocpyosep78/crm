@@ -37,7 +37,6 @@ require_once PATH_LIBS . '/Datasource/Datasource.php';
 require_once PATH_LIBS . '/ModelView/Model.php';
 require_once PATH_LIBS . '/ModelView/View.php';
 
-require_once PATH_LIBS . '/Access/Access.php';
 require_once PATH_LIBS . '/Snippet/Snippet.php';
 require_once PATH_LIBS . '/Template/Template.php';
 
@@ -49,9 +48,10 @@ require_once CLASSES_PATH . '/FileForm/FileForm.php';
 
 // Controllers
 require_once PATH_PVT . '/Controllers/Controller.php';
-
-// Response Handler
-require_once PATH_LIBS . '/Response/Response.php';
+require_once PATH_PVT . '/Controllers/PageController.php';
+require_once PATH_PVT . '/Controllers/ActionController.php';
+require_once PATH_PVT . '/Controllers/Response.php';
+require_once PATH_PVT . '/Controllers/Access.php';
 
 // Enabled ajax calls router
 require_once PATH_PVT . '/BaseAjax.php';
