@@ -83,9 +83,9 @@ class PageController extends Controller
 
 			// Store all info relevant to current page, as @@current
 			self::setParams($pageid, $args[1]);
-		}
 
-		self::triggerContentLoad();
+			self::triggerContentLoad();
+		}
 
 		echo self::html(isset($_GET['contentonly']));
 
