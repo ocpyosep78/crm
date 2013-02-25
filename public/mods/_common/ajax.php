@@ -85,7 +85,7 @@ function createNotes($data, $modifier)
 	oValidate()->preProcessInput($data, $pfx);
 
 	# A few things depend on where we're using Notes list
-	$page = $for = oNav()->currentPage();
+	$page = $for = Controller::getPageParams()['page'];
 	# When on usersInfo page, messages are always for that user only
 	if (strstr($page, 'users'))
 		$data['user'] = $modifier;

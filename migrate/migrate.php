@@ -39,10 +39,8 @@ elseif ($_POST['xajax'] === 'getPage')
 // New regular page load
 elseif (!empty($_GET['args']))
 {
-	require_once 'public/Sugar.php';
-
 	$atts = explode('/', $_GET['args']);
-	$page = Sugar::page(array_shift($atts), true);
+	$page = array_shift($atts);
 	$isNew = true;
 }
 // New ajax call for content

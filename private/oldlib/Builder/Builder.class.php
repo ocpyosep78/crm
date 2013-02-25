@@ -17,7 +17,6 @@ function oStats( $code=NULL )		{	return getBuilderObject('Stats', $code);		}
 function oFormTable( $code=NULL )	{	return getBuilderObject('FormTable', $code);	}
 
 function oSQL()						{	return getBuilderObject( 'SQL' );				}
-function oNav()						{	return getBuilderObject( 'Nav' );				}
 function oPageCfg()					{	return getBuilderObject( 'PageCfg' );			}
 
 function oTabs()					{	return getBuilderObject( 'Tabs' );				}
@@ -83,10 +82,6 @@ class Builder{
 
 			case 'FormTable':
 				$FormTable = new FormTable;
-				break;
-
-			case 'Nav':
-				$Nav = new Nav;
 				break;
 
 			case 'PageCfg':

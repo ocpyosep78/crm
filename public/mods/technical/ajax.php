@@ -188,5 +188,5 @@ function createTechVisit($data)
 	$axn = ($sqlAxn == 'insert') ? 'creada.' : 'modificada.';
 	$msg = sprintf('La visita técnica fue correctamente %s.', $axn);
 
-	return oNav()->getPage('techVisitsInfo', array($data['id_sale']), $msg, 1);
+	Controller::redirect('techVisitsInfo', array($data['id_sale']), $msg, 1);
 }

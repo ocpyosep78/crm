@@ -344,7 +344,7 @@ function page_createTechVisits($id=NULL, $customerid=NULL)
 	}
 	else
 	{
-		return oNav()->getPage('techVisits', 'No se encontró la visita pedida.');
+		Controller::redirect('techVisits', 'No se encontró la visita pedida.');
 	}
 
 	Template::one()->assign('systems', oLists()->systems());

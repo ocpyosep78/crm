@@ -20,22 +20,26 @@
 
 
 
-	function createCustomers( $atts ){
-
-		if( empty($atts['newCust_seller']) ) $atts['seller'] = NULL;
-		if( empty($atts['newCust_number']) ) $atts['number'] = NULL;
+	function createCustomers($atts)
+	{
+		empty($atts['newCust_seller']) && ($atts['seller'] = NULL);
+		empty($atts['newCust_number']) && ($atts['number'] = NULL);
 
 		oValidate()->preProcessInput($atts, "newCust_");
 
 		$potential = false;
-		if( isset($atts['potential']) ){
-			unset( $atts['potential'] );
+
+		if (isset($atts['potential']))
+		{
 			$atts['since'] = 'NULL';
 			$potential = true;
+
+			unset($atts['potential']);
 		}
 
 		$ruleSet = $potential ? 'potentialCustomers' : 'customers';
-		if( ($ans=oValidate()->test($atts, $ruleSet)) !== true ){
+		if (($ans=oValidate()->test($atts, $ruleSet)) !== true)
+		{
 			return addScript("showTip('newCust_{$ans['field']}', '{$ans['tip']}');");
 		}
 
@@ -44,26 +48,30 @@
 			($potential ? ' (como posible cliente)' : ''));
 		$ans = oSQL()->insert($atts, 'customers');
 
-		# On success redirect and show success msg
-		if( !$ans->error ) return oNav()->getPage('customersInfo', array($ans->ID), $ans->msg, 1);
-
 		# Handled errors
-		if( $ans->error == 1062 ){
-			if( $ans->column == 'customer' ){
+		if ($ans->error == 1062)
+		{
+			if ($ans->column == 'customer')
+			{
 				return say("El nombre {$atts['customer']} ya está registrado en la base de datos.");
 			}
-			elseif( $ans->column == 'number' ){
+			elseif ($ans->column == 'number')
+			{
 				return say("Ya existe un cliente con ese número. Verifique sus datos o inténtelo nuevamente.");
 			}
 		}
-
-		# Unhandled error
-		return say( $ans->msg );
-
+		elseif ($ans->error)    # Unhandled error
+		{
+			return say($ans->msg);
+		}
+		else                    # On success redirect and show success msg
+		{
+			Controller::redirect('customersInfo', [$ans->ID], $ans->msg, 1);
+		}
 	}
 
-	function editCustomers( $atts ){
-
+	function editCustomers($atts)
+	{
 		oValidate()->preProcessInput($atts, "editCust_");
 
 		$potential = false;
@@ -81,25 +89,33 @@
 			return addScript("showTip('editCust_{$ans['field']}', '{$ans['tip']}');");
 		}
 
-		if( $atts['number'] ){
+		if ($atts['number'])
+		{
 			$res = oSQL()->getCustomers(array('number' => $atts['number']));
-			if( count($res) > 1 || (count($res) == 1 && $res[0]['id_customer'] != $atts['id_customer']) ){
+
+			if (count($res) > 1 || (count($res) == 1 && $res[0]['id_customer'] != $atts['id_customer']))
+			{
 				return say("Ya existe un cliente con ese número.\\n".
 					"Verifique sus datos o inténtelo nuevamente.");
 			}
 		}
-		else $atts['number'] = NULL;
+		else
+		{
+			$atts['number'] = NULL;
+		}
 
 		# Request query and catch answer, then return it to the user
 		oSQL()->setOkMsg("El cliente {$atts['customer']} fue modificado con éxito");
-		$ans = oSQL()->editCustomers( $atts );
+		$ans = oSQL()->editCustomers($atts);
 
-		if( $ans->error ){
-			return say( $ans->msg, $ans->successCode );
-		}else{
-			return oNav()->getPage('customersInfo', array($atts['id_customer']), $ans->msg, $ans->successCode);
+		if ($ans->error)
+		{
+			return say($ans->msg, $ans->successCode);
 		}
-
+		else
+		{
+			Controller::redirect('customersInfo', [$atts['id_customer']], $ans->msg, $ans->successCode);
+		}
 	}
 
 	function setSeller( $id ){

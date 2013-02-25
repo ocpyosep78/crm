@@ -1,6 +1,6 @@
 <?php
 
-$id = array_shift($aux=oNav()->getCurrentAtts());
+$id = array_shift($aux=Controller::$atts);
 
 $cnt = array(
 	'notes'			=> oStats()->count('_notes', array('user' => $id)),

@@ -39,12 +39,12 @@ class View_Customer extends View
 
 	public function snp_newTech($params)
 	{
-		return oNav()->getPage('createTechVisits', [NULL, $params['id']]);
+		Controller::redirect('createTechVisits', [NULL, $params['id']]);
 	}
 
 	public function snp_newEvent($params)
 	{
-		return oNav()->getPage('createEvent', [NULL, $params['id']]);
+		Controller::redirect('createEvent', [NULL, $params['id']]);
 	}
 
 }
