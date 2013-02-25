@@ -1,11 +1,12 @@
 <div id='main_navBar'>
 	<div id='navButtonsBar'>
 	  {if $USER}
-		{foreach from=$pagestate.areas key=area item=btn}
+		{foreach from=$pagestate.tree.modules item=module}
 		  &nbsp;&nbsp;
-		  <a href='{$BBURL}/{$area}' rel='{$area}'
-			class='navMod{if $area == $pagestate.areaid} navCurrMod{/if}'><img
-			src="{$BBURL}/{$btn.image}" alt="{$btn.name}" title="{$btn.name}" /></a>
+		  <a href='{$BBURL}/{$module.uri}' rel='{$module.id}'
+			class='navMod{if $module.id == $pagestate.tree.module.id} navCurrMod{/if}'><img
+			src="{$URL_UPLOADS}/pages/{$module.image}"
+			alt="{$module.m_alias}" title="{$module.m_alias}" /></a>
 		{/foreach}
 	  {/if}
 	</div>
@@ -20,8 +21,8 @@
 
 	<div id='navSteps'>
 	  {if $USER}
-		<span>ruta</span>
-		<span>/&gt; <em><a href='javascript:void(0)'>{$pagestate.page.name}</a></em></span>
+		<span>página</span>
+		<span>/&gt; <em><a href='javascript:void(0)'>{$pagestate.info.alias}</a></em></span>
 	  {/if}
 	</div>
 

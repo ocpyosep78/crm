@@ -96,14 +96,14 @@ try
 }
 catch (PublicException $e)
 {
-	header('Content-type: text/xml');
+	header('Content-type: text/html; charset=utf8');
 	echo $e->getMessage();
 
 	exit;
 }
 catch (Exception $e)
 {
-	header('Content-type: text/xml');
+	header('Content-type: text/html; charset=utf8');
 	$error = devMode() ? $e->getMessage() : 'Ocurrió un error inesperado';
 	echo $error;
 

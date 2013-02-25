@@ -5,8 +5,8 @@
 	<ul id="debuggerbox">
 	  <li>Debugger <span style="color:#0000a0; cursor:pointer;">(click para minimizar)</span></li>
 
-	  <li>Módulo: {$pagestate.areaid} ({$pagestate.area.name})</li>
-	  <li>Página: {$pagestate.pageid} ({$pagestate.page.name})</li>
+	  <li>Módulo: {$pagestate.tree.module.model}:{$pagestate.tree.module.page}</li>
+	  <li>Página: {$pagestate.info.model}:{$pagestate.info.page}</li>
 	</ul>
   </div>
 

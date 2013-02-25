@@ -1,14 +1,12 @@
-<div id='main_box_{$page}'>
-	{$content}
+{$content}
 
-	{* JS on domready *}
-	{if isset($js)}
-	  <script type="text/javascript">
-		$(function(){
-			{foreach from=$js item=code}
-				{$code};
-			{/foreach}
-		});
-	  </script>
-	{/if}
-</div>
+{* JS on domready *}
+{if isset($js)}
+  <script type="text/javascript">
+	$(function(){
+		{foreach from=$js item=code}
+			{$code};
+		{/foreach}
+	});
+  </script>
+{/if}

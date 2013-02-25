@@ -14,6 +14,7 @@ define('PATH_SCRIPTS', PATH_STATIC . '/scripts');
 define('PATH_IMAGES', PATH_STATIC . '/images');
 define('PATH_STYLES', PATH_STATIC . '/styles');
 define('PATH_TPLS', PATH_STATIC . '/templates');
+define('PATH_UPLOADS', PATH_PUB . '/uploads');
 
 // Absolute urls for static content, for template use
 define('URL_STATIC', URL_PVT . '/static');
@@ -21,6 +22,7 @@ define('URL_SCRIPTS', URL_STATIC . '/scripts');
 define('URL_IMAGES', URL_STATIC . '/images');
 define('URL_STYLES', URL_STATIC . '/styles');
 define('URL_SKINS', URL_PVT . '/skins');
+define('URL_UPLOADS', URL_PUB . '/uploads');
 
 define('PATH_LIBS', PATH_PVT . '/lib');
 define('PATH_THIRDPARTY', PATH_LIBS . '/third-party');

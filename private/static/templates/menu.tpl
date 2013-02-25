@@ -5,15 +5,13 @@
 	<div id='menuDiv'>
 		<div class='h_filler' style='width:140px;'>&nbsp;</div>
 
-		{foreach from=$pagestate.groups item=group}
-			<div class='menuGroup'>{$group.area}</div>
+		{foreach from=$pagestate.tree.menu key=area item=pages}
+			<div class='menuGroup'>{$area}</div>
 
-			{foreach from=$group.pages key=pageid item=page}
-				{if $page.module == $pagestate.areaid}
-					<div class='menuItem' for='{$pageid}'>
-						<a href='{$BBURL}/{$pageid}'>{$page.name}</a>
-					</div>
-				{/if}
+			{foreach from=$pages item=page}
+				<div class='menuItem' for='{$page.id}'>
+					<a href='{$BBURL}/{$page.uri}'>{$page.alias}</a>
+				</div>
 			{/foreach}
 		{/foreach}
 	</div>

@@ -6,6 +6,9 @@ define('VERSION_STATUS', 'alpha', true);
 define('LAST_UPDATE', '2012-11-24');
 
 
+# Home | "model[:page = main]", e.g. 'home', 'home:main', 'users:me', etc.
+define('HOME', 'agenda');
+
 # Local
 define('MAIN_LOCATION', 'Montevideo');
 define('TIME_ZONE', 'America/Montevideo');
@@ -24,7 +27,6 @@ define('IMAGES_URL', URL_PUB . '/images');
 
 # Application
 define('APP_NAME', 'CRM / INGETEC', true);
-define('SKIN', NULL, true);
 
 define('UI_THEME', empty($_GET['theme']) ? 'redmond' : $_GET['theme']);
 

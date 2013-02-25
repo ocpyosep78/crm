@@ -252,9 +252,13 @@ function hideMenu(hide){ toggleMenu(!hide); }
 /**************************** N A V I G A T I O N *****************************/
 /******************************************************************************/
 
+/**
+ * getPage([event e, ]string page[, array/object atts])
+ *      Navigate to requested page
+ */
 function getPage() {
 	var args = $.makeArray(arguments),
-	    kevt = args.shift()||{},
+	    kevt = (args[0] && typeof args[0] === 'object') ? args.shift()||{} : {},
 		shift = kevt.shiftKey,
 		ctrl = kevt.ctrlKey,
 		page = args.shift();
@@ -264,33 +268,25 @@ function getPage() {
 }
 
 // Initialize loaded page and events associated to new elements in it
-function iniPage(name) {
-	var fn = window['ini_'+name];
-
+function contentload(page, params)
+{
 	showMenu(!empty(window.SHOW_MENU));
 
-	try {
-		fn && fn.apply(fn, IniParams.get());
+	var fn = window['ini_' + page.model + '_' + page.page];
+
+	try
+	{
+		fn && fn.apply(fn, params||[]);
+
 		$('.menuItem.currentPage').removeClass('currentPage');
-		$('.menuItem[for="' + name + '"]').addClass('currentPage');
-	} catch(e) {
+		$('.menuItem[for="' + page.id + '"]').addClass('currentPage');
+	}
+	catch(e)
+	{
 		return DEVMODE ? db(e) : false;
 	}
 
 	$('body').trigger('contentload');
-}
-
-// Current page's parameters (persistence)
-var IniParams = {
-	params: null,
-	set: function( data ){
-		this.params = $.makeArray(data);
-	},
-	get: function(){
-		var params = $.makeArray(this.params);
-		delete(this.params);
-		return params||{};
-	}
 }
 
 
@@ -312,8 +308,8 @@ $(function(){
 	});
 
 	// Menu
-	$('#hideMenu').click(hideMenu);
-	$('#showMenu').click(showMenu);
+	$('body').on('click', '#hideMenu', hideMenu);
+	$('body').on('click', '#showMenu', showMenu);
 
 	$('body').on('click', '.menuItem', function(e){
 		return !getPage(e, $(this)._for()) && false;
@@ -850,7 +846,7 @@ $(function(){
 
 
 
-function ini_registerSales() {
+function ini_Sales_register() {
 	var frm = $.forms('frmOldSales');
 
 	frm.setSeller = function(code){
