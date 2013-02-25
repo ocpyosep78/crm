@@ -892,11 +892,7 @@ function ini_registerSales() {
 	frm.restart();
 }
 
-function ini_home(){
-	return ini_agenda();
-}
-
-function ini_createEvent(id_event){		/* Agenda */
+function ini_Agenda_createEvent(id_event){		/* Agenda */
 	function validateTimeInput(el){
 		var p = el.val().split(':'),
 		    val = p[0].fill(2, 0, true) + ':' + (p[1]||'').fill(2, 0, true),
@@ -923,11 +919,11 @@ function ini_createEvent(id_event){		/* Agenda */
 	});
 }
 
-function ini_editEvent(){		/* Agenda */
+function ini_Agenda_editEvent(){		/* Agenda */
 	ini_createEvent($('#id_event').val());
 }
 
-function ini_agenda(){
+function ini_Agenda_main(){
 	// Tie events to each day
 	$('.agenda_dayWrapper').find('.agenda_dayDate, .agenda_dayName').click(function(){
 		$(this).parents('.agenda_dayWrapper').clone(true).dialog();
@@ -966,7 +962,7 @@ function ini_agenda(){
 	});
 
 	function getFilters(){
-		var filters = {};
+		var filters = {resched: !!$('#showRescheduled').attr('checked')};
 		$('.sel_agendaFilters').each(function(i, sel){
 			filters[$(sel).attr('filter')] = $(sel).val();
 		});
@@ -974,13 +970,10 @@ function ini_agenda(){
 	};
 
 	function filterAgenda(e){
-		var resched = $('#showRescheduled').attr('checked') ? 1 : 0;
-		getPage(e, 'agenda', [$('#thisDate').val(), getFilters(), resched]);
+		getPage(e, 'agenda', [$('#thisDate').val(), getFilters()]);
 	};
 
-	$('.sel_agendaFilters').each(function(i, sel){
-		$(sel).change(filterAgenda);
-	});
+	$('.sel_agendaFilters').change(filterAgenda);
 
 	$('.eventRescheduled').toggle($('#showRescheduled').attr('checked'));
 
@@ -1024,7 +1017,7 @@ function ini_agenda(){
 	});
 }
 
-function ini_agendaDay(){
+function ini_Agenda_agendaDay(){
 	function getFilters(){
 		var filters = {};
 		$('.sel_agendaFilters').each(function(i, sel){

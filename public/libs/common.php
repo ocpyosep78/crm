@@ -540,35 +540,3 @@ function error_handler($no, $str, $file, $line)
 
 	return true;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-function agendaEventTypes()
-{
-	return [
-		''			=> '(seleccionar)',
-		'incomes'   => 'Cobranzas',
-		'delivery'  => 'Expedición',
-		'invoice'   => 'Facturación',
-		'warranty'  => 'Garantía',
-		'travel'    => 'Giras',
-		'install'   => 'Instalaciones',
-		'calls'     => 'Llamadas',
-		'estimate'  => 'Presupuestos',
-		'laststeps' => 'Puesta a punto y curso',
-		'meetings'  => 'Reuniones',
-		'remote'    => 'Servicios remotos',
-		'service'   => 'Servicios técnicos',
-		'sales'     => 'Ventas',
-		'technical' => 'Visitas técnicas',
-	];
-}

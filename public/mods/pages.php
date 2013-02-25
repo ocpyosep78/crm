@@ -58,7 +58,7 @@ function page_editEvent($id=NULL, $customerid=NULL)
 	                                 'value' => date('Y-m-d')]);
 	oFormTable()->addInput('Hora Inicio', ['id' => 'iniTime']);
 	oFormTable()->addInput('Hora Fin', ['id' => 'endTime']);
-	oFormTable()->addCombo('Tipo', agendaEventTypes(), ['id' => 'type']);
+	oFormTable()->addCombo('Tipo', View::get('EventType')->getHashData(), ['id' => 'type']);
 	oFormTable()->addArea('Descripción', ['id'    => 'event',
 	                                      'style' => 'height:140px; width:320px;']);
 
@@ -124,99 +124,29 @@ function page_editAcc()
 
 }
 
-function page_agenda($firstDay=NULL, $currFilters=array(), $showRescheduled=1)
-{
-	/* If $firstDay is not given, start on last Monday */
-	empty($firstDay) && ($firstDay = 0);
-
-	/* If it's given as a date, or the format is wrong */
-	if (!is_numeric($firstDay))
-	{
-		$dayNum = strtotime($firstDay);
-		$firstDay = $dayNum ? ceil(($dayNum - time()) / 86400) : 0;
-	}
-
-	while (date('N', strtotime("{$firstDay} days")) != 1)
-	{
-		$firstDay--;
-	}
-
-	foreach ($currFilters as $key => $filter)
-	{
-		if (empty($filter))
-		{
-			unset($currFilters[$key]);
-		}
-	}
-
-	$range = ['ini' => date('Y-m-d', strtotime("{$firstDay} days")),
-	          'end' => date('Y-m-d', strtotime(($firstDay + AGENDA_DAYS_TO_SHOW - 1).' days'))];
-	$events = oSQL()->getEventsInfo(NULL, $range, $currFilters);
-
-	# Get data and pre-process it
-	$data = array();
-
-	for ($i=$firstDay; $i < ($firstDay + AGENDA_DAYS_TO_SHOW); $i++)
-	{
-		$date = date('Y-m-d', strtotime("{$i} days"));
-		$data[$date] = ['date'    => $date,
-		                'isToday' => !$i,
-		                'events'  => []];
-	}
-
-	# Fill days with events
-	foreach ($events as $event)
-	{
-		$event['event'] = nl2br($event['event']);
-		$data[substr($event['ini'], 0, 10)]['events'][] = $event;
-	}
-
-	foreach ($data as $day)
-	{
-		$days[] = $day;
-	}
-
-	# Filters
-	$filters = [
-		'type' => ['name'    => 'Tipo',
-		           'options' => ['' => '(todos)'] + agendaEventTypes()],
-		'user' => ['name'    => 'Usuario',
-		           'options' => [''=>'(todos)'] + View::get('User')->getHashData()]
-	];
-
-	Template::one()->assign('data', isset($days) ? $days : array());
-	Template::one()->assign('currFilters', $currFilters + array_fill_keys(array_keys($filters), ''));
-	Template::one()->assign('prev', $firstDay - 7);
-	Template::one()->assign('next', $firstDay + 7);
-	Template::one()->assign('types', agendaEventTypes());
-	Template::one()->assign('filters', $filters);
-	Template::one()->assign('showRescheduled', $showRescheduled);
-
-	Response::hideMenu();
-}
-
-function page_agendaDay($date=NULL, $currFilters=array(), $showRescheduled=1)
+function page_agendaDay($date=NULL, $filters=[])
 {
 	if (!$date)
 	{
 		return oNav()->abortFrame('Faltan datos requeridos para cargar la página.');
 	}
 
+	$sqlFilter = ['type' => $filters['type'], 'user' => $filters['user']];
+
 	# Basic structure of data to be passed
 	$day['date'] = $date;
 	$day['isToday'] = true;
-	$day['events'] = oSQL()->getEventsInfo(NULL, $date, $currFilters);
+	$day['events'] = oSQL()->getEventsInfo(NULL, $date, $sqlFilter);
 
 	# Filters
-	$filters = array();
-	$filters['type'] = array(
-		'name'		=> 'Tipo',
-		'options'	=> array(''=>'(todos)') + agendaEventTypes(),
-	);
-	$filters['user'] = array(
-		'name'		=> 'Usuario',
-		'options'	=> array(''=>'(todos)') + View::get('User')->getHashData(),
-	);
+	$filtersCfg = [
+		'type' => [
+			'name'		=> 'Tipo',
+			'options'	=> [''=>'(todos)'] + View::get('EventType')->getHashData()],
+		'user' => [
+			'name'		=> 'Usuario',
+			'options'	=> [''=>'(todos)'] + View::get('User')->getHashData()]
+	];
 
 	# Fill day with events
 	foreach ($day['events'] as &$event)
@@ -224,12 +154,15 @@ function page_agendaDay($date=NULL, $currFilters=array(), $showRescheduled=1)
 		$event['event'] = nl2br($event['event']);
 	}
 
+	// Add defaults
+	$filters += ['type' => '', 'user' => '', 'resched' => true];
+
 	Template::one()->assign('day', $day);
-	Template::one()->assign('types', agendaEventTypes());
+	Template::one()->assign('types', View::get('EventType')->getHashData());
 	Template::one()->assign('data', array(array('date' => $date)));
-	Template::one()->assign('filters', $filters);
-	Template::one()->assign('currFilters', $currFilters + array_fill_keys(array_keys($filters), ''));
-	Template::one()->assign('showRescheduled', $showRescheduled);
+	Template::one()->assign('filters', $filtersCfg);
+	Template::one()->assign('currFilters', $filters);
+	Template::one()->assign('showRescheduled', !empty($filters['resched']));
 }
 
 function page_calls(){

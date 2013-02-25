@@ -83,7 +83,7 @@
 	{
 		$events = oSQL()->getCustomerEvents($id);
 
-		Template::one()->assign('types', agendaEventTypes());
+		Template::one()->assign('types', View::get('EventType')->getHashData());
 		Template::one()->assign('events', $events);
 	}
 

@@ -203,7 +203,7 @@ function createEvent($data, $id=NULL)
 			}
 		}
 
-		return oNav()->getPage('agenda', array($data['ini']), $ans->msg, 1);
+		Controller::redirect('agenda', array($data['ini']), $ans->msg, 1);
 	}
 }
 

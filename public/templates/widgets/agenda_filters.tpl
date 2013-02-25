@@ -1,7 +1,6 @@
 <div id='agendaFilters'>
   <input type='hidden' id='thisDate' value='{$data[0].date|date_format:"Y-m-d"}' />
-  <input type='checkbox' id='showRescheduled' value='1'{if $showRescheduled} checked='checked'{/if} />
-  	Mostrar eventos cancelados / pospuestos
+
   {foreach from=$filters key=type item=filter}
 	<div>
 	  <select class='sel_agendaFilters' filter='{$type}'>
@@ -13,4 +12,7 @@
 	  Filtrar por {$filter.name}
 	</div>
   {/foreach}
+
+  <input type='checkbox' id='showRescheduled' value='1'{if $showRescheduled} checked='checked'{/if} />
+  <label for="showRescheduled">Mostrar eventos cancelados / pospuestos</label>
 </div>

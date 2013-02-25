@@ -3,7 +3,8 @@
 error_reporting(E_ERROR);
 
 $migrated = ['home',
-             'agenda', 'editEvent',
+             'agenda',
+//             'editEvent',
              'users'];
 
 define('OLD_VERSION', true, true);
