@@ -12,10 +12,16 @@ abstract class Datasource extends DS_Structure
 
 	public function __construct()
 	{
+		$this->initSearchObj();
+	}
+
+	private function testStructureIntegrity()
+	{
 		// Test integrity of object definitions
 		if (!$this->__table || !$this->__schema)
 		{
-			$msg = "A Model is required to have a @table and a @schema";
+			$msg = "A Model is required to have a @table and a @schema in" .
+			       " order to perform queries to the database";
 			throw new Exception($msg);
 		}
 
@@ -23,11 +29,10 @@ abstract class Datasource extends DS_Structure
 
 		if (empty($columns))
 		{
-			$msg = "DataSource failed to initialize with table {$this->table} and schema {$this->schema}";
+			$msg = "DataSource failed to initialize with table {$this->table}" .
+			       " and schema {$this->schema}";
 			throw new Exception($msg);
 		}
-
-		$this->initSearchObj();
 	}
 
 
@@ -42,9 +47,8 @@ abstract class Datasource extends DS_Structure
 	{
 		if (!$this->seems('select', $select))
 		{
-			$msg = 'Invalid parameter passed to select(): ' . var_export($select, true);
+			$msg = 'Invalid parameter for select(): ' . var_export($select, true);
 			throw new Exception($msg);
-			throw new Exception('Invalid parameter passed to select()');
 		}
 
 		if (!is_array($select))
@@ -62,7 +66,7 @@ abstract class Datasource extends DS_Structure
 
 		foreach ($select as $k => $v)
 		{
-			if (is_numeric($k))
+			if (is_integer($k))
 			{
 				if (is_array($v))
 				{
@@ -106,7 +110,7 @@ abstract class Datasource extends DS_Structure
 		}
 		elseif ($where)
 		{
-			$msg = 'Invalid parameter passed to where(): ' . var_export($where, true);
+			$msg = 'Invalid parameter for where(): ' . var_export($where, true);
 			throw new Exception($msg);
 		}
 
@@ -117,7 +121,7 @@ abstract class Datasource extends DS_Structure
 	{
 		if (!$this->seems('order', $order))
 		{
-			$msg = 'Invalid parameter passed to order(): ' . var_export($order, true);
+			$msg = 'Invalid parameter for order(): ' . var_export($order, true);
 			throw new Exception($msg);
 		}
 
@@ -130,7 +134,7 @@ abstract class Datasource extends DS_Structure
 	{
 		if (!$this->seems('limit', $limit))
 		{
-			$msg = 'Invalid parameter passed to limit(): ' . var_export($limit, true);
+			$msg = 'Invalid parameter for limit(): ' . var_export($limit, true);
 			throw new Exception($msg);
 		}
 
@@ -141,6 +145,8 @@ abstract class Datasource extends DS_Structure
 
 	public function setId($id)
 	{
+		$this->testStructureIntegrity();
+
 		$pk = $this->getPk();
 
 		if (!$pk)
@@ -167,6 +173,8 @@ abstract class Datasource extends DS_Structure
 	 */
 	public function find()
 	{
+		$this->testStructureIntegrity();
+
 		// Apply received arguments (where, select, order, limit)
 		$args = func_get_args();
 
@@ -237,6 +245,8 @@ abstract class Datasource extends DS_Structure
 	 */
 	public function update($set, $where)
 	{
+		$this->testStructureIntegrity();
+
 		if (!is_array($set))
 		{
 			$msg = 'Call to update() failed: $set must be an array';
@@ -274,6 +284,8 @@ abstract class Datasource extends DS_Structure
 	 */
 	public function delete($where)
 	{
+		$this->testStructureIntegrity();
+
 		if (!$this->seems('where', $where))
 		{
 			$msg = "Call to delete() failed: filter format is invalid (" .
@@ -435,6 +447,8 @@ abstract class Datasource extends DS_Structure
 	{
 		extract($this->read());
 
+		$joins = [];
+
 		foreach ($keys['src'] as $k)
 		{
 			$f1 = "`{$this->schema}`.`{$this->table}`.`{$k['col1']}`";
@@ -500,18 +514,20 @@ abstract class Datasource extends DS_Structure
 	 */
 	protected function exec_query($sql, $throw=false)
 	{
-		$res = $this->query($sql);
+		$this->testStructureIntegrity();
 
-		if ($throw && ($res === false))
+		$Answer = $this->query($sql);
+
+		if ($throw && $Answer->failed)
 		{
-			$msg = $sql . "\n" . mysql_error();
+			$msg = $sql . "\n" . $Answer->Error->error();
 			throw new Exception($msg);
 		}
 
 		// Returns DS_Result for SELECT-like queries, the Answer otherwise
 		$ret = preg_match('_^(SELECT|SHOW|DESCRIBE)\b_i', $sql)
-			? new DS_Result($this->Answer, $this->search, $sql, $res, $this)
-			: $this->Answer;
+			? new DS_Result($Answer, $this->search, $this)
+			: $Answer;
 
 		// Reset @search object
 		$this->initSearchObj();

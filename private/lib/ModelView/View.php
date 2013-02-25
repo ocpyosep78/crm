@@ -222,8 +222,17 @@ abstract class View
 	{
 		if (!$this->descr_field)
 		{
-			$msg = "Cannot get hash data without a field to select";
-			throw new Exception($msg);
+			$cols = $this->Model->columns();
+
+			if (count($cols) < 2)
+			{
+				$msg = "Cannot get hash data without a field to select";
+				throw new Exception($msg);
+			}
+			else
+			{
+				$this->__descr_field = array_keys($cols)[1];
+			}
 		}
 
 		return $this->Model->order('__description__ ASC')->limit(0)

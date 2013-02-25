@@ -13,6 +13,7 @@ trait ModelView
 
 	private static $cache;
 
+	protected $exists;
 
 	/**
 	 * final static Model get(string $name[, string $namespace = 'global'])
@@ -56,6 +57,7 @@ trait ModelView
 				if (!is_file($path))
 				{
 					eval("class {$class} extends {$parent}{}");
+					$exists = false;
 				}
 				elseif (!@include $path)
 				{
@@ -66,6 +68,10 @@ trait ModelView
 				{
 					$msg = "{$implementer} class {$class} not found ({$ucname})";
 					throw new Exception($msg);
+				}
+				else
+				{
+					$exists = true;
 				}
 			}
 
@@ -78,6 +84,9 @@ trait ModelView
 			// Link corresponding counterpart
 			$counterpart = ($implementer === 'Model') ? 'View' : 'Model';
 			$Instance->$counterpart = $counterpart::get($ucname, $namespace);
+
+			// Flag whether the class exists or was generated on the fly
+			$Instance->exists = $exists;
 		}
 
 		return self::$cache[$namespace][$ucname];

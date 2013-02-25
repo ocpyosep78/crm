@@ -17,9 +17,16 @@ trait Connect
 	];
 
 
-	public function get_last_error()
+	/**
+	 * static resource s_query(string $sql)
+	 *      Static version of #query().
+	 *
+	 * @param string $sql
+	 * @return resource
+	 */
+	public static function s_query($sql)
 	{
-		return $this->Error;
+		return (new self)->query($sql);
 	}
 
 
@@ -34,14 +41,9 @@ trait Connect
 	 */
 	public function query($sql)
 	{
-		mysql_set_charset('utf8', $this->connect());
 		$res = mysql_query($sql, $this->connect());
 
-		// Save last error's object, for later retrieval
-		$this->Error = $this->error($sql);
-		$this->Answer = $this->answer($sql, $res);
-
-		return $res;
+		return $this->answer($sql, $res, $this->error($sql));
 	}
 
 	private function connect()
@@ -55,6 +57,8 @@ trait Connect
 
 			@mysql_select_db(DS_SCHEMA, $conn)
 				or die('Unable to open database: ' . (DS_SCHEMA ? DS_SCHEMA : '(empty)'));
+
+			mysql_set_charset('utf8', $conn);
 		}
 
 		return $conn;
@@ -111,7 +115,7 @@ trait Connect
 		return $Error;
 	}
 
-	private function answer($sql, $res)
+	private function answer($sql, $res, $Error)
 	{
 		$Answer = new stdClass;
 
@@ -121,10 +125,10 @@ trait Connect
 		$Answer->rows = mysql_affected_rows();
 		$Answer->id = mysql_insert_id();
 
-		$Answer->Error = $this->Error;
-		$Answer->failed = !!$this->Error->errno;   // Shortcut
+		$Answer->Error = $Error;
+		$Answer->failed = !!$Error->errno;   // Shortcut
 
-		switch ($this->Error->errno)
+		switch ($Error->errno)
 		{
 			case 0:
 				$Answer->msg = self::$connect_msgs['success'];

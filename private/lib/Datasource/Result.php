@@ -16,16 +16,16 @@ class DS_Result
 	private $Answer;
 
 
-	public function __construct($Answer, $search, $query, $dataset, $caller)
+	public function __construct($Answer, $search, $caller)
 	{
 		$this->caller = $caller;
 		$this->Answer = $Answer;
 
 		$this->__search = $search;
-		$this->__query = $query;
-		$this->__orig_dataset = $dataset;
+		$this->__query = $Answer->sql;
+		$this->__orig_dataset = $Answer->res;
 
-		$this->__dataset = $dataset;
+		$this->__dataset = $Answer->res;
 		$this->__datatype = 'res';
 		$this->__namespace = 2;
 

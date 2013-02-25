@@ -28,6 +28,7 @@ abstract class Model extends Datasource
 	protected $__implicit_select = NULL;
 	protected $__implicit_where = NULL;
 
+
 	/**
 	 * attempt (default)
 	 *    Attempts to remove entry
@@ -64,7 +65,11 @@ abstract class Model extends Datasource
 	final public function __construct($name)
 	{
 		$this->__schema = DS_SCHEMA;
-		$this->__table || ($this->__table = explode('.', $name)[0]);
+
+		if (!$this->__table)
+		{
+			$this->__table = self::fromCamelCase(explode('.', $name)[0]);
+		}
 
 		parent::__construct();
 	}
@@ -229,7 +234,7 @@ abstract class Model extends Datasource
 
 		$map = ['__id__'          => $this->getPk(),
 		        '__description__' => $description ? $description : "''",
-		        '__disabled__'    => $del_flag ? $del_flag : 0];
+		        '__disabled__'    => $del_flag ? $del_flag : "''"];
 
 		if (is_array($item))
 		{

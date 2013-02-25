@@ -51,14 +51,14 @@ class DS_Structure
 			        AND `stored` > NOW() - 2";
 			$res = $this->query($sql);
 
-			if ($this->Answer->Error->error)
+			if ($res->failed)
 			{
-				throw new Exception($this->Answer->Error->error);
+				throw new Exception($this->Error->error);
 			}
 
-			if ($res)
+			if ($res->rows)
 			{
-				$structure = mysql_fetch_assoc($res);
+				$structure = mysql_fetch_assoc($res->res);
 
 				if ($structure)
 				{
@@ -114,7 +114,7 @@ class DS_Structure
 		        FROM `information_schema`.`key_column_usage`
 		        WHERE (`TABLE_SCHEMA` = '{$schema}' AND `TABLE_NAME` = '{$table}')
 		           OR (`REFERENCED_TABLE_SCHEMA` = '{$schema}' AND `REFERENCED_TABLE_NAME` = '{$table}')";
-		($res = $this->query($sql)) || ($all = []);
+		($res = $this->query($sql)->res) || ($all = []);
 
 		while ($data=mysql_fetch_assoc($res))
 		{
@@ -206,6 +206,8 @@ class DS_Structure
 
 	private function getColumns($tables, $keys)
 	{
+		$all = $own = $src = $tgt = [];
+
 		// Prepare sql to filter query in search of all relevant columns
 		foreach ($tables as $t)
 		{
@@ -236,7 +238,7 @@ class DS_Structure
 		               `EXTRA` AS 'extra',*/
 				FROM `information_schema`.`columns`
 				WHERE {$condition}";
-		($res = $this->query($sql)) || ($raw = []);
+		($res = $this->query($sql)->res) || ($raw = []);
 
 		while ($c=mysql_fetch_assoc($res))
 		{
@@ -267,6 +269,7 @@ class DS_Structure
 
 		if (empty($keys))
 		{
+			db();
 			$msg = "Failed to retrieve Keys list from database " .
 			       "(table: `{$this->schema}`.`{$this->table}`)";
 			throw new Exception($msg);
@@ -488,14 +491,6 @@ class DS_Structure
 			default:
 				return NULL;
 		}
-	}
-
-	private function enumDefinition($table, $column){
-		$sql = "SHOW COLUMNS
-				FROM `{$table}`
-				WHERE `Field` = '{$column}'";
-		$ret = $this->query($sql, 'field', 'Type');
-		return explode("','", preg_replace("/^enum\('|'\)$/", '', $ret));
 	}
 
 
