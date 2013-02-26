@@ -6,8 +6,10 @@
 /forum/
 
 # ignore folder content
-/app/images/users/*
-/app/images/products/*
+/*/images/users/*
+/*/images/User/*
+/*/images/products/*
+/*/images/Product/*
 /logs/*
 /sql/*
 /temp/*
@@ -16,8 +18,8 @@
 Thumbs.db
 
 # ignore specific files
-/app/chat.php
-/app/cfg/local.cfg.php
+/*/chat.php
+/*/cfg/local.cfg.php
 /update.bat
 
 # do not ignore these files
@@ -29,4 +31,3 @@ Thumbs.db
 !/sql/crm_minimal.sql
 !.gitignore
 !README
-/log
