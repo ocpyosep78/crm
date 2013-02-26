@@ -1,6 +1,6 @@
 <?php
 
-$migratehome = true;
+$migratehome = false;
 $migratelogin = true;
 
 $migrated = [
@@ -139,7 +139,6 @@ if (isset($newp) || isset($oldp))
 }
 
 
-
 function migrate($really=true)
 {
 	$GLOBALS['doMigrate'] = $really;
@@ -205,7 +204,7 @@ function xjxArgs2Array($sXml)
 	return _parseObjXml($aObjArray, 0);
 }
 
-function _parseObjXml($sXml, $iPos)
+function _parseObjXml($aObjArray, $iPos)
 {
 	while(!stristr($aObjArray[$iPos],"</xjxobj>"))
 	{
