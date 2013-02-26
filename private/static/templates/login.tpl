@@ -9,8 +9,8 @@
 			<td><input class="input" type="password" name="pass" /></td>
 		</tr>
 
-		<tr align="center">
-			<td colspan="2" align="right">
+		<tr>
+			<td colspan="2" align="right" id='persistLogin'>
 				<label for="btn_persist">Permanecer logueado</label>
 				<input type="checkbox" name="persist" id="btn_persist" value="1" />
 			</td>

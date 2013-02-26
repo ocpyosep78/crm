@@ -626,9 +626,11 @@ img.agenda_eventType{ float:right; height:30px; width:30px; margin:3px; }
 /**
  * LOGIN
  */
-#loginWrapper{ text-align:center; margin:15% 0 auto 0; }
-#loginWrapper > form{ display:inline-block; padding:25px 80px; text-align:center; background:#ccc; box-shadow:#909095 2px 0px 5px; background-image:linear-gradient(#fff, #eee); border-radius:9px; font-size:1.1em; color:#000; text-shadow:#fff 2px 2px 1px; }
-#loginWrapper th{ font-family:Georgia, "Times New Roman"; text-align:right; font-weight:normal; }
+#loginWrapper{ text-align:center; margin:12% 0 0 0; }
+#loginWrapper > form{ display:inline-block; padding:25px 80px; text-align:center; background:#ccc; box-shadow:#909095 2px 0px 5px; background-image:linear-gradient(#fff, #eee); border-radius:9px; font-size:1.2em; color:#000; text-shadow:#fff 2px 2px 1px; }
+#loginWrapper th{ font-family:sans-serif, "Times New Roman"; text-align:right; font-weight:normal; }
+#persistLogin{ padding-top:10px; }
+#persistLogin label{font-size:0.8em; position:relative; display:inline-block; top:-3px;}
 #btn_login{ height:40px; width:120px; margin-top:25px; padding:10px 20px; background:#567; border:none; border-radius:4px; color:#fff; cursor:pointer; }
 #btn_login:hover{ border:solid 1px #666; opacity:0.95; }
 

@@ -7,7 +7,7 @@ define('PDF_CELL_BORDER', isset($_GET['debug']) ? 1 : 0);
 !empty($_GET['id']) ? $id = $_GET['id'] : die('Faltan datos requeridos.');
 
 # Initialize constants and libraries
-require_once('../../../initialize.php');
+require_once('../../initialize.php');
 
 # Block unauthorized access
 Access::enforce('techVisitsInfo');

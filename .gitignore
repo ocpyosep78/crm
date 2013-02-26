@@ -16,8 +16,8 @@
 Thumbs.db
 
 # ignore specific files
-/app/chat.php
-/app/cfg/local.cfg.php
+/*/chat.php
+/*/cfg/local.cfg.php
 /update.bat
 
 # do not ignore these files

@@ -7,20 +7,20 @@
  * Licence: GNU GENERAL PUBLIC LICENSE <http://www.gnu.org/licenses/gpl.txt>
  */
 
-	
+
 	class Snippet_def_calls extends Snippets_Handler_Source{
-	
+
 		protected function getBasicAttributes(){
-			
+
 			return array(
 				'name'		=> 'Llamada',
 				'plural'	=> 'Llamadas',
 				'gender'	=> 'f',
 			);
-			
+
 		}
-		
-		
+
+
 		/**
 		 * @overview: List of tables involving this module, and each relevant field in them,
 		 *            plus attributes for each field that could be used by Modules.
@@ -35,7 +35,7 @@
 		 *            hidden => false explicitly to override.
 		 */
 		protected function getDatabaseDefinition(){
-		
+
 			$tables = array(
 				'_calls' => array(
 					'id_call'		=> array('name' => 'ID', 'isKey' => true),
@@ -57,15 +57,15 @@
 					'typeLabel' => array('name' => 'Tipo', 'frozen' => true),
 				),
 			);
-			
+
 			foreach( $tables as &$table ) foreach( $table as &$atts ) $atts['frozen'] = true;
-			
+
 			return $tables;
-			
+
 		}
-		
+
 		protected function getFieldsFor( $type ){
-		
+
 			switch( $type ){
 				case 'list':
 					return array('date', 'detail', 'caller', 'customer', 'assigned', 'type');
@@ -75,31 +75,31 @@
 				case 'edit':
 					return array('date', 'detail', 'caller', 'id_customer', 'user', 'type');
 			}
-		
+
 		}
-		
+
 		protected function getTools(){
-		
+
 			return array('view', 'create', 'edit', 'delete');
-			
+
 		}
-				
+
 /*		protected function checkFilter( &$filters ){
 		}/**/
-		
+
 /*		protected function checkData( &$data ){
 		}/**/
-		
+
 		protected function prefetchUserInput( &$data ){
-			
+
 			# Date comes as an array [date, time], we need a timestamp
 			$data['date'] = join(' ', $data['date']);
-			
+
 			# If no customer is picked, set it to null
 			if( !$data['id_customer'] ) $data['id_customer'] = NULL;
-			
+
 		}
-		
+
 		protected function getValidationRuleSet(){
 
 			return array(
@@ -109,26 +109,26 @@
 //				'id_customer'	=> array('selection'),
 				'user'			=> array('selection'),
 			);
-			
+
 		}/**/
-		
+
 /*		protected function strictValidation(){
 			return true;
 		}/**/
 
 /* TEMP : All these methods below should be automatically created based on the definition */
-		
+
 		private function globalFilters( &$filters ){
-		
+
 			$srch = $filters['*'];
 			$filters = array();
-			
+
 			$fields = array_diff($this->getFieldsFor('view'), (array)'>');
-			
+
 			foreach( $fields as $field ) $filters["`{$field}`"] = $srch;
-			
+
 		}
-				
+
 		protected function getListData($filters=array(), $join='AND'){
 			if( isset($filters['*']) ){
 				$this->globalFilters( $filters );
@@ -139,7 +139,7 @@
 				'typeLabel'	=> "IF(`ll`.`type` = 'technical', 'Técnica', 'Ventas')",
 		//		'email'			=> '`c`.`email`',
 			));
-			
+
 			$sql = "SELECT	`c`.`customer`,
 							CONCAT(`u`.`name`,' ', `u`.`lastName`) AS 'assigned',
 							`ll`.*,
@@ -152,9 +152,9 @@
 					LEFT JOIN `customers` `c` USING (`id_customer`)
 					WHERE {$this->array2filter($filters, $join)}
 					ORDER BY `ll`.`date`";
-					
+
 			return $sql;
-			
+
 		}
 		protected function getItemData( $id ){
 			return $this->getListData( array('id_call' => array($id, '=')) );
@@ -168,25 +168,29 @@
 		}
 
 		protected function listForFieldUser(){
-			return "SELECT	`user`,
-							CONCAT(`name`, ' ', `lastName`)
-					FROM `_users`";
+			$isCreate = ($this->params['main'] == 'createItem');
+			$filter = $isCreate ? 'WHERE NOT `blocked`' : '';
+
+			return "SELECT `user`,
+			               CONCAT(`name`, ' ', `lastName`)
+			        FROM `_users`
+			        {$filter}";
 		}
-		
+
 		public function onSuccess($input, $id){
 
 			$data = $input;
 			unset($data['caller'], $data['detail'], $data['id_call']);
-			
+
 			$data['by'] = getSes('user');
 			$data['note'] = "(Llamada de {$input['caller']}) {$input['detail']}";
 			$ans = $this->sqlEngine->insert($data, '_notes');
-			
+
 			if( !$input['type'] || !$ans->ID ) return;
-			
+
 			$data = array('model' => 'notes', 'uid' => $ans->ID);
 			$this->sqlEngine->insert($data, 'activity');
-			
+
 		}
-		
+
 	}
