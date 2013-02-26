@@ -6,10 +6,10 @@
 /forum/
 
 # ignore folder content
-/app/images/users/*
-/app/images/User/*
-/app/images/products/*
-/app/images/Product/*
+/*/images/users/*
+/*/images/User/*
+/*/images/products/*
+/*/images/Product/*
 /logs/*
 /sql/*
 /temp/*
