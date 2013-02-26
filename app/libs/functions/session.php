@@ -21,7 +21,38 @@
 		regSes($key, NULL);
 	}
 
-	function loggedIn(){
+	function loggedIn()
+	{
+		// Keep session alive by cookies
+		if (!getSes('user') && !empty($_COOKIE['crm_user']))
+		{
+			$user = substr($_COOKIE['crm_user'], 0, -40);
+			$cookie = substr($_COOKIE['crm_user'], -40);
+
+			$info = oSQL()->getUser($user);
+
+			// Clear saved cookie by saving last access without passing a cookie
+			if ($info && $info['blocked'])
+			{
+				oSQL()->saveLastAccess($info['user']);
+			}
+			elseif ($info && ($info['cookie'] == $cookie))
+			{
+				$cookie = sha1(time() . rand(1, time()));
+				$expire = time() + (3600*24*30);
+				setcookie('crm_user', "{$info['user']}{$cookie}", $expire);
+
+				oSQL()->saveLastAccess($info['user'], $cookie);
+
+				foreach ($info as $key => $val)
+				{
+					regSes($key, $val);
+				}
+
+				header('Refresh:0');
+			}
+		}
+
 		return getSes('user');
 	}
 
@@ -38,7 +69,7 @@
 					fclose( $fp );
 				}
 			}
-			oSQL()->saveLastAccessDate( $user );
+			oSQL()->saveLastAccess( $user );
 			foreach( $info as $key=> $val ) regSes($key, $val);
 			doActionsAtLogin();
 			return addScript('setTimeout(function(){location.href = location.href;},20);');

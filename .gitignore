@@ -7,10 +7,13 @@
 
 # ignore folder content
 /app/images/users/*
+/app/images/User/*
 /app/images/products/*
+/app/images/Product/*
 /logs/*
 /sql/*
 /temp/*
+/uploads/*/*
 
 # ignore files globally
 Thumbs.db
@@ -29,4 +32,3 @@ Thumbs.db
 !/sql/crm_minimal.sql
 !.gitignore
 !README
-/log

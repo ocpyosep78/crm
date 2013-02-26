@@ -447,11 +447,13 @@
 ** (INSERT, UPDATE)
 ***************/
 
-		public function saveLastAccessDate( $user ){
+		public function saveLastAccess($user, $cookie='')
+		{
 			$sql = "UPDATE `_users`
-					SET `last_access` = CURRENT_TIMESTAMP
+					SET `last_access` = CURRENT_TIMESTAMP,
+						`cookie` = IF('{$cookie}' != '', '{$cookie}', `cookie`)
 					WHERE `user` = '{$user}'";
-			return $this->modify( $sql );
+			return $this->modify($sql);
 		}
 
 		public function createUsers( $data ){

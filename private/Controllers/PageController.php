@@ -112,9 +112,6 @@ class PageController extends Controller
 		// Developer's mode
 		Response::assign('DEVMODE', devMode());
 
-		// Import all @@current keys: 'info', 'atts', 'tree', 'handler'
-		extract(self::$current);
-
 		// Content
 		if (!self::logged())
 		{
@@ -123,6 +120,9 @@ class PageController extends Controller
 		}
 		else
 		{
+			// Import all @@current keys: 'info', 'atts', 'tree', 'handler'
+			extract(self::$current);
+
 			// Show menu for all pages unless explicitely told otherwise
 			Response::showMenu();
 
@@ -161,7 +161,16 @@ class PageController extends Controller
 
 		Template::one()->assign('content', $content);
 
-		if ($onlyContent)   // Only content
+		if (!$onlyContent)          // Full page
+		{
+			// If there is a skin sellection apply it now, else use defaults
+			$skin = getSes('skin') ? URL_SKINS . "/{$skin}" : NULL;
+			$tpl  = $skin ? "{$skin}.tpl" : PATH_TPLS . '/main.tpl';
+			$css  = $skin ? "{$skin}.css" : URL_STYLES . '/style.css';
+
+			Template::one()->assign('css', $css);
+		}
+		elseif (self::logged())     // Only content
 		{
 			$navhtml = Template::one()->fetch(PATH_TPLS . '/navbar.tpl');
 			Response::html('#main_navBar:parent', $navhtml);
@@ -171,15 +180,6 @@ class PageController extends Controller
 
 			// Simple wrapper, mainly for javascript plus the content's html
 			$tpl = PATH_TPLS . '/content.tpl';
-		}
-		else                // Full page
-		{
-			// If there is a skin sellection apply it now, else use defaults
-			$skin = getSes('skin') ? URL_SKINS . "/{$skin}" : NULL;
-			$tpl  = $skin ? "{$skin}.tpl" : PATH_TPLS . '/main.tpl';
-			$css  = $skin ? "{$skin}.css" : URL_STYLES . '/style.css';
-
-			Template::one()->assign('css', $css);
 		}
 
 		return Template::one()->fetch($tpl);
