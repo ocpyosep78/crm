@@ -45,7 +45,7 @@ class Access
 		// Is the page defined (in the database)?
 		if (!$pageid || empty($pages[$pageid]))
 		{
-			return false;
+			return devMode();
 		}
 
 		$page = $pages[$pageid];
@@ -62,10 +62,13 @@ class Access
 			return false;
 		}
 
-		// Deny if parent exists (page's module) and is not allowed
-		if ($page['parent'] && !self::canLoad($page['parent']))
+		// Deny access if page has module and module's main page is not allowed
+		if ($page['mainpage'] && ($page['mainpage'] != $page['id']))
 		{
-			return false;
+			if (!self::canLoad($page['mainpage']))
+			{
+				return false;
+			}
 		}
 
 		// Read credentials, if set

@@ -120,15 +120,15 @@ class PageController extends Controller
 		}
 		else
 		{
-			// Import all @@current keys: 'info', 'atts', 'tree', 'handler'
+			// Import all @@current keys: 'page', 'atts', 'tree', 'handler'
 			extract(self::$current);
 
 			// Show menu for all pages unless explicitely told otherwise
 			Response::showMenu();
 
-			if (devMode() && !is_callable(self::handler($info['id'])))
+			if (devMode() && !is_callable(self::handler($page['id'])))
 			{
-				$msg = "Handler {$info['model']}:{$info['page']} not callable";
+				$msg = "Handler {$page['model']}:{$page['action']} not callable";
 				throw new Exception($msg);
 			}
 
@@ -146,7 +146,7 @@ class PageController extends Controller
 					break;
 			}
 
-			$tpl = "{$info['model']}/{$info['page']}.tpl";
+			$tpl = "{$page['model']}/{$page['action']}.tpl";
 			$path = TEMPLATES_PATH . "/{$tpl}";
 
 			if (!is_file($path))
@@ -172,11 +172,15 @@ class PageController extends Controller
 		}
 		elseif (self::logged())     // Only content
 		{
-			$navhtml = Template::one()->fetch(PATH_TPLS . '/navbar.tpl');
-			Response::html('#main_navBar:parent', $navhtml);
+			// Update navbar and menu if this page has got a module
+			if (self::$current['page']['module'])
+			{
+				$navhtml = Template::one()->fetch(PATH_TPLS . '/navbar.tpl');
+				Response::html('#main_navBar:parent', $navhtml);
 
-			$menuhtml = Template::one()->fetch(PATH_TPLS . '/menu.tpl');
-			Response::html('#main_menu:parent', $menuhtml);
+				$menuhtml = Template::one()->fetch(PATH_TPLS . '/menu.tpl');
+				Response::html('#main_menu:parent', $menuhtml);
+			}
 
 			// Simple wrapper, mainly for javascript plus the content's html
 			$tpl = PATH_TPLS . '/content.tpl';
@@ -194,10 +198,10 @@ class PageController extends Controller
 	private static function triggerContentLoad()
 	{
 		// Call js/contentload() to apply changes to content, menu and navbar
-		$info = json_encode(self::$current['info'], JSON_NUMERIC_CHECK);
+		$page = json_encode(self::$current['page'], JSON_NUMERIC_CHECK);
 		$args = json_encode(self::$current['atts'], JSON_NUMERIC_CHECK);
 
-		Response::domready("contentload({$info}, {$args});");
+		Response::domready("contentload({$page}, {$args});");
 	}
 
 	public static function redirect($page, $atts=[], $msg='', $msgtype='')
@@ -229,11 +233,11 @@ class PageController extends Controller
 	private static function setParams($pageid, $atts=[])
 	{
 		// Store as @@coords for later retrieval, together with atts and tree
-		self::$current['info'] = self::pages()[$pageid];
+		self::$current['page'] = self::pages($pageid);
 		self::$current['atts'] = $atts;
 		self::$current['tree'] = self::tree($pageid);
 
-		// Handler for this page: {Model}::{page}()
+		// Handler for this page: {Model}::{action}()
 		self::$current['handler'] = self::handler($pageid);
 	}
 
@@ -287,8 +291,8 @@ class PageController extends Controller
 
 			foreach (self::pages() as $item)
 			{
-				$uri = self::uri(end(explode('|', $item['alias'])));
-				$fqn = "{$item['model']}:{$item['page']}";
+				$uri = self::uri($item['alias']);
+				$fqn = "{$item['model']}:{$item['action']}";
 
 				// Look for home's pageid as well, to fall back if needed
 				if (!strcasecmp($home, $fqn) || !strcasecmp(HOME, $uri))
@@ -297,7 +301,7 @@ class PageController extends Controller
 					if (!is_callable(self::handler($item['id'])))
 					{
 						$msg = "La página de inicio definida no es válida" .
-						       " ({$item['model']}:{$item['page']})";
+						       " ({$item['model']}:{$item['action']})";
 						throw new PublicException($msg);
 					}
 
@@ -309,51 +313,48 @@ class PageController extends Controller
 			$msg = 'No se encontró la página de inicio definida (' . HOME . ')';
 			throw new PublicException($msg);
 		}
+
+		return $homepage;
 	}
 
 	/**
-	 * static array pages()
-	 *      Get a list of all stored pages (from the database) with their atts.
+	 * static array pages([int $id = NULL])
+	 *      Get a list of all stored pages with their atts. If $id is provided,
+	 * return only the page identified by it.
 	 *
+	 * @param int $id
 	 * @return array
 	 */
-	public static function pages()
+	public static function pages($id=NULL)
 	{
 		static $pages;
 
 		if (!$pages)
 		{
-			// Get all pages in the crm_tree table
-			$sql = "SELECT *
-			        FROM `crm_tree`
-			        ORDER BY `order`, `model`, `page`";
-			$data = self::s_query($sql)->res;
+			// Get all pages in the crm_page table
+			$sql = "SELECT `m`.*,
+			               `p`.*,
+			               `m`.`order` AS 'mod_order'
+			        FROM `crm_page` `p`
+			        LEFT JOIN `crm_module` `m` ON (`p`.`idmodule` = `m`.`id`)
+			        ORDER BY `p`.`order`";
+			$res = self::s_query($sql)->res;
 
-			while ($row = mysql_fetch_assoc($data))
+			while ($row = mysql_fetch_assoc($res))
 			{
-				// Ignore parents for global pages
-				if ($row['area'] === '*')
-				{
-					$row['parent'] = NULL;
-				}
-
 				// Set default alias if no alias is given
 				if (!$row['alias'])
 				{
-					$row['alias'] = "{$row['model']}:{$row['page']}";
+					$row['alias'] = "{$row['model']}:{$row['action']}";
 				}
-
-				// Divide alias into module alias and regular alias ("mod|reg")
-				list($row['m_alias'], $row['alias'])
-					= explode('|', "{$row['alias']}|{$row['alias']}");
 
 				// Add the page's uri (clean url from alias)
 				$row['uri'] = self::uri($row['alias']);
 
 				// Add images (not saved in database)
-				$imguri = strtolower("{$row['model']}_{$row['page']}.png");
+				$imguri = strtolower("{$row['model']}_{$row['action']}.png");
 				$imgpath = PATH_UPLOADS . "/pages/{$imguri}";
-				$row['image'] = is_file($imgpath) ? $imguri : '__missing__.gif';
+				$row['image'] = is_file($imgpath) ? $imguri : NULL;
 
 				$pages[$row['id']] = $row;
 			}
@@ -365,21 +366,71 @@ class PageController extends Controller
 			}
 		}
 
-		return $pages;
+		return $id ? (isset($pages[$id]) ? $pages[$id] : NULL) : $pages;
+	}
+
+	/**
+	 * static array modules([int $id = NULL])
+	 *      Get a list of all stored modules with their atts. If $id is
+	 * provided, return only the module identified by it.
+	 *
+	 * @param int $id
+	 * @return array
+	 */
+	public static function modules($id=NULL)
+	{
+		static $modules;
+
+		if (!$modules)
+		{
+			// Get all modules in the crm_module table
+			$sql = "SELECT *
+			        FROM `crm_module`
+			        ORDER BY `order`";
+			$res = self::s_query($sql)->res;
+
+			while ($row = mysql_fetch_assoc($res))
+			{
+				// Add images (not saved in database)
+				$imguri = "{$row['id']}.png";
+				$imgpath = PATH_UPLOADS . "/modules/{$imguri}";
+				$row['image'] = is_file($imgpath) ? $imguri : '__missing__.gif';
+
+				// Shortcut to the uri of this module's main page
+				if ($row['mainpage'])
+				{
+					$row['uri'] = self::pages($row['mainpage'])['uri'];
+				}
+				else
+				{
+					$row['uri'] = self::pages(self::homepage())['uri'];
+				}
+
+				$modules[$row['id']] = $row;
+			}
+
+			if (!$modules)
+			{
+				$msg = "No se han encontrado módulos en la base de datos";
+				throw new PublicException($msg);
+			}
+		}
+
+		return $id ? (isset($modules[$id]) ? $modules[$id] : NULL) : $modules;
 	}
 
 	/**
 	 * private static int requestedPage(mixed $input)
 	 *      Find out which page the user is trying to load, as described by
-	 * $input. It can be a number (pageid), a model, a model:page, or an alias.
+	 * $input. It can be a number (pageid), a model, a model:action or an alias.
 	 *
 	 * Expected behavior:
 	 *
-	 *    * return NULL if the page does not exist (in table crm_tree)
+	 *    * return NULL if the page does not exist (in table crm_page)
 	 *    * throw an exception if $input is ambiguous (more than 1 solution)
 	 *    * return the page id of the requested page otherwise
 	 *
-	 * NOTE: Access to the requested page is not evaluated in this method.
+	 * NOTE: Access rules for requested page are not evaluated in this method.
 	 *
 	 * @param mixed $input
 	 * @return int
@@ -405,16 +456,16 @@ class PageController extends Controller
 				$aliases = explode('|', $item['alias']);
 				$uri = self::uri(end($aliases));
 
-				$fqn = "{$item['model']}:{$item['page']}";
+				$fqn = "{$item['model']}:{$item['action']}";
 
-				// Matches model:page or alias
+				// Matches model:action or alias
 				if (!strcasecmp($page, $fqn) || !strcasecmp($input, $uri))
 				{
 					if (isset($pageid))
 					{
 						$original = $pages[$pageid];
-						$page1 = "{$original['model']}:{$original['page']}";
-						$page2 = "{$item['model']}:{$item['page']}";
+						$page1 = "{$original['model']}:{$original['action']}";
+						$page2 = "{$item['model']}:{$item['action']}";
 
 						$msg = "Código de página '{$input}' es ambiguo. Puede" .
 						       " hacer referencia a {$page1} o {$page2}";
@@ -440,124 +491,52 @@ class PageController extends Controller
 	private static function tree($pageid)
 	{
 		// Fill defaults
-		$tree = ['modules' => [],  # All available modules
-		         'pages'   => [],  # Available pages in current module (by id)
-		         'menu'    => [],  # Menu tree with available pages by area
-		         'module'  => [],  # Current module (page that represents it)
-		         'current' => []]; # Currently selected page
+		$tree = ['module'  => [],  # Page's module (defaults to first module)
+		         'modules' => [],  # All available modules
+		         'pages'   => [],  # Available pages in current module
+		         'menu'    => []]; # Menu tree with available pages by area
 
-		// Guess current module from pageid
-		$moduleid = self::module($pageid);
-
-		// Build tree structure for menu
-		foreach (self::pages() as $entry)
+		// Get allowed modules
+		foreach (self::modules() as $module)
 		{
-			// Only add items that the user has access to
-			if (!Access::canLoad($entry['id']))
+			if (Access::canLoad($module['mainpage']))
 			{
-				continue;
-			}
-
-			// Store page in main list, and create a reference (for other lists)
-			$tree['pages'][$entry['id']] = $entry;
-			$item =& $tree['pages'][$entry['id']];
-
-			// Add parent, siblings, children and the module itself to the menu
-			if (($item['id'] == $moduleid) || ($item['parent'] == $moduleid))
-			{
-				$tree['menu'][$item['area']][] =& $item;
-			}
-
-			// Global pages
-			if ($item['area'] === '*')
-			{
-				$global[] =& $item;
-			}
-			// Module pages
-			elseif (!$item['parent'])
-			{
-				$tree['modules'][] =& $item;
+				$tree['modules'][$module['id']] = $module;
 			}
 		}
 
-		if (isset($tree['pages'][$moduleid]))
+		// Set current module to this page's module. If empty, use first module
+		($moduleid = self::pages($pageid)['idmodule'])
+		|| ($moduleid = current(array_keys($tree['modules'])));
+
+		$tree['module'] =& $tree['modules'][$moduleid];
+
+		// Get allowed pages in current module
+		foreach (self::pages() as $page)
 		{
-			$tree['module'] =& $tree['pages'][$moduleid];
+			// Pages without a module (NULL) belong to all modules
+			if (!$page['idmodule'] || ($page['idmodule'] == $moduleid))
+			{
+				if (Access::canLoad($page['id']))
+				{
+					$tree['pages'][$page['id']] = $page;
+				}
+			}
 		}
 
-		!empty($global) && ($tree['menu'] += ['CRM' => $global]);
+		// Build tree structure for menu, with allowed pages in current module
+		foreach ($tree['pages'] as $id => &$page)
+		{
+			// Pages are required to have an area in order to be in the menu
+			$page['area'] && ($tree['menu'][$page['area']][] =& $page);
+		}
 
 		return $tree;
 	}
 
-	/**
-	 * static int module(int $pageid)
-	 *      The module is a non-global page (area <> *) without a parent. It
-	 * defines the respective menu tree. Since a global page has no module (its
-	 * parent is ignored, empty or not), in that case the module cannot be
-	 * guessed from it.
-	 *
-	 *      First fall-back module is that of the page that's calling to load
-	 * current page (if any), then the homepage's module (if not global), then
-	 * the first available module (as sorted by keys: order, model, page).
-	 *
-	 * @param int $pageid
-	 * @return int
-	 */
-	public static function module($pageid)
+	private static function hasModule($pageid)
 	{
-		return 2;
-
-		$pages = self::pages();
-
-		if (isset($allpages[$pageid]) && ($allpages['area'] !== '*'))
-		{
-			return ($parent = $allpages[$pageid]['parent']) ? $parent : $pageid;
-		}
-
-		// Choose the right default module page (i.e. the page that defines the
-		// current module and accordingly generates a menu.
-		if ($allpages[self::homepage()]['area'] === '*')
-		{
-
-		}
-
-		if (!isset($allpages[$pageid]))
-		{
-			$pageid = self::homepage();
-		}
-
-		if ($allpages[$pageid]['area'] === '*')
-		{
-			if ($allpages[self::homepage()]['area'] === '*')
-			{
-
-			}
-			else
-			{
-				return $allpages[self::homepage()];
-			}
-		}
-		else
-		{
-			return $allpages[$pageid];
-		}
-
-		foreach (self::pages() as $item)
-		{
-			// If sample is a global page, we will overwrite it with the default
-			if (empty($item['parent']) && ($item['area'] !== '*'))
-			{
-				$default = $item;
-			}
-		}
-
-		// Freeze current page, by id, before we (possibly) redefine $sample
-		$current = $sample['id'];
-
-		// Can't use sample from global pages (wouldn't give us a valid module)
-		// So overwrite it with default if that's the case (* := global area)
-		($sample['area'] === '*') && ($sample = $default);
+		return !empty(self::pages($pageid)['idmodule']);
 	}
 
 	/**
@@ -570,14 +549,14 @@ class PageController extends Controller
 	 */
 	public static function handler($pageid)
 	{
-		if (!isset(self::pages()[$pageid]))
+		$page = self::pages($pageid);
+
+		if (!$page)
 		{
 			return NULL;
 		}
 
-		$page = self::pages()[$pageid];
-
-		return [Model::get(ucfirst($page['model'])), $page['page']];
+		return [Model::get(ucfirst($page['model'])), $page['action']];
 	}
 
 }

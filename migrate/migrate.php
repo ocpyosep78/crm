@@ -1,19 +1,11 @@
 <?php
 
-$migratehome = false;
-$migratelogin = true;
-
-$migrated = [
-//	'home',
-//	'agenda',
-//	'editEvent',
-//	'users'
-];
-
-
-
 error_reporting(E_ERROR);
 session_start();
+
+
+$migratehome = false; # Migrate default page (no particular page requested)
+$migratelogin = true; # Migrate login page (i.e. when no user logged in)
 
 
 /**
@@ -40,7 +32,7 @@ elseif (empty($_POST['xajax']) && !empty($_GET['nav']))
 	($atts = $_SESSION['nav'][$_GET['nav']]['atts']) || ($atts = []);
 	($oldp = $_SESSION['nav'][$_GET['nav']]['page']) || ($oldp = '');
 
-	migrate(!$oldp ? $migratehome : in_array($oldp, $migrated));
+	migrate(!$oldp ? $migratehome : migrated($oldp));
 }
 
 // Old ajax call for content
@@ -50,7 +42,7 @@ elseif (isset($_POST['xajax']) && ($_POST['xajax'] === 'getPage'))
 	$oldp = array_shift($args);
 	$atts = $args ? xjxArgs2Array(array_shift($args)) : [];
 
-	migrate(!$oldp ? false : in_array($oldp, $migrated));
+	migrate(!$oldp ? $migratehome : migrated($oldp));
 }
 
 // Old ajax calls, except content
@@ -65,7 +57,7 @@ elseif (!empty($_GET['args']))
 	$atts = explode('/', $_GET['args']);
 	$newp = translatePage(array_shift($atts));
 
-	migrate(!$newp ? $migratehome : in_array($newp, $migrated));
+	migrate(!$newp ? $migratehome : migrated($newp));
 }
 
 // New ajax call for content
@@ -75,7 +67,7 @@ elseif (isset($_GET['ajax']) && isset($_POST['id']) && ($_POST['id'] === 'conten
 	$newp = translatePage(array_shift($args)['page']);
 	$atts = (array)array_shift($args);
 
-	migrate(!$newp ? $migratehome : in_array($newp, $migrated));
+	migrate(!$newp ? $migratehome : migrated($newp));
 }
 
 // New ajax calls, except content
@@ -89,6 +81,7 @@ else
 {
 	migrate(false);
 }
+
 
 // When changing from new to old or viceversa, we need to force a page redirect
 if (isset($newp) || isset($oldp))
@@ -119,7 +112,7 @@ if (isset($newp) || isset($oldp))
 	// Change from old to new
 	elseif (isset($oldp) && $doMigrate)
 	{
-		$newPageUri = newPageFromOld($oldp);
+		$newPageUri = aliasFromCode($oldp);
 		$href = trim("{$bburl}/{$newPageUri}/" . join('/', $atts), '/');
 
 		// Was it an ajax call ...
@@ -142,6 +135,16 @@ if (isset($newp) || isset($oldp))
 function migrate($really=true)
 {
 	$GLOBALS['doMigrate'] = $really;
+}
+
+function migrated($code)
+{
+	$sql = "SELECT `migrated`
+	        FROM `crm_page`
+	        WHERE `code` = '{$code}'";
+	$res = query($sql);
+
+	return $res ? !!(int)$res[0]['migrated'] : false;
 }
 
 
@@ -254,59 +257,43 @@ function _parseObjXml($aObjArray, $iPos)
 	return $aArray;
 }
 
+/**
+ * From new identifier (id, alias or model:action), get old code
+ */
 function translatePage($input)
 {
 	if (is_numeric($input))
 	{
-		$sql = "SELECT `oldpage`
-		        FROM `crm_tree`
+		$sql = "SELECT `code`
+		        FROM `crm_page`
 		        WHERE `id` = '{$input}'";
 		$res = query($sql);
 
-		return $res ? $res[0]['oldpage'] : '';
+		return $res ? $res[0]['code'] : '';
 	}
 
-	list($m, $p) = (explode(':', $input) + ['', 'main']);
+	list($m, $a) = (explode(':', $input) + ['', 'main']);
 
-	$sql = "SELECT `oldpage`
-	        FROM `crm_tree`
-	        WHERE `model` = '{$m}'
-	        AND `page` = {$p}";
+	$sql = "SELECT `code`
+	        FROM `crm_page`
+	        WHERE `code` = '{$input}'
+	        OR `alias` LIKE '{$input}'
+	        OR (`model` = '" . ucfirst($m). "' AND `action` = '{$a}')";
 	$res = query($sql);
 
-	if ($res)
-	{
-		return $res[0]['oldpage'];
-	}
-
-	$sql = "SELECT `alias`,
-	               `oldpage`
-	        FROM `crm_tree`";
-
-	foreach (query($sql) as $page)
-	{
-		$aliases = explode('|', $page['alias']);
-
-		if (!strcasecmp(uri(end($aliases)), $input))
-		{
-			return $page['oldpage'];
-		}
-	}
-
-	return '';
+	return $res ? $res[0]['code'] : '';
 }
 
-function newPageFromOld($oldp)
+function aliasFromCode($oldp)
 {
 	$sql = "SELECT `alias`
-	        FROM `crm_tree`
-	        WHERE `oldpage` = '{$oldp}'";
+	        FROM `crm_page`
+	        WHERE `code` = '{$oldp}'";
 	$res = query($sql);
 
 	if ($res)
 	{
-		$aliases = explode('|', $res[0]['alias']);
-		return uri(end($aliases));
+		return uri($res[0]['alias']);
 	}
 	else
 	{
@@ -317,7 +304,7 @@ function newPageFromOld($oldp)
 
 function uri($str)
 {
-	return strtolower(preg_replace('_[^\wáéíóúÁÉÍÓÚ]_', '_', $str));
+	return strtolower(preg_replace('_[ &?#]_', '_', $str));
 }
 
 function query($sql)

@@ -3,10 +3,10 @@
 	  {if $USER}
 		{foreach from=$pagestate.tree.modules item=module}
 		  &nbsp;&nbsp;
-		  <a href='{$BBURL}/{$module.uri}' rel='{$module.id}'
-			class='navMod{if $module.id == $pagestate.tree.module.id} navCurrMod{/if}'><img
-			src="{$URL_UPLOADS}/pages/{$module.image}"
-			alt="{$module.m_alias}" title="{$module.m_alias}" /></a>
+		  <a href='{$BBURL}/{$module.uri}' rel='{$module.mainpage}'
+			class='navMod{if $module.id == $pagestate.tree.module} navCurrMod{/if}'><img
+			src="{$URL_UPLOADS}/modules/{$module.image}"
+			alt="{$module.module}" title="{$module.module}" /></a>
 		{/foreach}
 	  {/if}
 	</div>
@@ -22,7 +22,8 @@
 	<div id='navSteps'>
 	  {if $USER}
 		<span>página</span>
-		<span>/&gt; <em><a href='javascript:void(0)'>{$pagestate.info.alias}</a></em></span>
+		<span>/&gt; <em><a href='{$BBURL}/{$pagestate.page.uri}'
+		  rel='{$pagestate.page.id}'>{$pagestate.page.alias}</a></em></span>
 	  {/if}
 	</div>
 

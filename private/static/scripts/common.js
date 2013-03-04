@@ -272,7 +272,7 @@ function contentload(page, params)
 {
 	showMenu(!empty(window.SHOW_MENU));
 
-	var fn = window['ini_' + page.model + '_' + page.page];
+	var fn = window['ini_' + page.model + '_' + page.action];
 
 	try
 	{
@@ -299,8 +299,9 @@ $(function(){
 	$('body').on('click', '.navMod', function(e){
 		$('.navCurrMod')._class('navMod');
 		$(this).addClass('navCurrMod');
-		getPage(e, $(this)._rel());
-		return false;
+		// Let href act if rel attribute is empty, else getPage and cancel click
+		$(this)._rel() && getPage(e, $(this)._rel());
+		return !$(this)._rel();
 	});
 
 	$('body').on('click', '.logout', function(){

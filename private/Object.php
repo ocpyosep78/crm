@@ -45,7 +45,7 @@ trait Object
 
 	public static function uri($str)
 	{
-		return strtolower(preg_replace('_[^\wáéíóúÁÉÍÓÚ]_', '_', $str));
+		return strtolower(preg_replace('_[ &?#]_', '_', $str));
 	}
 
 }
