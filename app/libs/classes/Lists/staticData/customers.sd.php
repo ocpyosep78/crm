@@ -12,6 +12,7 @@
 		'legal_name'	=> 'Razón Social',
 //		'rut'			=> 'RUT',
 		'address'		=> 'Dirección',
+		'billingaddr'   => 'Dir. de Facturación',
 //		'id_location'	=> '',
 //		'location'		=> 'Ciudad',
 		'phone'			=> 'Teléfono',

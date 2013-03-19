@@ -264,16 +264,16 @@ BUTTON, .button{
 	padding:2px 8px;
 	border:solid 1px #036;
 	border-radius:4px;
-	
-	
+
+
 	background:#cccccc;
 	color:#000000;
 	font-family:Helvetica, sans-serif, Arial;
 	text-align:center;
 	cursor:pointer;
 	box-shadow:#606068 2px 2px 5px;
-	
-	
+
+
 }
 BUTTON:hover, .button:hover{
 	background:#d0d0da;
@@ -413,8 +413,8 @@ TABLE.data{
 	border-collapse:collapse;
 	background:#ffffff;
 	border-radius:8px;
-	
-	
+
+
 }
 TABLE.data TD{
 	padding:4px 5px;
@@ -440,8 +440,8 @@ TABLE.data TD DIV{
 	background:#eaeaf5;
 	border-radius:8px;
 	box-shadow:#000000 2px 2px 5px;
-	
-	
+
+
 }
 .tableWrapper{
 	height:auto;
@@ -546,8 +546,8 @@ TABLE.simpleList .simpleListCreate{ white-space:nowrap; }
 .FormTable TH{height:1.4em;width:130px;padding:5px 10px 2px 3px;font-weight:normal;text-indent:15px;white-space:nowrap;}
 .FormTable TD{color:#002060;}
 .FormTable .FormTableTitle{padding-top:16px; padding-bottom:8px; text-align:left;font-size:13px;font-weight:bold;text-indent:0px;}
-.FormTable INPUT.input, .FormTable INPUT.inputFocused{width:150px;}
-.FormTable SELECT{width:154px;}
+.FormTable INPUT.input, .FormTable INPUT.inputFocused{width:250px;}
+.FormTable SELECT{width:254px;}
 .FormTable .FormTableSubmitLine{text-align:left;}
 .FormTable .Tip{vertical-align:top;height:0px;}
 .FormTable .Tip DIV{display:none;position:absolute;padding-left:18px;}

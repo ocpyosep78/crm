@@ -43,7 +43,7 @@
 					'legal_name'	=> 'Razón Social',
 					'rut'			=> 'RUT',
 					'address'		=> 'Dirección',
-					'billingaddress'=> 'Dir. de Facturación',
+					'billingaddr'	=> 'Dir. de Facturación',
 					'id_location'	=> '',
 					'phone'			=> 'Teléfono',
 					'email'			=> 'Email',
@@ -70,11 +70,11 @@
 					return array('number', 'customer', 'legal_name', 'address', 'phone', 'sellerName');
 				case 'view':
 					return array('number', 'customer', 'legal_name', 'rut', 'since', '>',
-						'phone', 'email', 'address', 'billingaddress', 'location', 'sellerName');
+						'phone', 'email', 'address', 'billingaddr', 'location', 'sellerName');
 				case 'create':
 				case 'edit':
 					return array('number', 'customer', 'legal_name', 'rut', 'since', '>',
-						'phone', 'email', 'address', 'location', 'sellerName');
+						'phone', 'email', 'address', 'billingaddr', 'location', 'sellerName');
 			}
 
 		}
@@ -101,13 +101,13 @@
 
 			return array(
 				'number'		=> array('text', NULL, 10),
-				'customer'		=> array('text', 2, 80),
-				'legal_name'	=> array('text', 2, 80),
+				'customer'		=> array('open', 2, 80),
+				'legal_name'	=> array('open', 2, 80),
 				'rut'			=> array('rut', NULL, 12),
 				'phone'			=> array('phone', 3, 40 ),
 				'email'			=> array('email', NULL, 50),
-				'address'		=> array('text', NULL, 80),
-				'billingaddress'=> array('text', NULL, 80),
+				'address'		=> array('open', NULL, 80),
+				'billingaddr'	=> array('open', NULL, 80),
 				'id_location'	=> array('selection'),
 			);
 
