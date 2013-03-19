@@ -81,8 +81,8 @@
 		<tr>
 
 			<td id='main_menu' rowspan="2">
-				<img id='hideMenu' src='app/images/arrow_head_left.gif' title='Ocultar menÃº' />
-				<img id='showMenu' src='app/images/arrow_head_right.gif' title='Mostrar menÃº' />
+				<img id='hideMenu' src='app/images/arrow_head_left.gif' title='Ocultar menú' />
+				<img id='showMenu' src='app/images/arrow_head_right.gif' title='Mostrar menú' />
 				<div id='menuDiv'>
 				  <div class='h_filler' style='width:140px;'>&nbsp;</div>
 				  {foreach from=$Page->menuItems key=key item=items}
