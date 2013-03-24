@@ -69,6 +69,15 @@
 			array('' => '') + oSQL()->getLocations(),
 			array('id' => 'id_location', 'selected' => $id ? $cust['id_location'] : 29));	/* TEMP : use MAIN_LOCATOIN instead */
 
+		# Block 'Contacto'
+		if (!$id)
+		{
+			oFormTable()->addTitle('Contacto Principal');
+			oFormTable()->addInput('Nombre', array('id' => 'ccc_name'));
+			oFormTable()->addInput('Teléfono', array('id' => 'ccc_phone'));
+			oFormTable()->addInput('Email', array('id' => 'ccc_email'));
+		}
+
 		# Disabled, an input telling PHP to save it as potential customer
 		# (sent only if that option is selected)
 		oFormTable()->hiddenRow();
@@ -98,7 +107,16 @@
 		oFormTable()->xajaxSubmit( $id ? 'editCustomers' : 'createCustomers');
 
 		# Attach comboList and get the page
-		oLists()->includeComboList('customers', !empty($cust['since']) ? 'customers' : 'potential', $id);
+		if ($id)
+		{
+			$combo = !empty($cust['since']) ? 'customers' : 'potential';
+			oLists()->includeComboList('customers', $combo, $id);
+		}
+		else
+		{
+			oSmarty()->assign('comboList', '');
+		}
+
 		oSmarty()->assign('editCustomerTbl', oFormTable()->getTemplate());
 
 		# Add commands and actions to Xajax response object
