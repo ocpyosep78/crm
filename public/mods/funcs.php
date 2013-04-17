@@ -13,7 +13,8 @@ function canEditEvent($user, $creator, $target=NULL)
 	if( getSes('id_profile') <= 2 ) return true;
 
 	# 3. Groups of users who can edit eachother's events
-	$groups[] = ['mantunez', 'rdelossantos', 'gperdomo', 'rferdinand', 'flaborde'];
+	$groups[] = ['mantunez', 'rdelossantos', 'gperdomo', 'rferdinand',
+	             'flaborde', 'ghoppe', 'mvillar'];
 
 	foreach ($groups as $group)
 	{
